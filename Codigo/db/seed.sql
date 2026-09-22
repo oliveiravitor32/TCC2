@@ -35,8 +35,12 @@ VALUES
 ON CONFLICT (codigo) DO NOTHING;
 
 INSERT INTO versao_base_regras (rotulo, qtd_regras, resumo)
-VALUES ('v0-provisoria', 1, 'Particoes trapezoidais provisorias; sera substituida apos a definicao dos tercis.')
+VALUES ('v0-provisoria', 9,
+        'Particoes trapezoidais provisorias (tercis 1/3 e 2/3); 9 regras; atenuacao condicionada a ausencia de risco. '
+        'Arquivo: decisao/regras/v0-provisoria.toml. Substituida pela v1 apos os tercis de Melbourne.')
 ON CONFLICT (rotulo) DO NOTHING;
+
+-- hash_regras e conferido pelo servico de decisao ao iniciar (passo 5).
 
 -- Previsao provisoria (passo 5): persistencia, ate o treino do XGBoost (Etapa 3).
 INSERT INTO versao_modelo_previsao (rotulo, algoritmo)

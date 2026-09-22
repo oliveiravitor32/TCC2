@@ -372,6 +372,70 @@ POR QUE: sem essa rodada H3 nao tem evidencia.
 TEXTO:   acrescentar a 3.9 (Etapa 6 ou nova etapa) a comparacao, com a metrica
          "fracao da janela de baixa demanda consumida em transicao" (2.10).
 
+
+===============================================================================
+18. BASE DE REGRAS v0: ATENUACAO CONDICIONADA A AUSENCIA DE RISCO
+    Trecho: 3.7 (paragrafos da base de regras e das funcoes de pertinencia)
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+TCC:     base em forma linguistica, com origem declarada; agregacao e
+         defuzificacao nao detalhadas.
+CODIGO:  decisao/regras/v0-provisoria.toml, 9 regras. E = minimo, implicacao
+         = minimo, agregacao = maximo, defuzificacao pelo centroide. As regras
+         de atenuacao (R6, R7, R8) exigem ocorrencia = nao e meteorologia =
+         normal; R8 exige tambem prevista = baixa; R9 (inicio da noite) vale
+         so com observada = baixa.
+POR QUE: na primeira versao, uma ocorrencia com movimento baixo ativava ao
+         mesmo tempo R1 (pleno) e R6/R8 (reduzido); o centroide caia em 0,459
+         e a verificacao levava ao piso - luz minima durante uma ocorrencia.
+         O mesmo acontecia com previsao alta (antecipacao anulada) e com
+         movimento alto as 19h (R9 puxava para 0,688). Condicionar a reducao
+         a ausencia de risco e a restricao deliberada que Pickering, Cohen e
+         De Baets (2026) apontam como condicao da interpretabilidade. Com a
+         correcao esses casos vao a ~0,93. Teste:
+         tests/test_inferencia.py::test_risco_nao_e_diluido_pela_regra_de_reducao
+TEXTO:   acrescentar a 3.7 o metodo (min/max/centroide) e a frase: "as regras
+         de atenuacao sao condicionadas a ausencia de ocorrencia e de
+         condicao adversa, de modo que evidencia de risco nao seja diluida
+         na agregacao". A base completa vai para o Capitulo 5 (objetivo c).
+
+
+===============================================================================
+19. UNIVERSO DE SAIDA DA INFERENCIA DE 0 A 1, SEM CONHECER O PISO
+    Trecho: 3.7 ("a saida e o nivel de fluxo luminoso pretendido")
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+TCC:     saida = fracao continua do fluxo pleno.
+CODIGO:  o universo de saida vai de 0 a 1; a inferencia nao le o piso da
+         classe. Movimento baixo na madrugada produz ~0,17, e a verificacao
+         corrige para 0,5 com restricao 'piso'.
+POR QUE: mantem pura a separacao entre camada adaptativa e camada fixa (3.7):
+         a inferencia pode ser trocada sem saber nada da norma, e a atuacao da
+         verificacao fica visivel e contavel no registro (resultado d).
+         Consequencia a declarar: parte relevante das correcoes registradas
+         sera 'piso' por construcao, e nao por falha da inferencia.
+TEXTO:   registrar em 3.7 que o universo de saida e [0,1] e que o piso e
+         imposto exclusivamente pela verificacao.
+
+
+===============================================================================
+20. PARTICOES PROVISORIAS, FAIXA HORARIA E MODO REATIVO
+    Trecho: 3.7 (particoes) e Quadro 7 (faixa horaria)
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+CODIGO:  - movimentacao chega normalizada no ponto (0 a 1); fronteiras
+           provisorias em 1/3 e 2/3, rampas de +-0,083; a v1 troca pelos
+           tercis da serie de Melbourne sem mudar o codigo, so o arquivo;
+         - faixa horaria em horas desde as 18h: inicio_noite (18h-21h),
+           madrugada (00h-03h), pre_amanhecer (04h-06h), trapezoidais;
+         - modo reativo (H3): a inferencia recebe a observada no lugar da
+           prevista, com a MESMA base de regras, para que a comparacao isole
+           o efeito da previsao;
+         - se nenhuma regra ativar, o nivel pretendido e 1,0 (lado seguro);
+           a varredura do espaco de entrada mostra que isso nao ocorre na v0.
+TEXTO:   declarar em 3.7 a normalizacao por ponto e as faixas; em 3.9, que o
+         modo reativo usa a mesma base.
+
 ===============================================================================
 FIM
 ===============================================================================
