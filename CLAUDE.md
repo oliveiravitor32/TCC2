@@ -4,7 +4,7 @@ Responda sempre em **português do Brasil**. O autor é iniciante em eletrônica
 
 ## Fonte da verdade
 
-A especificação vigente está em `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP.docx` (há também o `.pdf` com o mesmo conteúdo). **Siga o TCC.**
+A especificação vigente está em `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP.docx` (há também o `.pdf` com o mesmo conteúdo caso seja necessário verificar algo visual ou que teve problemas em visualizar no .docx). **Siga o TCC.**
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
 
@@ -107,6 +107,10 @@ Movimentação observada e prevista: conjuntos baixa/média/alta, **trapezoidais
 
 `classe_iluminacao`, `ponto_de_luz`, `evento_urbano`, `versao_base_regras`, `decisao`, `telemetria` **e a tabela associativa `decisao` ↔ `evento_urbano` (N:N)** — registra em quais eventos cada decisão se apoiou. Reclassificação de via = registro novo, nunca UPDATE do existente. A seção 4.7.3 (modelo físico) está PENDENTE no texto e deve ser escrita a partir do `schema.sql` real.
 
+Entidades acrescentadas pelo código (item 16 do `DIVERGENCIAS_TCC.txt`): `versao_modelo_previsao` (RNF04), `execucao_cenario` (RF10, 3.11, H3: regime + modo antecipado/reativo), `sessao_medicao` (residual, descarte 5 %), `calibracao` (duty × lux por série; origem da tabela do firmware), `alerta_diagnostico` (RF11), `luminaria_referencia` (Quadro 9). A view `auditoria_decisao` dá a razão entregue/esperado e a latência evento → telemetria.
+
+Decisões já tomadas: luminária de referência **em tabela**; calibração **no banco, com cópia gravada no firmware**.
+
 ## Requisitos para lembrar (Quadros 10 e 11)
 
 - RF01–RF12 (RF11 diagnóstico, RF12 energia).
@@ -135,7 +139,7 @@ docker-compose.yml
 
 ## Ordem de desenvolvimento combinada
 
-1. `db/schema.sql` + `seed.sql` ✅ (conferir a tabela associativa decisão ↔ evento)
+1. `db/schema.sql` + `seed.sql` ✅ (revisado no passo 0 para a versão nova do TCC)
 2. `decisao/verificacao.py` + testes aleatórios (100 mil casos, zero violações de piso e taxa) ✅
 3. Inferência Mamdani com partições provisórias
 4. API de eventos

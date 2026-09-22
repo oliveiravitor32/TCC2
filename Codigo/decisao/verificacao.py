@@ -1,4 +1,4 @@
-"""Camada de verificacao normativa (TCC 7.6).
+"""Camada de verificacao normativa (TCC 3.7).
 
 Invariante de seguranca: nenhum nivel emitido pelo sistema pode violar os tres
 limites abaixo, quaisquer que sejam a previsao e a inferencia nebulosa.

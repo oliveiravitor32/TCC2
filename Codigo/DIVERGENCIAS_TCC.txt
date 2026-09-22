@@ -1,7 +1,7 @@
 ===============================================================================
 DIVERGENCIAS E DECISOES DE IMPLEMENTACAO EM RELACAO AO TEXTO DO TCC
-Documento de referencia: TCC_Iluminacao_Adaptativa_SP_7.docx
-Ultima atualizacao: 20/09/2026
+Documento de referencia: Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP.docx
+Ultima atualizacao: 21/09/2026
 ===============================================================================
 
 COMO LER ESTE ARQUIVO
@@ -20,7 +20,7 @@ Manter este arquivo atualizado a cada decisao nova.
 
 ===============================================================================
 1. PASSO DA RAMPA DE DIMERIZACAO: 5 s (o TCC implica 1 s)
-   Trecho: Quadro 6 / secao 7.6
+   Trecho: Quadro 6 / secao 3.7
    Acao: [ATUALIZAR TEXTO]
 -------------------------------------------------------------------------------
 TCC:     o Quadro 6 expressa a taxa maxima de decrescimo como 0,017 lux/s, o
@@ -37,7 +37,7 @@ POR QUE: o limite normativo respeitado continua sendo o mesmo - 0,1 do fluxo
          dois passos consecutivos de 1 s e de 0,0017 do fluxo pleno, abaixo da
          resolucao do sensor e imperceptivel a vista.
 TEXTO:   manter o valor normativo do Quadro 6 como esta (ele e a prescricao) e
-         acrescentar em 7.6 que a discretizacao adotada e de um passo a cada
+         acrescentar em 3.7 que a discretizacao adotada e de um passo a cada
          5 s, com queda maxima de 0,00833 do fluxo pleno por passo, respeitando
          por construcao o limite de 0,1/min.
 VERIFICACAO: tests/test_verificacao.py::test_rampa_completa_de_pleno_ao_piso_nunca_viola
@@ -45,7 +45,7 @@ VERIFICACAO: tests/test_verificacao.py::test_rampa_completa_de_pleno_ao_piso_nun
 
 ===============================================================================
 2. PERIODO DO CICLO E TIMEOUT DO FAILSAFE: 5 s e 15 s
-   Trecho: RNF07 (Quadro 12), secao 7.3
+   Trecho: RNF07 (Quadro 11), secao 3.4
    Acao: [ACRESCENTAR]
 -------------------------------------------------------------------------------
 TCC:     RNF07 exige que o no assuma o fluxo pleno apos X segundos sem comando,
@@ -58,16 +58,16 @@ POR QUE: 15 s e 3x o periodo do ciclo, margem sugerida no proprio planejamento.
          timeout menor produziria acionamentos espurios do failsafe e poluiria
          a medicao de latencia da Etapa 5; um maior deixaria o ponto sob
          comando obsoleto por tempo relevante.
-TEXTO:   registrar em 7.3 o par (periodo 5 s, timeout 15 s) e a razao da
+TEXTO:   registrar em 3.4 o par (periodo 5 s, timeout 15 s) e a razao da
          proporcao de 3x.
 
 
 ===============================================================================
 3. A CLASSE DE ILUMINACAO E CONGELADA NA DECISAO
-   Trecho: secao 8.5 (cardinalidade classe_iluminacao x ponto_de_luz)
+   Trecho: secao 4.7.2 (cardinalidade classe_iluminacao x ponto_de_luz)
    Acao: [ACRESCENTAR]
 -------------------------------------------------------------------------------
-TCC:     8.5 afirma que a relacao entre classe e ponto de luz permite recuperar
+TCC:     4.7.2 afirma que a relacao entre classe e ponto de luz permite recuperar
          por juncao o criterio normativo de qualquer decisao passada, "desde
          que a reclassificacao seja registrada como dado novo, e nao como
          alteracao do registro existente".
@@ -80,17 +80,17 @@ POR QUE: a condicao que o TCC enuncia ("registrar como dado novo") nao e
          auditoria ficaria silenciosamente invalida. Gravar a classe na propria
          decisao torna a garantia estrutural em vez de procedimental: o
          criterio aplicado fica imutavel junto com a decisao que ele restringiu.
-TEXTO:   acrescentar a 8.5 que a decisao carrega a classe vigente, e que a
+TEXTO:   acrescentar a 4.7.2 que a decisao carrega a classe vigente, e que a
          juncao com `classe_iluminacao` serve para recuperar os limites daquela
          classe, nao para descobrir qual classe valia.
 
 
 ===============================================================================
 4. VOCABULARIO FECHADO PARA A RESTRICAO APLICADA
-   Trecho: Quadro 2 (entidade `decisao`)
+   Trecho: Quadro 15 (entidade `decisao`)
    Acao: [ACRESCENTAR]
 -------------------------------------------------------------------------------
-TCC:     o Quadro 2 lista o atributo como "restricao que motivou a correcao",
+TCC:     o Quadro 15 lista o atributo como "restricao que motivou a correcao",
          sem enumerar valores.
 CODIGO:  coluna com CHECK restrito a quatro valores: 'nenhuma', 'piso', 'taxa',
          'meteorologia' - um por limite do invariante, mais a ausencia de
@@ -99,12 +99,12 @@ POR QUE: o resultado d) do TCC e quantitativo ("quantas decisoes a camada de
          verificacao corrigiu, e por que motivo"). Texto livre nao se agrega;
          vocabulario fechado, sim, e o banco recusa por construcao um valor
          fora da lista.
-TEXTO:   enumerar os quatro valores no Quadro 2 ou em 8.5.
+TEXTO:   enumerar os quatro valores no Quadro 15 ou em 4.7.2.
 
 
 ===============================================================================
 5. PRIORIDADE ENTRE PISO E TAXA QUANDO OS DOIS ATUAM
-   Trecho: secao 7.6
+   Trecho: secao 3.7
    Acao: [ACRESCENTAR]
 -------------------------------------------------------------------------------
 TCC:     descreve os tres limites, mas nao diz o que registrar quando mais de
@@ -119,12 +119,12 @@ POR QUE: tomar o maximo e a unica composicao que satisfaz os dois limites ao
          responde a pergunta de auditoria ("o que impediu o sistema de
          escurecer mais?"). O empate vai para 'piso' porque o piso e o limite
          normativo absoluto, enquanto a taxa e transitoria.
-TEXTO:   acrescentar a 7.6 a regra de composicao (maximo) e a de registro.
+TEXTO:   acrescentar a 3.7 a regra de composicao (maximo) e a de registro.
 
 
 ===============================================================================
 6. METEOROLOGIA ADVERSA SOBREPOE-SE AOS DEMAIS LIMITES
-   Trecho: secao 7.6
+   Trecho: secao 3.7
    Acao: [ACRESCENTAR]
 -------------------------------------------------------------------------------
 TCC:     condicao adversa leva o nivel a 1,0.
@@ -135,13 +135,13 @@ POR QUE: nao ha conflito possivel: 1,0 e o maximo da escala, portanto nunca
          fica abaixo do piso, e representa sempre uma ELEVACAO, que o TCC
          declara livre de limite de taxa. Registrar 'meteorologia' quando o
          nivel nao mudou inflaria a contagem de correcoes do resultado d).
-TEXTO:   registrar em 7.6 que a regra meteorologica e avaliada primeiro e que
+TEXTO:   registrar em 3.7 que a regra meteorologica e avaliada primeiro e que
          so conta como correcao quando de fato altera o nivel.
 
 
 ===============================================================================
 7. RESOLUCAO NUMERICA DE 0,001 E ARREDONDAMENTO SEMPRE NO SENTIDO SEGURO
-   Trecho: secoes 7.6 e 8.5
+   Trecho: secoes 3.7 e 4.7.2
    Acao: [ACRESCENTAR]
 -------------------------------------------------------------------------------
 TCC:     trata o nivel como fracao continua do fluxo pleno, sem fixar precisao.
@@ -158,12 +158,12 @@ POR QUE: nivel e um numero que atravessa Python, JSON, MQTT e PostgreSQL;
          abaixo da permitida. Nenhum arredondamento pode produzir violacao.
          3 casas equivalem a 0,01 lux na classe P3, uma ordem de grandeza
          abaixo da resolucao do BH1750.
-TEXTO:   acrescentar a 7.6 a resolucao adotada e a politica de arredondamento.
+TEXTO:   acrescentar a 3.7 a resolucao adotada e a politica de arredondamento.
 
 
 ===============================================================================
 8. A CAMADA DE VERIFICACAO SO CORRIGE PARA CIMA
-   Trecho: secao 7.6
+   Trecho: secao 3.7
    Acao: [ACRESCENTAR]
 -------------------------------------------------------------------------------
 TCC:     descreve a camada como impeditiva de violacao, sem afirmar o sentido
@@ -175,23 +175,23 @@ POR QUE: e uma propriedade derivada - os tres limites sao todos limites
          inteira de defeitos: uma futura regra escrita de forma errada, que
          escurecesse o ponto, falharia em vez de passar despercebida. A camada
          e de seguranca; economia de energia e atribuicao da inferencia.
-TEXTO:   enunciar em 7.6 que a camada e monotonicamente nao decrescente em
+TEXTO:   enunciar em 3.7 que a camada e monotonicamente nao decrescente em
          relacao ao nivel pretendido.
 
 
 ===============================================================================
-9. ATRIBUTOS ACRESCENTADOS AS ENTIDADES DO QUADRO 2
-   Trecho: Quadro 2 e secao 8.5
+9. ATRIBUTOS ACRESCENTADOS AS ENTIDADES DO QUADRO 15
+   Trecho: Quadro 15 e secao 4.7.2
    Acao: [ATUALIZAR TEXTO]
 -------------------------------------------------------------------------------
-TCC:     o Quadro 2 lista os "atributos principais" de cada entidade.
+TCC:     o Quadro 15 lista os "atributos principais" de cada entidade.
 CODIGO:  o schema tem, alem deles:
          - evento_urbano.rotulo      -> qualifica o evento ('chuva', 'neblina',
                                         'nevoeiro'); sem ele a regra
                                         meteorologica nao teria de onde ler a
                                         condicao, ja que `valor` e numerico.
          - evento_urbano.vigente_ate -> ate quando o evento entra no ciclo de
-                                        decisao. 8.5 afirma que "o mesmo evento
+                                        decisao. 4.7.2 afirma que "o mesmo evento
                                         pode sustentar decisoes sucessivas
                                         enquanto permanecer vigente"; a
                                         vigencia precisa estar gravada em algum
@@ -201,7 +201,7 @@ CODIGO:  o schema tem, alem deles:
                                         de energia do RF12, que de outro modo
                                         ficaria em constante no codigo.
          - decisao.previsao_movimentacao -> a estimativa que alimentou a
-                                        inferencia. 8.5 descreve a cadeia de
+                                        inferencia. 4.7.2 descreve a cadeia de
                                         auditoria como "evento, estimativa,
                                         nivel pretendido, restricao, nivel
                                         emitido, medicao": a estimativa e um
@@ -215,33 +215,37 @@ CODIGO:  o schema tem, alem deles:
          - versao_base_regras.hash_regras -> detecta edicao do arquivo de
                                         regras sem criacao de versao nova, que
                                         quebraria silenciosamente a
-                                        reprodutibilidade prometida no Quadro 2.
-POR QUE: o Quadro 2 se declara lista de atributos "principais", entao nao ha
+                                        reprodutibilidade prometida no Quadro 15.
+POR QUE: o Quadro 15 se declara lista de atributos "principais", entao nao ha
          contradicao formal; ainda assim, a Figura 2 (diagrama ER) precisa ser
          redesenhada com os campos acima, sob pena de o texto e o banco
          divergirem em um ponto que a banca pode conferir.
-TEXTO:   atualizar a Figura 2 e, se couber, o Quadro 2.
+TEXTO:   atualizar a Figura 2 e, se couber, o Quadro 15.
 
 
 ===============================================================================
 10. VIEW DE AUDITORIA NAO PREVISTA NO MODELO
-    Trecho: secao 8.5
+    Trecho: secao 4.7.2
     Acao: [ACRESCENTAR]
 -------------------------------------------------------------------------------
 TCC:     descreve entidades, nao visoes.
-CODIGO:  a view `auditoria_decisao` junta decisao, ponto, classe e telemetria e
-         calcula piso vigente, divergencia em lux entre nivel decidido e lux
-         medido, e latencia do percurso.
-POR QUE: e a materializacao em SQL da cadeia de auditoria descrita em 8.5. Nao
+CODIGO:  a view `auditoria_decisao` junta decisao, ponto, classe, telemetria,
+         sessao de medicao e eventos, e calcula o piso vigente, a RAZAO entre
+         a iluminancia entregue (descontada a residual da sessao) e a esperada
+         para o nivel emitido - forma exigida por 3.4.4/3.4.5, em que o erro
+         de escala do sensor se cancela -, a latencia da decisao e a latencia
+         do evento ate a telemetria (RNF03), esta calculada so com relogios
+         do servidor, sem depender do relogio do no.
+POR QUE: e a materializacao em SQL da cadeia de auditoria descrita em 4.7.2. Nao
          acrescenta dado nenhum - e derivada - e serve para que os resultados
          d), e) e h) sejam extraidos por uma consulta unica e conferivel, em
          vez de por codigo Python que a banca nao inspecionaria.
-TEXTO:   mencionar em 8.5 que a cadeia e exposta como visao; opcional.
+TEXTO:   mencionar em 4.7.2 que a cadeia e exposta como visao; opcional.
 
 
 ===============================================================================
 11. PISO DE DIMERIZACAO DAS CLASSES P5 E P6 NA CARGA INICIAL
-    Trecho: Quadro 8 / secao 7.7
+    Trecho: Quadro 8 / secao 3.8
     Acao: [ACRESCENTAR]
 -------------------------------------------------------------------------------
 TCC:     o Quadro 8 reproduz as iluminancias de P3 a P6 e o texto fixa o par
@@ -251,7 +255,7 @@ CODIGO:  o seed grava classe_min_dimerizacao = 'P5' para P3 e 'P6' para P4
          e P6, que ficam nao dimerizaveis.
 POR QUE: apenas P3 e usada na avaliacao; as outras existem para que a tabela
          seja a reproducao integral do Quadro 8 e para que uma reclassificacao
-         da via seja operacao de dado, como 7.2.2 promete. NULL em P5 e P6 e
+         da via seja operacao de dado, como 4.7.1 promete. NULL em P5 e P6 e
          conservador: na duvida, a classe nao dimeriza.
 TEXTO:   nota de rodape no Quadro 8, se o autor julgar necessario. O valor
          efetivamente avaliado (P3 -> piso P5 -> 0,5 do fluxo pleno) esta no
@@ -260,7 +264,7 @@ TEXTO:   nota de rodape no Quadro 8, se o autor julgar necessario. O valor
 
 ===============================================================================
 12. TAXA MAXIMA DE DECRESCIMO REPLICADA EM TODAS AS CLASSES
-    Trecho: Quadro 2 (entidade classe_iluminacao)
+    Trecho: Quadro 15 (entidade classe_iluminacao)
     Acao: [ACRESCENTAR]
 -------------------------------------------------------------------------------
 TCC:     a taxa maxima de decrescimo e atributo da classe de iluminacao.
@@ -269,13 +273,13 @@ POR QUE: o valor de 0,1 do fluxo pleno por minuto nao e, na norma, uma
          prescricao por classe - e a taxa adotada pelo trabalho. Como o TCC a
          modelou como atributo da classe, o seed a replica, mas o unico valor
          exercitado e o de P3.
-TEXTO:   registrar a origem do valor 0,1/min em 7.6, distinguindo-o das
+TEXTO:   registrar a origem do valor 0,1/min em 3.7, distinguindo-o das
          iluminancias, que vem da norma.
 
 
 ===============================================================================
 13. BROKER LOCAL SEM TLS E SEM CREDENCIAL POR DISPOSITIVO
-    Trecho: secao 7.2 / RNF05
+    Trecho: secao 3.2 / RNF06
     Acao: [SO DESENVOLVIMENTO]
 -------------------------------------------------------------------------------
 TCC:     o enlace MQTT usa TLS e credencial propria de cada dispositivo.
@@ -298,6 +302,75 @@ Todo o codigo fica sob `Codigo/`, e nao na raiz do repositorio, para nao se
 misturar com `Docs/` e com o proprio .docx. A estrutura interna (db, decisao,
 api_eventos, painel, firmware, cenarios, modelo, tests) e a planejada.
 Sem efeito sobre o texto.
+
+
+===============================================================================
+15. IMPLANTACAO EM VM COM CONTEINERES, E NAO EM PLATAFORMA COMO SERVICO
+    Trecho: 4.6.1, Quadro 12 (linhas "Implantacao em nuvem" e "Banco de
+            dados") e Quadro 13 (linha "Banco de dados")
+    Acao: [ATUALIZAR TEXTO]
+-------------------------------------------------------------------------------
+TCC:     "toda a camada de software e implantada em provedor de nuvem, em
+         modelo de plataforma como servico"; "PostgreSQL em instancia
+         gerenciada".
+CODIGO:  todos os servicos (API de eventos, servico de decisao, Mosquitto com
+         TLS, PostgreSQL e painel) sobem por docker compose numa maquina
+         virtual da Oracle Cloud (Always Free).
+POR QUE: o servico de decisao mantem conexao MQTT e ciclo continuos; planos
+         gratuitos de plataforma como servico suspendem processos ociosos, o
+         que derrubaria o no para o failsafe durante a defesa. A VM fica
+         sempre ligada e sem custo. O argumento de 4.6.1 - o no e comandado de
+         fora da rede local - continua integralmente valido.
+TEXTO:   trocar "plataforma como servico" por "maquina virtual em nuvem, com
+         os servicos em conteineres" e "instancia gerenciada" por "PostgreSQL
+         em conteiner, na mesma maquina virtual".
+
+
+===============================================================================
+16. ENTIDADES ACRESCENTADAS AO MODELO DE DADOS
+    Trecho: Quadro 15, Figura 2 e 4.7.3 (PENDENTE)
+    Acao: [ATUALIZAR TEXTO]
+-------------------------------------------------------------------------------
+TCC:     o Quadro 15 lista seis entidades; a Figura 2 acrescenta a
+         associativa decisao-evento.
+CODIGO:  alem delas, o schema tem:
+         - versao_modelo_previsao (+ decisao.versao_modelo_id) -> o RNF04 exige
+           reconstituir a decisao; a versao da base de regras sozinha nao
+           basta, porque a previsao tambem entra na inferencia (3.6). A
+           persistencia e registrada como "modelo" enquanto o XGBoost nao
+           existe.
+         - execucao_cenario (+ decisao.execucao_id) -> separa as rodadas da
+           suite (RF10), os regimes comparados em 3.11 e o modo antecipado x
+           reativo necessario para avaliar H3.
+         - sessao_medicao (+ telemetria.sessao_id) -> residual medida antes de
+           cada sessao e regra de descarte de 5 % (3.4.3).
+         - calibracao -> varredura duty x lux em series independentes (3.4.4);
+           origem da tabela nivel -> duty gravada no firmware (3.3) e da
+           repetibilidade que fixa a tolerancia do diagnostico (3.4.5).
+         - alerta_diagnostico -> falha total e perda de controle (RF11).
+         - luminaria_referencia -> Quadro 9 (40 W e 440 W), lida pelo calculo
+           de energia (RF12) em vez de constante no codigo.
+POR QUE: cada entidade materializa algo que o texto ja afirma fazer; sem elas
+         o registro nao sustentaria os resultados de 5.1 a 5.5.
+TEXTO:   acrescentar as entidades ao Quadro 15 (ou declarar em 4.7.1 que o
+         quadro lista as entidades nucleares), redesenhar a Figura 2 e
+         redigir 4.7.3 a partir do schema.sql.
+
+
+===============================================================================
+17. COMPARACAO ANTECIPADO x REATIVO NAO PREVISTA NAS ETAPAS
+    Trecho: 3.9 (etapas 3 a 7) e 6.1
+    Acao: [ATUALIZAR TEXTO]
+-------------------------------------------------------------------------------
+TCC:     6.1 avalia H3 pela "comparacao entre o acionamento antecipado e o
+         puramente reativo - comparacao que as etapas de 3.9 ainda nao
+         preveem de forma explicita".
+CODIGO:  o executor de cenarios roda a mesma suite com a previsao ligada
+         (antecipado) e desligada (reativo), registrando o modo em
+         execucao_cenario.modo_previsao.
+POR QUE: sem essa rodada H3 nao tem evidencia.
+TEXTO:   acrescentar a 3.9 (Etapa 6 ou nova etapa) a comparacao, com a metrica
+         "fracao da janela de baixa demanda consumida em transicao" (2.10).
 
 ===============================================================================
 FIM

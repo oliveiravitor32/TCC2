@@ -1,7 +1,7 @@
 ===============================================================================
 LACUNAS DO TEXTO DO TCC - PONTOS QUE VALEM SER DOCUMENTADOS E NAO ESTAO
-Documento de referencia: TCC_Iluminacao_Adaptativa_SP_7.docx
-Ultima atualizacao: 20/09/2026
+Documento de referencia: Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP.docx
+Ultima atualizacao: 21/09/2026
 ===============================================================================
 
 DIFERENCA PARA O OUTRO ARQUIVO
@@ -21,11 +21,11 @@ Prioridade:
 
 ===============================================================================
 1. COMO UM NIVEL ARBITRARIO VIRA CICLO DE TRABALHO
-   Onde caberia: 7.3.2, apos o paragrafo dos ciclos de 10 lux e 5 lux
+   Onde caberia: 3.4.2, apos o paragrafo dos ciclos de 10 lux e 5 lux
    Prioridade: [ALTA]
 -------------------------------------------------------------------------------
 O QUE FALTA: o texto determina por medicao os ciclos de trabalho
-correspondentes a 10 lux e a 5 lux, e 7.3.4 levanta a curva de iluminancia
+correspondentes a 10 lux e a 5 lux, e 3.4.4 levanta a curva de iluminancia
 varrendo o ciclo em degraus. Falta a regra que liga as duas coisas: o sistema
 emite niveis continuos (0,500 a 1,000), e nao apenas os dois extremos. Nao
 esta escrito como o firmware converte, por exemplo, o nivel 0,732 em valor de
@@ -38,7 +38,7 @@ a conformidade e definida em lux, nao em ciclo de trabalho: entregar menos lux
 do que o nivel emitido declara e, na pratica, operar abaixo do que a auditoria
 registra. O texto ja diz, corretamente, que interpolacao linear a partir do
 teto nao serve; falta dizer o que serve.
-SUGESTAO: declarar que a conversao usa a propria curva levantada em 7.3.4 -
+SUGESTAO: declarar que a conversao usa a propria curva levantada em 3.4.4 -
 uma tabela de pontos medidos (ciclo, lux) interpolada, ancorada nos dois
 valores normativos - e que a verificacao dessa conversao e o ensaio de
 monotonicidade ja previsto. Alternativa mais simples de defender: medir a
@@ -47,10 +47,10 @@ curva, ajustar uma lei de potencia e reportar o residuo.
 
 ===============================================================================
 2. QUALIDADE DE SERVICO, RETENCAO E TESTAMENTO NO MQTT
-   Onde caberia: Quadro 13 e secao 7.2
+   Onde caberia: Quadro 14 e secao 3.2
    Prioridade: [ALTA]
 -------------------------------------------------------------------------------
-O QUE FALTA: o Quadro 13 especifica o CONTEUDO das duas mensagens MQTT, mas
+O QUE FALTA: o Quadro 14 especifica o CONTEUDO das duas mensagens MQTT, mas
 nao o nivel de qualidade de servico (0, 1 ou 2), se a mensagem de comando e
 retida no intermediario, nem se o no publica mensagem de testamento (last
 will) ao perder a conexao.
@@ -61,7 +61,7 @@ duas viagens de rede a cada comando, o que tambem aparece na latencia. Comando
 retido significa que o no, ao reconectar, recebe imediatamente o ultimo nivel
 - mas possivelmente um nivel velho, o que conflita com o item 4 abaixo. E o
 testamento e o meio padrao de detectar queda do no; sem ele, o diagnostico de
-perda de controle de 7.3.5 so percebe a ausencia por inferencia.
+perda de controle de 3.4.5 so percebe a ausencia por inferencia.
 SUGESTAO: QoS 1 nos dois topicos (entrega ao menos uma vez, com a
 deduplicacao resolvida pelo decisao_id, que o texto ja adota por outra razao);
 comando sem retencao, para que um nivel obsoleto nunca seja reaplicado no
@@ -71,7 +71,7 @@ reinicio; testamento no topico de telemetria, alimentando o estado
 
 ===============================================================================
 3. ESTADO DO NO ENTRE O ENERGIZAR E O PRIMEIRO COMANDO
-   Onde caberia: 7.3, junto ao RNF07
+   Onde caberia: 3.4, junto ao RNF07
    Prioridade: [ALTA]
 -------------------------------------------------------------------------------
 O QUE FALTA: o RNF07 diz o que fazer quando um comando PARA de chegar. Nao diz
@@ -91,7 +91,7 @@ decrescimo passa a ter um nivel anterior bem definido (1,0).
 
 ===============================================================================
 4. COMANDO ATRASADO OU FORA DE ORDEM
-   Onde caberia: 8.4, no paragrafo que justifica o decisao_id
+   Onde caberia: 4.6.2, no paragrafo que justifica o decisao_id
    Prioridade: [ALTA]
 -------------------------------------------------------------------------------
 O QUE FALTA: o texto afirma - corretamente - que mensagens podem ser
@@ -107,12 +107,12 @@ um identificador, nao uma ordem.
 SUGESTAO: acrescentar ao payload de comando um numero de sequencia monotonico
 por ponto de luz, ou o carimbo de tempo da decisao, e declarar que o no
 descarta comando cuja sequencia seja menor que a do ultimo aplicado. Isso
-altera o Quadro 13 (um campo a mais) e e barato de implementar.
+altera o Quadro 14 (um campo a mais) e e barato de implementar.
 
 
 ===============================================================================
 5. JANELA DE OPERACAO DO SISTEMA
-   Onde caberia: 7.7 ou 7.8
+   Onde caberia: 3.8 ou 3.9
    Prioridade: [MEDIA]
 -------------------------------------------------------------------------------
 O QUE FALTA: o texto nao declara em que periodo o sistema opera. A classe P3 e
@@ -134,7 +134,7 @@ iluminacao ja esta acesa - e usar a mesma janela nos tres regimes comparados.
 
 ===============================================================================
 6. O QUE O SERVICO DECIDE QUANDO A ENTRADA FALTA
-   Onde caberia: 7.5 e 7.6
+   Onde caberia: 3.6 e 3.7
    Prioridade: [MEDIA]
 -------------------------------------------------------------------------------
 O QUE FALTA: o texto descreve o percurso com a entrada disponivel. Nao trata
@@ -143,7 +143,7 @@ previsao, e indisponibilidade do banco de dados - de onde a camada de
 verificacao le o proprio criterio.
 POR QUE IMPORTA: o terceiro caso e o delicado. A camada de verificacao le os
 limites normativos do banco, decisao de projeto que o proprio TCC destaca em
-7.2.2. Sem banco, ela nao tem criterio, e um sistema que nao pode verificar
+4.7.1. Sem banco, ela nao tem criterio, e um sistema que nao pode verificar
 nao pode emitir comando - sob pena de a garantia do resultado d) ter uma
 excecao nao documentada. Os outros dois casos sao menos graves mas precisam de
 regra escrita, senao a inferencia recebe entrada indefinida.
@@ -157,7 +157,7 @@ paragrafo.
 
 ===============================================================================
 7. CRITERIO DE ESTABILIZACAO DA ILUMINANCIA
-   Onde caberia: 7.8, Etapa 5
+   Onde caberia: 3.9, Etapa 5
    Prioridade: [MEDIA]
 -------------------------------------------------------------------------------
 O QUE FALTA: a latencia e medida "ate a estabilizacao da iluminancia no valor
@@ -169,14 +169,14 @@ de que tolerancia?" e das mais faceis de fazer em banca. Uma tolerancia frouxa
 encurta artificialmente a latencia; uma apertada demais nunca converge, dada a
 dispersao do sensor.
 SUGESTAO: reaproveitar a dispersao apurada no ensaio de repetibilidade de
-7.3.4 - que o texto ja usa para fixar a tolerancia do diagnostico em 7.3.5 - e
+3.4.4 - que o texto ja usa para fixar a tolerancia do diagnostico em 3.4.5 - e
 definir estabilizacao como N leituras consecutivas dentro dessa faixa em torno
 do alvo. Um unico ensaio passa a sustentar os dois criterios.
 
 
 ===============================================================================
 8. REFERENCIA DE TEMPO DO NO
-   Onde caberia: 7.3 ou 8.4
+   Onde caberia: 3.4 ou 4.6.2
    Prioridade: [MEDIA]
 -------------------------------------------------------------------------------
 O QUE FALTA: o texto nao diz de onde vem o carimbo de tempo da telemetria. O
@@ -195,7 +195,7 @@ opcao elimina a questao em vez de administra-la.
 
 ===============================================================================
 9. SAIDA DA CONDICAO METEOROLOGICA ADVERSA
-   Onde caberia: 7.6
+   Onde caberia: 3.7
    Prioridade: [MEDIA]
 -------------------------------------------------------------------------------
 O QUE FALTA: o texto diz que chuva, neblina ou nevoeiro levam o nivel a 1,0.
@@ -214,7 +214,7 @@ minimo de permanencia no pleno apos o fim da condicao, para evitar oscilacao.
 
 ===============================================================================
 10. GUARDA DAS CREDENCIAIS
-    Onde caberia: 7.2 ou RNF05
+    Onde caberia: 3.2 ou RNF06
     Prioridade: [BAIXA]
 -------------------------------------------------------------------------------
 O QUE FALTA: o texto exige credencial propria por dispositivo e canal cifrado,
@@ -232,7 +232,7 @@ que o repositorio traz apenas modelos de exemplo.
 
 ===============================================================================
 11. NUMERO DE PONTOS DE LUZ E O QUE ISSO IMPLICA NO TOPICO
-    Onde caberia: 8.4
+    Onde caberia: 4.6.2
     Prioridade: [BAIXA]
 -------------------------------------------------------------------------------
 O QUE FALTA: os topicos sao parametrizados por ponto ('iluminacao/{ponto}/...'),
