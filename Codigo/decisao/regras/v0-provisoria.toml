@@ -42,7 +42,7 @@ pleno         = [0.8, 0.95, 1.0, 1.0]
 # ---------------------------------------------------------------------------
 # Regras. Antecedentes ligados por E (minimo).
 #
-# As regras de ATENUACAO (R6, R7, R8) exigem ocorrencia = nao e
+# As regras que ATENUAM abaixo do pleno (R6 a R9) exigem ocorrencia = nao e
 # meteorologia = normal: na agregacao por maximo com centroide, uma regra de
 # reducao ativa ao lado de uma de elevacao puxaria a saida para baixo, e a
 # evidencia de risco seria diluida. Condicionar a reducao a ausencia de risco
@@ -105,6 +105,6 @@ origem = "Norma: NBR 5101, 6.3 - baixa movimentacao"
 
 [[regra]]
 id = "R9"
-se = { faixa_horaria = "inicio_noite", observada = "baixa" }
+se = { ocorrencia = "nao", meteorologia = "normal", faixa_horaria = "inicio_noite", observada = "baixa" }
 entao = "intermediario"
 origem = "Dominio: faixa horaria como evidencia de apoio (Quadro 7)"

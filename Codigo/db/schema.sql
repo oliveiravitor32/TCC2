@@ -86,6 +86,19 @@ CREATE TABLE evento_urbano (
 CREATE INDEX evento_urbano_ocorrido_idx ON evento_urbano (ocorrido_em DESC);
 CREATE INDEX evento_urbano_tipo_idx     ON evento_urbano (tipo, ocorrido_em DESC);
 
+-- Evento novo acorda o servico de decisao na hora (LISTEN evento_urbano):
+-- esperar o proximo ciclo de 5 s estouraria o RNF03 (< 2 s).
+CREATE FUNCTION avisar_evento_urbano() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    PERFORM pg_notify('evento_urbano', NEW.id::text);
+    RETURN NEW;
+END $$;
+
+CREATE TRIGGER evento_urbano_aviso
+    AFTER INSERT ON evento_urbano
+    FOR EACH ROW EXECUTE FUNCTION avisar_evento_urbano();
+
 -- ---------------------------------------------------------------------------
 -- Versao da base de regras Mamdani: condicao para reproduzir resultados.
 -- ---------------------------------------------------------------------------
@@ -259,8 +272,10 @@ CREATE INDEX alerta_aberto_idx ON alerta_diagnostico (ponto_de_luz_id)
 
 -- ---------------------------------------------------------------------------
 -- Visao de auditoria: cadeia evento -> decisao -> medicao.
---   latencia_evento: RNF03, do evento mais recente que sustentou a decisao
---     ate a chegada da telemetria (so relogios do servidor; inclui a volta).
+--   latencia_evento: RNF03, do recebimento do evento ate a chegada da
+--     telemetria da PRIMEIRA decisao que o consumiu (so relogios do
+--     servidor; inclui a volta). NULL nas decisoes seguintes, que apenas
+--     mantem o evento vigente.
 --   razao_entregue: diagnostico por RAZAO (3.4.4/3.4.5) - um erro de escala
 --     do sensor cancela-se; a residual da sessao e subtraida (3.4.3).
 -- ---------------------------------------------------------------------------
@@ -293,6 +308,13 @@ SELECT d.id                          AS decisao_id,
           FROM decisao_evento de
           JOIN evento_urbano e ON e.id = de.evento_id
          WHERE de.decisao_id = d.id
+           AND NOT EXISTS (
+                 SELECT 1
+                   FROM decisao_evento de2
+                   JOIN decisao d2 ON d2.id = de2.decisao_id
+                  WHERE de2.evento_id = de.evento_id
+                    AND d2.ponto_de_luz_id = d.ponto_de_luz_id
+                    AND d2.criado_em < d.criado_em)
        ) ev ON true;
 
 COMMIT;

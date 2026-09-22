@@ -474,5 +474,90 @@ RISCO:   exposta na VM, qualquer pessoa na internet pode publicar eventos e
 TEXTO:   se permanecer aberta, registrar entre as limitacoes (6.3).
 
 ===============================================================================
+23. ENTRADA AUSENTE E VIGENCIA DOS EVENTOS
+    Trecho: 3.7 (quarta regra) e LACUNAS 6 e 9
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+CODIGO:  - movimentacao sem vigente_ate vale 15 min; vencida, o ciclo decide
+           nivel pretendido 1,0 e CONTINUA publicando (a ausencia de dado fica
+           registrada como decisao sem evento de movimentacao, em vez de sumir
+           da auditoria como aconteceria se o no caisse no failsafe);
+         - ocorrencia e meteorologia sem vigente_ate valem ate o proximo
+           evento do mesmo tipo ('encerrada' / 'limpo'): na duvida, o risco
+           permanece;
+         - apos 'limpo', a dimerizacao e liberada no ciclo seguinte; a descida
+           ate o piso ja dura >= 5 min por norma, o que funciona como carencia.
+POR QUE: estende a logica da quarta regra (3.7) do no para o servico: falta
+         de informacao nunca produz atenuacao.
+TEXTO:   acrescentar a 3.7, junto a quarta regra.
+VERIFICACAO: tests/test_ciclo.py (sem_dado, ocorrencia_persiste, expira,
+             chuva_forca_pleno_e_limpo_libera)
+
+
+===============================================================================
+24. APOS O FAILSAFE, A RAMPA RECOMECA DO PLENO
+    Trecho: 3.7 (taxa) e RNF02 / RNF07
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+TCC:     taxa medida entre o nivel corrente e o decidido; failsafe leva a 1,0.
+CODIGO:  se a ultima decisao gravada e mais antiga que o timeout do failsafe
+         (15 s), o ciclo considera que o no ja voltou a 1,0 e calcula o
+         limite de taxa a partir do pleno, e nao do ultimo nivel gravado.
+POR QUE: sem isso, ao voltar de uma queda do servico com o no em 1,0 e o
+         banco dizendo 0,5, o primeiro comando derrubaria a luz de 1,0 a 0,5
+         num passo - violacao FISICA do RNF02 que a verificacao, olhando so o
+         banco, nao veria. O "nivel corrente" da taxa e o do no, nao o do
+         registro.
+TEXTO:   acrescentar a 3.7 que o nivel corrente, apos failsafe, e o pleno.
+VERIFICACAO: tests/test_ciclo.py::test_apos_failsafe_a_rampa_recomeca_do_pleno
+
+
+===============================================================================
+25. EVENTO ACORDA O CICLO (RNF03)
+    Trecho: RNF03 (Quadro 11) e 3.9 Etapa 5
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+TCC:     do evento a aplicacao do duty < 2 s.
+CODIGO:  alem do ciclo periodico de 5 s, um gatilho no banco (pg_notify)
+         acorda o servico a cada evento inserido, que decide na hora. A view
+         auditoria_decisao mede a latencia a partir da PRIMEIRA decisao que
+         consumiu cada evento.
+POR QUE: so com o ciclo periodico, o evento esperaria ate 5 s (media 2,5 s)
+         e o RNF03 falharia por construcao. Medicao de desenvolvimento, no
+         simulado na mesma maquina: 10/10 eventos entre 51 e 66 ms. A medicao
+         que conta e a da Etapa 5, com o ESP32 e a VM.
+TEXTO:   descrever em 4.6.1 que o servico reage ao evento e mantem o ciclo
+         periodico para a rampa e para alimentar o no (RNF07).
+
+
+===============================================================================
+26. MQTT: QoS 1, SEM RETAIN NO COMANDO, ESTADO DO NO COM LAST WILL
+    Trecho: Quadro 14 e LACUNA 2
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+CODIGO:  comando e telemetria em QoS 1, sem retain. A reentrega possivel do
+         QoS 1 e absorvida pela unicidade de decisao_id na telemetria. Novo
+         topico iluminacao/{ponto}/estado ("online" / "offline"), retido, com
+         last will "offline": o servico marca o ponto 'sem_comunicacao'.
+POR QUE: comando retido faria um no que reconecta aplicar decisao velha; sem
+         retain ele espera o proximo ciclo (<= 5 s) e, ate la, fica no
+         failsafe. O estado retido e so informativo, nao comanda nada.
+TEXTO:   acrescentar o topico de estado ao Quadro 14.
+
+
+===============================================================================
+27. R9 TAMBEM CONDICIONADA A AUSENCIA DE RISCO
+    Trecho: 3.7 (complementa o item 18)
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+CODIGO:  R9 (inicio da noite -> intermediario) passou a exigir ocorrencia =
+         nao e meteorologia = normal, como R6 a R8.
+POR QUE: no teste ponta a ponta, as 22h49 com chuva a R9 diluia a R2 e a
+         inferencia dava 0,837; com ocorrencia (que a verificacao nao forca a
+         1,0) a luz ficaria em ~0,84. A frase proposta no item 18 passa a
+         valer para "as regras que atenuam abaixo do pleno".
+VERIFICACAO: tests/test_inferencia.py::test_risco_no_inicio_da_noite_nao_e_diluido_pela_r9
+
+===============================================================================
 FIM
 ===============================================================================

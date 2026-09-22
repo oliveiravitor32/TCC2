@@ -73,6 +73,14 @@ def test_risco_nao_e_diluido_pela_regra_de_reducao(oc, met):
     assert nivel(0.1, 0.1, oc=oc, met=met) > Decimal("0.9")
 
 
+@pytest.mark.parametrize("oc,met", [(True, False), (False, True)])
+@pytest.mark.parametrize("hora", [19, 21, 22, 23])
+def test_risco_no_inicio_da_noite_nao_e_diluido_pela_r9(oc, met, hora):
+    # Achado do teste ponta a ponta: as 22h49 com chuva a R9 puxava para 0,837.
+    momento = datetime(2026, 9, 21, hora, 49)
+    assert nivel(0.1, 0.1, oc=oc, met=met, momento=momento) > Decimal("0.9")
+
+
 def test_previsao_alta_antecipa_elevacao():
     assert nivel(0.1, 0.9) > Decimal("0.9")
 

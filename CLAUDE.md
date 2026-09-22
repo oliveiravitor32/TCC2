@@ -143,7 +143,7 @@ docker-compose.yml
 2. `decisao/verificacao.py` + testes aleatórios (100 mil casos, zero violações de piso e taxa) ✅
 3. Inferência Mamdani com partições provisórias ✅ (`decisao/inferencia.py` + `decisao/regras/v0-provisoria.toml`; saída 0–1, atenuação condicionada à ausência de risco, reativo = prevista ← observada; itens 18–20 do DIVERGENCIAS)
 4. API de eventos ✅ (`api_eventos/`: vocabulário fechado, extras → 422, sem autenticação por decisão do autor — reavaliar no deploy; datas voltam em UTC, o ciclo converte para America/Sao_Paulo)
-5. `ciclo.py` com previsão provisória (persistência) publicando no Mosquitto local
+5. `ciclo.py` com previsão provisória (persistência) publicando no Mosquitto local ✅ (`decisao/ciclo.py`, `servico.py`, `simulador/no_simulado.py`; evento acorda o ciclo via pg_notify; itens 23–27 do DIVERGENCIAS)
 6. Firmware com MQTT/TLS, PWM calibrado e failsafe → **fluxo completo funcionando**
 7. Painel
 8. Treino do modelo XGBoost (Etapa 3) e troca da previsão provisória
