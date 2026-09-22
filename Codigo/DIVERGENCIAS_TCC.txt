@@ -559,5 +559,52 @@ POR QUE: no teste ponta a ponta, as 22h49 com chuva a R9 diluia a R2 e a
 VERIFICACAO: tests/test_inferencia.py::test_risco_no_inicio_da_noite_nao_e_diluido_pela_r9
 
 ===============================================================================
+28. TEMPO DE INTEGRACAO DO SENSOR: ~440 ms, NAO 120 ms
+    Trecho: 3.4.2 ("120 ms de integracao do sensor") x Quadro 4 ("0,11 lx no
+            modo de alta resolucao 2 com o registrador de tempo de medicao no
+            valor maximo")
+    Acao: [ATUALIZAR TEXTO]
+-------------------------------------------------------------------------------
+TCC:     as duas afirmacoes sao incompativeis: 120 ms e o tempo com o
+         registrador no valor PADRAO (69), em que a resolucao do modo 2 e de
+         ~0,42 lx; com o registrador no maximo (254) a resolucao e 0,11 lx e
+         a integracao sobe para ~440 ms.
+CODIGO:  modo de alta resolucao 2 com MTreg = 254 (0,11 lx, ~440 ms).
+POR QUE: a faixa de trabalho e de 5 a 10 lux; 0,42 lx de resolucao seria
+         8 % do piso. O argumento de 3.4.2 continua valido, com folga maior:
+         o periodo do PWM de 5 kHz (0,2 ms) e desprezivel diante de 440 ms.
+         Efeito colateral: a leitura de confirmacao do no acrescenta ~0,45 s
+         a latencia do RNF03, ainda dentro dos 2 s.
+TEXTO:   em 3.4.2, trocar "120 ms de integracao" por "cerca de 440 ms de
+         integracao, com o registrador de tempo de medicao no valor maximo".
+
+
+===============================================================================
+29. PROCEDIMENTO DE CALIBRACAO E TABELA NIVEL -> DUTY
+    Trecho: 3.3 ("tabela de calibracao levantada por medicao"), 3.4.2 e
+            3.4.4; LACUNA 1
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+CODIGO:  bancada/calibrar.py com o sketch bancada/calibracao/calibracao.ino:
+         1. residual com o LED apagado (10 leituras); sessao descartada se
+            > 5 % da classe;
+         2. varredura de 33 duties em 3 series independentes (monotonicidade
+            e curva de 3.4.4), cada ponto = media de 3 leituras;
+         3. duty de 10 lx e de 5 lx por BISSECAO NO HARDWARE - cada passo e
+            uma medicao, nenhum valor sai de conta sobre o teto (3.4.2);
+         4. 3 repeticoes independentes em cada um desses dois duties
+            (apaga e volta), cuja dispersao e a base da tolerancia do RF11;
+         5. tabela nivel -> duty gravada no firmware (firmware/no/
+            calibracao.h): pontos medidos da curva media, com 1,0 e o piso
+            EXATAMENTE nos duties encontrados em 3; entre pontos medidos o no
+            interpola linearmente.
+POR QUE: responde a LACUNA 1 (como um nivel arbitrario vira duty) sem
+         contrariar 3.4.2: os dois pontos normativos sao medidos; so os
+         niveis intermediarios - que nenhuma restricao avalia - usam
+         interpolacao entre vizinhos medidos a poucos % de distancia.
+TEXTO:   descrever o procedimento em 3.4.4 e a interpolacao entre pontos
+         medidos em 3.3.
+
+===============================================================================
 FIM
 ===============================================================================

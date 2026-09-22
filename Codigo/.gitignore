@@ -2,3 +2,5 @@ __pycache__/
 .venv/
 *.pyc
 .pytest_cache/
+# Saidas sinteticas do modo --simulada: nunca versionar
+*_SIMULADA*
