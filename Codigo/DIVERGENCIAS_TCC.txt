@@ -437,5 +437,42 @@ TEXTO:   declarar em 3.7 a normalizacao por ponto e as faixas; em 3.9, que o
          modo reativo usa a mesma base.
 
 ===============================================================================
+21. CONTRATO DA INTERFACE DE EVENTOS: VOCABULARIO FECHADO
+    Trecho: Quadro 14 (POST /eventos) e 5.4 (especificacao da interface)
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+TCC:     "carimbo de tempo, tipo do evento, valor, abrangencia e origem".
+CODIGO:  - tipo em {movimentacao, ocorrencia, meteorologia};
+         - movimentacao exige valor em [0,1] (normalizado no ponto) e nao
+           admite rotulo;
+         - meteorologia exige rotulo em {chuva, neblina, nevoeiro, limpo};
+           ocorrencia exige rotulo em {seguranca, transito, encerrada};
+           nenhum dos dois admite valor;
+         - carimbo com fuso horario obrigatorio; vigente_ate opcional;
+         - qualquer campo fora do contrato e recusado com 422 e nao chega ao
+           banco (teste: test_recusa_evento_fora_do_contrato).
+POR QUE: a especificacao da interface e resultado do trabalho (objetivo f), e
+         a recusa de campos extras e a forma verificavel do RNF08 e de 3.10
+         ("identificadores biometricos, imagens e placas nao componham o
+         contrato de dados"). "limpo" e "encerrada" permitem declarar o fim
+         de uma condicao (LACUNA 9).
+TEXTO:   acrescentar o campo "rotulo" ao Quadro 14 e levar o vocabulario a
+         especificacao consolidada de 5.4.
+
+
+===============================================================================
+22. POST /eventos SEM AUTENTICACAO
+    Trecho: 4.6.1 / Quadro 14
+    Acao: [ACRESCENTAR] (decisao do autor, com risco declarado)
+-------------------------------------------------------------------------------
+CODIGO:  a interface REST nao exige credencial, nem para publicar.
+RISCO:   exposta na VM, qualquer pessoa na internet pode publicar eventos e
+         alterar a luz. A camada de verificacao continua garantindo a norma
+         (o pior caso e iluminacao a mais, nunca abaixo do piso), mas a
+         demonstracao pode ser perturbada. Reavaliar no passo 10 (deploy):
+         chave no POST, restricao por IP no proxy ou manter aberta.
+TEXTO:   se permanecer aberta, registrar entre as limitacoes (6.3).
+
+===============================================================================
 FIM
 ===============================================================================

@@ -7,6 +7,10 @@ dependencies = [
     "scipy>=1.11",
     "networkx>=3",
     "scikit-fuzzy==0.5.0",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "psycopg[binary]>=3.2",
+    "psycopg-pool>=3.2",
 ]
 
 [tool.pytest.ini_options]
