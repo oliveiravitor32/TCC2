@@ -8,3 +8,5 @@ __pycache__/
 modelo/dados/*.csv
 # Relatorios da suite: gerados por cenarios/executar.py
 cenarios/resultados/*.json
+# Logs dos servicos locais (subir.sh)
+.logs/
