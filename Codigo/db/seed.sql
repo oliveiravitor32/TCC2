@@ -42,9 +42,12 @@ ON CONFLICT (rotulo) DO NOTHING;
 
 -- hash_regras e conferido pelo servico de decisao ao iniciar (passo 5).
 
--- Previsao provisoria (passo 5): persistencia, ate o treino do XGBoost (Etapa 3).
+-- Camadas de previsao (3.6). A persistencia foi a previsao provisoria e
+-- segue como referencia de comparacao em 5.1. As metricas do modelo treinado
+-- sao preenchidas por  python -m modelo.treinar --registrar.
 INSERT INTO versao_modelo_previsao (rotulo, algoritmo)
-VALUES ('persistencia', 'persistencia')
+VALUES ('persistencia', 'persistencia'),
+       ('xgboost-v1',   'xgboost')
 ON CONFLICT (rotulo) DO NOTHING;
 
 COMMIT;

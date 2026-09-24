@@ -15,7 +15,7 @@ import pytest
 
 from decisao import ciclo, config
 from decisao.inferencia import carregar
-from decisao.previsao import Persistencia
+from decisao.previsao import Historico, Persistencia
 
 try:
     psycopg.connect(config.DATABASE_URL, connect_timeout=2).close()
@@ -176,6 +176,45 @@ def test_modo_reativo_nao_grava_previsao(conn, ponto):
         "SELECT previsao_movimentacao FROM decisao WHERE id = %s", (d.id,)
     ).fetchone()[0]
     assert prev is None
+
+
+def test_historico_horario_agrega_por_hora(conn, ponto):
+    # Agrupamento por hora de relogio (T0 = 04:00 UTC). Duas leituras na
+    # mesma hora viram media; a hora sem evento nao aparece, e a hora em
+    # curso (incompleta) tambem nao.
+    evento(conn, "movimentacao", em=T0 - timedelta(minutes=70), valor=0.2)   # 02:50 -> 2
+    evento(conn, "movimentacao", em=T0 - timedelta(minutes=100), valor=0.4)  # 02:20 -> 2
+    evento(conn, "movimentacao", em=T0 - timedelta(hours=3), valor=0.8)      # 01:00 -> 3
+    evento(conn, "movimentacao", em=T0, valor=0.1)                           # hora em curso
+    h = ciclo.historico_horario(conn, T0, horas=24)
+    assert h[2] == pytest.approx(0.3)   # media de 0,2 e 0,4
+    assert h[3] == pytest.approx(0.8)
+    assert 1 not in h and 0 not in h
+
+
+def test_previsao_do_modelo_e_gravada(conn, ponto):
+    # Previsor de teste: usa o historico, para conferir que ele chega inteiro.
+    class Media:
+        rotulo = "persistencia"
+
+        def horas_necessarias(self) -> int:
+            return 24
+
+        def prever(self, h: Historico) -> float:
+            return sum(h.serie.values()) / len(h.serie)
+
+    for k in range(1, 25):
+        evento(conn, "movimentacao", em=T0 - timedelta(hours=k), valor=0.4)
+    evento(conn, "movimentacao", em=T0, valor=0.9)
+    d = ciclo.decidir(
+        conn, base=BASE, previsor=Media(), ponto=ponto, agora=T0,
+        versao_regras_id=ciclo.registrar_versao_regras(conn, BASE),
+        versao_modelo_id=ciclo.id_modelo(conn, "persistencia"),
+    )
+    gravada = conn.execute(
+        "SELECT previsao_movimentacao FROM decisao WHERE id = %s", (d.id,)
+    ).fetchone()[0]
+    assert float(gravada) == pytest.approx(0.4, abs=0.001)
 
 
 # --------------------------------------------------------------------------

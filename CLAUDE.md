@@ -146,7 +146,7 @@ docker-compose.yml
 5. `ciclo.py` com previsão provisória (persistência) publicando no Mosquitto local ✅ (`decisao/ciclo.py`, `servico.py`, `simulador/no_simulado.py`; evento acorda o ciclo via pg_notify; itens 23–27 do DIVERGENCIAS)
 6. Firmware com MQTT/TLS, PWM calibrado e failsafe → **fluxo completo funcionando**
 7. Painel
-8. Treino do modelo XGBoost (Etapa 3) e troca da previsão provisória
+8. Treino do modelo XGBoost (Etapa 3) e troca da previsão provisória ✅ (`modelo/baixar_dados.py` + `treinar.py`; MAE 0,0468 × 0,0572 sazonal × 0,0811 persistência; tercis reais 0,1038 e 0,4053 → `decisao/regras/v1-tercis.toml`; itens 30–32 do DIVERGENCIAS)
 9. Cenários (RF10, com modo reativo), diagnóstico (RF11), energia (RF12)
 10. Deploy na VM Oracle com Docker
 

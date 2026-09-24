@@ -1,0 +1,17 @@
+{
+  "conjunto": "pedestrian-counting-system-monthly-counts-per-hour",
+  "fonte": "https://data.melbourne.vic.gov.au/api/explore/v2.1/catalog/datasets/pedestrian-counting-system-monthly-counts-per-hour",
+  "extraido_em": "2026-09-23",
+  "baixado_em": "2026-09-24T02:31:23.129786+00:00",
+  "registros_declarados": 1622895,
+  "linhas_no_csv": 1622895,
+  "bytes": 49148977,
+  "sha256": "2e8f9fc92ef2c78eeee13ae1ff5b092d19f0cf19b8135c1d54008315c16481c8",
+  "colunas": [
+    "sensing_date",
+    "hourday",
+    "sensor_name",
+    "location_id",
+    "pedestriancount"
+  ]
+}

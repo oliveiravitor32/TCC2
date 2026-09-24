@@ -52,14 +52,32 @@ class Bancada:
     def __init__(self, porta: str) -> None:
         import serial  # pyserial
 
-        self.s = serial.Serial(porta, 115200, timeout=30)
+        try:
+            self.s = serial.Serial(porta, 115200, timeout=5)
+        except serial.SerialException as erro:
+            raise SystemExit(
+                f"nao consegui abrir {porta}: {erro}\n"
+                "  - o Monitor Serial da Arduino IDE esta aberto? feche-o\n"
+                "  - a porta esta certa? use --porta COMx"
+            ) from None
+        print(f"conectando em {porta}...")
         # Abrir a porta reinicia o ESP32: espera a identificacao.
-        fim = time.monotonic() + 8
+        fim = time.monotonic() + 10
         while time.monotonic() < fim:
-            if "ID calibracao" in self._linha(timeout_ok=True):
+            l = self._linha(timeout_ok=True)
+            if "ID calibracao" in l:
+                # A propria linha traz o autoteste do sensor.
+                print(f"no respondeu: {l}")
+                if "0.00 lx" in l:
+                    print("  ATENCAO: autoteste leu 0,00 lx com a fita apagada -"
+                          " normal se a caixa estiver bem vedada")
                 return
             self.s.write(b"?\n")
-        raise RuntimeError(f"sketch de calibracao nao respondeu em {porta}")
+        raise SystemExit(
+            f"o ESP32 em {porta} nao respondeu 'ID calibracao v1'.\n"
+            "  Grave bancada/calibracao/calibracao.ino na placa.\n"
+            "  (o sketch de diagnostico NAO serve para calibrar)"
+        )
 
     def _linha(self, timeout_ok: bool = False) -> str:
         l = self.s.readline().decode(errors="replace").strip()
@@ -127,8 +145,23 @@ def media(b, duty: int, k: int = 3) -> float:
 
 
 def medir_residual(b) -> float:
+    print("medindo a residual (luz apagada, ~5 s)...")
     b.duty(0)
     return statistics.fmean(b.medir(10))
+
+
+def conectar_banco(simulada: bool) -> psycopg.Connection:
+    """Falha rapido e explica: sem timeout, um banco parado trava o script."""
+    print("conectando no banco...")
+    try:
+        return psycopg.connect(
+            config.DATABASE_URL, autocommit=not simulada, connect_timeout=5
+        )
+    except psycopg.OperationalError as erro:
+        raise SystemExit(
+            f"nao consegui falar com o Postgres: {erro}\n"
+            "  Abra o Docker Desktop e rode:  docker compose up -d"
+        ) from None
 
 
 def buscar_duty(b, alvo_liquido: float, residual: float, lo: int = 0, hi: int = DUTY_MAX) -> int:
@@ -182,6 +215,14 @@ def cmd_teto(b, lux_classe: float) -> None:
     razao = teto / lux_classe
     print(f"residual (apagado): {residual:.2f} lx")
     print(f"teto liquido (duty 4095): {teto:.2f} lx  = {razao:.2f} x o valor da classe")
+    if teto < 1.0:
+        print("\nPROBLEMA: o sensor le quase nada com a fita no MAXIMO.")
+        print("  Nao e comprimento de fita - e a fita apagada ou o sensor sem ve-la:")
+        print("  1. a fita acende? olhe dentro da caixa com o duty no maximo")
+        print("  2. fonte de 12 V ligada? OUT+ / OUT- do D4184 na fita?")
+        print("  3. GPIO25 no TRIG do modulo e GND comum?")
+        print("  4. o sensor esta virado para a fita, sem difusor demais em cima dele?")
+        return
     if residual > RESIDUAL_MAX * lux_classe:
         print(f"ATENCAO: residual acima de {RESIDUAL_MAX:.0%} da classe - melhore o anteparo (3.4.3)")
     if razao < TETO_MIN:
@@ -190,6 +231,18 @@ def cmd_teto(b, lux_classe: float) -> None:
         print(f"FITA LONGA: encurte o segmento (alvo {TETO_MIN}x a {TETO_MAX}x)")
     else:
         print("OK: comprimento dentro do criterio de 3.4.2")
+
+
+def cmd_monitor(b, duty: int) -> None:
+    """Fixa o duty e imprime a lux ate Ctrl+C: util para ajustar a montagem."""
+    b.duty(duty)
+    print(f"duty fixo em {duty} ({duty / DUTY_MAX:.0%}). Ctrl+C para sair.\n")
+    try:
+        while True:
+            print(f"  lux: {statistics.fmean(b.medir(1)):8.2f}")
+    except KeyboardInterrupt:
+        b.duty(0)
+        print("\nfita apagada.")
 
 
 def cmd_completa(b, conn, args) -> Relatorio:
@@ -346,7 +399,8 @@ const int CALIBRACAO_SESSAO = {r.sessao_id or 0};
 
 def main(argv: list[str] | None = None) -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("modo", choices=["teto", "completa"])
+    p.add_argument("modo", choices=["teto", "completa", "monitor"])
+    p.add_argument("--duty", type=int, default=DUTY_MAX, help="modo monitor: duty fixo 0..4095")
     p.add_argument("--porta", default="COM3")
     p.add_argument("--ponto", default="BANCADA-01")
     p.add_argument("--comprimento-cm", type=float, default=None)
@@ -357,9 +411,12 @@ def main(argv: list[str] | None = None) -> None:
     args = p.parse_args(argv)
 
     b = BancadaSimulada() if args.simulada else Bancada(args.porta)
+    if args.modo == "monitor":  # nao precisa de banco
+        cmd_monitor(b, max(0, min(args.duty, DUTY_MAX)))
+        return
     # Simulada: tudo numa transacao desfeita ao final - numero sintetico
     # nunca fica no banco.
-    conn = psycopg.connect(config.DATABASE_URL, autocommit=not args.simulada)
+    conn = conectar_banco(args.simulada)
     try:
         if args.modo == "teto":
             cmd_teto(b, classe_do_ponto(conn, args.ponto)[2])

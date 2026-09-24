@@ -4,3 +4,5 @@ __pycache__/
 .pytest_cache/
 # Saidas sinteticas do modo --simulada: nunca versionar
 *_SIMULADA*
+# Serie de Melbourne: baixada por modelo/baixar_dados.py, fora do git
+modelo/dados/*.csv

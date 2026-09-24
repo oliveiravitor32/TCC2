@@ -606,5 +606,69 @@ TEXTO:   descrever o procedimento em 3.4.4 e a interpolacao entre pontos
          medidos em 3.3.
 
 ===============================================================================
+30. NORMALIZACAO POR PONTO PELO PERCENTIL 99, E NAO PELO MAXIMO
+    Trecho: 3.6 ("normalizadas em relacao a distribuicao do proprio ponto")
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+CODIGO:  nivel = contagem / percentil 99 do proprio ponto, limitado a [0,1].
+POR QUE: o maximo absoluto de um ponto e um evento isolado (um jogo, uma
+         passeata) e achataria toda a distribuicao restante - a "movimentacao
+         alta" do dia a dia cairia para perto de 0,2 e as particoes nebulosas
+         ficariam sem uso. O percentil 99 e o "cheio" recorrente do ponto.
+         Consequencia declarada: cerca de 1 % das horas satura em 1,0.
+TEXTO:   dizer em 3.6 que a normalizacao usa o percentil 99 do ponto.
+
+
+===============================================================================
+31. TERCIS REAIS DA SERIE: 0,10 E 0,41 (E NAO 1/3 E 2/3)
+    Trecho: 3.7 (fronteiras nos tercis) e base de regras do Capitulo 5
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+CODIGO:  decisao/regras/v1-tercis.toml, com fronteiras em 0.1038 e
+         0.4053, calculadas por modelo/treinar.py sobre a serie
+         extraida em 2026-09-23 (49 pontos). A v0, com 1/3 e 2/3,
+         fica no repositorio como a versao provisoria que produziu as
+         primeiras decisoes.
+POR QUE: a distribuicao de pedestres e assimetrica - a maior parte das horas
+         e de movimento baixo (madrugada e comeco da manha). Os tercis
+         REAIS refletem isso; 1/3 e 2/3 eram suposicao. Como 3.7 promete
+         fronteiras "derivadas da distribuicao observada, e nao arbitradas",
+         o valor correto e este, reproduzivel por quem repetir o
+         procedimento sobre a mesma serie.
+TEXTO:   registrar os tercis efetivos em 3.7 e no Capitulo 5 (objetivo c),
+         com a data de extracao da serie.
+
+
+===============================================================================
+32. RESULTADO DA CAMADA DE PREVISAO (5.1)
+    Trecho: 5.1, 6.1 (H3) e Quadro 15 (versao_modelo_previsao)
+    Acao: [ACRESCENTAR - e resultado, nao divergencia]
+-------------------------------------------------------------------------------
+Serie de Melbourne extraida em 2026-09-23, 49 pontos com cobertura
+>= 98 %, particao cronologica (645,237 linhas de treino,
+161,332 de teste, corte em 2026-04-27), nivel normalizado por ponto:
+
+    modelo          MAE      RMSE
+    XGBoost         0.0468   0.0755
+    media sazonal   0.0572   0.0913
+    persistencia    0.0811   0.1221
+
+O modelo supera as duas referencias ingenuas (42% melhor que a
+persistencia e 18% melhor que a media sazonal), o que atende o
+objetivo especifico g). Atributos: atrasos de 1, 2, 3, 24 e 168 h, medias de
+3 h e 24 h, hora (inclusive em seno e cosseno), dia da semana, fim de semana
+e feriado.
+
+DECISOES A REGISTRAR NO TEXTO:
+  - feriados: no treino, os de Victoria (onde a serie e medida), calculados
+    por regra; a sexta da Grande Final da AFL varia e nao foi incluida. Em
+    operacao, o servico usa os feriados nacionais brasileiros. E o atributo
+    "feriado" que muda de calendario junto com a cidade, nao o modelo.
+  - em operacao, sem historico completo para os atrasos, a previsao cai para
+    a persistencia em vez de extrapolar sobre buraco (o log registra).
+  - a comparacao de H3 (antecipado x reativo) so faz sentido com este
+    modelo: com a persistencia, os dois modos produzem a MESMA decisao.
+
+===============================================================================
 FIM
 ===============================================================================

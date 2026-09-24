@@ -18,7 +18,7 @@ import psycopg
 
 from . import config
 from .inferencia import BaseRegras, Entrada, inferir
-from .previsao import Previsor
+from .previsao import Historico, Previsor
 from .verificacao import PLENO, Criterio, verificar
 
 log = logging.getLogger(__name__)
@@ -162,6 +162,30 @@ def estado_via(conn: psycopg.Connection, agora: datetime) -> EstadoVia:
     )
 
 
+def historico_horario(conn: psycopg.Connection, agora: datetime, horas: int) -> dict[int, float]:
+    """Nivel medio de movimentacao por hora CHEIA DE RELOGIO anterior a `agora`.
+
+    Chave = atraso em horas (1 = hora de relogio anterior). O modelo foi
+    treinado sobre janelas horarias fechadas (3.6), entao o agrupamento
+    precisa ser por hora do relogio, e nao por diferenca corrida: a hora em
+    curso e incompleta e nao entra.
+    """
+    linhas = conn.execute(
+        """
+        SELECT (extract(epoch FROM (date_trunc('hour', %(agora)s)
+                                    - date_trunc('hour', ocorrido_em))) / 3600)::int AS atraso,
+               avg(valor) AS nivel
+          FROM evento_urbano
+         WHERE tipo = 'movimentacao'
+           AND ocorrido_em <= %(agora)s
+           AND ocorrido_em > %(agora)s - make_interval(hours => %(horas)s)
+         GROUP BY 1
+        """,
+        {"agora": agora, "horas": horas + 1},
+    ).fetchall()
+    return {int(a): float(n) for a, n in linhas if a >= 1 and n is not None}
+
+
 # ---------------------------------------------------------------------------
 # Decisao
 # ---------------------------------------------------------------------------
@@ -207,7 +231,17 @@ def decidir(
         # Sem dado de movimentacao nao se dimeriza (DIVERGENCIAS 23).
         pretendido = PLENO
     else:
-        previsao = None if reativo else previsor.prever(estado.observada)
+        if reativo:
+            previsao = None
+        else:
+            horas = getattr(previsor, "horas_necessarias", lambda: 24)()
+            previsao = previsor.prever(
+                Historico(
+                    momento=agora.astimezone(config.FUSO),
+                    observada=estado.observada,
+                    serie=historico_horario(conn, agora, horas),
+                )
+            )
         pretendido = inferir(
             base,
             Entrada(

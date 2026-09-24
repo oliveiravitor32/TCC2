@@ -1,0 +1,54 @@
+{
+  "rotulo": "xgboost-v1",
+  "gerado_em": "2026-09-24T02:36:56.098028+00:00",
+  "serie_extraida_em": "2026-09-23",
+  "serie_sha256": "2e8f9fc92ef2c78eeee13ae1ff5b092d19f0cf19b8135c1d54008315c16481c8",
+  "pontos": 49,
+  "linhas_treino": 645237,
+  "linhas_teste": 161332,
+  "corte_treino_teste": "2026-04-27 18:00:00",
+  "percentil_cheio": 0.99,
+  "atrasos_h": [
+    1,
+    2,
+    3,
+    24,
+    168
+  ],
+  "atributos": [
+    "atraso_1h",
+    "atraso_2h",
+    "atraso_3h",
+    "atraso_24h",
+    "atraso_168h",
+    "media_3h",
+    "media_24h",
+    "hora",
+    "hora_sen",
+    "hora_cos",
+    "dia_semana",
+    "fim_de_semana",
+    "feriado"
+  ],
+  "melhor_iteracao": 1373,
+  "metricas": {
+    "xgboost": {
+      "mae": 0.04677141622297196,
+      "rmse": 0.07552430235770488
+    },
+    "persistencia": {
+      "mae": 0.08108818832733539,
+      "rmse": 0.12211103170123558
+    },
+    "media_sazonal": {
+      "mae": 0.05722152977896345,
+      "rmse": 0.0913440483702063
+    }
+  },
+  "menor_mae": "xgboost",
+  "tercis_nivel": [
+    0.1038,
+    0.4053
+  ],
+  "modelo_sha256": "c737d0acbddb58331ab8186a2e1d4af2a003b7ffff6f7208a470f181fffe81c0"
+}

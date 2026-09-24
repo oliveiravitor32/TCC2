@@ -32,7 +32,7 @@ from .ciclo import (
     registrar_versao_regras,
 )
 from .inferencia import BASE_V0, carregar
-from .previsao import Persistencia
+from .previsao import carregar_previsor
 
 log = logging.getLogger("decisao")
 
@@ -47,11 +47,13 @@ def _ponto_do_topico(topico: str) -> str:
 
 
 class Servico:
-    def __init__(self, *, reativo: bool = False, execucao_id: int | None = None) -> None:
+    def __init__(self, *, reativo: bool = False, execucao_id: int | None = None,
+                 previsao: str | None = None) -> None:
         self.reativo = reativo
         self.execucao_id = execucao_id
         self.base = carregar(BASE_V0)
-        self.previsor = Persistencia()
+        # Sem argumento: o modelo treinado, se existir; senao, persistencia.
+        self.previsor = carregar_previsor(previsao)
         self._parar = threading.Event()
 
         # Duas conexoes: o psycopg nao e seguro entre threads, e os callbacks
@@ -64,6 +66,7 @@ class Servico:
             self.versao_regras_id = registrar_versao_regras(self.db_ciclo, self.base)
             self.versao_modelo_id = id_modelo(self.db_ciclo, self.previsor.rotulo)
 
+        log.info("previsao: %s", self.previsor.rotulo)
         self.mqtt = mqtt.Client(
             mqtt.CallbackAPIVersion.VERSION2,
             client_id="servico-decisao",
@@ -178,10 +181,12 @@ def main() -> None:
     p = argparse.ArgumentParser(description="Servico de decisao (TCC 4.6.1)")
     p.add_argument("--reativo", action="store_true", help="inferencia sem previsao (H3)")
     p.add_argument("--execucao-id", type=int, default=None, help="execucao_cenario em curso")
+    p.add_argument("--previsao", choices=["persistencia", "xgboost"], default=None,
+                   help="forca a camada de previsao (padrao: o modelo treinado, se houver)")
     args = p.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-    s = Servico(reativo=args.reativo, execucao_id=args.execucao_id)
+    s = Servico(reativo=args.reativo, execucao_id=args.execucao_id, previsao=args.previsao)
     signal.signal(signal.SIGINT, s.parar)
     signal.signal(signal.SIGTERM, s.parar)
     s.executar()

@@ -38,17 +38,31 @@ void setup() {
   ledcAttach(PINO_PWM, FREQ_PWM, BITS_PWM);
   ledcWrite(PINO_PWM, 0);  // comeca apagado
 
-  if (!sensor.begin(BH1750::ONE_TIME_HIGH_RES_MODE_2)) {
+  // Modo CONTINUO: o sensor mede sem parar e cada leitura pega a conversao
+  // mais recente. Foi o que funcionou nesta placa; o modo "one time" exigia
+  // reconfigurar a cada leitura e devolvia o registrador zerado.
+  if (!sensor.begin(BH1750::CONTINUOUS_HIGH_RES_MODE_2)) {
     Serial.println("ERRO sensor BH1750 nao encontrado (confira SDA/SCL/VCC)");
   }
-  sensor.setMTreg(BH1750_MTREG_MAX);
-  Serial.println("ID calibracao v1");
+  sensor.setMTreg(BH1750_MTREG_MAX);  // 0,11 lx de resolucao
+
+  // Autoteste: mostra que o sensor responde e quanto demora cada leitura.
+  unsigned long t0 = millis();
+  float teste = lerLux();
+  Serial.printf("ID calibracao v2 | autoteste: %.2f lx em %lu ms\n", teste, millis() - t0);
 }
 
 float lerLux() {
-  // Modo "one time": cada leitura dispara uma conversao nova e completa.
-  sensor.configure(BH1750::ONE_TIME_HIGH_RES_MODE_2);
-  sensor.measurementReady(true);  // espera o tempo maximo da conversao
+  // measurementReady() NAO espera: so informa se ja deu o tempo. E preciso
+  // chamar em laco - ler antes da conversao terminar devolve lixo.
+  unsigned long limite = millis() + 2000;
+  while (!sensor.measurementReady(false)) {
+    if (millis() > limite) {
+      Serial.println("ERRO conversao do sensor nao terminou");
+      return -1;
+    }
+    delay(10);
+  }
   return sensor.readLightLevel();
 }
 
