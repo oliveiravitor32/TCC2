@@ -159,3 +159,47 @@ def test_telemetria_liga_a_decisao(cliente, conn):
     r = cliente.get("/telemetria", params={"ponto": "BANCADA-01"})
     linha = next(x for x in r.json() if x["decisao_id"] == d)
     assert linha["duty"] == 0.25 and linha["lux_medido"] == 5.1
+
+
+# --------------------------------------------------------------------------
+# GET /pontos e /alertas (fora do Quadro 14; o painel depende deles)
+# --------------------------------------------------------------------------
+def test_pontos_traz_estado_e_ultima_decisao(cliente, conn):
+    d, _ = _decisao_com_telemetria(conn)
+    linha = next(p for p in cliente.get("/pontos").json() if p["codigo"] == "BANCADA-01")
+    assert linha["classe_codigo"] == "P3"
+    assert linha["lux_pleno"] == 10.0
+    assert linha["piso_fracao"] == 0.5
+    assert linha["estado_operacional"] == "operante"
+    assert linha["nivel_emitido"] == 0.5 and linha["restricao_aplicada"] == "piso"
+    assert linha["lux_medido"] == 5.1 and linha["duty"] == 0.25
+
+
+def test_pontos_sem_decisao_nao_quebra(cliente, conn):
+    linha = cliente.get("/pontos").json()[0]
+    assert linha["nivel_emitido"] is None and linha["lux_medido"] is None
+
+
+def test_alertas_lista_apenas_os_abertos_por_padrao(cliente, conn):
+    d, _ = _decisao_com_telemetria(conn)
+    conn.execute(
+        "INSERT INTO alerta_diagnostico (ponto_de_luz_id, decisao_id, tipo, razao,"
+        " tolerancia, ciclos, encerrado_em)"
+        " SELECT id, %s, 'falha_total', 0.02, 0.15, 3, NULL FROM ponto_de_luz"
+        " WHERE codigo = 'BANCADA-01'", (d,),
+    )
+    conn.execute(
+        "INSERT INTO alerta_diagnostico (ponto_de_luz_id, tipo, razao, tolerancia,"
+        " ciclos, encerrado_em)"
+        " SELECT id, 'perda_controle', 0.7, 0.15, 12, now() FROM ponto_de_luz"
+        " WHERE codigo = 'BANCADA-01'",
+    )
+    abertos = cliente.get("/alertas").json()
+    assert [a["tipo"] for a in abertos] == ["falha_total"]
+    assert abertos[0]["ponto"] == "BANCADA-01" and abertos[0]["ciclos"] == 3
+    assert len(cliente.get("/alertas", params={"abertos": False}).json()) == 2
+
+
+def test_cors_liberado_para_o_painel(cliente):
+    r = cliente.get("/pontos", headers={"Origin": "https://painel.vercel.app"})
+    assert r.headers.get("access-control-allow-origin") is not None

@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+/* Paleta do painel: fundo escuro, porque o que se acompanha e iluminacao
+   noturna e a defesa acontece com a sala clara e a caixa fechada. */
+@theme {
+  --color-fundo: #0b1020;
+  --color-carta: #141b2f;
+  --color-borda: #26304d;
+  --color-texto: #e6ebf7;
+  --color-suave: #94a3c4;
+  --color-luz: #fbbf24;
+  --color-piso: #f97316;
+  --color-taxa: #38bdf8;
+  --color-meteo: #a78bfa;
+  --color-ok: #34d399;
+  --color-falha: #f87171;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--color-fundo);
+  color: var(--color-texto);
+  font-family: ui-sans-serif, system-ui, "Segoe UI", sans-serif;
+}

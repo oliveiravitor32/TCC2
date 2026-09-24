@@ -17,15 +17,19 @@ from datetime import datetime
 
 import psycopg
 from fastapi import Depends, FastAPI, Query, status
+from fastapi.middleware.cors import CORSMiddleware
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
 
-from .esquemas import Decisao, Evento, EventoEntrada, Telemetria, Tipo
+from .esquemas import Alerta, Decisao, Evento, EventoEntrada, Ponto, Telemetria, Tipo
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://iluminacao:iluminacao@localhost:5432/iluminacao"
 )
 LIMITE_MAX = 5000
+# O painel e servido de outra origem (Vercel) e a API roda na VM: sem CORS o
+# navegador bloqueia a leitura. Lista separada por virgula; "*" libera todas.
+ORIGENS = [o.strip() for o in os.environ.get("ORIGENS_PAINEL", "*").split(",") if o.strip()]
 
 _pool: ConnectionPool | None = None
 
@@ -45,6 +49,13 @@ app = FastAPI(
     description="Emulacao da interface da plataforma municipal (TCC 4.6.2, Quadro 14).",
     version="0.1.0",
     lifespan=_ciclo_de_vida,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ORIGENS,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
 )
 
 
@@ -132,6 +143,55 @@ def consultar_decisoes(
          LIMIT %(limite)s
         """,
         {"ponto": ponto, "inicio": inicio, "fim": fim, "execucao_id": execucao_id, "limite": limite},
+    ).fetchall()
+
+
+@app.get("/pontos", response_model=list[Ponto])
+def consultar_pontos(conn: psycopg.Connection = Conn) -> list[dict]:
+    """Estado de cada ponto de luz, com a ultima decisao e a ultima medicao.
+
+    Fora do Quadro 14: o painel precisa mostrar o estado do no (RF08) e o
+    RF11 so e observavel se o operador vir o ponto em falha.
+    """
+    return conn.execute(
+        """
+        SELECT p.codigo, p.logradouro, p.classe_codigo, p.estado_operacional,
+               c.iluminancia_media_min_lux AS lux_pleno,
+               cm.iluminancia_media_min_lux / c.iluminancia_media_min_lux AS piso_fracao,
+               u.nivel_emitido, u.restricao_aplicada, u.criado_em AS decidido_em,
+               t.lux_medido, t.duty, t.medido_em
+          FROM ponto_de_luz p
+          JOIN classe_iluminacao c       ON c.codigo = p.classe_codigo
+          LEFT JOIN classe_iluminacao cm ON cm.codigo = c.classe_min_dimerizacao
+          LEFT JOIN LATERAL (
+                SELECT d.* FROM decisao d
+                 WHERE d.ponto_de_luz_id = p.id
+                 ORDER BY d.criado_em DESC LIMIT 1
+               ) u ON true
+          LEFT JOIN telemetria t ON t.decisao_id = u.id
+         ORDER BY p.codigo
+        """
+    ).fetchall()
+
+
+@app.get("/alertas", response_model=list[Alerta])
+def consultar_alertas(
+    abertos: bool = True,
+    limite: int = Query(100, ge=1, le=LIMITE_MAX),
+    conn: psycopg.Connection = Conn,
+) -> list[dict]:
+    """Alertas de diagnostico do ponto de luz (RF11, 3.4.5)."""
+    return conn.execute(
+        """
+        SELECT a.id, p.codigo AS ponto, a.tipo, a.razao, a.tolerancia, a.ciclos,
+               a.aberto_em, a.encerrado_em
+          FROM alerta_diagnostico a
+          JOIN ponto_de_luz p ON p.id = a.ponto_de_luz_id
+         WHERE (NOT %(abertos)s OR a.encerrado_em IS NULL)
+         ORDER BY a.aberto_em DESC
+         LIMIT %(limite)s
+        """,
+        {"abertos": abertos, "limite": limite},
     ).fetchall()
 
 

@@ -91,7 +91,7 @@ Movimentação observada e prevista: conjuntos baixa/média/alta, **trapezoidais
 - Serviço de decisão em Python: XGBoost para previsão; scikit-fuzzy (Mamdani) para inferência; módulo próprio de verificação lendo `classe_iluminacao`
 - MQTT 5.0 com TLS e credencial por dispositivo (Mosquitto)
 - PostgreSQL
-- Painel: HTML + CSS + JS em React, consumindo a REST
+- Painel: Vite + React + Tailwind 4 + lucide-react, consumindo a REST (publicado na Vercel; `VITE_API_URL` no build)
 - Firmware: C++/Arduino para ESP32
 
 ## Contratos (Quadro 14)
@@ -145,7 +145,7 @@ docker-compose.yml
 4. API de eventos ✅ (`api_eventos/`: vocabulário fechado, extras → 422, sem autenticação por decisão do autor — reavaliar no deploy; datas voltam em UTC, o ciclo converte para America/Sao_Paulo)
 5. `ciclo.py` com previsão provisória (persistência) publicando no Mosquitto local ✅ (`decisao/ciclo.py`, `servico.py`, `simulador/no_simulado.py`; evento acorda o ciclo via pg_notify; itens 23–27 do DIVERGENCIAS)
 6. Firmware com MQTT/TLS, PWM calibrado e failsafe → **fluxo completo funcionando**
-7. Painel
+7. Painel ✅ (`painel/`: Vite + React + Tailwind 4 + lucide; só leitura, atualiza a cada 2 s; **vai para a Vercel**, não para a VM; API ganhou CORS e os endpoints `/pontos` e `/alertas`; itens 37–38 do DIVERGENCIAS)
 8. Treino do modelo XGBoost (Etapa 3) e troca da previsão provisória ✅ (`modelo/baixar_dados.py` + `treinar.py`; MAE 0,0468 × 0,0572 sazonal × 0,0811 persistência; tercis reais 0,1038 e 0,4053 → `decisao/regras/v1-tercis.toml`; itens 30–32 do DIVERGENCIAS)
 9. Cenários (RF10, com modo reativo), diagnóstico (RF11), energia (RF12) ✅ (`cenarios/` 10 cenários com relógio virtual; `decisao/diagnostico.py`; `decisao/energia.py`; **zero violações em 26.880 decisões**; adaptativo = 67 % do pleno e 93 % do horário fixo; **H3 não confirmada**: antecipado 21,2 % × reativo 11,4 % da janela em transição; itens 33–36 do DIVERGENCIAS)
 10. Deploy na VM Oracle com Docker

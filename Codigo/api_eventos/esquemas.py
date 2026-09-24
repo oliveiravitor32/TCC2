@@ -98,3 +98,33 @@ class Telemetria(BaseModel):
     recebido_em: datetime
     duty: float
     lux_medido: float
+
+
+class Ponto(BaseModel):
+    """Linha do GET /pontos: estado atual do ponto de luz, para o painel."""
+
+    codigo: str
+    logradouro: str | None
+    classe_codigo: str
+    estado_operacional: Literal["operante", "falha", "manutencao", "sem_comunicacao"]
+    lux_pleno: float
+    piso_fracao: float | None
+    nivel_emitido: float | None
+    restricao_aplicada: str | None
+    decidido_em: datetime | None
+    lux_medido: float | None
+    duty: float | None
+    medido_em: datetime | None
+
+
+class Alerta(BaseModel):
+    """Linha do GET /alertas (RF11, 3.4.5)."""
+
+    id: int
+    ponto: str
+    tipo: Literal["falha_total", "perda_controle"]
+    razao: float | None
+    tolerancia: float | None
+    ciclos: int | None
+    aberto_em: datetime
+    encerrado_em: datetime | None

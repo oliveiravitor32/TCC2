@@ -788,5 +788,55 @@ TEXTO:   registrar em 3.4.5 os dois limiares, a regra do 3 sigma e a
          distincao entre alerta (registro) e failsafe (atuacao).
 
 ===============================================================================
+37. ENDPOINTS /pontos E /alertas, E CORS NA INTERFACE REST
+    Trecho: Quadro 14 (contratos) e 4.6 (linha "Front end")
+    Acao: [ATUALIZAR TEXTO]
+-------------------------------------------------------------------------------
+TCC:     o Quadro 14 especifica quatro operacoes: POST/GET /eventos,
+         GET /decisoes e GET /telemetria.
+CODIGO:  acrescentou dois endpoints de leitura, dos quais o painel depende:
+         - GET /pontos   -> estado operacional do ponto, classe, piso, ultima
+                            decisao e ultima medicao. Sem ele o painel nao
+                            mostra o estado do no nem sabe o valor da classe;
+         - GET /alertas  -> alertas de diagnostico abertos (RF11). O RF11 so
+                            e observavel pelo operador se o alerta aparecer
+                            em algum lugar.
+         A API tambem passou a enviar cabecalhos CORS (variavel
+         ORIGENS_PAINEL): o painel e servido por outra origem, e sem isso o
+         navegador bloqueia a leitura.
+POR QUE: o Quadro 14 descreve o contrato de INTEGRACAO (o que a plataforma
+         municipal precisaria publicar e o que o no troca com o servico). Os
+         dois endpoints novos sao de APRESENTACAO, consumidos so pelo painel,
+         e nao fazem parte da especificacao de interface de 5.4.
+TEXTO:   acrescentar os dois ao Quadro 14 marcando-os como de apresentacao,
+         ou criar uma linha em 4.6 dizendo que o painel consome, alem do
+         contrato de integracao, duas consultas proprias.
+
+
+===============================================================================
+38. PAINEL PUBLICADO NA VERCEL, FORA DA VM
+    Trecho: 4.6.1 (implantacao) e Quadro 12 (linha "Front end")
+    Acao: [ATUALIZAR TEXTO]
+-------------------------------------------------------------------------------
+TCC:     "painel web servido pelo mesmo ambiente".
+CODIGO:  o painel e um aplicativo estatico (Vite + React + Tailwind +
+         lucide-react) publicado na Vercel; API, servico de decisao, broker e
+         banco continuam em Docker na VM Oracle (item 15).
+POR QUE: decisao do autor. O painel nao tem estado nem processo proprio - e
+         HTML, CSS e JavaScript consumindo a REST -, e publica-lo separado
+         simplifica o deploy e tira carga da VM Always Free. A arquitetura de
+         4.6 nao muda: o painel continua sendo cliente da interface REST, que
+         e o que o texto de fato afirma.
+CONSEQUENCIAS a registrar:
+         - a API precisa de CORS para a origem do painel (item 37);
+         - o painel e servido por HTTPS, e o navegador bloqueia chamada a API
+           em HTTP puro: a API precisa de HTTPS no passo 10;
+         - VITE_API_URL e lida na HORA DO BUILD; trocar a URL exige novo
+           deploy.
+TEXTO:   em 4.6.1 e no Quadro 12, dizer que o painel e estatico e publicado
+         em servico de hospedagem de front end, e que os demais componentes
+         rodam em conteineres na maquina virtual.
+
+===============================================================================
 FIM
 ===============================================================================
