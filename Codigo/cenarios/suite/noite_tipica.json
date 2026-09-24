@@ -1,0 +1,136 @@
+{
+  "nome": "noite_tipica",
+  "descricao": "Movimentacao caindo ao longo da noite ate o vale da madrugada e voltando ao amanhecer.",
+  "origem": "Perfil diario observado na serie de pedestres (3.5, 3.6).",
+  "inicio_local": "2026-09-22T18:00:00",
+  "duracao_min": 480,
+  "eventos": [
+    {
+      "em_min": 0,
+      "tipo": "movimentacao",
+      "valor": 0.55,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 30,
+      "tipo": "movimentacao",
+      "valor": 0.48,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 60,
+      "tipo": "movimentacao",
+      "valor": 0.4,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 90,
+      "tipo": "movimentacao",
+      "valor": 0.3,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 120,
+      "tipo": "movimentacao",
+      "valor": 0.2,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 150,
+      "tipo": "movimentacao",
+      "valor": 0.12,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 180,
+      "tipo": "movimentacao",
+      "valor": 0.07,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 210,
+      "tipo": "movimentacao",
+      "valor": 0.04,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 240,
+      "tipo": "movimentacao",
+      "valor": 0.03,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 270,
+      "tipo": "movimentacao",
+      "valor": 0.03,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 300,
+      "tipo": "movimentacao",
+      "valor": 0.04,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 330,
+      "tipo": "movimentacao",
+      "valor": 0.06,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 360,
+      "tipo": "movimentacao",
+      "valor": 0.1,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 390,
+      "tipo": "movimentacao",
+      "valor": 0.18,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 420,
+      "tipo": "movimentacao",
+      "valor": 0.3,
+      "vigente_min": 35
+    },
+    {
+      "em_min": 450,
+      "tipo": "movimentacao",
+      "valor": 0.45,
+      "vigente_min": 35
+    }
+  ],
+  "envelope": [
+    {
+      "de_min": 0,
+      "ate_min": 90,
+      "min": 0.85,
+      "max": 1.0,
+      "nota": "movimentacao alta ou media no inicio da noite"
+    },
+    {
+      "de_min": 90,
+      "ate_min": 180,
+      "min": 0.5,
+      "max": 1.0,
+      "nota": "transicao sob rampa normativa"
+    },
+    {
+      "de_min": 180,
+      "ate_min": 330,
+      "min": 0.5,
+      "max": 0.62,
+      "janela_baixa": true,
+      "nota": "vale da madrugada"
+    },
+    {
+      "de_min": 330,
+      "ate_min": 480,
+      "min": 0.5,
+      "max": 1.0,
+      "nota": "retomada ao amanhecer"
+    }
+  ]
+}

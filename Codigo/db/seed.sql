@@ -40,6 +40,14 @@ VALUES ('v0-provisoria', 9,
         'Arquivo: decisao/regras/v0-provisoria.toml. Substituida pela v1 apos os tercis de Melbourne.')
 ON CONFLICT (rotulo) DO NOTHING;
 
+-- Base vigente: tercis da serie de Melbourne (2026-09-23), calculados por
+-- modelo/treinar.py. A v0 fica registrada porque produziu as primeiras decisoes.
+INSERT INTO versao_base_regras (rotulo, qtd_regras, resumo)
+VALUES ('v1-tercis', 9,
+        'Tercis da serie de Melbourne (2026-09-23) normalizada por ponto: '
+        'fronteiras em 0.1038 e 0.4053. Arquivo: decisao/regras/v1-tercis.toml.')
+ON CONFLICT (rotulo) DO NOTHING;
+
 -- hash_regras e conferido pelo servico de decisao ao iniciar (passo 5).
 
 -- Camadas de previsao (3.6). A persistencia foi a previsao provisoria e

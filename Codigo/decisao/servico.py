@@ -31,7 +31,8 @@ from .ciclo import (
     registrar_telemetria,
     registrar_versao_regras,
 )
-from .inferencia import BASE_V0, carregar
+from .diagnostico import Monitor
+from .inferencia import carregar
 from .previsao import carregar_previsor
 
 log = logging.getLogger("decisao")
@@ -51,9 +52,10 @@ class Servico:
                  previsao: str | None = None) -> None:
         self.reativo = reativo
         self.execucao_id = execucao_id
-        self.base = carregar(BASE_V0)
+        self.base = carregar(config.REGRAS)
         # Sem argumento: o modelo treinado, se existir; senao, persistencia.
         self.previsor = carregar_previsor(previsao)
+        self.monitor = Monitor()  # diagnostico do ponto de luz (RF11)
         self._parar = threading.Event()
 
         # Duas conexoes: o psycopg nao e seguro entre threads, e os callbacks
@@ -95,7 +97,13 @@ class Servico:
         try:
             if msg.topic.endswith("/telemetria"):
                 carga = json.loads(msg.payload)
-                if not registrar_telemetria(self.db_retorno, ponto, carga):
+                if registrar_telemetria(self.db_retorno, ponto, carga):
+                    # A telemetria acabou de ser gravada: diagnostica o ponto
+                    # (RF11). O alerta so registra, nao altera o nivel.
+                    diag = self.monitor.avaliar(self.db_retorno, carga["decisao_id"])
+                    if diag and diag != "normal":
+                        log.warning("%s: %s", ponto, diag)
+                else:
                     log.debug("telemetria descartada ou duplicada: %s", carga)
             elif msg.topic.endswith("/estado"):
                 online = msg.payload.decode(errors="replace").strip() == "online"

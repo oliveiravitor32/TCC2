@@ -1,0 +1,38 @@
+{
+  "nome": "adversarial_silencio_da_plataforma",
+  "descricao": "ADVERSARIAL: a interface para de publicar; sem dado, nao se dimeriza.",
+  "origem": "Modo de falha declarado em 3.7 (quarta regra) e item 23 do DIVERGENCIAS.",
+  "adversarial": true,
+  "inicio_local": "2026-09-23T02:30:00",
+  "duracao_min": 60,
+  "eventos": [
+    {
+      "em_min": 0,
+      "tipo": "movimentacao",
+      "valor": 0.02,
+      "vigente_min": 10
+    },
+    {
+      "em_min": 5,
+      "tipo": "movimentacao",
+      "valor": 0.02,
+      "vigente_min": 10
+    }
+  ],
+  "envelope": [
+    {
+      "de_min": 0,
+      "ate_min": 20,
+      "min": 0.5,
+      "max": 1.0,
+      "nota": "ultimo dado ainda vigente, depois expira"
+    },
+    {
+      "de_min": 20,
+      "ate_min": 60,
+      "min": 0.95,
+      "max": 1.0,
+      "nota": "sem dado: pleno"
+    }
+  ]
+}

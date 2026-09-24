@@ -29,6 +29,12 @@ MOV = {
 @pytest.fixture
 def conn():
     c = psycopg.connect(DATABASE_URL, row_factory=dict_row)
+    # A suite de cenarios deixa milhares de eventos e decisoes no banco, com
+    # carimbos no relogio virtual. Limpar aqui (e desfazer no rollback) e o
+    # que torna estes testes independentes da ordem de execucao.
+    for tabela in ("alerta_diagnostico", "telemetria", "decisao_evento", "decisao",
+                   "calibracao", "sessao_medicao", "evento_urbano", "execucao_cenario"):
+        c.execute(f"DELETE FROM {tabela}")
     try:
         yield c
     finally:

@@ -1,7 +1,7 @@
 ===============================================================================
 DIVERGENCIAS E DECISOES DE IMPLEMENTACAO EM RELACAO AO TEXTO DO TCC
 Documento de referencia: Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP.docx
-Ultima atualizacao: 21/09/2026
+Ultima atualizacao: 24/09/2026
 ===============================================================================
 
 COMO LER ESTE ARQUIVO
@@ -668,6 +668,124 @@ DECISOES A REGISTRAR NO TEXTO:
     a persistencia em vez de extrapolar sobre buraco (o log registra).
   - a comparacao de H3 (antecipado x reativo) so faz sentido com este
     modelo: com a persistencia, os dois modos produzem a MESMA decisao.
+
+===============================================================================
+33. RELOGIO VIRTUAL E ISOLAMENTO DOS CENARIOS
+    Trecho: 3.9 (Etapa 4) e a decisao em aberto sobre o relogio de cenario
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+CODIGO:  a suite roda em TEMPO SIMULADO, com passo igual ao periodo do ciclo
+         (5 s). Uma rampa de cinco minutos continua tendo 60 passos e
+         continua limitada a 0,1/min; o que muda e so o tempo de parede.
+         Cada cenario e deslocado em SEMANAS inteiras em relacao ao anterior,
+         preservando a hora do dia e o dia da semana.
+POR QUE: em tempo real a suite levaria horas e nao seria repetivel (RF10). O
+         deslocamento em semanas corrige um defeito encontrado na primeira
+         execucao: os cenarios declaram horarios que se sobrepoem (a chuva as
+         02h cai dentro da madrugada ociosa, das 01h as 03h) e, como
+         meteorologia e ocorrencia valem "ate o proximo evento do mesmo
+         tipo", a condicao declarada em um contaminava o outro - a madrugada
+         ociosa registrou 480 correcoes por 'meteorologia' sem ter chuva.
+         A latencia fisica (RNF03) nao se mede aqui: e a da Etapa 5.
+TEXTO:   registrar em 3.9 que os cenarios correm em relogio virtual e que a
+         medicao de latencia e feita a parte, com o no.
+
+
+===============================================================================
+34. REFERENCIA DE TAXA: ULTIMA DECISAO ANTERIOR AO INSTANTE ATUAL
+    Trecho: 3.7 (taxa) / RNF02
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+CODIGO:  o nivel anterior e o da ultima decisao com carimbo ANTERIOR ao
+         instante da decisao corrente e, dentro de um cenario, da propria
+         execucao.
+POR QUE: defeito encontrado na primeira execucao da suite. A consulta pegava
+         a decisao de maior carimbo, que podia estar no futuro (outro cenario
+         no relogio virtual). O intervalo dava negativo, a queda admitida
+         virava zero e a rampa travava - o sistema quase nao dimerizava e,
+         nas trocas de cenario, aparecia um degrau que a propria conta nao
+         limitava: 13 violacoes de taxa. Corrigido, a suite passou a zero
+         violacoes. Em operacao vale o mesmo: decisao com carimbo futuro nao
+         e "nivel corrente".
+TEXTO:   nao altera o texto; e implementacao. Serve como caso de teste em 4.8.
+
+
+===============================================================================
+35. RESULTADO DA SUITE DE CENARIOS (5.2, 5.4 e 5.5)
+    Trecho: 5.2, 5.4, 5.5 e Capitulo 6
+    Acao: [ACRESCENTAR - e resultado, nao divergencia]
+-------------------------------------------------------------------------------
+10 cenarios (4 adversariais), base de regras v1-tercis, passo de 5 s,
+previsao pelo modelo treinado. Cada modo (antecipado e reativo) executa
+13,440 decisoes; 26,880 no total.
+
+INVARIANTE DE SEGURANCA (5.2, H2): ZERO violacoes de piso, de taxa e de
+meteorologia nos dois modos, inclusive nos cenarios adversariais -
+construidos para induzir nivel inadmissivel (serra de 1 minuto, movimentacao
+zero declarada, chuva intermitente, silencio da plataforma).
+
+ADERENCIA AO ENVELOPE (5.4) e ENERGIA (5.5), luminaria de referencia de 40 W:
+
+  cenario                            decis.  ader.   adapt.   pleno    fixo  ad/pl ad/fx
+  adversarial_meteo_intermitente      720  1.000     34.3    40.0    30.8   0.86  1.11
+  adversarial_serra                   720  1.000     36.0    40.0    20.8   0.90  1.73
+  adversarial_silencio_da_plataforma  720  1.000     35.0    40.0    40.0   0.88  0.88
+  adversarial_zero                    480  1.000     13.3    26.7    14.2   0.50  0.94
+  chuva_com_via_ociosa                720  1.000     29.2    40.0    40.0   0.73  0.73
+  fluxo_intenso_de_madrugada          720  1.000     37.2    40.0    40.0   0.93  0.93
+  madrugada_ociosa                   1440  1.000     40.0    80.0    60.8   0.50  0.66
+  noite_tipica                       5760  0.939    196.1   320.0   220.8   0.61  0.89
+  ocorrencia_na_madrugada            1080  1.000     39.2    60.0    40.8   0.65  0.96
+  saida_de_evento                    1080  1.000     39.2    60.0    30.8   0.65  1.27
+  TOTAL                                             499.6  746.7  539.2   0.67  0.93
+
+A unica discordancia esta em noite_tipica (93.9 por cento): o envelope supunha
+fluxo pleno ate 90 min, e o sistema comeca a atenuar aos 60 min, quando a
+movimentacao cruza a fronteira "alta/media" dos tercis. O envelope foi
+definido antes da execucao e NAO foi ajustado depois - a discordancia fica
+reportada como esta, nos termos de 3.9.
+
+H3 - ACIONAMENTO ANTECIPADO x REATIVO: NAO CONFIRMADA.
+  antecipado: 1527/7200 ciclos em transicao = 21.2 por cento da janela de baixa demanda
+  reativo:    863/7560 ciclos em transicao = 11.4 por cento
+  em noite_tipica, o modo antecipado chega ao piso aos 240 min e o reativo
+  aos 180 min.
+O efeito e o OPOSTO do enunciado em 2.10, e a razao e compreensivel: a
+previsao antecipa tanto a queda quanto a SUBIDA da demanda. Prevendo
+movimentacao media para a hora seguinte, a regra R7 segura a atenuacao, e a
+janela de baixa demanda e gasta em nivel intermediario em vez de no piso. O
+beneficio da antecipacao aparece do outro lado - evitar atenuar as vesperas
+de uma retomada -, que nao e o que H3 enuncia.
+A metrica exclui os ciclos sob chuva ou ocorrencia: neles o pleno e imposto
+pela norma ou pela regra de dominio, e conta-los mediria a verificacao, e
+nao a previsao.
+RESSALVA: o historico que precede cada cenario e sintetico (perfil diario
+declarado no executor); com a serie municipal publicada no formato da
+especificacao de interface o resultado pode ser outro - o que reforca a
+recomendacao de 7.1 sobre retreinar com dado local.
+TEXTO:   6.1 deve registrar H3 como nao confirmada, com esta explicacao;
+         6.2 pode discutir o achado (a antecipacao e simetrica).
+
+
+===============================================================================
+36. LIMIARES DO DIAGNOSTICO (RF11)
+    Trecho: 3.4.5
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+CODIGO:  tolerancia = 3 x a dispersao relativa medida no ensaio de
+         repetibilidade (3 sigma), lida da tabela de calibracao; enquanto o
+         ensaio nao existir, 15 por cento provisorios. Falha total: 3 ciclos
+         (15 s). Perda de controle: 12 ciclos (1 min). O alerta REGISTRA e
+         marca o ponto; nao altera o nivel de iluminacao.
+POR QUE: os dois fenomenos sao diferentes. Falha total (comando nao nulo,
+         leitura na residual) e condicao inequivoca e nao e ruido: detectar
+         em 15 s e seguro e demonstravel na banca. Perda de controle e
+         gradual (sujeira, depreciacao, deslocamento) e nao tem urgencia -
+         nenhum operador age em segundos sobre uma luminaria, e esperar um
+         minuto quase elimina o alarme falso. O 3 sigma vem de 3.4.4: a
+         tolerancia tem de ficar acima da dispersao do proprio instrumento.
+TEXTO:   registrar em 3.4.5 os dois limiares, a regra do 3 sigma e a
+         distincao entre alerta (registro) e failsafe (atuacao).
 
 ===============================================================================
 FIM

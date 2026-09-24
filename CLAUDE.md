@@ -147,16 +147,13 @@ docker-compose.yml
 6. Firmware com MQTT/TLS, PWM calibrado e failsafe → **fluxo completo funcionando**
 7. Painel
 8. Treino do modelo XGBoost (Etapa 3) e troca da previsão provisória ✅ (`modelo/baixar_dados.py` + `treinar.py`; MAE 0,0468 × 0,0572 sazonal × 0,0811 persistência; tercis reais 0,1038 e 0,4053 → `decisao/regras/v1-tercis.toml`; itens 30–32 do DIVERGENCIAS)
-9. Cenários (RF10, com modo reativo), diagnóstico (RF11), energia (RF12)
+9. Cenários (RF10, com modo reativo), diagnóstico (RF11), energia (RF12) ✅ (`cenarios/` 10 cenários com relógio virtual; `decisao/diagnostico.py`; `decisao/energia.py`; **zero violações em 26.880 decisões**; adaptativo = 67 % do pleno e 93 % do horário fixo; **H3 não confirmada**: antecipado 21,2 % × reativo 11,4 % da janela em transição; itens 33–36 do DIVERGENCIAS)
 10. Deploy na VM Oracle com Docker
 
 ## Decisões em aberto (perguntar ao autor antes de assumir)
 
 - **Passo da rampa:** sugestão de um passo a cada 5 s (o Quadro 6 fala em ≈0,017 lux/s, ou seja, passo de 1 s). Cada passo gera uma linha em `decisao`.
-- **Relógio de cenário:** a previsão usa janelas horárias, mas a rampa é em tempo real. Os cenários precisam de tempo acelerado para eventos/previsão e tempo real para a rampa.
 - **Timeout do failsafe** (sugestão: 3× o período do ciclo).
-- **N ciclos consecutivos** do alerta de perda de controle (RF11).
-- **Horário da linha de base de atenuação fixa** (ex.: 0h–5h em P5).
 
 ## Hardware atual (já montado e testado)
 

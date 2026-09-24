@@ -126,7 +126,9 @@ def criterio(conn: psycopg.Connection, classe: str) -> Criterio:
 # ---------------------------------------------------------------------------
 # Estado da via
 # ---------------------------------------------------------------------------
-def estado_via(conn: psycopg.Connection, agora: datetime) -> EstadoVia:
+def estado_via(
+    conn: psycopg.Connection, agora: datetime, desde: datetime | None = None
+) -> EstadoVia:
     """Ultimo evento vigente de cada tipo.
 
     - movimentacao sem vigente_ate vale VALIDADE_MOVIMENTACAO_S; vencida, nao
@@ -134,12 +136,18 @@ def estado_via(conn: psycopg.Connection, agora: datetime) -> EstadoVia:
     - ocorrencia e meteorologia sem vigente_ate valem ate o proximo evento do
       mesmo tipo ('encerrada' / 'limpo'): na duvida, a condicao de risco
       permanece.
+
+    `desde` limita a janela de eventos considerada. Em operacao e None (o
+    estado da via nao "recomeca"). O executor de cenarios passa o inicio da
+    execucao: uma chuva declarada em outro cenario, e nunca encerrada, ficaria
+    vigente para sempre e contaminaria os cenarios seguintes.
     """
     linhas = conn.execute(
         """
         SELECT DISTINCT ON (tipo) id, tipo, valor, rotulo
           FROM evento_urbano
          WHERE ocorrido_em <= %(agora)s
+           AND (%(desde)s::timestamptz IS NULL OR ocorrido_em >= %(desde)s)
            AND COALESCE(vigente_ate,
                         CASE WHEN tipo = 'movimentacao'
                              THEN ocorrido_em + %(validade)s
@@ -147,7 +155,8 @@ def estado_via(conn: psycopg.Connection, agora: datetime) -> EstadoVia:
                         'infinity') > %(agora)s
          ORDER BY tipo, ocorrido_em DESC, id DESC
         """,
-        {"agora": agora, "validade": timedelta(seconds=config.VALIDADE_MOVIMENTACAO_S)},
+        {"agora": agora, "desde": desde,
+         "validade": timedelta(seconds=config.VALIDADE_MOVIMENTACAO_S)},
     ).fetchall()
     por_tipo = {tipo: (eid, valor, rotulo) for eid, tipo, valor, rotulo in linhas}
 
@@ -190,18 +199,28 @@ def historico_horario(conn: psycopg.Connection, agora: datetime, horas: int) -> 
 # Decisao
 # ---------------------------------------------------------------------------
 def _referencia_de_taxa(
-    conn: psycopg.Connection, ponto: Ponto, agora: datetime
+    conn: psycopg.Connection, ponto: Ponto, agora: datetime, execucao_id: int | None = None
 ) -> tuple[Decimal | None, Decimal | None]:
     """Nivel anterior e intervalo para o limite de taxa.
+
+    E a ultima decisao ANTERIOR a `agora` - decisao com carimbo futuro nao e
+    "nivel corrente" e travaria a rampa (o intervalo daria zero). Dentro de
+    um cenario, a referencia e a da propria execucao: duas execucoes com
+    relogios virtuais distintos nao sao uma sequencia fisica.
 
     Se a ultima decisao e mais velha que o timeout do failsafe, o no ja
     voltou sozinho a 1,0 (RNF07): a rampa recomeca do pleno, e nao do ultimo
     valor gravado - senao a luz cairia de 1,0 ao nivel antigo num passo so.
     """
     ultima = conn.execute(
-        "SELECT nivel_emitido, criado_em FROM decisao"
-        " WHERE ponto_de_luz_id = %s ORDER BY criado_em DESC LIMIT 1",
-        (ponto.id,),
+        """
+        SELECT nivel_emitido, criado_em FROM decisao
+         WHERE ponto_de_luz_id = %(ponto)s
+           AND criado_em <= %(agora)s
+           AND (%(execucao)s::bigint IS NULL OR execucao_id = %(execucao)s)
+         ORDER BY criado_em DESC LIMIT 1
+        """,
+        {"ponto": ponto.id, "agora": agora, "execucao": execucao_id},
     ).fetchone()
     if ultima is None:
         return None, None
@@ -223,8 +242,9 @@ def decidir(
     versao_modelo_id: int,
     execucao_id: int | None = None,
     reativo: bool = False,
+    desde: datetime | None = None,
 ) -> DecisaoTomada:
-    estado = estado_via(conn, agora)
+    estado = estado_via(conn, agora, desde)
 
     previsao: float | None = None
     if estado.observada is None:
@@ -253,7 +273,7 @@ def decidir(
             ),
         ).nivel_pretendido
 
-    anterior, segundos = _referencia_de_taxa(conn, ponto, agora)
+    anterior, segundos = _referencia_de_taxa(conn, ponto, agora, execucao_id)
     r = verificar(
         pretendido,
         criterio(conn, ponto.classe_codigo),

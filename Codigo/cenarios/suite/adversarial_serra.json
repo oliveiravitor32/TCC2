@@ -1,0 +1,379 @@
+{
+  "nome": "adversarial_serra",
+  "descricao": "ADVERSARIAL: movimentacao alternando entre vazio e cheio a cada minuto, para induzir violacao de taxa.",
+  "origem": "Cenario construido para submeter a camada de verificacao a esforco (3.9, Etapa 4).",
+  "adversarial": true,
+  "inicio_local": "2026-09-23T00:00:00",
+  "duracao_min": 60,
+  "eventos": [
+    {
+      "em_min": 0,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 1,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 2,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 3,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 4,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 5,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 6,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 7,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 8,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 9,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 10,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 11,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 12,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 13,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 14,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 15,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 16,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 17,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 18,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 19,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 20,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 21,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 22,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 23,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 24,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 25,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 26,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 27,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 28,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 29,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 30,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 31,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 32,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 33,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 34,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 35,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 36,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 37,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 38,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 39,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 40,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 41,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 42,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 43,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 44,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 45,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 46,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 47,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 48,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 49,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 50,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 51,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 52,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 53,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 54,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 55,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 56,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 57,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 58,
+      "tipo": "movimentacao",
+      "valor": 0.01,
+      "vigente_min": 2
+    },
+    {
+      "em_min": 59,
+      "tipo": "movimentacao",
+      "valor": 0.95,
+      "vigente_min": 2
+    }
+  ],
+  "envelope": [
+    {
+      "de_min": 0,
+      "ate_min": 60,
+      "min": 0.5,
+      "max": 1.0,
+      "nota": "qualquer nivel admissivel; o que se verifica e o invariante"
+    }
+  ]
+}

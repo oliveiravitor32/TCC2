@@ -24,11 +24,12 @@ def test_decisao_do_passo_fica_visivel_para_outra_conexao():
     s = Servico()
     outra = psycopg.connect(config.DATABASE_URL, autocommit=True)
     try:
-        antes = outra.execute("SELECT max(criado_em) FROM decisao").fetchone()[0]
+        # Pelo relogio REAL: a suite de cenarios grava decisoes com carimbos
+        # no futuro virtual, e um max(criado_em) global nunca seria superado.
         s.passo()  # broker desconectado: publica falha, mas a decisao e gravada
         novas = outra.execute(
-            "SELECT id FROM decisao WHERE %s::timestamptz IS NULL OR criado_em > %s",
-            (antes, antes),
+            "SELECT id FROM decisao WHERE execucao_id IS NULL"
+            "   AND criado_em > now() - interval '2 minutes'"
         ).fetchall()
         assert len(novas) >= 1
     finally:

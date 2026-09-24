@@ -8,11 +8,16 @@ DIVERGENCIAS_TCC.txt. Podem ser trocadas por variavel de ambiente.
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from zoneinfo import ZoneInfo
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://iluminacao:iluminacao@localhost:5432/iluminacao"
 )
+
+# Base de regras vigente (3.7). A v0 continua no repositorio porque produziu
+# as primeiras decisoes; a v1 tem os tercis reais da serie (item 31).
+REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v1-tercis.toml")
 
 # Ciclo de decisao e failsafe do no (DIVERGENCIAS 1 e 2).
 PERIODO_S = float(os.environ.get("PERIODO_S", "5"))
@@ -36,3 +41,15 @@ MQTT_QOS = 1
 TOPICO_COMANDO = "iluminacao/{ponto}/comando"
 TOPICO_TELEMETRIA = "iluminacao/+/telemetria"
 TOPICO_ESTADO = "iluminacao/+/estado"
+
+# Diagnostico do ponto de luz (RF11, 3.4.5).
+# A tolerancia NAO e arbitrada: sai da dispersao medida no ensaio de
+# repetibilidade (3.4.4), multiplicada por K_SIGMA. Os contadores sao
+# diferentes porque os fenomenos sao diferentes: falha total e condicao
+# inequivoca; perda de controle e gradual e o alerta so registra.
+K_SIGMA = float(os.environ.get("K_SIGMA", "3"))
+CICLOS_FALHA_TOTAL = int(os.environ.get("CICLOS_FALHA_TOTAL", "3"))
+CICLOS_PERDA_CONTROLE = int(os.environ.get("CICLOS_PERDA_CONTROLE", "12"))
+# Enquanto nao houver ensaio de repetibilidade, esta tolerancia provisoria
+# evita alarme falso; o valor definitivo vem da bancada.
+TOLERANCIA_PROVISORIA = float(os.environ.get("TOLERANCIA_PROVISORIA", "0.15"))

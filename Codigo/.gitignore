@@ -6,3 +6,5 @@ __pycache__/
 *_SIMULADA*
 # Serie de Melbourne: baixada por modelo/baixar_dados.py, fora do git
 modelo/dados/*.csv
+# Relatorios da suite: gerados por cenarios/executar.py
+cenarios/resultados/*.json
