@@ -25,6 +25,7 @@ export const api = {
   telemetria: (params) => pegar("/telemetria", params),
   eventos: (params) => pegar("/eventos", params),
   alertas: (params) => pegar("/alertas", params),
+  energia: (params) => pegar("/energia", params),
 };
 
 // Rotulos das correcoes da camada de verificacao (3.7).

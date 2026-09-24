@@ -35,6 +35,10 @@ def test_decisao_do_passo_fica_visivel_para_outra_conexao():
     finally:
         ids = [r[0] for r in novas] if "novas" in locals() else []
         if ids:
+            # A telemetria vem primeiro: com o no simulado no ar, a decisao
+            # que o teste criou ja pode ter recebido a leitura de volta, e a
+            # chave estrangeira impede apagar a decisao antes dela.
+            outra.execute("DELETE FROM telemetria WHERE decisao_id = ANY(%s)", (ids,))
             outra.execute("DELETE FROM decisao_evento WHERE decisao_id = ANY(%s)", (ids,))
             outra.execute("DELETE FROM decisao WHERE id = ANY(%s)", (ids,))
         outra.close()

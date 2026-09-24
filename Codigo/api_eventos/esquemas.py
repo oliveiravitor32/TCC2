@@ -128,3 +128,40 @@ class Alerta(BaseModel):
     ciclos: int | None
     aberto_em: datetime
     encerrado_em: datetime | None
+
+
+class AmostraEnergia(BaseModel):
+    """Um instante da serie de potencia (RF12)."""
+
+    medido_em: datetime
+    # Fracao do fluxo pleno pela LUZ MEDIDA e pelo COMANDO: 3.11 manda
+    # confrontar as duas estimativas.
+    fracao_medida: float
+    fracao_comandada: float
+    potencia_medida_w: float
+    potencia_comandada_w: float
+
+
+class Energia(BaseModel):
+    """GET /energia: consumo estimado na janela, para a luminaria de referencia.
+
+    Estimativa, nao medicao eletrica (3.11): supoe potencia proporcional ao
+    nivel e despreza o consumo fixo do driver e do controlador, o que a torna
+    um limite superior otimista.
+    """
+
+    ponto: str
+    luminaria: str
+    potencia_nominal_w: float
+    janela_min: float
+    inicio: datetime
+    fim: datetime
+    amostras: list[AmostraEnergia]
+    potencia_agora_w: float | None
+    energia_pela_luz_wh: float
+    energia_pelo_comando_wh: float
+    energia_pleno_wh: float
+    energia_horario_fixo_wh: float
+    razao_pleno: float | None
+    razao_horario_fixo: float | None
+    divergencia_entre_estimativas: float | None

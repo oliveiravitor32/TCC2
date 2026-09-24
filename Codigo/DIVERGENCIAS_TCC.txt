@@ -838,5 +838,40 @@ TEXTO:   em 4.6.1 e no Quadro 12, dizer que o painel e estatico e publicado
          rodam em conteineres na maquina virtual.
 
 ===============================================================================
+39. CONSUMO EM TEMPO REAL NO PAINEL, DERIVADO DA ILUMINANCIA MEDIDA
+    Trecho: 3.11 (verificacao cruzada entre as duas estimativas), RF08 e RF12
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+TCC:     3.11 preve DUAS estimativas de energia - uma derivada do ciclo
+         comandado e outra derivada da iluminancia medida - e manda reportar
+         a divergencia entre elas. O texto trata disso como resultado (5.5),
+         nao como leitura de tela.
+CODIGO:  endpoint GET /energia e um cartao no painel mostram, a cada 2 s:
+         - a potencia instantanea da luminaria de referencia do Quadro 9,
+           calculada pela LUZ MEDIDA (fracao = iluminancia liquida dividida
+           pela iluminancia da classe, descontada a residual da sessao);
+         - a energia acumulada na janela, ao lado das duas linhas de base de
+           3.11 (fluxo pleno constante e atenuacao por horario fixo);
+         - a divergencia para a estimativa pelo COMANDO, que e exatamente a
+           verificacao cruzada que 3.11 pede.
+         A conta fica no servidor, no mesmo modulo decisao/energia.py que
+         produz os numeros do Capitulo 5: nao existe uma segunda
+         implementacao do RF12 no painel que pudesse divergir daquela.
+POR QUE: a potencia do segmento de fita (cerca de 1 W) nao tem significado
+         para quem raciocina em termos do parque, e 3.11 ja resolve isso
+         projetando para a luminaria de referencia. Mostrar essa projecao ao
+         vivo torna o RF12 observavel durante a demonstracao, do mesmo modo
+         que o painel ja torna observavel a camada de verificacao.
+OBSERVACAO util para o texto: com o no simulado e SEM sessao de medicao
+         aberta, a fracao medida passou de 1,0 (41,4 W numa luminaria de
+         40 W), porque a residual nao e descontada quando nao ha sessao. Isso
+         nao e defeito do calculo: e a propria razao pela qual 3.4.3 exige
+         registrar a residual antes de cada sessao. Na bancada real, com a
+         sessao aberta pelo bancada/calibrar.py, o desconto acontece.
+TEXTO:   acrescentar o endpoint ao Quadro 14 (junto com /pontos e /alertas,
+         item 37) e, em 5.5, registrar que a comparacao entre as duas
+         estimativas tambem e exibida em tempo real.
+
+===============================================================================
 FIM
 ===============================================================================

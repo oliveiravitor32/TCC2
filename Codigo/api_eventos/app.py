@@ -13,15 +13,31 @@ from __future__ import annotations
 import os
 from collections.abc import Iterator
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, time, timedelta, timezone
 
 import psycopg
-from fastapi import Depends, FastAPI, Query, status
+from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
 
-from .esquemas import Alerta, Decisao, Evento, EventoEntrada, Ponto, Telemetria, Tipo
+from decisao.energia import (
+    energia_decisoes,
+    energia_pleno_constante,
+    energia_por_fracao,
+    trajetoria_horario_fixo,
+)
+
+from .esquemas import (
+    Alerta,
+    Decisao,
+    Energia,
+    Evento,
+    EventoEntrada,
+    Ponto,
+    Telemetria,
+    Tipo,
+)
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://iluminacao:iluminacao@localhost:5432/iluminacao"
@@ -30,6 +46,10 @@ LIMITE_MAX = 5000
 # O painel e servido de outra origem (Vercel) e a API roda na VM: sem CORS o
 # navegador bloqueia a leitura. Lista separada por virgula; "*" libera todas.
 ORIGENS = [o.strip() for o in os.environ.get("ORIGENS_PAINEL", "*").split(",") if o.strip()]
+# Linha de base por horario fixo (3.11): a programacao agendada que uma
+# telegestao sem dados urbanos faria.
+HORA_INICIO_ATENUACAO = time(0, 0)
+HORA_FIM_ATENUACAO = time(5, 0)
 
 _pool: ConnectionPool | None = None
 
@@ -193,6 +213,125 @@ def consultar_alertas(
         """,
         {"abertos": abertos, "limite": limite},
     ).fetchall()
+
+
+@app.get("/energia", response_model=Energia)
+def consultar_energia(
+    ponto: str | None = None,
+    janela_min: float = Query(30, gt=0, le=1440),
+    luminaria: str = "REF-40W",
+    conn: psycopg.Connection = Conn,
+) -> dict:
+    """Consumo estimado na janela, projetado para a luminaria do Quadro 9.
+
+    A serie vem da LUZ MEDIDA - fracao = iluminancia liquida / iluminancia da
+    classe -, e a mesma janela e integrada tambem pelo COMANDO, pelo fluxo
+    pleno constante e pela atenuacao por horario fixo (3.11). A potencia da
+    bancada nao serve para essa leitura: o segmento de fita consome cerca de
+    um watt, sem significado para quem raciocina em termos do parque.
+    """
+    ref = conn.execute(
+        "SELECT codigo, potencia_nominal_w FROM luminaria_referencia WHERE codigo = %s",
+        (luminaria,),
+    ).fetchone()
+    if ref is None:
+        raise HTTPException(404, f"luminaria de referencia {luminaria!r} nao cadastrada")
+
+    alvo = conn.execute(
+        """
+        SELECT p.id, p.codigo, c.iluminancia_media_min_lux,
+               cm.iluminancia_media_min_lux / c.iluminancia_media_min_lux AS piso
+          FROM ponto_de_luz p
+          JOIN classe_iluminacao c       ON c.codigo = p.classe_codigo
+          LEFT JOIN classe_iluminacao cm ON cm.codigo = c.classe_min_dimerizacao
+         WHERE (%s::text IS NULL OR p.codigo = %s)
+         ORDER BY p.codigo LIMIT 1
+        """,
+        (ponto, ponto),
+    ).fetchone()
+    if alvo is None:
+        raise HTTPException(404, "nenhum ponto de luz cadastrado")
+
+    potencia = float(ref["potencia_nominal_w"])
+    lux_pleno = float(alvo["iluminancia_media_min_lux"])
+    piso = float(alvo["piso"] or 1.0)
+    fim = datetime.now(timezone.utc)
+    inicio = fim - timedelta(minutes=janela_min)
+
+    linhas = conn.execute(
+        """
+        SELECT t.medido_em, t.recebido_em, t.duty, t.lux_medido,
+               COALESCE(s.lux_residual, 0) AS residual, d.nivel_emitido
+          FROM telemetria t
+          JOIN decisao d ON d.id = t.decisao_id
+          LEFT JOIN sessao_medicao s ON s.id = t.sessao_id
+         WHERE t.ponto_de_luz_id = %(ponto)s AND t.recebido_em >= %(inicio)s
+         ORDER BY t.recebido_em
+        """,
+        {"ponto": alvo["id"], "inicio": inicio},
+    ).fetchall()
+
+    amostras = []
+    for l in linhas:
+        # Fracao pela luz: quanto da iluminancia da classe esta sendo
+        # entregue. E o que o texto chama de verificacao cruzada da
+        # estimativa derivada do ciclo comandado.
+        medida = max((float(l["lux_medido"]) - float(l["residual"])) / lux_pleno, 0.0)
+        comandada = float(l["nivel_emitido"])
+        amostras.append({
+            "medido_em": l["recebido_em"],
+            "fracao_medida": round(medida, 4),
+            "fracao_comandada": round(comandada, 4),
+            "potencia_medida_w": round(potencia * medida, 3),
+            "potencia_comandada_w": round(potencia * comandada, 3),
+        })
+
+    serie_luz = [(a["medido_em"], a["fracao_medida"]) for a in amostras]
+    pela_luz = energia_por_fracao(serie_luz, potencia, fim=fim)
+
+    decisoes = conn.execute(
+        """
+        SELECT criado_em, nivel_anterior, nivel_emitido FROM decisao
+         WHERE ponto_de_luz_id = %(ponto)s AND criado_em >= %(inicio)s
+         ORDER BY criado_em
+        """,
+        {"ponto": alvo["id"], "inicio": inicio},
+    ).fetchall()
+    pelo_comando = energia_decisoes(
+        [(d["criado_em"],
+          float(d["nivel_anterior"]) if d["nivel_anterior"] is not None else None,
+          float(d["nivel_emitido"])) for d in decisoes],
+        potencia, fim=fim,
+    )
+
+    pleno = energia_pleno_constante(potencia, janela_min)
+    fixo = energia_decisoes(
+        trajetoria_horario_fixo(
+            inicio, fim, piso,
+            hora_inicio_atenuacao=HORA_INICIO_ATENUACAO,
+            hora_fim_atenuacao=HORA_FIM_ATENUACAO,
+        ),
+        potencia, fim=fim,
+    )
+    return {
+        "ponto": alvo["codigo"],
+        "luminaria": ref["codigo"],
+        "potencia_nominal_w": potencia,
+        "janela_min": janela_min,
+        "inicio": inicio,
+        "fim": fim,
+        "amostras": amostras,
+        "potencia_agora_w": amostras[-1]["potencia_medida_w"] if amostras else None,
+        "energia_pela_luz_wh": round(pela_luz, 4),
+        "energia_pelo_comando_wh": round(pelo_comando, 4),
+        "energia_pleno_wh": round(pleno, 4),
+        "energia_horario_fixo_wh": round(fixo, 4),
+        "razao_pleno": round(pela_luz / pleno, 4) if pleno else None,
+        "razao_horario_fixo": round(pela_luz / fixo, 4) if fixo else None,
+        "divergencia_entre_estimativas": (
+            round(pela_luz / pelo_comando - 1, 4) if pelo_comando else None
+        ),
+    }
 
 
 @app.get("/telemetria", response_model=list[Telemetria])

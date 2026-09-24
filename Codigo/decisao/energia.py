@@ -26,7 +26,8 @@ from datetime import datetime, time, timedelta
 
 __all__ = [
     "Passo", "energia_passo", "energia_decisoes", "energia_bancada",
-    "energia_pleno_constante", "trajetoria_horario_fixo", "TAXA_PADRAO",
+    "energia_por_fracao", "energia_pleno_constante", "trajetoria_horario_fixo",
+    "TAXA_PADRAO",
 ]
 
 TAXA_PADRAO = 0.1  # fracao do fluxo pleno por minuto (NBR 5101, 6.10.2)
@@ -88,6 +89,34 @@ def energia_decisoes(
     return total
 
 
+def energia_por_fracao(
+    serie: list[tuple[datetime, float]],
+    potencia_plena_w: float,
+    fim: datetime | None = None,
+) -> float:
+    """Energia (Wh) de uma serie (instante, fracao da potencia plena).
+
+    Cada valor vale ate a leitura seguinte. Serve as duas estimativas que
+    3.11 manda confrontar:
+
+      - pelo COMANDO: a fracao e o ciclo de trabalho aplicado pelo no;
+      - pela LUZ MEDIDA: a fracao e a iluminancia liquida dividida pela
+        iluminancia da classe.
+
+    A divergencia entre as duas e o que o texto pede que seja reportado.
+    """
+    if not serie:
+        return 0.0
+    ordenada = sorted(serie, key=lambda t: t[0])
+    total = 0.0
+    for i, (quando, fracao) in enumerate(ordenada):
+        seguinte = ordenada[i + 1][0] if i + 1 < len(ordenada) else fim
+        if seguinte is None:
+            break
+        total += potencia_plena_w * max(fracao, 0.0) * (seguinte - quando).total_seconds() / 3600
+    return total
+
+
 def energia_bancada(
     telemetria: list[tuple[datetime, float]],
     potencia_plena_w: float,
@@ -99,16 +128,7 @@ def energia_bancada(
     duty vale ate a leitura seguinte - e a trajetoria efetivamente aplicada,
     nao a decidida.
     """
-    if not telemetria:
-        return 0.0
-    ordenada = sorted(telemetria, key=lambda t: t[0])
-    total = 0.0
-    for i, (quando, duty) in enumerate(ordenada):
-        seguinte = ordenada[i + 1][0] if i + 1 < len(ordenada) else fim
-        if seguinte is None:
-            break
-        total += potencia_plena_w * duty * (seguinte - quando).total_seconds() / 3600
-    return total
+    return energia_por_fracao(telemetria, potencia_plena_w, fim)
 
 
 def energia_pleno_constante(potencia_w: float, minutos: float) -> float:

@@ -12,14 +12,16 @@ import { CircleDot, Lightbulb, Pause, Play, RefreshCw, WifiOff } from "lucide-re
 import { ESTADOS, api, hora } from "./api";
 import { Entregue, EstadoDaVia, Inferencia, Verificacao } from "./componentes/Cartoes";
 import { Alertas, Decisoes, Eventos } from "./componentes/Listas";
+import Energia from "./componentes/Energia";
 import Trajetoria from "./componentes/Trajetoria";
 
 const PERIODO_MS = 2000; // metade do ciclo de decisao (5 s), sem afoga-lo
 const JANELA = 240; // decisoes exibidas na trajetoria
+const JANELA_ENERGIA_MIN = 30; // minutos integrados no cartao de consumo
 
 export default function App() {
   const [dados, setDados] = useState({
-    pontos: [], decisoes: [], telemetria: [], eventos: [], alertas: [],
+    pontos: [], decisoes: [], telemetria: [], eventos: [], alertas: [], energia: null,
   });
   const [erro, setErro] = useState(null);
   const [rodando, setRodando] = useState(true);
@@ -30,14 +32,15 @@ export default function App() {
     if (carregando.current) return; // nao empilha requisicao lenta
     carregando.current = true;
     try {
-      const [pontos, decisoes, telemetria, eventos, alertas] = await Promise.all([
+      const [pontos, decisoes, telemetria, eventos, alertas, energia] = await Promise.all([
         api.pontos(),
         api.decisoes({ limite: JANELA }),
         api.telemetria({ limite: JANELA }),
         api.eventos({ limite: 40 }),
         api.alertas({ abertos: true }),
+        api.energia({ janela_min: JANELA_ENERGIA_MIN }),
       ]);
-      setDados({ pontos, decisoes, telemetria, eventos, alertas });
+      setDados({ pontos, decisoes, telemetria, eventos, alertas, energia });
       setAtualizadoEm(new Date());
       setErro(null);
     } catch (e) {
@@ -131,6 +134,8 @@ export default function App() {
           luxPleno={ponto?.lux_pleno ?? 10}
         />
       </section>
+
+      <Energia energia={dados.energia} />
 
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2">

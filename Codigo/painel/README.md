@@ -6,8 +6,13 @@ camada de verificação** e **a iluminância medida no nó** — a cadeia que to
 conformidade normativa observável durante a execução e durante a defesa.
 
 É um aplicativo **só de leitura**: não publica evento e não comanda nada. Consome a
-interface REST do Quadro 14 (`/pontos`, `/decisoes`, `/telemetria`, `/eventos`,
-`/alertas`), atualizando a cada 2 s.
+interface REST (`/pontos`, `/decisoes`, `/telemetria`, `/eventos`, `/alertas`,
+`/energia`), atualizando a cada 2 s.
+
+O cartão de consumo projeta a potência da **luminária de referência do Quadro 9**
+(40 W) a partir da iluminância medida, e a compara com o fluxo pleno constante e com
+a atenuação por horário fixo. A conta é feita no servidor, pelo mesmo módulo que
+produz os resultados do Capítulo 5 — o painel não recalcula nada por conta própria.
 
 Stack: Vite + React + Tailwind CSS 4 + lucide-react.
 

@@ -203,3 +203,94 @@ def test_alertas_lista_apenas_os_abertos_por_padrao(cliente, conn):
 def test_cors_liberado_para_o_painel(cliente):
     r = cliente.get("/pontos", headers={"Origin": "https://painel.vercel.app"})
     assert r.headers.get("access-control-allow-origin") is not None
+
+
+# --------------------------------------------------------------------------
+# GET /energia (RF12, 3.11): consumo estimado para a luminaria de referencia
+# --------------------------------------------------------------------------
+def _telemetria_em(conn, quando, nivel, lux, residual_sessao=None):
+    """Uma decisao com telemetria num instante dado, para a serie de energia."""
+    sessao = None
+    if residual_sessao is not None:
+        sessao = conn.execute(
+            "INSERT INTO sessao_medicao (ponto_de_luz_id, lux_residual, lux_classe)"
+            " SELECT id, %s, 10 FROM ponto_de_luz WHERE codigo = 'BANCADA-01' RETURNING id",
+            (residual_sessao,),
+        ).fetchone()["id"]
+    d = conn.execute(
+        """
+        INSERT INTO decisao (criado_em, ponto_de_luz_id, versao_base_regras_id,
+                             versao_modelo_id, classe_codigo, nivel_pretendido,
+                             nivel_emitido, restricao_aplicada)
+        SELECT %s, p.id, r.id, m.id, 'P3', %s, %s, 'nenhuma'
+          FROM ponto_de_luz p, versao_base_regras r, versao_modelo_previsao m
+         WHERE p.codigo = 'BANCADA-01' AND r.rotulo = 'v0-provisoria'
+           AND m.rotulo = 'persistencia'
+        RETURNING id
+        """,
+        (quando, nivel, nivel),
+    ).fetchone()["id"]
+    conn.execute(
+        "INSERT INTO telemetria (decisao_id, ponto_de_luz_id, sessao_id, medido_em,"
+        " recebido_em, duty, lux_medido)"
+        " SELECT %s, id, %s, %s, %s, %s, %s FROM ponto_de_luz WHERE codigo = 'BANCADA-01'",
+        (d, sessao, quando, quando, nivel / 2, lux),
+    )
+    return d
+
+
+def test_energia_sem_telemetria(cliente):
+    r = cliente.get("/energia", params={"janela_min": 10}).json()
+    assert r["luminaria"] == "REF-40W" and r["potencia_nominal_w"] == 40.0
+    assert r["amostras"] == [] and r["potencia_agora_w"] is None
+    assert r["energia_pela_luz_wh"] == 0
+    assert r["energia_pleno_wh"] == pytest.approx(40 * 10 / 60, abs=0.01)
+
+
+def test_energia_integra_a_serie_da_luz_medida(cliente, conn):
+    import datetime as dt
+
+    agora = dt.datetime.now(dt.timezone.utc)
+    # Meia hora inteira no piso (5 lx de 10 lx = metade do fluxo pleno).
+    for k in range(30, 0, -1):
+        _telemetria_em(conn, agora - dt.timedelta(minutes=k), 0.5, 5.0)
+    r = cliente.get("/energia", params={"janela_min": 30}).json()
+    # 29 ou 30: a amostra mais antiga cai na borda da janela, e o "agora" do
+    # servidor e alguns milissegundos posterior ao do teste.
+    assert len(r["amostras"]) >= 29
+    assert r["amostras"][-1]["fracao_medida"] == pytest.approx(0.5, abs=0.01)
+    assert r["potencia_agora_w"] == pytest.approx(20.0, abs=0.5)
+    # Metade da potencia por meia hora: cerca de 10 Wh, contra 20 Wh do pleno.
+    assert r["energia_pela_luz_wh"] == pytest.approx(10.0, rel=0.06)
+    assert r["energia_pleno_wh"] == pytest.approx(20.0, abs=0.01)
+    assert r["razao_pleno"] == pytest.approx(0.5, rel=0.05)
+
+
+def test_energia_desconta_a_residual_da_sessao(cliente, conn):
+    import datetime as dt
+
+    agora = dt.datetime.now(dt.timezone.utc)
+    # 5,4 lx medidos com 0,4 de residual = 5,0 liquidos = metade do pleno.
+    _telemetria_em(conn, agora - dt.timedelta(minutes=2), 0.5, 5.4, residual_sessao=0.4)
+    _telemetria_em(conn, agora - dt.timedelta(minutes=1), 0.5, 5.4, residual_sessao=None)
+    r = cliente.get("/energia", params={"janela_min": 10}).json()
+    assert r["amostras"][0]["fracao_medida"] == pytest.approx(0.5, abs=0.01)
+    # Sem sessao aberta, a residual nao e descontada e a fracao sai maior.
+    assert r["amostras"][1]["fracao_medida"] > r["amostras"][0]["fracao_medida"]
+
+
+def test_energia_nos_dois_extremos_da_faixa_contratual(cliente, conn):
+    import datetime as dt
+
+    agora = dt.datetime.now(dt.timezone.utc)
+    for k in range(10, 0, -1):
+        _telemetria_em(conn, agora - dt.timedelta(minutes=k), 0.5, 5.0)
+    p40 = cliente.get("/energia", params={"janela_min": 10}).json()
+    p440 = cliente.get("/energia", params={"janela_min": 10, "luminaria": "REF-440W"}).json()
+    assert p440["energia_pela_luz_wh"] == pytest.approx(11 * p40["energia_pela_luz_wh"], rel=1e-3)
+    # 3.11: a razao entre regimes nao depende da potencia nominal.
+    assert p440["razao_pleno"] == pytest.approx(p40["razao_pleno"], rel=1e-3)
+
+
+def test_energia_com_luminaria_desconhecida(cliente):
+    assert cliente.get("/energia", params={"luminaria": "REF-1W"}).status_code == 404
