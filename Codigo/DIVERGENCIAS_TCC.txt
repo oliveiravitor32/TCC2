@@ -979,5 +979,54 @@ TEXTO:   explicitar na limitacao de 6.3 que, em campo, um ponto de luz
          ponto, com movimentacao de pedestres e de veiculos.
 
 ===============================================================================
+43. POR QUE INFERENCIA NEBULOSA COM UMA UNICA CLASSE
+    Trecho: 2.6 (escolha do modelo interpretavel) e 3.7 (mecanismo de decisao)
+    Acao: [ACRESCENTAR]
+    >>> PERGUNTA PENDENTE AO AUTOR - ver o fim deste item <<<
+-------------------------------------------------------------------------------
+TCC:     2.6 justifica a inferencia nebulosa pela composicao de evidencias
+         parciais, pela continuidade da saida e pela rastreabilidade. O
+         trabalho adota uma unica classe (P3), o que pode levar a banca a
+         perguntar se o metodo faz sentido sem varias classes a combinar.
+CODIGO:  a classe NAO e entrada da inferencia: e parametro da camada de
+         verificacao (define o piso). A inferencia compoe tres variaveis
+         graduadas - movimentacao observada, movimentacao prevista e faixa
+         horaria -, e trata ocorrencia e meteorologia como condicoes que
+         suspendem a atenuacao (itens 18 e 27).
+TEXTO PARA O DOCUMENTO (aprovado pelo autor; em 2.6 ou 3.7):
+         "A multiplicidade que justifica a inferencia nebulosa e de
+         variaveis, e nao de classes: mesmo numa unica classe, o sistema
+         compoe movimentacao observada, prevista e faixa horaria, e trata
+         ocorrencia e condicao meteorologica como condicoes que suspendem a
+         atenuacao. A classe e parametro da camada de verificacao. A extensao
+         para vias de classe M, ou para pontos de luz que atendem pista e
+         calcada, acrescenta uma segunda medida de demanda - o caso em que a
+         composicao de evidencias parciais se torna ainda mais necessaria -
+         sem alterar o metodo."
+PONTOS FRACOS PARA A DEFESA (preparar resposta, nao necessariamente escrever):
+         1. o conjunto "reduzido" (0 a 0,45) fica inteiro abaixo do piso de
+            0,5: na pratica o comportamento efetivo se aproxima de tres
+            patamares (piso, ~0,55, ~0,93) mais as rampas. Resposta: decisao
+            deliberada (item 19), a inferencia nao conhece a norma;
+         2. "uma tabela de tres linhas nao faria o mesmo?" - a diferenca
+            existe nas fronteiras dos tercis, mas hoje NAO ha medicao que a
+            prove. E o ponto mais fragil (ver a pergunta abaixo);
+         3. o argumento da "continuidade da saida" em 2.6 e parcialmente
+            redundante: quem garante a transicao suave e a rampa da camada de
+            verificacao, que suavizaria tambem uma tabela em degraus;
+         4. a previsao nao demonstrou beneficio na decisao (H3 nao
+            confirmada, item 35), embora preveja bem (item 32).
+
+-------------------------------------------------------------------------------
+PERGUNTA PENDENTE - fazer ao autor quando as divergencias forem resolvidas:
+-------------------------------------------------------------------------------
+  Para fortalecer o ponto 2 (o mais fragil), o experimento seria rodar a
+  MESMA suite de cenarios com uma tabela de regras sem logica nebulosa - os
+  mesmos limiares (tercis), so que em degraus - e comparar aderencia ao
+  envelope, numero de mudancas bruscas de nivel e energia. E de baixo custo,
+  porque a suite ja existe, e transformaria o ponto mais fragil num
+  resultado. PERGUNTAR se e para fazer. Ainda nao foi feito.
+
+===============================================================================
 FIM
 ===============================================================================

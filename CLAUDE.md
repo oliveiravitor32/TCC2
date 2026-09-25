@@ -152,6 +152,8 @@ docker-compose.yml
 
 ## Decisões em aberto (perguntar ao autor antes de assumir)
 
+- **Ao resolver as divergências do `DIVERGENCIAS_TCC.txt` com o autor, avisar e perguntar sobre o item 43:** se é para rodar a suíte de cenários também com uma **tabela de regras em degraus** (mesmos tercis, sem lógica nebulosa) e comparar aderência, mudanças bruscas de nível e energia. Responde à pergunta provável da banca "uma tabela não bastaria?". Ainda não foi feito.
+
 - **Passo da rampa:** sugestão de um passo a cada 5 s (o Quadro 6 fala em ≈0,017 lux/s, ou seja, passo de 1 s). Cada passo gera uma linha em `decisao`.
 - **Timeout do failsafe** (sugestão: 3× o período do ciclo).
 
