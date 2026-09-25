@@ -190,6 +190,34 @@ void iniciarMqtt() {
   esp_mqtt_client_start(cliente);
 }
 
+// ---- Diagnostico de Wi-Fi ----------------------------------------------------
+// Chamado quando a conexao falha: lista as redes que o ESP32 enxerga. Ele so
+// opera em 2,4 GHz; se a rede configurada nao aparece, ou e de 5 GHz ou o
+// sinal nao chega. Se aparece, o problema e nome ou senha.
+void diagnosticarWifi() {
+  Serial.printf("status do Wi-Fi: %d (1 = rede nao encontrada, 4 = conexao recusada, "
+                "6 = desconectado)\n", WiFi.status());
+  Serial.println("redes que o ESP32 enxerga (so 2,4 GHz):");
+  int n = WiFi.scanNetworks();
+  bool achou = false;
+  for (int i = 0; i < n; i++) {
+    bool eh = WiFi.SSID(i) == WIFI_SSID;
+    achou |= eh;
+    Serial.printf("  %s \"%s\"  sinal %d dBm  canal %d%s\n", eh ? ">>" : "  ",
+                  WiFi.SSID(i).c_str(), WiFi.RSSI(i), WiFi.channel(i),
+                  WiFi.encryptionType(i) == WIFI_AUTH_WPA2_ENTERPRISE ? "  (corporativa)" : "");
+  }
+  if (n <= 0) Serial.println("  nenhuma rede encontrada");
+  if (achou) {
+    Serial.println("-> a rede configurada APARECE: confira a SENHA (maiusculas, espacos).");
+  } else {
+    Serial.printf("-> a rede \"%s\" NAO aparece: ela e de 5 GHz, o nome esta diferente "
+                  "(maiusculas contam) ou o sinal nao chega.\n", WIFI_SSID);
+  }
+  WiFi.scanDelete();
+  WiFi.begin(WIFI_SSID, WIFI_SENHA);  // o scan interrompe a tentativa; recomeca
+}
+
 // ---- Setup / loop ------------------------------------------------------------
 void setup() {
   Serial.begin(115200);
@@ -217,9 +245,12 @@ void setup() {
     delay(250);
     Serial.print(".");
   }
-  Serial.println(WiFi.status() == WL_CONNECTED
-                     ? " ok, IP " + WiFi.localIP().toString()
-                     : " falhou (segue tentando; a luz fica no pleno)");
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println(" ok, IP " + WiFi.localIP().toString());
+  } else {
+    Serial.println(" falhou (segue tentando; a luz fica no pleno)");
+    diagnosticarWifi();
+  }
 
   configTime(0, 0, "pool.ntp.org", "time.google.com");  // hora UTC para medido_em
   iniciarMqtt();
