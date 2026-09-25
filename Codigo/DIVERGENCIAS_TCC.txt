@@ -887,13 +887,13 @@ TCC:     os calculos de ordem de grandeza supoem a luminaria a 1,5 m do plano
 BANCADA: caixa de papelao de 44 x 16 x 19 cm, forrada internamente de papel
          camurca preto (face interna fosca, 3.4.3). Fita e sensor centrados
          nas paredes opostas da maior dimensao, um de frente para o outro:
-         h = 0,44 m, no eixo. Segmento de 3 emissores (5 cm, o menor
-         intervalo de seccionamento), atenuado por difusor de papel ate o
+         h = 0,44 m, no eixo. Segmento de 3 emissores (6 cm medidos, o
+         menor intervalo de seccionamento), atenuado por difusor de papel ate o
          teto ficar no criterio: 18,00 lx a ciclo pleno = 1,80 x a classe,
          com residual de 0,00 lx.
 CONSEQUENCIAS NOS NUMEROS DO TEXTO:
-         - fonte pontual: 5 cm a 44 cm subtendem 2 x atan(2,5/44) = 6,5 graus.
-           A distancia e 8,8 vezes o comprimento da fonte, acima da regra
+         - fonte pontual: 6 cm a 44 cm subtendem 2 x atan(3/44) = 7,8 graus.
+           A distancia e 7,3 vezes o comprimento da fonte, acima da regra
            pratica de 5 vezes, com a qual o erro da lei do inverso do
            quadrado fica abaixo de 1 %. O argumento se mantem;
          - refletor de 800 lm: a 0,44 m, E = 800 / (pi x 0,44^2) = cerca de
@@ -913,11 +913,15 @@ OBSERVACAO: 42,6 lx sem difusor a 0,44 m correspondem a cerca de 26 lm no
          fluxo declarado pelos fornecedores (600 lm/m). E mais um registro
          de que o valor de catalogo nao e confiavel, que e o que 3.4.2 ja
          afirma para justificar a determinacao por medicao.
-TEXTO:   no Quadro 5, trocar os dois calculos para 0,44 m (6,5 graus; cerca
+TEXTO:   no Quadro 5, trocar os dois calculos para 0,44 m (7,8 graus; cerca
          de 1.300 lx); em 3.4.2, trocar "altura" por "distancia", substituir
          "poucas dezenas de centimetros" pelo segmento efetivo e acrescentar
          o difusor ao procedimento; no Quadro 4, acrescentar o difusor e as
          dimensoes do anteparo.
+
+CORRECAO (25/09/2026): o segmento medido tem 6 cm, e nao 5 cm. Potencia a
+         ciclo pleno: 14,4 W/m x 0,06 m = 0,86 W (entra na calibracao pelo
+         --comprimento-cm 6).
 
 ===============================================================================
 41. "MOVIMENTACAO NA VIA" DE QUEM? PEDESTRES, NO CENARIO ADOTADO
