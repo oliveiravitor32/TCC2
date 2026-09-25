@@ -873,5 +873,52 @@ TEXTO:   acrescentar o endpoint ao Quadro 14 (junto com /pontos e /alertas,
          estimativas tambem e exibida em tempo real.
 
 ===============================================================================
+40. GEOMETRIA DA BANCADA: 0,44 m, E NAO 1,5 m
+    Trecho: Quadro 5 (linha "Fonte de luz"), 3.4.2 (dimensionamento) e
+            Quadro 4 (linha "Segmento de fita")
+    Acao: [ATUALIZAR TEXTO]
+-------------------------------------------------------------------------------
+TCC:     os calculos de ordem de grandeza supoem a luminaria a 1,5 m do plano
+         de medicao: "dez centimetros a 1,5 m subtendem menos de quatro
+         graus"; o refletor de 800 lm "entregaria cerca de 113 lux a 1,5 m";
+         o segmento resultante "situa-se na ordem de poucas dezenas de
+         centimetros"; e "fixada a altura, o comprimento do segmento e a
+         variavel de projeto".
+BANCADA: caixa de papelao de 44 x 16 x 19 cm, forrada internamente de papel
+         camurca preto (face interna fosca, 3.4.3). Fita e sensor centrados
+         nas paredes opostas da maior dimensao, um de frente para o outro:
+         h = 0,44 m, no eixo. Segmento de 3 emissores (5 cm, o menor
+         intervalo de seccionamento), atenuado por difusor de papel ate o
+         teto ficar no criterio: 18,00 lx a ciclo pleno = 1,80 x a classe,
+         com residual de 0,00 lx.
+CONSEQUENCIAS NOS NUMEROS DO TEXTO:
+         - fonte pontual: 5 cm a 44 cm subtendem 2 x atan(2,5/44) = 6,5 graus.
+           A distancia e 8,8 vezes o comprimento da fonte, acima da regra
+           pratica de 5 vezes, com a qual o erro da lei do inverso do
+           quadrado fica abaixo de 1 %. O argumento se mantem;
+         - refletor de 800 lm: a 0,44 m, E = 800 / (pi x 0,44^2) = cerca de
+           1.300 lx, mais de 70 vezes o teto adotado. O argumento fica mais
+           forte, nao mais fraco;
+         - comprimento do segmento: nao e mais "poucas dezenas de
+           centimetros". Mesmo no minimo de 3 emissores a leitura sem
+           difusor foi de 42,6 lx (4,3 x a classe), e a atenuacao final veio
+           de um difusor, que o texto nao preve. O procedimento de 3.4.2
+           ("ajusta-se o comprimento, em multiplos do intervalo de
+           seccionamento") precisa admitir o difusor quando o minimo de
+           seccionamento ja excede o criterio;
+         - "fixada a altura": a luz corre na horizontal; o correto e
+           "fixada a distancia".
+OBSERVACAO: 42,6 lx sem difusor a 0,44 m correspondem a cerca de 26 lm no
+         segmento de 3 emissores, isto e, uns 520 lm/m - abaixo do menor
+         fluxo declarado pelos fornecedores (600 lm/m). E mais um registro
+         de que o valor de catalogo nao e confiavel, que e o que 3.4.2 ja
+         afirma para justificar a determinacao por medicao.
+TEXTO:   no Quadro 5, trocar os dois calculos para 0,44 m (6,5 graus; cerca
+         de 1.300 lx); em 3.4.2, trocar "altura" por "distancia", substituir
+         "poucas dezenas de centimetros" pelo segmento efetivo e acrescentar
+         o difusor ao procedimento; no Quadro 4, acrescentar o difusor e as
+         dimensoes do anteparo.
+
+===============================================================================
 FIM
 ===============================================================================
