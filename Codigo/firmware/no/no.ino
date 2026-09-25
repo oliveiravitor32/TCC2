@@ -198,7 +198,12 @@ void diagnosticarWifi() {
   Serial.printf("status do Wi-Fi: %d (1 = rede nao encontrada, 4 = conexao recusada, "
                 "6 = desconectado)\n", WiFi.status());
   Serial.println("redes que o ESP32 enxerga (so 2,4 GHz):");
+  // O scan falha em silencio se o radio ainda estiver tentando conectar
+  // ("sta is connecting"): interrompe a tentativa antes de procurar.
+  WiFi.disconnect();
+  delay(200);
   int n = WiFi.scanNetworks();
+  if (n < 0) Serial.printf("  o scan falhou (codigo %d)\n", n);
   bool achou = false;
   for (int i = 0; i < n; i++) {
     bool eh = WiFi.SSID(i) == WIFI_SSID;
@@ -207,7 +212,7 @@ void diagnosticarWifi() {
                   WiFi.SSID(i).c_str(), WiFi.RSSI(i), WiFi.channel(i),
                   WiFi.encryptionType(i) == WIFI_AUTH_WPA2_ENTERPRISE ? "  (corporativa)" : "");
   }
-  if (n <= 0) Serial.println("  nenhuma rede encontrada");
+  if (n == 0) Serial.println("  nenhuma rede encontrada (confira se o hotspot/roteador esta em 2,4 GHz)");
   if (achou) {
     Serial.println("-> a rede configurada APARECE: confira a SENHA (maiusculas, espacos).");
   } else {
