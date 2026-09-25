@@ -1162,5 +1162,44 @@ TEXTO:   em 3.4.5, completar: "fixada acima da dispersao apurada e nunca
          abaixo da resolucao do instrumento no menor nivel operado".
 
 ===============================================================================
+48. PRIMEIROS RESULTADOS COM O NO REAL (5.3, parcial)
+    Trecho: 5.3 (latencia e diagnostico) e 3.9 (Etapa 5)
+    Acao: [ACRESCENTAR - e resultado]
+-------------------------------------------------------------------------------
+SESSAO:  25/09/2026, 00:39 a 00:50, ESP32 real com o firmware da calibracao
+         da sessao 72, rede Wi-Fi de 2,4 GHz, broker e servico no PC.
+
+FLUXO COMPLETO: nivel 1,0 -> duty 2352 (57,44 %) -> 9,96 a 10,07 lx; razao
+         entregue/esperado entre 0,996 e 1,007 (um degrau do sensor). 131 de
+         132 decisoes com telemetria de volta.
+
+DESCIDA EM RAMPA (evento de movimentacao 0,05 as 00:42:03):
+         - do pleno ao piso em 5,21 min (a norma exige ao menos 5 min);
+         - maior queda entre decisoes consecutivas: 0,0080 do pleno, abaixo
+           do limite de 0,0083 por passo de 5 s;
+         - no piso, 4,98 lx medidos (classe P5 = 5 lx);
+         - 63 decisoes corrigidas por 'taxa' e 18 por 'piso'.
+
+SUBIDA IMEDIATA (chuva as 00:48:41): pleno na decisao seguinte, restricao
+         'meteorologia'.
+
+FALHA INDUZIDA (RF11, fonte de 12 V desligada): alerta de falha total aberto
+         as 00:49:18, apos 3 ciclos, com razao 0,000; encerrado sozinho as
+         00:50:13, ao religar. Tolerancia em uso: 3,40 % (item 47).
+
+LATENCIA evento -> chegada da telemetria (RNF03): 1.240 ms e 1.263 ms. Sao
+         so 2 amostras: a Etapa 5 pede distribuicao sobre repeticoes, com o
+         numero de repeticoes explicitado - AINDA A FAZER. Cerca de 0,9 s
+         desses valores e o descarte das duas leituras do sensor (item 46);
+         o duty em si e aplicado antes.
+
+FAILSAFE (RNF07): o teste feito nao demonstrou o comportamento - o servico
+         foi parado as 00:50:26 com a luz ja em 1,0 (por causa da chuva), e o
+         failsafe levou de 1,0 a 1,0. REFAZER partindo do piso. O firmware
+         passou a imprimir no serial, a cada 2 s em failsafe, o nivel, o duty
+         e o lux medido, porque o Quadro 11 pede a MEDICAO do estado assumido
+         e no failsafe nao ha telemetria (nao ha decisao a responder).
+
+===============================================================================
 FIM
 ===============================================================================

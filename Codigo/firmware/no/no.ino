@@ -291,6 +291,14 @@ void loop() {
     float lux = sensor.readLightLevel();
     if (lux >= 0) {
       ultimaLux = lux;
+      // Em failsafe nao ha decisao a responder, entao nao ha telemetria. O
+      // RNF07 pede a MEDICAO do estado assumido pelo no: fica no serial.
+      static unsigned long ultimoRelato = 0;
+      if (emFailsafe && millis() - ultimoRelato >= 2000) {
+        ultimoRelato = millis();
+        Serial.printf("  failsafe: nivel 1,000 duty %d lux %.2f (%lu s sem comando)\n",
+                      dutyAtual, lux, (millis() - ultimoComando) / 1000);
+      }
       if (leiturasADescartar > 0) {
         leiturasADescartar--;  // ainda e luz de antes da troca
       } else if (decisaoPendente[0]) {
