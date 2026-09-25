@@ -1,113 +1,120 @@
-// Sketch de CALIBRACAO do no de bancada (TCC 3.4.2 a 3.4.4).
+// Diagnostico rapido da bancada: acha o BH1750, dimeriza a fita e imprime
+// duty + lux continuamente. NAO e o firmware nem a calibracao - e so para
+// descobrir por que o sensor nao esta lendo.
 //
-// Nao e o firmware de operacao: nao usa Wi-Fi nem MQTT. Fica esperando
-// comandos pela serial (115200) enviados pelo script bancada/calibrar.py,
-// que grava os resultados no banco (sessao_medicao e calibracao).
+// Monitor Serial em 115200.
 //
-// Ligacoes (as mesmas do no):
-//   BH1750  SDA = GPIO21, SCL = GPIO22, VCC = 3V3, endereco 0x23
-//   D4184   TRIG/PWM = GPIO25, GND comum
-//
-// PWM de 5 kHz, 12 bits (0..4095), SEM correcao de gama: a calibracao mede
-// a resposta real duty -> lux, e e ela que o firmware vai usar.
-//
-// Sensor em alta resolucao 2 com MTreg = 254 (maximo): 0,11 lx de
-// resolucao, cerca de 440 ms por leitura (Quadro 4).
-//
-// Protocolo (uma linha por comando):
-//   ?        -> "ID calibracao v1"
-//   D <n>    -> aplica duty n (0..4095)         -> "OK D <n>"
-//   M <k>    -> k leituras (1..50)              -> "L <lux>" x k, depois "FIM"
-//   Qualquer erro                               -> "ERRO <motivo>"
+// Ligacoes esperadas: SDA=21, SCL=22, VCC=3V3, GND comum; PWM=25.
 
 #include <Wire.h>
 #include <BH1750.h>
 
 const int PINO_PWM = 25;
-const int FREQ_PWM = 5000;
-const int BITS_PWM = 12;
 const int DUTY_MAX = 4095;
 
-BH1750 sensor(0x23);
-String linha;
+BH1750 sensor;
+uint8_t enderecoAchado = 0;
+int duty = 0;
+int passo = 64;
+
+// Pares (SDA, SCL) testados: o esperado, o invertido e outros comuns.
+const int PARES[][2] = {{21, 22}, {22, 21}, {4, 5}, {32, 33}, {33, 32}, {19, 18}};
+const int N_PARES = sizeof(PARES) / sizeof(PARES[0]);
+int sdaUsado = 21, sclUsado = 22;
+
+// Varre o barramento nos pinos atuais e mostra tudo o que responder.
+uint8_t varrer(int sda, int scl, bool detalhar) {
+  Wire.end();
+  Wire.begin(sda, scl);
+  delay(50);
+  uint8_t achado = 0;
+  for (uint8_t a = 1; a < 127; a++) {
+    Wire.beginTransmission(a);
+    if (Wire.endTransmission() == 0) {
+      if (detalhar) Serial.printf("  SDA=%d SCL=%d -> dispositivo em 0x%02X", sda, scl, a);
+      if (a == 0x23 || a == 0x5C) {
+        if (detalhar) Serial.print("  <- BH1750");
+        achado = a;
+      }
+      if (detalhar) Serial.println();
+    }
+  }
+  return achado;
+}
+
+uint8_t procurarSensor() {
+  Serial.println("\n--- varredura I2C (varios pares de pinos) ---");
+  for (int i = 0; i < N_PARES; i++) {
+    uint8_t achado = varrer(PARES[i][0], PARES[i][1], true);
+    if (achado) {
+      sdaUsado = PARES[i][0];
+      sclUsado = PARES[i][1];
+      Serial.printf("ACHOU: BH1750 em 0x%02X com SDA=%d, SCL=%d\n", achado, sdaUsado, sclUsado);
+      Serial.println("-------------------------------------------\n");
+      return achado;
+    }
+  }
+  Serial.println("NADA respondeu em nenhum par de pinos.");
+  Serial.println("Nao e pino trocado. Verifique, nesta ordem:");
+  Serial.println("  1. VCC do sensor no 3V3 do ESP32 (nao 5V, nao VIN)");
+  Serial.println("  2. GND do sensor no GND do ESP32");
+  Serial.println("  3. fios/emendas abertos (teste ligando direto, sem extensao)");
+  Serial.println("  4. soldas do GY-302");
+  Serial.println("-------------------------------------------\n");
+  // Volta ao barramento padrao para as proximas tentativas.
+  Wire.end();
+  Wire.begin(21, 22);
+  return 0;
+}
 
 void setup() {
   Serial.begin(115200);
-  Wire.begin(21, 22);
+  delay(300);
 
-  ledcAttach(PINO_PWM, FREQ_PWM, BITS_PWM);
-  ledcWrite(PINO_PWM, 0);  // comeca apagado
+  ledcAttach(PINO_PWM, 5000, 12);
+  ledcWrite(PINO_PWM, 0);
 
-  // Modo CONTINUO: o sensor mede sem parar e cada leitura pega a conversao
-  // mais recente. Foi o que funcionou nesta placa; o modo "one time" exigia
-  // reconfigurar a cada leitura e devolvia o registrador zerado.
-  if (!sensor.begin(BH1750::CONTINUOUS_HIGH_RES_MODE_2)) {
-    Serial.println("ERRO sensor BH1750 nao encontrado (confira SDA/SCL/VCC)");
-  }
-  sensor.setMTreg(BH1750_MTREG_MAX);  // 0,11 lx de resolucao
-
-  // Autoteste: mostra que o sensor responde e quanto demora cada leitura.
-  unsigned long t0 = millis();
-  float teste = lerLux();
-  Serial.printf("ID calibracao v2 | autoteste: %.2f lx em %lu ms\n", teste, millis() - t0);
-}
-
-float lerLux() {
-  // measurementReady() NAO espera: so informa se ja deu o tempo. E preciso
-  // chamar em laco - ler antes da conversao terminar devolve lixo.
-  unsigned long limite = millis() + 2000;
-  while (!sensor.measurementReady(false)) {
-    if (millis() > limite) {
-      Serial.println("ERRO conversao do sensor nao terminou");
-      return -1;
+  enderecoAchado = procurarSensor();
+  if (enderecoAchado) {
+    if (sensor.begin(BH1750::CONTINUOUS_HIGH_RES_MODE_2, enderecoAchado)) {
+      sensor.setMTreg(BH1750_MTREG_MAX);  // 0,11 lx, ~440 ms por leitura
+      Serial.println("sensor iniciado. duty / lux:");
+    } else {
+      Serial.println("ERRO: sensor achado no barramento mas nao iniciou.");
+      enderecoAchado = 0;
     }
-    delay(10);
-  }
-  return sensor.readLightLevel();
-}
-
-void tratar(String cmd) {
-  cmd.trim();
-  if (cmd == "?") {
-    Serial.println("ID calibracao v1");
-  } else if (cmd.startsWith("D ")) {
-    long n = cmd.substring(2).toInt();
-    if (n < 0 || n > DUTY_MAX) {
-      Serial.println("ERRO duty fora de 0..4095");
-      return;
-    }
-    ledcWrite(PINO_PWM, n);
-    Serial.print("OK D ");
-    Serial.println(n);
-  } else if (cmd.startsWith("M ")) {
-    long k = cmd.substring(2).toInt();
-    if (k < 1 || k > 50) {
-      Serial.println("ERRO k fora de 1..50");
-      return;
-    }
-    for (long i = 0; i < k; i++) {
-      float lux = lerLux();
-      if (lux < 0) {
-        Serial.println("ERRO leitura do sensor falhou");
-        return;
-      }
-      Serial.print("L ");
-      Serial.println(lux, 2);
-    }
-    Serial.println("FIM");
-  } else if (cmd.length() > 0) {
-    Serial.println("ERRO comando desconhecido");
   }
 }
 
 void loop() {
-  while (Serial.available()) {
-    char c = Serial.read();
-    if (c == '\n') {
-      tratar(linha);
-      linha = "";
-    } else if (c != '\r') {
-      linha += c;
+  // Sobe e desce o brilho para ver a lux acompanhar.
+  duty += passo;
+  if (duty >= DUTY_MAX) { duty = DUTY_MAX; passo = -passo; }
+  if (duty <= 0)        { duty = 0;        passo = -passo; }
+  ledcWrite(PINO_PWM, duty);
+
+  if (!enderecoAchado) {
+    Serial.printf("duty %4d (%3d%%) | sensor ausente - a fita deve estar variando\n",
+                  duty, duty * 100 / DUTY_MAX);
+    // Sem sensor, tenta de novo de vez em quando (mau contato intermitente).
+    static int tentativas = 0;
+    if (++tentativas % 20 == 0) {
+      enderecoAchado = procurarSensor();
+      if (enderecoAchado) {
+        sensor.begin(BH1750::CONTINUOUS_HIGH_RES_MODE_2, enderecoAchado);
+        sensor.setMTreg(BH1750_MTREG_MAX);
+      }
     }
+    delay(500);
+    return;
   }
+
+  while (!sensor.measurementReady(false)) {
+    delay(10);
+  }
+  float lux = sensor.readLightLevel();
+  Serial.printf("duty %4d (%3d%%) | lux %8.2f%s\n",
+                duty, duty * 100 / DUTY_MAX, lux,
+                lux < 0 ? "   <- LEITURA INVALIDA" : "");
+  delay(100);
 }
