@@ -1,7 +1,7 @@
 ===============================================================================
 DIVERGENCIAS E DECISOES DE IMPLEMENTACAO EM RELACAO AO TEXTO DO TCC
 Documento de referencia: Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP.docx
-Ultima atualizacao: 24/09/2026
+Ultima atualizacao: 25/09/2026
 ===============================================================================
 
 COMO LER ESTE ARQUIVO
@@ -918,6 +918,65 @@ TEXTO:   no Quadro 5, trocar os dois calculos para 0,44 m (6,5 graus; cerca
          "poucas dezenas de centimetros" pelo segmento efetivo e acrescentar
          o difusor ao procedimento; no Quadro 4, acrescentar o difusor e as
          dimensoes do anteparo.
+
+===============================================================================
+41. "MOVIMENTACAO NA VIA" DE QUEM? PEDESTRES, NO CENARIO ADOTADO
+    Trecho: Quadro 7 (linha "Nivel de movimentacao na via"), 3.6 e 3.7
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+TCC:     o Quadro 7 chama a variavel de "nivel de movimentacao na via", sem
+         dizer se de pedestres ou de veiculos, e a justifica pela subsecao
+         6.10.3 da norma, que fala em "monitoramento continuo do trafego de
+         veiculos e do meio ambiente". Ja 3.6 treina o modelo com contagem
+         de PEDESTRES, por ser "o mesmo fenomeno que a classe P disciplina".
+         A 2.3 registra que o Termo de Referencia do Smart Sampa exige os
+         dois tipos de analitico: contagem de pessoas, densidade e
+         concentracao de pessoas, e tambem contagem e fluxo de veiculos e
+         alarme de congestionamento.
+CODIGO:  a variavel e tratada como atividade de pedestres (a serie de
+         Melbourne e de pedestres; o cenario e de classe P3).
+POR QUE: nao ha erro, mas ha ambiguidade que a banca pode explorar: a
+         justificativa cita veiculos e o dado e de pedestres. A norma cita
+         veiculos porque trata de todas as classes.
+TEXTO:   acrescentar ao Quadro 7 ou a 3.7 uma frase como: "No cenario
+         adotado, de classe P, o nivel de movimentacao corresponde a
+         atividade de pedestres, obtida da contagem de pessoas e da deteccao
+         de densidade ja exigidas da plataforma municipal (2.3). Em vias de
+         classe M, a mesma variavel seria alimentada pela contagem e pelo
+         fluxo de veiculos." A frase reforca a tese: a mesma arquitetura
+         atende as duas classes, trocando so o analitico que alimenta a
+         variavel.
+
+
+===============================================================================
+42. UMA LUMINARIA, DUAS CLASSES: PISTA (M) E CALCADA (P)
+    Trecho: 3.8 (classe adotada), 6.3 (limitacao "uma unica classe de via")
+            e 7.1 (recomendacoes)
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+TCC:     adota a calcada de via urbana local, classe P3, e declara em 6.3
+         que "considera-se uma unica classe de via".
+REALIDADE: numa rua local comum, uma unica luminaria ilumina a pista e a
+         calcada. No projeto luminotecnico a pista recebe uma classe M e a
+         calcada uma classe P, e a mesma luminaria e dimensionada para
+         atender as duas ao mesmo tempo. A classe e da AREA iluminada, nao
+         da luminaria. (A classe C, de conflito, cobre cruzamentos e
+         travessias.)
+CONSEQUENCIA para a dimerizacao em campo:
+         - o piso efetivo e o MAIS RESTRITIVO entre as classes atendidas
+           pelo ponto de luz;
+         - a movimentacao teria de considerar pedestres e veiculos, e a
+           plataforma ja fornece os dois analiticos (item 41).
+CODIGO:  hoje cada ponto_de_luz tem uma classe. A extensao nao muda o
+         conceito: o ponto passaria a ter varias classes e a verificacao
+         usaria o maior piso entre elas. A camada de verificacao ja le o
+         criterio do banco (RF09) e continua fixa; so a consulta que monta o
+         criterio mudaria. E o tipo de evolucao que a separacao entre camada
+         adaptativa e camada fixa (3.7) permite.
+TEXTO:   explicitar na limitacao de 6.3 que, em campo, um ponto de luz
+         costuma atender pista e calcada, e que o piso seria o da classe mais
+         exigente; em 7.1, recomendar a extensao para varias classes por
+         ponto, com movimentacao de pedestres e de veiculos.
 
 ===============================================================================
 FIM
