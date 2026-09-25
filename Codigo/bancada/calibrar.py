@@ -233,16 +233,79 @@ def cmd_teto(b, lux_classe: float) -> None:
         print("OK: comprimento dentro do criterio de 3.4.2")
 
 
-def cmd_monitor(b, duty: int) -> None:
-    """Fixa o duty e imprime a lux ate Ctrl+C: util para ajustar a montagem."""
+JANELA_ESTAVEL_S = 60   # janela em que se julga a estabilidade
+LIMIAR_ESTAVEL = 0.002  # variacao relativa (0,2 %) abaixo da qual esta estavel
+
+
+def cmd_monitor(b, duty: int, limite_s: float | None = None) -> None:
+    """Fixa o duty e acompanha a lux ate Ctrl+C (ou ate `limite_s`).
+
+    Mostra a deriva desde o inicio e diz quando a leitura estabiliza - o que
+    serve para saber quanto tempo a bancada precisa aquecer antes da
+    calibracao (3.4.4). Grava tudo em bancada/resultados/aquecimento_*.csv.
+    """
+    pasta = RAIZ / "bancada" / "resultados"
+    pasta.mkdir(parents=True, exist_ok=True)
+    arquivo = pasta / f"aquecimento_{datetime.now():%Y%m%d_%H%M%S}.csv"
+
     b.duty(duty)
-    print(f"duty fixo em {duty} ({duty / DUTY_MAX:.0%}). Ctrl+C para sair.\n")
+    print(f"duty fixo em {duty} ({duty / DUTY_MAX:.0%}). Ctrl+C para parar.")
+    print(f"gravando em {arquivo}\n")
+    print(f"{'tempo':>7s}  {'lux':>7s}  {'desde o inicio':>15s}  {'min':>6s}  {'max':>6s}  estado")
+
+    inicio = time.monotonic()
+    leituras: list[tuple[float, float]] = []  # (segundos, lux)
+    estavel_desde: float | None = None
     try:
-        while True:
-            print(f"  lux: {statistics.fmean(b.medir(1)):8.2f}")
+        with arquivo.open("w", encoding="utf-8") as csv:
+            csv.write("segundos,lux\n")
+            while limite_s is None or time.monotonic() - inicio < limite_s:
+                lux = statistics.fmean(b.medir(1))
+                t = time.monotonic() - inicio
+                leituras.append((t, lux))
+                csv.write(f"{t:.1f},{lux:.2f}\n")
+                csv.flush()
+
+                primeira = leituras[0][1]
+                valores = [v for _, v in leituras]
+                deriva = (lux - primeira) / primeira if primeira else 0.0
+
+                # Estavel = na ultima janela, max e min distam menos que o limiar.
+                janela = [v for s, v in leituras if s >= t - JANELA_ESTAVEL_S]
+                if t < JANELA_ESTAVEL_S:
+                    estado = "aquecendo..."
+                else:
+                    media = statistics.fmean(janela)
+                    amplitude = (max(janela) - min(janela)) / media if media else 0.0
+                    if amplitude <= LIMIAR_ESTAVEL:
+                        estavel_desde = estavel_desde if estavel_desde is not None else t
+                        estado = f"ESTAVEL (variacao {amplitude:.2%} no ultimo minuto)"
+                    else:
+                        estavel_desde = None
+                        estado = f"variando {amplitude:.2%} no ultimo minuto"
+
+                print(f"{t:6.0f}s  {lux:7.2f}  {lux - primeira:+8.2f} ({deriva:+.1%})"
+                      f"  {min(valores):6.2f}  {max(valores):6.2f}  {estado}")
     except KeyboardInterrupt:
+        pass
+    finally:
         b.duty(0)
-        print("\nfita apagada.")
+
+    if len(leituras) > 1:
+        valores = [v for _, v in leituras]
+        total = leituras[-1][0]
+        print(f"\nfita apagada. {len(leituras)} leituras em {total:.0f} s.")
+        print(f"  inicio {valores[0]:.2f} lx -> fim {valores[-1]:.2f} lx "
+              f"(deriva {valores[-1] - valores[0]:+.2f} lx, "
+              f"{(valores[-1] - valores[0]) / valores[0]:+.1%})")
+        print(f"  minimo {min(valores):.2f} | maximo {max(valores):.2f} | "
+              f"desvio padrao {statistics.pstdev(valores):.3f} lx")
+        if estavel_desde is not None:
+            print(f"  estabilizou por volta de {estavel_desde - JANELA_ESTAVEL_S:.0f} s: "
+                  "aqueca a bancada pelo menos isso antes de calibrar.")
+        else:
+            print("  nao chegou a estabilizar: deixe mais tempo ligada.")
+        print(f"  dados: {arquivo}")
 
 
 def cmd_completa(b, conn, args) -> Relatorio:
@@ -401,6 +464,8 @@ def main(argv: list[str] | None = None) -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("modo", choices=["teto", "completa", "monitor"])
     p.add_argument("--duty", type=int, default=DUTY_MAX, help="modo monitor: duty fixo 0..4095")
+    p.add_argument("--minutos", type=float, default=None,
+                   help="modo monitor: para sozinho depois deste tempo")
     p.add_argument("--porta", default="COM3")
     p.add_argument("--ponto", default="BANCADA-01")
     p.add_argument("--comprimento-cm", type=float, default=None)
@@ -412,7 +477,8 @@ def main(argv: list[str] | None = None) -> None:
 
     b = BancadaSimulada() if args.simulada else Bancada(args.porta)
     if args.modo == "monitor":  # nao precisa de banco
-        cmd_monitor(b, max(0, min(args.duty, DUTY_MAX)))
+        cmd_monitor(b, max(0, min(args.duty, DUTY_MAX)),
+                    args.minutos * 60 if args.minutos else None)
         return
     # Simulada: tudo numa transacao desfeita ao final - numero sintetico
     # nunca fica no banco.
