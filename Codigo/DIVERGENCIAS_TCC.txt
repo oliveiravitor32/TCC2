@@ -1067,6 +1067,18 @@ DEFEITO ENCONTRADO E CORRIGIDO (bancada/calibrar.py):
 TEXTO:   registrar em 3.4.3 o tempo de aquecimento; em 3.4.4, os numeros do
          ensaio de estabilidade; em 3.4.4 ou 4.8, que o procedimento descarta
          as leituras imediatamente posteriores a troca de nivel.
+SEGUNDO ENSAIO (24/09/2026, 6 min, bancada ja morna): media estavel em
+         25,47 lx a partir do 2o minuto; desvio padrao 0,040 lx.
+         Dados: bancada/resultados/aquecimento_20260924_225650.csv
+CRITERIO DE ESTABILIDADE (corrigido): a bancada e considerada estavel
+         quando a MEDIA de um minuto difere menos de 0,1 % da media do
+         minuto anterior. O criterio inicial (amplitude max - min abaixo de
+         0,2 % no ultimo minuto) era impossivel de satisfazer: cada degrau
+         do sensor vale ~0,44 % da leitura no teto, e a leitura oscila entre
+         dois degraus vizinhos com a luz parada. Aplicado aos dois ensaios,
+         o criterio corrigido da ~3 min com a bancada fria e ~30 s com ela
+         morna. RECOMENDACAO: aquecer ~3 min antes de calibrar ou medir (o
+         "~6 min" anotado acima e conservador).
 
 ===============================================================================
 FIM

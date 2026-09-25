@@ -257,7 +257,12 @@ def cmd_teto(b, lux_classe: float) -> None:
 
 
 JANELA_ESTAVEL_S = 60   # janela em que se julga a estabilidade
-LIMIAR_ESTAVEL = 0.002  # variacao relativa (0,2 %) abaixo da qual esta estavel
+# Estavel = a MEDIA do ultimo minuto mudou menos que isto em relacao a media
+# do minuto anterior. Olhar a amplitude (max - min) nao funciona: cada degrau
+# do BH1750 vale ~0,11 lx, cerca de 0,44 % da leitura no teto, e a leitura
+# oscila entre dois degraus vizinhos mesmo com a luz parada. A media filtra
+# essa oscilacao; a deriva de aquecimento aparece nela.
+LIMIAR_ESTAVEL = 0.001  # 0,1 % entre medias de minutos consecutivos
 
 
 def cmd_monitor(b, duty: int, limite_s: float | None = None) -> None:
@@ -293,19 +298,22 @@ def cmd_monitor(b, duty: int, limite_s: float | None = None) -> None:
                 valores = [v for _, v in leituras]
                 deriva = (lux - primeira) / primeira if primeira else 0.0
 
-                # Estavel = na ultima janela, max e min distam menos que o limiar.
-                janela = [v for s, v in leituras if s >= t - JANELA_ESTAVEL_S]
-                if t < JANELA_ESTAVEL_S:
+                # Estavel = a media do ultimo minuto quase nao mudou em relacao
+                # a do minuto anterior (ver LIMIAR_ESTAVEL).
+                if t < 2 * JANELA_ESTAVEL_S:
                     estado = "aquecendo..."
                 else:
-                    media = statistics.fmean(janela)
-                    amplitude = (max(janela) - min(janela)) / media if media else 0.0
-                    if amplitude <= LIMIAR_ESTAVEL:
+                    atual = [v for s, v in leituras if s >= t - JANELA_ESTAVEL_S]
+                    anterior = [v for s, v in leituras
+                                if t - 2 * JANELA_ESTAVEL_S <= s < t - JANELA_ESTAVEL_S]
+                    m_atual, m_anterior = statistics.fmean(atual), statistics.fmean(anterior)
+                    variacao = (m_atual - m_anterior) / m_anterior if m_anterior else 0.0
+                    if abs(variacao) <= LIMIAR_ESTAVEL:
                         estavel_desde = estavel_desde if estavel_desde is not None else t
-                        estado = f"ESTAVEL (variacao {amplitude:.2%} no ultimo minuto)"
+                        estado = f"ESTAVEL (media {variacao:+.2%} no ultimo minuto)"
                     else:
                         estavel_desde = None
-                        estado = f"variando {amplitude:.2%} no ultimo minuto"
+                        estado = f"variando: media {variacao:+.2%} no ultimo minuto"
 
                 print(f"{t:6.0f}s  {lux:7.2f}  {lux - primeira:+8.2f} ({deriva:+.1%})"
                       f"  {min(valores):6.2f}  {max(valores):6.2f}  {estado}")
@@ -324,7 +332,7 @@ def cmd_monitor(b, duty: int, limite_s: float | None = None) -> None:
         print(f"  minimo {min(valores):.2f} | maximo {max(valores):.2f} | "
               f"desvio padrao {statistics.pstdev(valores):.3f} lx")
         if estavel_desde is not None:
-            print(f"  estabilizou por volta de {estavel_desde - JANELA_ESTAVEL_S:.0f} s: "
+            print(f"  estabilizou por volta de {estavel_desde - 2 * JANELA_ESTAVEL_S:.0f} s: "
                   "aqueca a bancada pelo menos isso antes de calibrar.")
         else:
             print("  nao chegou a estabilizar: deixe mais tempo ligada.")
