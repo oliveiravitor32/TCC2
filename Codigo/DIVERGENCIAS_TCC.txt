@@ -1081,5 +1081,86 @@ CRITERIO DE ESTABILIDADE (corrigido): a bancada e considerada estavel
          "~6 min" anotado acima e conservador).
 
 ===============================================================================
+45. O NO USA MQTT 3.1.1; BROKER E SERVICO USAM MQTT 5
+    Trecho: Quadro 13 (linha "Intermediario de mensagens") e 4.6.1
+    Acao: [ATUALIZAR TEXTO]
+-------------------------------------------------------------------------------
+TCC:     "Broker MQTT 5.0 sobre canal cifrado, com credencial por
+         dispositivo".
+CODIGO:  o Mosquitto e o servico de decisao usam MQTT 5. O firmware do ESP32
+         usa o cliente nativo do chip (esp-mqtt) em MQTT 3.1.1.
+POR QUE: o nucleo Arduino do ESP32 (versao 3.3.12) e distribuido com o
+         protocolo 5 desligado na compilacao das bibliotecas
+         (sdkconfig: "CONFIG_MQTT_PROTOCOL_5 is not set"). Liga-lo exigiria
+         recompilar o nucleo. O broker aceita as duas versoes ao mesmo tempo,
+         e nada do que o sistema usa depende do 5: QoS 1, last will, mensagem
+         retida, TLS e usuario/senha existem no 3.1.1.
+TEXTO:   no Quadro 13, "Broker MQTT 5.0; o no conecta em MQTT 3.1.1, versao
+         suportada pelo nucleo do microcontrolador", ou simplesmente "MQTT
+         (versoes 5 e 3.1.1)".
+
+
+===============================================================================
+46. FIRMWARE DO NO: COMPORTAMENTOS QUE O TEXTO NAO FIXA
+    Trecho: 3.4, RNF07, LACUNAS 1 e 3, Quadro 14
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+CODIGO:  firmware/no/no.ino (compilado para o DOIT ESP32 DEVKIT V1: 81 % da
+         memoria de programa, 15 % da RAM).
+         - ao energizar, o no aplica o nivel PLENO e fica nele ate o primeiro
+           comando (LACUNA 3): nunca comeca apagado;
+         - nivel -> duty pela tabela da calibracao (sessao 72), com
+           interpolacao linear entre pontos medidos; 1,0 -> 2352 e 0,5 ->
+           1217, exatamente os duties medidos; nada acima de 1,0 passa do
+           duty do pleno (LACUNA 1, item 29);
+         - depois de trocar o duty, duas leituras do sensor sao descartadas
+           antes da telemetria (a mesma regra da calibracao, item 44). Isso
+           acrescenta cerca de 0,9 s entre a aplicacao do duty e a
+           telemetria; o duty em si e aplicado na hora;
+         - failsafe: 15 s sem comando -> nivel 1,0 (RNF07, item 2);
+         - se um comando novo chega antes da leitura do anterior, a decisao
+           anterior fica sem telemetria (1:1 nao obrigatorio);
+         - last will "offline" retido em iluminacao/{ponto}/estado;
+         - hora por NTP para o medido_em; sem hora, o campo e omitido e o
+           servidor usa a de recebimento;
+         - configuracao (Wi-Fi, broker, credencial) em segredos.h, fora do
+           git (RNF06).
+LATENCIA (RNF03): a medida da view vai do evento a CHEGADA da telemetria, e
+         por isso inclui os ~0,9 s de descarte. O RNF03 fala na APLICACAO do
+         ciclo de trabalho, que acontece antes. Se a medida da Etapa 5
+         ficar perto de 2 s, e esse o componente a descontar - e o texto
+         precisa dizer qual das duas grandezas reporta.
+TEXTO:   3.4, junto ao RNF07: o no parte do pleno ao energizar; 3.9 (Etapa
+         5): declarar que a latencia medida inclui a leitura de confirmacao.
+
+
+===============================================================================
+47. TOLERANCIA DO DIAGNOSTICO: PISO DE RESOLUCAO DO SENSOR
+    Trecho: 3.4.5 (complementa o item 36)
+    Acao: [ACRESCENTAR]
+-------------------------------------------------------------------------------
+TCC:     a tolerancia "e fixada acima da dispersao apurada no ensaio de
+         repetibilidade, de modo que o alerta nao seja disparado pelo proprio
+         instrumento".
+CODIGO:  tolerancia = maior entre (a) 3 x a maior dispersao relativa entre
+         series, na sessao de calibracao MAIS RECENTE e so nos pontos da
+         faixa de operacao (no piso ou acima), e (b) 1,5 degrau do sensor
+         dividido pela iluminancia do piso (resolucao do BH1750 em alta
+         resolucao 2 com MTreg 254: 0,113 lx).
+POR QUE: a sessao 72 mostrou dois problemas na regra do item 36. Primeiro,
+         as repeticoes nos duties de 10 e 5 lx sairam identicas (dispersao
+         0 %), e 3 x 0 = 0 dispararia o alerta a cada oscilacao de um degrau
+         - justamente o que o texto proibe. Segundo, tomando todos os duties,
+         o ponto de 0,30 lx (onde um degrau vale 11,6 %) dominava e levaria a
+         tolerancia a ~35 %. Na faixa de operacao a maior dispersao foi
+         0,74 % (3 sigma = 2,2 %), abaixo de um degrau no piso. O 1,5 degrau
+         e meio degrau (o valor esperado cai entre dois degraus) mais um
+         degrau de oscilacao (15 de 33 pontos da sessao 72 diferiram em
+         exatamente um degrau entre series).
+RESULTADO: com a sessao 72, tolerancia = 3,39 %.
+TEXTO:   em 3.4.5, completar: "fixada acima da dispersao apurada e nunca
+         abaixo da resolucao do instrumento no menor nivel operado".
+
+===============================================================================
 FIM
 ===============================================================================

@@ -10,3 +10,5 @@ modelo/dados/*.csv
 cenarios/resultados/*.json
 # Logs dos servicos locais (subir.sh)
 .logs/
+# Segredos do no (Wi-Fi e credencial do broker): nunca versionar
+firmware/no/segredos.h
