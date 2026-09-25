@@ -1028,5 +1028,42 @@ PERGUNTA PENDENTE - fazer ao autor quando as divergencias forem resolvidas:
   resultado. PERGUNTAR se e para fazer. Ainda nao foi feito.
 
 ===============================================================================
+44. ENSAIO DE ESTABILIDADE E AQUECIMENTO DA BANCADA
+    Trecho: 3.4.4 (repetibilidade e consistencia) e 3.4.3 (condicoes de medicao)
+    Acao: [ACRESCENTAR - e resultado]
+-------------------------------------------------------------------------------
+ENSAIO:  24/09/2026, fita a ciclo pleno (duty 4095) por 10 min, caixa
+         fechada, sala escura; 1.355 leituras do BH1750 (alta resolucao 2,
+         MTreg maximo). Dados: bancada/resultados/aquecimento_20260924_221457.csv
+RESULTADO (descartada a primeira leitura, ver abaixo):
+         - media 25,54 lx; desvio padrao 0,054 lx (0,2 %); minimo 25,24,
+           maximo 25,58. As leituras assumem so 4 valores distintos: a
+           variacao esta no limite de resolucao do sensor (~0,11 lx);
+         - aquecimento: a media sobe 0,34 % nos primeiros ~6 min
+           (25,486 -> 25,573 lx) e depois fica estavel.
+CONSEQUENCIAS:
+         - a bancada deve aquecer ~6 min antes de cada sessao de calibracao
+           ou de medicao, para que calibracao e demonstracao ocorram na
+           mesma condicao termica;
+         - a dispersao de 0,2 % sustenta a afirmacao de repetibilidade de
+           3.4.4 e da uma ideia da tolerancia do RF11 (3 sigma = ~0,6 %),
+           cujo valor definitivo sai da calibracao completa.
+DEFEITO ENCONTRADO E CORRIGIDO (bancada/calibrar.py):
+         a primeira leitura apos trocar o duty vinha de uma conversao que
+         comecou ANTES da troca (o sensor mede continuamente). Efeitos:
+         o monitor comecou em 0,00 lx com a fita no maximo, e o `teto`, que
+         media 5 leituras, informava 24,0 lx quando o valor real era 25,5 lx
+         (4 leituras certas e uma misturada). Na calibracao completa, cada
+         ponto (media de 3) teria o mesmo vies. Agora duas leituras sao
+         descartadas apos cada troca de duty; a bancada simulada reproduz o
+         comportamento e o teste cobre o caso.
+         Consequencia pratica: o teto real e 25,5 lx = 2,55 x a classe, FORA
+         do criterio de 1,5 a 2 x de 3.4.2; e preciso atenuar cerca de 30 %
+         antes de calibrar.
+TEXTO:   registrar em 3.4.3 o tempo de aquecimento; em 3.4.4, os numeros do
+         ensaio de estabilidade; em 3.4.4 ou 4.8, que o procedimento descarta
+         as leituras imediatamente posteriores a troca de nivel.
+
+===============================================================================
 FIM
 ===============================================================================

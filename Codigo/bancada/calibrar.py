@@ -41,6 +41,13 @@ POTENCIA_W_POR_M = 14.4  # especificacao eletrica da fita 5050, 60 LED/m (Quadro
 TETO_MIN, TETO_MAX = 1.5, 2.0  # teto fisico / valor da classe (3.4.2)
 RESIDUAL_MAX = 0.05  # fracao do valor da classe (3.4.3)
 ACOMODACAO_S = 0.3  # espera apos trocar o duty, antes de medir
+# O BH1750 mede continuamente. Depois de trocar o duty, a proxima leitura e
+# a de uma conversao que COMECOU ANTES da troca (luz antiga ou mistura das
+# duas), e a seguinte ainda pode estar nesse caso com o registrador no maximo
+# (conversao de ate ~660 ms). Duas leituras sao descartadas antes de medir.
+# Achado do monitor de 10 min: a primeira leitura com a fita no maximo veio
+# 0,00 lx, e o `teto` media 24,0 lx quando o valor real era 25,5 lx.
+LEITURAS_DESCARTADAS = 2
 
 
 # ---------------------------------------------------------------------------
@@ -92,6 +99,7 @@ class Bancada:
         while not self._linha().startswith("OK D"):
             pass
         time.sleep(ACOMODACAO_S)
+        self.medir(LEITURAS_DESCARTADAS)  # descarta as conversoes anteriores a troca
 
     def medir(self, k: int) -> list[float]:
         self.s.write(f"M {k}\n".encode())
@@ -109,13 +117,28 @@ class BancadaSimulada:
         self.residual, self.teto, self.gama = residual, teto, gama
         self.d = 0
         self.rng = random.Random(42)
+        # Reproduz o sensor real: apos trocar o duty, as primeiras leituras
+        # ainda sao do nivel anterior.
+        self._velhas: list[float] = []
 
-    def duty(self, n: int) -> None:
+    def _nivel(self, d: int) -> float:
+        return self.teto * (d / DUTY_MAX) ** self.gama + self.residual
+
+    def _aplicar(self, n: int) -> None:
+        """Troca o duty SEM descartar leituras, como o sensor faria."""
+        self._velhas = [self._nivel(self.d)] * LEITURAS_DESCARTADAS
         self.d = n
 
+    def duty(self, n: int) -> None:
+        self._aplicar(n)
+        self.medir(LEITURAS_DESCARTADAS)
+
     def medir(self, k: int) -> list[float]:
-        base = self.teto * (self.d / DUTY_MAX) ** self.gama + self.residual
-        return [round(max(0.0, base + self.rng.gauss(0, 0.05)), 2) for _ in range(k)]
+        valores = []
+        for _ in range(k):
+            base = self._velhas.pop(0) if self._velhas else self._nivel(self.d)
+            valores.append(round(max(0.0, base + self.rng.gauss(0, 0.05)), 2))
+        return valores
 
 
 # ---------------------------------------------------------------------------
@@ -295,9 +318,9 @@ def cmd_monitor(b, duty: int, limite_s: float | None = None) -> None:
         valores = [v for _, v in leituras]
         total = leituras[-1][0]
         print(f"\nfita apagada. {len(leituras)} leituras em {total:.0f} s.")
+        relativa = (valores[-1] - valores[0]) / valores[0] if valores[0] else 0.0
         print(f"  inicio {valores[0]:.2f} lx -> fim {valores[-1]:.2f} lx "
-              f"(deriva {valores[-1] - valores[0]:+.2f} lx, "
-              f"{(valores[-1] - valores[0]) / valores[0]:+.1%})")
+              f"(deriva {valores[-1] - valores[0]:+.2f} lx, {relativa:+.1%})")
         print(f"  minimo {min(valores):.2f} | maximo {max(valores):.2f} | "
               f"desvio padrao {statistics.pstdev(valores):.3f} lx")
         if estavel_desde is not None:
