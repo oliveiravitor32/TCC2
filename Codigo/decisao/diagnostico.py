@@ -84,33 +84,63 @@ def classificar(l: Leitura, lim: Limiares) -> Diagnostico:
 # Tolerancia vinda da bancada
 # ---------------------------------------------------------------------------
 def tolerancia_do_ponto(conn: psycopg.Connection, ponto_de_luz_id: int) -> float:
-    """K_SIGMA x a maior dispersao relativa entre series de calibracao.
+    """Tolerancia do diagnostico, derivada da bancada (3.4.4, 3.4.5).
 
-    Sem ensaio de repetibilidade ainda gravado, devolve a tolerancia
-    provisoria - e avisa, porque o valor do TCC tem de vir da bancada.
+    E o MAIOR entre dois valores:
+
+      - K_SIGMA x a maior dispersao relativa entre series, considerando so a
+        sessao de calibracao MAIS RECENTE e so os pontos da FAIXA DE OPERACAO
+        (iluminancia media no piso ou acima). Fora dela a conta nao tem
+        sentido: a 0,3 lx um unico degrau do sensor ja vale 38 %, e esse
+        ponto inflaria a tolerancia para dezenas de por cento;
+      - o piso de resolucao: DEGRAUS_TOLERANCIA degraus do sensor divididos
+        pela iluminancia do piso. Abaixo disso o alerta seria disparado pela
+        quantizacao do proprio instrumento.
+
+    Sem calibracao gravada, devolve a tolerancia provisoria e avisa.
     """
+    piso = conn.execute(
+        """
+        SELECT COALESCE(cm.iluminancia_media_min_lux, c.iluminancia_media_min_lux)
+          FROM ponto_de_luz p
+          JOIN classe_iluminacao c       ON c.codigo = p.classe_codigo
+          LEFT JOIN classe_iluminacao cm ON cm.codigo = c.classe_min_dimerizacao
+         WHERE p.id = %s
+        """,
+        (ponto_de_luz_id,),
+    ).fetchone()
+    lux_piso = float(piso[0]) if piso else None
+
     linhas = conn.execute(
         """
-        SELECT c.duty, array_agg(c.lux_medido)
-          FROM calibracao c
-          JOIN sessao_medicao s ON s.id = c.sessao_id
-         WHERE s.ponto_de_luz_id = %s AND NOT s.descartada
-         GROUP BY c.sessao_id, c.duty
+        WITH ultima AS (
+            SELECT s.id, s.lux_residual FROM sessao_medicao s
+             WHERE s.ponto_de_luz_id = %s AND NOT s.descartada
+               AND EXISTS (SELECT 1 FROM calibracao c WHERE c.sessao_id = s.id)
+             ORDER BY s.iniciada_em DESC LIMIT 1
+        )
+        SELECT c.duty, array_agg(c.lux_medido - u.lux_residual)
+          FROM calibracao c JOIN ultima u ON u.id = c.sessao_id
+         GROUP BY c.duty
         HAVING count(*) > 1
         """,
         (ponto_de_luz_id,),
     ).fetchall()
+    if not linhas or not lux_piso:
+        log.info("sem ensaio de repetibilidade; tolerancia provisoria de %.0f %%",
+                 config.TOLERANCIA_PROVISORIA * 100)
+        return config.TOLERANCIA_PROVISORIA
+
     dispersoes = []
     for _duty, valores in linhas:
         v = [float(x) for x in valores]
         media = statistics.fmean(v)
-        if media > 0:
+        if media >= lux_piso * 0.98:  # faixa de operacao (folga de meio degrau)
             dispersoes.append(statistics.stdev(v) / media)
-    if not dispersoes:
-        log.info("sem ensaio de repetibilidade; tolerancia provisoria de %.0f %%",
-                 config.TOLERANCIA_PROVISORIA * 100)
-        return config.TOLERANCIA_PROVISORIA
-    return config.K_SIGMA * max(dispersoes)
+
+    pela_dispersao = config.K_SIGMA * max(dispersoes, default=0.0)
+    pela_resolucao = config.DEGRAUS_TOLERANCIA * config.RESOLUCAO_SENSOR_LUX / lux_piso
+    return max(pela_dispersao, pela_resolucao)
 
 
 # ---------------------------------------------------------------------------

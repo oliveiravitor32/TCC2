@@ -53,3 +53,11 @@ CICLOS_PERDA_CONTROLE = int(os.environ.get("CICLOS_PERDA_CONTROLE", "12"))
 # Enquanto nao houver ensaio de repetibilidade, esta tolerancia provisoria
 # evita alarme falso; o valor definitivo vem da bancada.
 TOLERANCIA_PROVISORIA = float(os.environ.get("TOLERANCIA_PROVISORIA", "0.15"))
+# Resolucao do BH1750 em alta resolucao 2 com MTreg = 254: cada contagem vale
+# (1/1,2) x (69/254) / 2 = 0,113 lx. A tolerancia nao pode ficar abaixo do que
+# o instrumento distingue, senao o proprio sensor dispara o alerta (3.4.5).
+RESOLUCAO_SENSOR_LUX = float(os.environ.get("RESOLUCAO_SENSOR_LUX", "0.113"))
+# Piso da tolerancia em degraus do sensor, no menor nivel operado: meio degrau
+# porque o valor esperado cai entre dois degraus, mais um degrau de oscilacao
+# entre series (na sessao 72, 15 de 33 pontos diferiram em exatamente um).
+DEGRAUS_TOLERANCIA = float(os.environ.get("DEGRAUS_TOLERANCIA", "1.5"))

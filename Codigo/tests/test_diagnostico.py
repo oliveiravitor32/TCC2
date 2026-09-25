@@ -103,19 +103,53 @@ def test_tolerancia_provisoria_sem_ensaio(conn, ponto):
     assert tolerancia_do_ponto(conn, ponto.id) == config.TOLERANCIA_PROVISORIA
 
 
-def test_tolerancia_vem_da_dispersao_medida(conn, ponto):
+def _sessao(conn, ponto, pontos: dict[float, list[float]], residual=0.0, quando=None) -> int:
+    """Sessao de calibracao com {duty: [lux da serie 1, 2, 3...]}."""
     sid = conn.execute(
-        "INSERT INTO sessao_medicao (ponto_de_luz_id, lux_residual, lux_classe)"
-        " VALUES (%s, 0.2, 10) RETURNING id", (ponto.id,)
+        "INSERT INTO sessao_medicao (ponto_de_luz_id, lux_residual, lux_classe, iniciada_em)"
+        " VALUES (%s, %s, 10, COALESCE(%s, now())) RETURNING id", (ponto.id, residual, quando)
     ).fetchone()[0]
-    for serie, lux in enumerate([9.9, 10.0, 10.1], start=1):  # dispersao ~1 %
-        conn.execute(
-            "INSERT INTO calibracao (sessao_id, serie, duty, lux_medido) VALUES (%s, %s, 0.6, %s)",
-            (sid, serie, lux),
-        )
+    for duty, valores in pontos.items():
+        for serie, lux in enumerate(valores, start=1):
+            conn.execute(
+                "INSERT INTO calibracao (sessao_id, serie, duty, lux_medido) VALUES (%s, %s, %s, %s)",
+                (sid, serie, duty, lux),
+            )
+    return sid
+
+
+PISO_RESOLUCAO = config.DEGRAUS_TOLERANCIA * config.RESOLUCAO_SENSOR_LUX / 5.0  # ~3,4 %
+
+
+def test_tolerancia_vem_da_dispersao_quando_ela_supera_a_resolucao(conn, ponto):
+    # 3 % de dispersao no pleno: 3 sigma = 9 %, acima do piso de resolucao.
+    _sessao(conn, ponto, {0.6: [9.7, 10.0, 10.3]})
     t = tolerancia_do_ponto(conn, ponto.id)
-    assert t == pytest.approx(config.K_SIGMA * 0.01, rel=0.05)
-    assert t < config.TOLERANCIA_PROVISORIA  # bancada boa aperta a tolerancia
+    assert t == pytest.approx(config.K_SIGMA * 0.03, rel=0.05)
+    assert t > PISO_RESOLUCAO
+
+
+def test_bancada_perfeita_nao_zera_a_tolerancia(conn, ponto):
+    # Achado da sessao 72: repeticoes identicas davam dispersao 0 %. A
+    # tolerancia nao pode cair abaixo do que o sensor distingue.
+    _sessao(conn, ponto, {0.57: [9.96, 9.96, 9.96], 0.30: [4.98, 4.98, 4.98]})
+    assert tolerancia_do_ponto(conn, ponto.id) == pytest.approx(PISO_RESOLUCAO)
+
+
+def test_pontos_abaixo_do_piso_nao_inflam_a_tolerancia(conn, ponto):
+    # A 0,3 lx um degrau do sensor vale ~38 %: fora da faixa de operacao,
+    # esse ponto nao pode definir a tolerancia (daria mais de 100 %).
+    _sessao(conn, ponto, {0.03: [0.30, 0.30, 0.41], 0.57: [9.96, 9.96, 9.96]})
+    assert tolerancia_do_ponto(conn, ponto.id) == pytest.approx(PISO_RESOLUCAO)
+
+
+def test_so_a_sessao_mais_recente_conta(conn, ponto):
+    from datetime import datetime, timedelta, timezone
+
+    ontem = datetime.now(timezone.utc) - timedelta(days=1)
+    _sessao(conn, ponto, {0.6: [8.0, 10.0, 12.0]}, quando=ontem)  # sessao antiga e ruim
+    _sessao(conn, ponto, {0.6: [9.96, 9.96, 9.96]})               # recalibracao boa
+    assert tolerancia_do_ponto(conn, ponto.id) == pytest.approx(PISO_RESOLUCAO)
 
 
 def test_falha_total_induzida_abre_alerta_apos_tres_ciclos(conn, ponto):
