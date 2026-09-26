@@ -1326,5 +1326,43 @@ ISOLAMENTO DA SUITE (bug corrigido): o historico sintetico de 168 h gravado
          exatamente.
 
 ===============================================================================
+52. CENARIO 'RUIDO NA FRONTEIRA' (decisao do autor sobre o item 51)
+    Trecho: 3.5 (suite), 3.7 (justificativa da logica nebulosa), 5.4, 5.5
+    Acao: [ATUALIZAR TEXTO] - rodada de 26/09/2026
+-------------------------------------------------------------------------------
+DECLARAR NO TEXTO: o cenario foi acrescentado DEPOIS de a comparacao do
+         item 51 dar empate, para testar a afirmacao da 3.7 (resposta gradual
+         perto das fronteiras), que nenhum cenario anterior exercitava.
+CENARIO: 2 h de madrugada, uma leitura de movimentacao por minuto, sorteada
+         de normal(0,1038; 0,025) com semente 51 (tercil inferior = 0,1038;
+         59 das 120 leituras abaixo dele). Envelope: piso a 0,70 (entre o
+         piso e o intermediario), fixado pela regra, nao pelo resultado.
+RESULTADO NO CENARIO (igual nos modos antecipado e reativo):
+                     viol  aderencia  variacao total  inversoes  %pleno
+         Mamdani       0     100 %          0,50           19      50,3 %
+         Degraus       0     100 %          3,45           68      52,9 %
+         A tabela varia ~7x mais e inverte o sentido ~3,5x mais; a
+         Mamdani fica praticamente no piso. Nenhuma subida brusca nas duas:
+         a amplitude de cada pulo da tabela e pequena (0,05 do pleno =
+         0,5 lx na P3), porque o degrau 'reduzido' e cortado no piso.
+LEITURA: a diferenca existe e vai no sentido que a 3.7 afirma, mas a
+         amplitude e pequena. O texto deve dizer as duas coisas.
+SUITE COM 9 CENARIOS (13.440 decisoes por rodada, zero violacoes em todas):
+         Mamdani antecipado: aderencia 97,4 %; 63,8 % do pleno; 90,0 % do
+                             horario fixo; H3 16,5 % (sem adversariais 13,6 %)
+         Mamdani reativo:    aderencia 97,4 %; 63,2 % do pleno; 89,2 % do
+                             horario fixo; H3  6,4 % (sem adversariais 1,8 %)
+         Degraus antecipado: 64,0 % do pleno; 90,3 % do horario fixo
+         Degraus reativo:    63,6 % do pleno; 89,7 % do horario fixo
+         ESTES sao os numeros vigentes da suite (substituem os do item 50).
+         H3 continua nao confirmada.
+BANCADA: os ensaios de fluxo (rampa, subida imediata, falha induzida,
+         failsafe, latencia) serao refeitos numa sessao limpa DEPOIS do
+         deploy (base v2, TLS pela internet); os registros antigos foram
+         apagados na migracao 001 e so existem no backup. A calibracao da
+         sessao 72 continua valida (independe da logica); conferir residual
+         e 2-3 pontos no inicio da sessao.
+
+===============================================================================
 FIM
 ===============================================================================

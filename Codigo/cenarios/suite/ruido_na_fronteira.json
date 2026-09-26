@@ -1,0 +1,745 @@
+{
+  "nome": "ruido_na_fronteira",
+  "descricao": "Movimentacao oscilando em torno do tercil inferior (ruido de medicao): a decisao nao deve alternar entre degraus.",
+  "origem": "Acrescentado DEPOIS da comparacao tabela x Mamdani (DIVERGENCIAS 51/52), para testar a resposta gradual que a 3.7 atribui a logica nebulosa. Uma leitura por minuto, normal(0,1038; 0,025), semente 51.",
+  "inicio_local": "2026-09-23T01:00:00",
+  "duracao_min": 120,
+  "eventos": [
+    {
+      "em_min": 0,
+      "tipo": "movimentacao",
+      "valor": 0.105,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 1,
+      "tipo": "movimentacao",
+      "valor": 0.133,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 2,
+      "tipo": "movimentacao",
+      "valor": 0.128,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 3,
+      "tipo": "movimentacao",
+      "valor": 0.143,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 4,
+      "tipo": "movimentacao",
+      "valor": 0.107,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 5,
+      "tipo": "movimentacao",
+      "valor": 0.135,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 6,
+      "tipo": "movimentacao",
+      "valor": 0.126,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 7,
+      "tipo": "movimentacao",
+      "valor": 0.093,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 8,
+      "tipo": "movimentacao",
+      "valor": 0.144,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 9,
+      "tipo": "movimentacao",
+      "valor": 0.096,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 10,
+      "tipo": "movimentacao",
+      "valor": 0.07,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 11,
+      "tipo": "movimentacao",
+      "valor": 0.093,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 12,
+      "tipo": "movimentacao",
+      "valor": 0.084,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 13,
+      "tipo": "movimentacao",
+      "valor": 0.092,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 14,
+      "tipo": "movimentacao",
+      "valor": 0.129,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 15,
+      "tipo": "movimentacao",
+      "valor": 0.103,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 16,
+      "tipo": "movimentacao",
+      "valor": 0.152,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 17,
+      "tipo": "movimentacao",
+      "valor": 0.099,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 18,
+      "tipo": "movimentacao",
+      "valor": 0.123,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 19,
+      "tipo": "movimentacao",
+      "valor": 0.107,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 20,
+      "tipo": "movimentacao",
+      "valor": 0.058,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 21,
+      "tipo": "movimentacao",
+      "valor": 0.11,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 22,
+      "tipo": "movimentacao",
+      "valor": 0.119,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 23,
+      "tipo": "movimentacao",
+      "valor": 0.135,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 24,
+      "tipo": "movimentacao",
+      "valor": 0.074,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 25,
+      "tipo": "movimentacao",
+      "valor": 0.136,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 26,
+      "tipo": "movimentacao",
+      "valor": 0.142,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 27,
+      "tipo": "movimentacao",
+      "valor": 0.085,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 28,
+      "tipo": "movimentacao",
+      "valor": 0.119,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 29,
+      "tipo": "movimentacao",
+      "valor": 0.143,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 30,
+      "tipo": "movimentacao",
+      "valor": 0.06,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 31,
+      "tipo": "movimentacao",
+      "valor": 0.122,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 32,
+      "tipo": "movimentacao",
+      "valor": 0.05,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 33,
+      "tipo": "movimentacao",
+      "valor": 0.114,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 34,
+      "tipo": "movimentacao",
+      "valor": 0.15,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 35,
+      "tipo": "movimentacao",
+      "valor": 0.1,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 36,
+      "tipo": "movimentacao",
+      "valor": 0.125,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 37,
+      "tipo": "movimentacao",
+      "valor": 0.063,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 38,
+      "tipo": "movimentacao",
+      "valor": 0.091,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 39,
+      "tipo": "movimentacao",
+      "valor": 0.095,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 40,
+      "tipo": "movimentacao",
+      "valor": 0.132,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 41,
+      "tipo": "movimentacao",
+      "valor": 0.101,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 42,
+      "tipo": "movimentacao",
+      "valor": 0.13,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 43,
+      "tipo": "movimentacao",
+      "valor": 0.107,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 44,
+      "tipo": "movimentacao",
+      "valor": 0.089,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 45,
+      "tipo": "movimentacao",
+      "valor": 0.112,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 46,
+      "tipo": "movimentacao",
+      "valor": 0.116,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 47,
+      "tipo": "movimentacao",
+      "valor": 0.101,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 48,
+      "tipo": "movimentacao",
+      "valor": 0.13,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 49,
+      "tipo": "movimentacao",
+      "valor": 0.086,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 50,
+      "tipo": "movimentacao",
+      "valor": 0.114,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 51,
+      "tipo": "movimentacao",
+      "valor": 0.125,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 52,
+      "tipo": "movimentacao",
+      "valor": 0.092,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 53,
+      "tipo": "movimentacao",
+      "valor": 0.108,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 54,
+      "tipo": "movimentacao",
+      "valor": 0.107,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 55,
+      "tipo": "movimentacao",
+      "valor": 0.068,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 56,
+      "tipo": "movimentacao",
+      "valor": 0.151,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 57,
+      "tipo": "movimentacao",
+      "valor": 0.099,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 58,
+      "tipo": "movimentacao",
+      "valor": 0.123,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 59,
+      "tipo": "movimentacao",
+      "valor": 0.021,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 60,
+      "tipo": "movimentacao",
+      "valor": 0.136,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 61,
+      "tipo": "movimentacao",
+      "valor": 0.089,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 62,
+      "tipo": "movimentacao",
+      "valor": 0.074,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 63,
+      "tipo": "movimentacao",
+      "valor": 0.096,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 64,
+      "tipo": "movimentacao",
+      "valor": 0.126,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 65,
+      "tipo": "movimentacao",
+      "valor": 0.051,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 66,
+      "tipo": "movimentacao",
+      "valor": 0.127,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 67,
+      "tipo": "movimentacao",
+      "valor": 0.062,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 68,
+      "tipo": "movimentacao",
+      "valor": 0.13,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 69,
+      "tipo": "movimentacao",
+      "valor": 0.108,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 70,
+      "tipo": "movimentacao",
+      "valor": 0.132,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 71,
+      "tipo": "movimentacao",
+      "valor": 0.121,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 72,
+      "tipo": "movimentacao",
+      "valor": 0.076,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 73,
+      "tipo": "movimentacao",
+      "valor": 0.088,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 74,
+      "tipo": "movimentacao",
+      "valor": 0.115,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 75,
+      "tipo": "movimentacao",
+      "valor": 0.09,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 76,
+      "tipo": "movimentacao",
+      "valor": 0.099,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 77,
+      "tipo": "movimentacao",
+      "valor": 0.071,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 78,
+      "tipo": "movimentacao",
+      "valor": 0.12,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 79,
+      "tipo": "movimentacao",
+      "valor": 0.171,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 80,
+      "tipo": "movimentacao",
+      "valor": 0.13,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 81,
+      "tipo": "movimentacao",
+      "valor": 0.113,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 82,
+      "tipo": "movimentacao",
+      "valor": 0.071,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 83,
+      "tipo": "movimentacao",
+      "valor": 0.096,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 84,
+      "tipo": "movimentacao",
+      "valor": 0.135,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 85,
+      "tipo": "movimentacao",
+      "valor": 0.1,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 86,
+      "tipo": "movimentacao",
+      "valor": 0.12,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 87,
+      "tipo": "movimentacao",
+      "valor": 0.09,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 88,
+      "tipo": "movimentacao",
+      "valor": 0.09,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 89,
+      "tipo": "movimentacao",
+      "valor": 0.105,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 90,
+      "tipo": "movimentacao",
+      "valor": 0.087,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 91,
+      "tipo": "movimentacao",
+      "valor": 0.084,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 92,
+      "tipo": "movimentacao",
+      "valor": 0.106,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 93,
+      "tipo": "movimentacao",
+      "valor": 0.092,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 94,
+      "tipo": "movimentacao",
+      "valor": 0.042,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 95,
+      "tipo": "movimentacao",
+      "valor": 0.118,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 96,
+      "tipo": "movimentacao",
+      "valor": 0.14,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 97,
+      "tipo": "movimentacao",
+      "valor": 0.106,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 98,
+      "tipo": "movimentacao",
+      "valor": 0.086,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 99,
+      "tipo": "movimentacao",
+      "valor": 0.068,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 100,
+      "tipo": "movimentacao",
+      "valor": 0.076,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 101,
+      "tipo": "movimentacao",
+      "valor": 0.093,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 102,
+      "tipo": "movimentacao",
+      "valor": 0.124,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 103,
+      "tipo": "movimentacao",
+      "valor": 0.099,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 104,
+      "tipo": "movimentacao",
+      "valor": 0.093,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 105,
+      "tipo": "movimentacao",
+      "valor": 0.068,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 106,
+      "tipo": "movimentacao",
+      "valor": 0.1,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 107,
+      "tipo": "movimentacao",
+      "valor": 0.076,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 108,
+      "tipo": "movimentacao",
+      "valor": 0.147,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 109,
+      "tipo": "movimentacao",
+      "valor": 0.108,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 110,
+      "tipo": "movimentacao",
+      "valor": 0.096,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 111,
+      "tipo": "movimentacao",
+      "valor": 0.147,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 112,
+      "tipo": "movimentacao",
+      "valor": 0.147,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 113,
+      "tipo": "movimentacao",
+      "valor": 0.1,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 114,
+      "tipo": "movimentacao",
+      "valor": 0.063,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 115,
+      "tipo": "movimentacao",
+      "valor": 0.132,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 116,
+      "tipo": "movimentacao",
+      "valor": 0.087,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 117,
+      "tipo": "movimentacao",
+      "valor": 0.118,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 118,
+      "tipo": "movimentacao",
+      "valor": 0.071,
+      "vigente_min": 15
+    },
+    {
+      "em_min": 119,
+      "tipo": "movimentacao",
+      "valor": 0.088,
+      "vigente_min": 15
+    }
+  ],
+  "envelope": [
+    {
+      "de_min": 0,
+      "ate_min": 10,
+      "min": 0.5,
+      "max": 1.0,
+      "nota": "descida inicial"
+    },
+    {
+      "de_min": 10,
+      "ate_min": 120,
+      "min": 0.5,
+      "max": 0.7,
+      "nota": "fronteira baixa/media: entre o piso e o intermediario"
+    }
+  ]
+}
