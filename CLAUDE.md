@@ -154,7 +154,7 @@ docker-compose.yml
 
 - Confirmado pelo autor: passo da rampa de 5 s e failsafe de 15 s. Base de regras vigente: `v2-sem-meteorologia` (8 regras); resultados da suíte no item 50.
 
-- **Ao resolver as divergências do `DIVERGENCIAS_TCC.txt` com o autor, avisar e perguntar sobre o item 43:** se é para rodar a suíte de cenários também com uma **tabela de regras em degraus** (mesmos tercis, sem lógica nebulosa) e comparar aderência, mudanças bruscas de nível e energia. Responde à pergunta provável da banca "uma tabela não bastaria?". Ainda não foi feito.
+- Item 43 feito (item 51 do DIVERGENCIAS): tabela em degraus empata com a Mamdani na suíte atual. **Pendente:** o autor decidir se entra um cenário com ruído na fronteira de um tercil.
 
 
 ## Hardware atual (já montado e testado)
