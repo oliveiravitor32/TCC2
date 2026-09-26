@@ -10,6 +10,12 @@ pelo centroide, com as funcoes de pertinencia do scikit-fuzzy. A base de
 regras e as particoes vem de um arquivo TOML versionado (RNF05); o grau de
 ativacao de cada regra e devolvido para a auditoria (rastreabilidade, 2.6).
 
+Variante em DEGRAUS (DIVERGENCIAS 43, item 51): a mesma base, com as
+pertinencias reduzidas a 0 ou 1 (movimentacao cortada nos tercis, faixa
+horaria no conjunto de maior grau). O resultado e uma tabela: cada combinacao
+de termos tem um unico nivel. Serve so para comparar com a Mamdani ("uma
+tabela nao bastaria?"); a decisao em operacao usa a Mamdani.
+
 Este modulo e puro: nao le banco, nao faz rede.
 """
 
@@ -17,7 +23,7 @@ from __future__ import annotations
 
 import hashlib
 import tomllib
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime
 from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
@@ -26,7 +32,7 @@ from typing import Final, Mapping
 import numpy as np
 import skfuzzy as fuzz
 
-__all__ = ["BaseRegras", "Entrada", "Resultado", "carregar", "inferir", "BASE_VIGENTE"]
+__all__ = ["BaseRegras", "Entrada", "Resultado", "carregar", "em_degraus", "inferir", "BASE_VIGENTE"]
 
 # Base vigente. As versoes anteriores (v0-provisoria, v1-tercis) usavam a
 # condicao meteorologica, retirada na v2 (DIVERGENCIAS 49); ficam no historico
@@ -91,6 +97,8 @@ class BaseRegras:
     faixa: dict[str, list[float]]
     saida: dict[str, list[float]]
     regras: tuple[Regra, ...]
+    # "mamdani" (vigente) ou "degraus" (comparacao do item 51).
+    metodo: str = "mamdani"
 
     def texto(self) -> str:
         """Base inteira em linguagem natural (RNF05)."""
@@ -165,6 +173,15 @@ def carregar(caminho: Path = BASE_VIGENTE) -> BaseRegras:
     )
 
 
+def em_degraus(base: BaseRegras) -> BaseRegras:
+    """A mesma base como tabela em degraus (mesmos tercis, mesmas regras).
+
+    Rotulo proprio, para que a decisao registre qual variante a produziu
+    (RNF04); o hash e o do mesmo arquivo de regras.
+    """
+    return replace(base, rotulo=f"{base.rotulo}-degraus", metodo="degraus")
+
+
 # ---------------------------------------------------------------------------
 # Inferencia
 # ---------------------------------------------------------------------------
@@ -189,6 +206,14 @@ def _pertinencias(base: BaseRegras, e: Entrada) -> dict[tuple[str, str], float]:
     prevista = e.observada if e.prevista is None else e.prevista
     graus: dict[tuple[str, str], float] = {}
     for var, x in (("observada", e.observada), ("prevista", prevista)):
+        if base.metodo == "degraus":
+            # Corte seco no tercil (meio da rampa).
+            f1 = (base.mov["baixa"][2] + base.mov["baixa"][3]) / 2
+            f2 = (base.mov["alta"][0] + base.mov["alta"][1]) / 2
+            termo_x = "baixa" if x < f1 else "media" if x < f2 else "alta"
+            for termo in base.mov:
+                graus[(var, termo)] = 1.0 if termo == termo_x else 0.0
+            continue
         for termo, p in base.mov.items():
             graus[(var, termo)] = _grau(p, x)
     for var, valor in (("ocorrencia", e.ocorrencia),):
@@ -198,6 +223,12 @@ def _pertinencias(base: BaseRegras, e: Entrada) -> dict[tuple[str, str], float]:
     h = horas_desde_18h(e.momento)
     for termo, p in base.faixa.items():
         graus[("faixa_horaria", termo)] = _grau(p, h)
+    if base.metodo == "degraus":
+        # Um unico conjunto: o de maior grau (empate fica com o primeiro).
+        chaves = [("faixa_horaria", t) for t in base.faixa]
+        vencedor = max(chaves, key=lambda k: graus[k])
+        for k in chaves:
+            graus[k] = 1.0 if k == vencedor else 0.0
     return graus
 
 

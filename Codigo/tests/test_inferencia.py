@@ -15,7 +15,7 @@ from decimal import Decimal
 
 import pytest
 
-from decisao.inferencia import Entrada, _hash, carregar, horas_desde_18h, inferir
+from decisao.inferencia import Entrada, _hash, carregar, em_degraus, horas_desde_18h, inferir
 from decisao.verificacao import Criterio, verificar
 
 BASE = carregar()
@@ -163,3 +163,34 @@ def test_cadeia_inferencia_verificacao_nunca_viola():
             assert anterior - r.nivel_emitido <= P3.taxa_max_decrescimo_min * 5 / 60
         anterior = r.nivel_emitido
         momento += timedelta(seconds=5)
+
+
+# --------------------------------------------------------------------------
+# Variante em degraus (item 51): mesma base, sem logica nebulosa
+# --------------------------------------------------------------------------
+DEGRAUS = em_degraus(BASE)
+
+
+def test_degraus_tem_rotulo_proprio_e_mesmo_hash():
+    assert DEGRAUS.rotulo == "v2-sem-meteorologia-degraus"
+    assert DEGRAUS.hash_regras == BASE.hash_regras
+
+
+def test_degraus_e_uma_tabela_com_poucos_niveis():
+    niveis = {
+        inferir(DEGRAUS, Entrada(i / 100, j / 100, oc, datetime(2026, 9, 21, h))).nivel_pretendido
+        for i in range(0, 101, 2) for j in range(0, 101, 2) for h in range(24) for oc in (False, True)
+    }
+    assert len(niveis) <= 6
+
+
+def test_degraus_coincide_com_mamdani_longe_das_fronteiras():
+    for obs, prev in ((BAIXA, BAIXA), (MEDIA, MEDIA), (ALTA, ALTA)):
+        e = Entrada(obs, prev, False, MADRUGADA)
+        assert inferir(DEGRAUS, e).nivel_pretendido == inferir(BASE, e).nivel_pretendido
+
+
+def test_degraus_salta_na_fronteira():
+    antes = inferir(DEGRAUS, Entrada(0.1037, 0.1037, False, MADRUGADA)).nivel_pretendido
+    depois = inferir(DEGRAUS, Entrada(0.1039, 0.1039, False, MADRUGADA)).nivel_pretendido
+    assert depois - antes > Decimal("0.2")

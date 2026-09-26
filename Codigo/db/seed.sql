@@ -57,6 +57,12 @@ VALUES ('v2-sem-meteorologia', 8,
         '8 regras, sem condicao meteorologica. Arquivo: decisao/regras/v2-sem-meteorologia.toml.')
 ON CONFLICT (rotulo) DO NOTHING;
 
+-- Mesma base como tabela em degraus, so para a comparacao do item 51.
+INSERT INTO versao_base_regras (rotulo, qtd_regras, resumo)
+VALUES ('v2-sem-meteorologia-degraus', 8,
+        'Mesma base v2 como tabela em degraus (corte seco nos tercis, faixa horaria no conjunto de maior grau); so para comparacao com a Mamdani.')
+ON CONFLICT (rotulo) DO NOTHING;
+
 -- hash_regras e conferido pelo servico de decisao ao iniciar (passo 5).
 
 -- Camadas de previsao (3.6). A persistencia foi a previsao provisoria e

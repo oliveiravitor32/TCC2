@@ -124,8 +124,22 @@ def criterio(conn: psycopg.Connection, classe: str) -> Criterio:
 # ---------------------------------------------------------------------------
 # Estado da via
 # ---------------------------------------------------------------------------
+def origens_da_execucao(execucao_id: int | None) -> list[str] | None:
+    """Origens de evento que uma execucao de cenario enxerga (DIVERGENCIAS 51).
+
+    Em operacao (None) todas as origens valem. Na suite, cada execucao so
+    enxerga os eventos que ela mesma gravou: o historico sintetico de um
+    cenario cai no horario de outro, e sem esse filtro uma rodada contamina a
+    seguinte.
+    """
+    if execucao_id is None:
+        return None
+    return [f"cenario:{execucao_id}", f"cenario-historico:{execucao_id}"]
+
+
 def estado_via(
-    conn: psycopg.Connection, agora: datetime, desde: datetime | None = None
+    conn: psycopg.Connection, agora: datetime, desde: datetime | None = None,
+    origens: list[str] | None = None,
 ) -> EstadoVia:
     """Ultimo evento vigente de cada tipo.
 
@@ -145,6 +159,7 @@ def estado_via(
           FROM evento_urbano
          WHERE ocorrido_em <= %(agora)s
            AND (%(desde)s::timestamptz IS NULL OR ocorrido_em >= %(desde)s)
+           AND (%(origens)s::text[] IS NULL OR origem = ANY(%(origens)s))
            AND COALESCE(vigente_ate,
                         CASE WHEN tipo = 'movimentacao'
                              THEN ocorrido_em + %(validade)s
@@ -152,7 +167,7 @@ def estado_via(
                         'infinity') > %(agora)s
          ORDER BY tipo, ocorrido_em DESC, id DESC
         """,
-        {"agora": agora, "desde": desde,
+        {"agora": agora, "desde": desde, "origens": origens,
          "validade": timedelta(seconds=config.VALIDADE_MOVIMENTACAO_S)},
     ).fetchall()
     por_tipo = {tipo: (eid, valor, rotulo) for eid, tipo, valor, rotulo in linhas}
@@ -166,7 +181,9 @@ def estado_via(
     )
 
 
-def historico_horario(conn: psycopg.Connection, agora: datetime, horas: int) -> dict[int, float]:
+def historico_horario(
+    conn: psycopg.Connection, agora: datetime, horas: int, origens: list[str] | None = None
+) -> dict[int, float]:
     """Nivel medio de movimentacao por hora CHEIA DE RELOGIO anterior a `agora`.
 
     Chave = atraso em horas (1 = hora de relogio anterior). O modelo foi
@@ -183,9 +200,10 @@ def historico_horario(conn: psycopg.Connection, agora: datetime, horas: int) -> 
          WHERE tipo = 'movimentacao'
            AND ocorrido_em <= %(agora)s
            AND ocorrido_em > %(agora)s - make_interval(hours => %(horas)s)
+           AND (%(origens)s::text[] IS NULL OR origem = ANY(%(origens)s))
          GROUP BY 1
         """,
-        {"agora": agora, "horas": horas + 1},
+        {"agora": agora, "horas": horas + 1, "origens": origens},
     ).fetchall()
     return {int(a): float(n) for a, n in linhas if a >= 1 and n is not None}
 
@@ -239,7 +257,8 @@ def decidir(
     reativo: bool = False,
     desde: datetime | None = None,
 ) -> DecisaoTomada:
-    estado = estado_via(conn, agora, desde)
+    origens = origens_da_execucao(execucao_id)
+    estado = estado_via(conn, agora, desde, origens)
 
     previsao: float | None = None
     if estado.observada is None:
@@ -254,7 +273,7 @@ def decidir(
                 Historico(
                     momento=agora.astimezone(config.FUSO),
                     observada=estado.observada,
-                    serie=historico_horario(conn, agora, horas),
+                    serie=historico_horario(conn, agora, horas, origens),
                 )
             )
         pretendido = inferir(

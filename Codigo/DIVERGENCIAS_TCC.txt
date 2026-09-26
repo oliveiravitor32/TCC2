@@ -1266,22 +1266,64 @@ TEXTO SUGERIDO para a limitacao em 6.3:
 50. RESULTADOS DA SUITE SEM METEOROLOGIA (substituem os numeros do item 35)
     Trecho: 5.2, 5.4, 5.5, 6.1 (H3)
     Acao: [ATUALIZAR TEXTO] - rodada de 26/09/2026, base v2-sem-meteorologia
+    >>> CORRIGIDO PELO ITEM 51: os numeros do modo reativo foram refeitos com as
+        execucoes isoladas (a primeira rodada estava contaminada).
 -------------------------------------------------------------------------------
 8 cenarios (3 adversariais), 12.000 decisoes por modo, passo de 5 s.
 VIOLACOES: zero de piso e zero de taxa nos dois modos (24.000 decisoes).
 ENERGIA (REF-40W; razao identica a 440 W), suite inteira:
          antecipado: 65,4 % do pleno constante e 93,1 % do horario fixo;
-         reativo:    63,4 % do pleno e 90,2 % do horario fixo.
-ADERENCIA AO ENVELOPE: antecipado 97,1 %; reativo 94,1 % (a diferenca vem
-         do cenario 'silencio da plataforma': 50,8 % no reativo, porque sem
-         previsao a regra de movimento baixo atenua quando a plataforma para
-         de publicar). Na noite tipica, 93,9 % nos dois modos.
+         reativo:    64,7 % do pleno e 92,2 % do horario fixo.
+ADERENCIA AO ENVELOPE: 97,1 % nos dois modos (noite tipica: 93,9 %).
 H3 (fracao da janela de baixa demanda gasta em transicao):
-         suite inteira: antecipado 18,3 % x reativo 7,5 %;
+         suite inteira: antecipado 18,3 % x reativo 7,0 %;
          sem adversariais: antecipado 15,3 % x reativo 1,9 %.
          H3 CONTINUA NAO CONFIRMADA: a previsao atrasa a descida (na noite
          tipica o piso e alcancado aos 240 min no antecipado x 180 min no
          reativo) e gasta mais energia. Reportar assim mesmo (3.6).
+
+===============================================================================
+51. TABELA EM DEGRAUS x MAMDANI (responde ao item 43) + ISOLAMENTO DA SUITE
+    Trecho: 3.7 (justificativa da logica nebulosa), 3.9, 5.4, 5.5, 6.3
+    Acao: [DECIDIR COM O AUTOR] - rodada de 26/09/2026
+-------------------------------------------------------------------------------
+EXPERIMENTO: a mesma base v2 rodada como TABELA EM DEGRAUS: mesmas 8 regras,
+         pertinencias reduzidas a 0 ou 1 (movimentacao cortada nos tercis,
+         faixa horaria no conjunto de maior grau). Codigo: em_degraus() em
+         inferencia.py; `python -m cenarios.executar --degraus`; rotulo
+         'v2-sem-meteorologia-degraus' em versao_base_regras (migracao 002).
+         Nova metrica por cenario: subidas bruscas (>= 0,1 num passo), maior
+         subida, variacao total e inversoes de sentido.
+RESULTADO (8 cenarios, 12.000 decisoes por rodada, REF-40W):
+                         viol  aderencia  %pleno  %fixo   H3 (suite/sem adv)
+         Mamdani  antec.    0     97,1 %   65,4 %  93,1 %   18,3 % / 15,3 %
+         Degraus  antec.    0     97,1 %   65,3 %  92,9 %   23,9 % / 21,9 %
+         Mamdani  reativo   0     97,1 %   64,7 %  92,2 %    7,0 % /  1,9 %
+         Degraus  reativo   0     97,1 %   64,8 %  92,3 %    7,1 % /  1,9 %
+         Subidas bruscas: 5 em todas as rodadas (maior = 0,5, todas de
+         ocorrencia ou fluxo subito, que exigem subida imediata); variacao
+         total 9,0 a 9,1; inversoes de sentido 61 (58 no cenario serra).
+LEITURA HONESTA: nesta suite a tabela em degraus empata com a Mamdani em
+         seguranca, aderencia, energia e mudancas bruscas. A unica diferenca
+         e a H3 no modo antecipado (a tabela gasta mais a janela em
+         transicao). O motivo provavel: a suite quase nao tem movimentacao
+         perto das fronteiras dos tercis, que e onde as duas diferem, e a
+         camada de verificacao ja suaviza as descidas da tabela.
+         CONSEQUENCIA PARA O TEXTO: a 3.7 nao pode justificar a logica
+         nebulosa por desempenho medido. Justificativas que continuam de pe:
+         legibilidade da base e resposta gradual perto das fronteiras.
+PERGUNTA AO AUTOR: acrescentar um cenario com movimentacao oscilando em
+         torno de um tercil (ruido de medicao na fronteira), onde a tabela
+         alternaria entre degraus? E um caso realista, mas foi pensado DEPOIS
+         de ver este resultado; se entrar, o texto deve dizer isso.
+ISOLAMENTO DA SUITE (bug corrigido): o historico sintetico de 168 h gravado
+         antes de cada cenario caia no horario do cenario anterior, e numa
+         segunda rodada virava 'movimentacao observada' dele (o 'silencio da
+         plataforma' deixava de ser silencio). Agora cada execucao so enxerga
+         os eventos com origem 'cenario:{id}' e 'cenario-historico:{id}'
+         (ciclo.origens_da_execucao). Os numeros do reativo no item 50
+         estavam contaminados e foram corrigidos; os do antecipado repetiram
+         exatamente.
 
 ===============================================================================
 FIM

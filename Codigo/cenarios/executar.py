@@ -2,6 +2,7 @@
 
     python -m cenarios.executar                    # toda a suite, modo antecipado
     python -m cenarios.executar --reativo          # sem previsao (H3)
+    python -m cenarios.executar --degraus          # tabela em degraus (item 51)
     python -m cenarios.executar --cenario noite_tipica
 
 RELOGIO VIRTUAL. O cenario roda em tempo simulado, com passo igual ao
@@ -40,7 +41,7 @@ from decisao.energia import (
     energia_pleno_constante,
     trajetoria_horario_fixo,
 )
-from decisao.inferencia import carregar
+from decisao.inferencia import carregar, em_degraus
 from decisao.previsao import carregar_previsor
 
 AQUI = Path(__file__).resolve().parent
@@ -131,16 +132,16 @@ def _inserir_evento(conn, quando: datetime, tipo: str, valor=None, rotulo=None,
     )
 
 
-def _semear_historico(conn, inicio: datetime) -> None:
+def _semear_historico(conn, inicio: datetime, execucao_id: int) -> None:
     """Uma leitura por hora nas 168 h anteriores ao cenario (perfil sintetico)."""
     for k in range(HORAS_HISTORICO, 0, -1):
         quando = (inicio - timedelta(hours=k)).replace(minute=0, second=0, microsecond=0)
         _inserir_evento(conn, quando, "movimentacao", valor=perfil_horario(quando.astimezone(config.FUSO)),
-                        vigente_ate=quando + timedelta(hours=1), origem="cenario-historico")
+                        vigente_ate=quando + timedelta(hours=1), origem=f"cenario-historico:{execucao_id}")
 
 
 def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
-             indice: int = 0) -> dict:
+             indice: int = 0, degraus: bool = False) -> dict:
     """Roda um cenario no relogio virtual.
 
     `indice` desloca o cenario em SEMANAS inteiras. Os cenarios declaram
@@ -151,6 +152,8 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
     decisao (faixa horaria na inferencia, dia da semana no modelo).
     """
     base = carregar(config.REGRAS)
+    if degraus:
+        base = em_degraus(base)
     previsor = carregar_previsor(previsao)
     ponto = ciclo.pontos(conn)[0]
     inicio = (cenario.inicio_local + timedelta(weeks=indice)).astimezone(timezone.utc)
@@ -161,9 +164,9 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
             "INSERT INTO execucao_cenario (cenario, regime, modo_previsao, iniciada_em, observacao)"
             " VALUES (%s, 'adaptativo', %s, %s, %s) RETURNING id",
             (cenario.nome, "reativo" if reativo else "antecipado", inicio,
-             f"relogio virtual, passo {config.PERIODO_S} s; previsao {previsor.rotulo}; deslocamento de {indice} semana(s)"),
+             f"relogio virtual, passo {config.PERIODO_S} s; previsao {previsor.rotulo}; regras {base.rotulo}; deslocamento de {indice} semana(s)"),
         ).fetchone()[0]
-        _semear_historico(conn, inicio)
+        _semear_historico(conn, inicio, execucao_id)
 
         pendentes = sorted(cenario.eventos, key=lambda e: e["em_min"])
         registro: list[dict] = []
@@ -178,6 +181,7 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
                 _inserir_evento(
                     conn, agora, e["tipo"], e.get("valor"), e.get("rotulo"),
                     agora + timedelta(minutes=vig) if vig else None,
+                    origem=f"cenario:{execucao_id}",
                 )
                 i += 1
             d = ciclo.decidir(
@@ -245,6 +249,18 @@ def avaliar(cenario, registro, execucao_id, criterio, modelo, reativo, inicio, f
                 and not r["ocorrencia"]]
     em_transicao = [r for r in em_baixa if r["nivel_emitido"] > piso + margem]
 
+    # Mudancas de nivel (item 51). A descida e limitada pela taxa; o que pode
+    # ser brusco e a subida e o vai-e-volta. "Brusca" = subida de 0,1 do
+    # pleno ou mais num unico passo.
+    deltas = [b["nivel_emitido"] - a["nivel_emitido"] for a, b in zip(registro, registro[1:])]
+    sinais = [1 if d > 1e-9 else -1 for d in deltas if abs(d) > 1e-9]
+    mudancas = {
+        "subidas_bruscas": sum(1 for d in deltas if d >= 0.1 - 1e-9),
+        "maior_subida": round(max(deltas, default=0.0), 3),
+        "variacao_total": round(sum(abs(d) for d in deltas), 3),
+        "inversoes_de_sentido": sum(1 for a, b in zip(sinais, sinais[1:]) if a != b),
+    }
+
     decisoes = [(r["criado_em"], r["nivel_anterior"], r["nivel_emitido"]) for r in registro]
     energia = {}
     for nome, potencia in POTENCIAS_REFERENCIA.items():
@@ -300,6 +316,7 @@ def avaliar(cenario, registro, execucao_id, criterio, modelo, reativo, inicio, f
                 min((r["minuto"] for r in em_baixa if r["nivel_emitido"] <= piso + margem),
                     default=-1), 2),
         },
+        "mudancas": mudancas,
         "energia": energia,
     }
 
@@ -308,6 +325,8 @@ def main() -> None:
     p = argparse.ArgumentParser(description="Suite de cenarios (3.9, RF10)")
     p.add_argument("--cenario", default=None, help="roda so este cenario")
     p.add_argument("--reativo", action="store_true", help="sem previsao (H3)")
+    p.add_argument("--degraus", action="store_true",
+                   help="mesma base como tabela em degraus, sem logica nebulosa (item 51)")
     p.add_argument("--previsao", choices=["persistencia", "xgboost"], default=None)
     p.add_argument("--saida", default=None, help="arquivo do relatorio")
     args = p.parse_args()
@@ -316,7 +335,8 @@ def main() -> None:
     relatorios = []
     with psycopg.connect(config.DATABASE_URL, connect_timeout=5) as conn:
         for i, c in enumerate(cenarios):
-            r = executar(conn, c, reativo=args.reativo, previsao=args.previsao, indice=i)
+            r = executar(conn, c, reativo=args.reativo, previsao=args.previsao, indice=i,
+                         degraus=args.degraus)
             relatorios.append(r)
             v = r["violacoes"]
             print(f"{c.nome:34s} decisoes={r['decisoes']:4d} "
@@ -329,7 +349,7 @@ def main() -> None:
         "gerado_em": datetime.now(timezone.utc).isoformat(),
         "modo_previsao": "reativo" if args.reativo else "antecipado",
         "passo_s": config.PERIODO_S,
-        "base_regras": carregar(config.REGRAS).rotulo,
+        "base_regras": (em_degraus if args.degraus else (lambda b: b))(carregar(config.REGRAS)).rotulo,
         "cenarios": len(relatorios),
         "decisoes": sum(r["decisoes"] for r in relatorios),
         "violacoes_totais": {
@@ -338,7 +358,8 @@ def main() -> None:
         "relatorios": relatorios,
     }
     RESULTADOS.mkdir(exist_ok=True)
-    nome = args.saida or f"suite_{'reativo' if args.reativo else 'antecipado'}.json"
+    nome = args.saida or (f"suite_{'reativo' if args.reativo else 'antecipado'}"
+                          f"{'_degraus' if args.degraus else ''}.json")
     (RESULTADOS / nome).write_text(
         json.dumps(total, indent=2, ensure_ascii=False, default=str), encoding="utf-8"
     )

@@ -45,11 +45,11 @@ def ponto(conn):
     return next(p for p in ciclo.pontos(conn) if p.codigo == "BANCADA-01")
 
 
-def evento(conn, tipo, *, em, valor=None, rotulo=None, vigente_ate=None) -> int:
+def evento(conn, tipo, *, em, valor=None, rotulo=None, vigente_ate=None, origem="teste") -> int:
     return conn.execute(
         "INSERT INTO evento_urbano (ocorrido_em, tipo, valor, rotulo, origem, vigente_ate)"
-        " VALUES (%s, %s, %s, %s, 'teste', %s) RETURNING id",
-        (em, tipo, valor, rotulo, vigente_ate),
+        " VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+        (em, tipo, valor, rotulo, origem, vigente_ate),
     ).fetchone()[0]
 
 
@@ -264,3 +264,16 @@ def test_last_will_marca_sem_comunicacao(conn, ponto):
     assert estado() == "sem_comunicacao"
     ciclo.atualizar_estado_ponto(conn, "BANCADA-01", online=True)
     assert estado() == "operante"
+
+
+def test_execucao_de_cenario_so_enxerga_os_proprios_eventos(conn, ponto):
+    # DIVERGENCIAS 51: o historico sintetico de uma execucao nao pode virar
+    # "movimentacao observada" de outra.
+    evento(conn, "movimentacao", em=T0, valor=0.7, origem="cenario-historico:1",
+           vigente_ate=T0 + timedelta(hours=1))
+    evento(conn, "movimentacao", em=T0 - timedelta(hours=2), valor=0.7, origem="cenario:1")
+    origens = ciclo.origens_da_execucao(2)
+    assert ciclo.estado_via(conn, T0 + timedelta(minutes=1), origens=origens).observada is None
+    assert ciclo.historico_horario(conn, T0 + timedelta(minutes=1), 24, origens) == {}
+    # Em operacao (sem execucao) todas as origens valem.
+    assert ciclo.estado_via(conn, T0 + timedelta(minutes=1)).observada == 0.7
