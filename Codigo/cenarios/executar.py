@@ -12,7 +12,7 @@ cenarios de horas. A latencia fisica (RNF03) nao se mede aqui: ela e medida
 na Etapa 5, com o no.
 
 O que cada execucao produz:
-  - RNF01/RNF02 (5.2): violacoes de piso, de taxa e de meteorologia, contadas
+  - RNF01/RNF02 (5.2): violacoes de piso e de taxa, contadas
     sobre o registro de decisoes. O esperado e zero;
   - 5.4: aderencia ao envelope esperado de cada trecho;
   - 5.5: energia do regime adaptativo e das duas linhas de base de 3.11;
@@ -144,9 +144,9 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
     """Roda um cenario no relogio virtual.
 
     `indice` desloca o cenario em SEMANAS inteiras. Os cenarios declaram
-    horarios do dia que se sobrepoem (a chuva as 02h cairia dentro da
-    madrugada ociosa, que vai das 01h as 03h), e uma condicao declarada em um
-    contaminaria o outro. O deslocamento em semanas separa as janelas sem
+    horarios do dia que se sobrepoem (a ocorrencia das 01h30 cairia dentro
+    da madrugada ociosa, que vai das 01h as 03h), e uma condicao declarada em
+    um contaminaria o outro. O deslocamento em semanas separa as janelas sem
     alterar a hora do dia nem o dia da semana - as duas coisas que entram na
     decisao (faixa horaria na inferencia, dia da semana no modelo).
     """
@@ -192,7 +192,6 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
                 "nivel_anterior": float(d.nivel_anterior) if d.nivel_anterior is not None else None,
                 "restricao": d.restricao_aplicada,
                 "observada": d.estado.observada,
-                "meteorologia_adversa": d.estado.meteorologia_adversa,
                 "ocorrencia": d.estado.ocorrencia,
                 "criado_em": agora,
             })
@@ -220,9 +219,6 @@ def avaliar(cenario, registro, execucao_id, criterio, modelo, reativo, inicio, f
         b for a, b in zip(registro, registro[1:])
         if a["nivel_emitido"] - b["nivel_emitido"] > taxa_passo + 1e-9
     ]
-    violacoes_meteo = [
-        r for r in registro if r["meteorologia_adversa"] and r["nivel_emitido"] < 1.0 - 1e-9
-    ]
 
     dentro, fora, sem_envelope = 0, [], 0
     for r in registro:
@@ -242,12 +238,11 @@ def avaliar(cenario, registro, execucao_id, criterio, modelo, reativo, inicio, f
     # acima do piso, isto e, a janela sendo gasta descendo em vez de no
     # nivel que ela justificaria.
     margem = 0.02
-    # Ciclos sob chuva ou ocorrencia ficam de fora: neles o pleno e imposto
-    # pela norma ou pela regra de dominio, e contar esses ciclos mediria a
-    # verificacao, nao o efeito da previsao.
+    # Ciclos sob ocorrencia ficam de fora: neles o pleno e imposto pela regra
+    # de dominio, e conta-los mediria essa regra, nao o efeito da previsao.
     em_baixa = [r for r in registro
                 if r["observada"] is not None and r["observada"] < fronteira_baixa
-                and not r["meteorologia_adversa"] and not r["ocorrencia"]]
+                and not r["ocorrencia"]]
     em_transicao = [r for r in em_baixa if r["nivel_emitido"] > piso + margem]
 
     decisoes = [(r["criado_em"], r["nivel_anterior"], r["nivel_emitido"]) for r in registro]
@@ -284,11 +279,10 @@ def avaliar(cenario, registro, execucao_id, criterio, modelo, reativo, inicio, f
         "violacoes": {
             "piso": len(violacoes_piso),
             "taxa": len(violacoes_taxa),
-            "meteorologia": len(violacoes_meteo),
         },
         "restricoes_aplicadas": {
             r: sum(1 for x in registro if x["restricao"] == r)
-            for r in ("nenhuma", "piso", "taxa", "meteorologia")
+            for r in ("nenhuma", "piso", "taxa")
         },
         "envelope": {
             "ciclos_avaliados": avaliados,
@@ -326,7 +320,7 @@ def main() -> None:
             relatorios.append(r)
             v = r["violacoes"]
             print(f"{c.nome:34s} decisoes={r['decisoes']:4d} "
-                  f"violacoes(piso/taxa/meteo)={v['piso']}/{v['taxa']}/{v['meteorologia']} "
+                  f"violacoes(piso/taxa)={v['piso']}/{v['taxa']} "
                   f"aderencia={r['envelope']['aderencia']} "
                   f"energia={r['energia']['REF-40W']['adaptativo_wh']:.1f} Wh "
                   f"({r['energia']['REF-40W']['razao_adaptativo_pleno']:.0%} do pleno)")
@@ -339,7 +333,7 @@ def main() -> None:
         "cenarios": len(relatorios),
         "decisoes": sum(r["decisoes"] for r in relatorios),
         "violacoes_totais": {
-            k: sum(r["violacoes"][k] for r in relatorios) for k in ("piso", "taxa", "meteorologia")
+            k: sum(r["violacoes"][k] for r in relatorios) for k in ("piso", "taxa")
         },
         "relatorios": relatorios,
     }

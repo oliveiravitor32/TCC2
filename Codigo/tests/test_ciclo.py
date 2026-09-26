@@ -97,7 +97,7 @@ def test_sem_dado_de_movimentacao_decide_pleno(conn, ponto):
 
 
 def test_movimentacao_baixa_na_madrugada_vai_ao_piso(conn, ponto):
-    ev = evento(conn, "movimentacao", em=T0 - timedelta(minutes=1), valor=0.1)
+    ev = evento(conn, "movimentacao", em=T0 - timedelta(minutes=1), valor=0.02)
     d = decidir(conn, ponto, T0)
     assert d.nivel_pretendido < Decimal("0.5")
     assert d.nivel_emitido == Decimal("0.500") and d.restricao_aplicada == "piso"
@@ -109,7 +109,7 @@ def test_movimentacao_baixa_na_madrugada_vai_ao_piso(conn, ponto):
 
 def test_descida_respeita_a_taxa_entre_ciclos(conn, ponto):
     decidir(conn, ponto, T0)  # sem dado: 1,0
-    evento(conn, "movimentacao", em=T0, valor=0.1)
+    evento(conn, "movimentacao", em=T0, valor=0.02)
     d = decidir(conn, ponto, T0 + timedelta(seconds=5))
     assert d.nivel_anterior == Decimal("1.000")
     assert d.nivel_emitido == Decimal("0.992") and d.restricao_aplicada == "taxa"
@@ -117,7 +117,7 @@ def test_descida_respeita_a_taxa_entre_ciclos(conn, ponto):
 
 def test_rampa_completa_leva_pelo_menos_cinco_minutos(conn, ponto):
     decidir(conn, ponto, T0)
-    evento(conn, "movimentacao", em=T0, valor=0.1)
+    evento(conn, "movimentacao", em=T0, valor=0.02)
     agora, niveis = T0, []
     for _ in range(80):  # 80 x 5 s = 6 min 40 s
         agora += timedelta(seconds=5)
@@ -129,7 +129,7 @@ def test_rampa_completa_leva_pelo_menos_cinco_minutos(conn, ponto):
 
 def test_apos_failsafe_a_rampa_recomeca_do_pleno(conn, ponto):
     # Servico estava parado: ultima decisao (0,5) ha 60 s, mais que o timeout.
-    evento(conn, "movimentacao", em=T0, valor=0.1)
+    evento(conn, "movimentacao", em=T0, valor=0.02)
     for s in range(0, 400, 5):
         decidir(conn, ponto, T0 + timedelta(seconds=s))
     volta = T0 + timedelta(seconds=395 + 60)
@@ -138,20 +138,21 @@ def test_apos_failsafe_a_rampa_recomeca_do_pleno(conn, ponto):
     assert d.nivel_emitido == Decimal("0.992")  # e nao 0,5 de uma vez
 
 
-def test_chuva_forca_pleno_e_limpo_libera(conn, ponto):
-    evento(conn, "movimentacao", em=T0, valor=0.1, vigente_ate=T0 + timedelta(hours=1))
-    evento(conn, "meteorologia", em=T0, rotulo="chuva")
+def test_ocorrencia_eleva_e_encerrada_libera_em_rampa(conn, ponto):
+    evento(conn, "movimentacao", em=T0, valor=0.02, vigente_ate=T0 + timedelta(hours=1))
+    evento(conn, "ocorrencia", em=T0, rotulo="seguranca")
     d = decidir(conn, ponto, T0 + timedelta(seconds=5))
-    assert d.nivel_emitido == Decimal("1.000")
-    assert d.estado.meteorologia_adversa
-    evento(conn, "meteorologia", em=T0 + timedelta(seconds=6), rotulo="limpo")
+    assert d.estado.ocorrencia
+    assert d.nivel_emitido > Decimal("0.9")  # R1: pleno, sem diluicao
+    elevado = d.nivel_emitido
+    evento(conn, "ocorrencia", em=T0 + timedelta(seconds=6), rotulo="encerrada")
     d = decidir(conn, ponto, T0 + timedelta(seconds=10))
-    assert not d.estado.meteorologia_adversa
-    assert d.nivel_emitido == Decimal("0.992")  # volta a descer, em rampa
+    assert not d.estado.ocorrencia
+    assert d.nivel_emitido == elevado - Decimal("0.008")  # volta a descer, em rampa
 
 
 def test_ocorrencia_persiste_ate_encerrada(conn, ponto):
-    evento(conn, "movimentacao", em=T0, valor=0.1, vigente_ate=T0 + timedelta(hours=2))
+    evento(conn, "movimentacao", em=T0, valor=0.02, vigente_ate=T0 + timedelta(hours=2))
     evento(conn, "ocorrencia", em=T0, rotulo="seguranca")
     assert ciclo.estado_via(conn, T0 + timedelta(hours=1)).ocorrencia
     evento(conn, "ocorrencia", em=T0 + timedelta(hours=1, seconds=1), rotulo="encerrada")
@@ -159,14 +160,14 @@ def test_ocorrencia_persiste_ate_encerrada(conn, ponto):
 
 
 def test_movimentacao_sem_vigencia_expira(conn, ponto):
-    evento(conn, "movimentacao", em=T0, valor=0.1)
-    assert ciclo.estado_via(conn, T0 + timedelta(seconds=config.VALIDADE_MOVIMENTACAO_S - 1)).observada == 0.1
+    evento(conn, "movimentacao", em=T0, valor=0.02)
+    assert ciclo.estado_via(conn, T0 + timedelta(seconds=config.VALIDADE_MOVIMENTACAO_S - 1)).observada == 0.02
     assert ciclo.estado_via(conn, T0 + timedelta(seconds=config.VALIDADE_MOVIMENTACAO_S + 1)).observada is None
 
 
 def test_evento_futuro_nao_entra(conn, ponto):
-    evento(conn, "meteorologia", em=T0 + timedelta(minutes=5), rotulo="chuva")
-    assert not ciclo.estado_via(conn, T0).meteorologia_adversa
+    evento(conn, "ocorrencia", em=T0 + timedelta(minutes=5), rotulo="seguranca")
+    assert not ciclo.estado_via(conn, T0).ocorrencia
 
 
 def test_modo_reativo_nao_grava_previsao(conn, ponto):
@@ -185,7 +186,7 @@ def test_historico_horario_agrega_por_hora(conn, ponto):
     evento(conn, "movimentacao", em=T0 - timedelta(minutes=70), valor=0.2)   # 02:50 -> 2
     evento(conn, "movimentacao", em=T0 - timedelta(minutes=100), valor=0.4)  # 02:20 -> 2
     evento(conn, "movimentacao", em=T0 - timedelta(hours=3), valor=0.8)      # 01:00 -> 3
-    evento(conn, "movimentacao", em=T0, valor=0.1)                           # hora em curso
+    evento(conn, "movimentacao", em=T0, valor=0.02)                           # hora em curso
     h = ciclo.historico_horario(conn, T0, horas=24)
     assert h[2] == pytest.approx(0.3)   # media de 0,2 e 0,4
     assert h[3] == pytest.approx(0.8)

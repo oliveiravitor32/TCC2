@@ -45,7 +45,7 @@ def test_cenario_bem_formado(arquivo):
     # O envelope nunca admite nivel abaixo do piso da classe adotada (3.8).
     assert all(f["min"] >= 0.5 for f in faixas)
     for e in c.eventos:
-        assert e["tipo"] in ("movimentacao", "ocorrencia", "meteorologia")
+        assert e["tipo"] in ("movimentacao", "ocorrencia")
         assert 0 <= e["em_min"] <= c.duracao_min
 
 
@@ -59,11 +59,11 @@ def test_perfil_horario_tem_vale_de_madrugada_e_pico_de_tarde():
 # --------------------------------------------------------------------------
 # Avaliacao
 # --------------------------------------------------------------------------
-def registro(niveis, observada=0.02, meteo=False, ocorrencia=False):
+def registro(niveis, observada=0.02, ocorrencia=False):
     return [
         {"minuto": i * 5 / 60, "nivel_pretendido": n, "nivel_emitido": n,
          "nivel_anterior": niveis[i - 1] if i else None, "restricao": "nenhuma",
-         "observada": observada, "meteorologia_adversa": meteo, "ocorrencia": ocorrencia,
+         "observada": observada, "ocorrencia": ocorrencia,
          "criado_em": T0 + timedelta(seconds=5 * i)}
         for i, n in enumerate(niveis)
     ]
@@ -102,11 +102,6 @@ def test_rampa_no_limite_nao_e_violacao():
     assert avaliar_simples(niveis)["violacoes"]["taxa"] == 0
 
 
-def test_conta_violacao_de_meteorologia():
-    r = avaliar_simples([1.0, 0.99], meteo=True)
-    assert r["violacoes"]["meteorologia"] == 1  # sob chuva, so 1,0 e admissivel
-
-
 def test_aderencia_ao_envelope():
     r = avaliar_simples([0.6, 0.6, 0.4])  # o ultimo esta fora de [0,5; 1,0]
     assert r["envelope"]["dentro"] == 2
@@ -131,11 +126,10 @@ def test_h3_transicao_e_o_que_esta_acima_do_piso():
     assert r["h3"]["fracao_em_transicao"] == 0.5
 
 
-@pytest.mark.parametrize("meteo,ocorrencia", [(True, False), (False, True)])
-def test_h3_ignora_ciclos_em_que_o_pleno_e_imposto(meteo, ocorrencia):
-    # Sob chuva ou ocorrencia o nivel alto vem da norma/dominio, nao de
-    # falta de antecipacao: medir isso seria medir a verificacao.
-    r = avaliar_simples([1.0, 1.0], observada=0.02, meteo=meteo, ocorrencia=ocorrencia)
+def test_h3_ignora_ciclos_em_que_o_pleno_e_imposto():
+    # Sob ocorrencia o nivel alto vem da regra de dominio, nao de falta de
+    # antecipacao: medir isso seria medir a regra.
+    r = avaliar_simples([1.0, 1.0], observada=0.02, ocorrencia=True)
     assert r["h3"]["ciclos_em_janela_baixa"] == 0
 
 

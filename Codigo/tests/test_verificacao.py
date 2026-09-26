@@ -13,7 +13,6 @@ from decimal import Decimal
 import pytest
 
 from decisao.verificacao import (
-    METEOROLOGIA,
     NENHUMA,
     PASSO,
     PISO,
@@ -64,18 +63,6 @@ def test_elevacao_e_livre():
     )
     assert r.nivel_emitido == PLENO
     assert r.restricao_aplicada == NENHUMA
-
-
-def test_meteorologia_adversa_forca_fluxo_pleno():
-    r = verificar(
-        Decimal("0.500"),
-        P3,
-        nivel_anterior=Decimal("0.500"),
-        segundos_desde_anterior=5,
-        meteorologia_adversa=True,
-    )
-    assert r.nivel_emitido == PLENO
-    assert r.restricao_aplicada == METEOROLOGIA
 
 
 def test_piso_vence_taxa_quando_ambos_atuam():
@@ -157,7 +144,6 @@ def _sorteia_caso(rng: random.Random) -> dict:
         "criterio": criterio,
         "nivel_anterior": anterior,
         "segundos_desde_anterior": segundos,
-        "meteorologia_adversa": rng.random() < 0.15,
     }
 
 
@@ -173,18 +159,13 @@ def test_cem_mil_casos_aleatorios_sem_violacao():
             criterio,
             nivel_anterior=caso["nivel_anterior"],
             segundos_desde_anterior=caso["segundos_desde_anterior"],
-            meteorologia_adversa=caso["meteorologia_adversa"],
         )
 
         # 1. piso
         if r.nivel_emitido < criterio.piso:
             violacoes.append(f"[{i}] piso: {r.nivel_emitido} < {criterio.piso} | {caso}")
         # 2. taxa, conferida contra o limite exato (sem arredondamento)
-        if (
-            not caso["meteorologia_adversa"]
-            and caso["nivel_anterior"] is not None
-            and caso["segundos_desde_anterior"] is not None
-        ):
+        if caso["nivel_anterior"] is not None and caso["segundos_desde_anterior"] is not None:
             queda_exata = (
                 criterio.taxa_max_decrescimo_min
                 * Decimal(str(caso["segundos_desde_anterior"]))
@@ -195,9 +176,6 @@ def test_cem_mil_casos_aleatorios_sem_violacao():
                 violacoes.append(
                     f"[{i}] taxa: caiu {queda_real} > {queda_exata} | {caso}"
                 )
-        # 3. meteorologia
-        if caso["meteorologia_adversa"] and r.nivel_emitido != PLENO:
-            violacoes.append(f"[{i}] meteorologia: {r.nivel_emitido} != 1 | {caso}")
         # faixa e resolucao
         if not (Decimal(0) <= r.nivel_emitido <= PLENO):
             violacoes.append(f"[{i}] faixa: {r.nivel_emitido}")

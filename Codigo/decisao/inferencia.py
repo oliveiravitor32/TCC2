@@ -26,9 +26,12 @@ from typing import Final, Mapping
 import numpy as np
 import skfuzzy as fuzz
 
-__all__ = ["BaseRegras", "Entrada", "Resultado", "carregar", "inferir", "BASE_V0"]
+__all__ = ["BaseRegras", "Entrada", "Resultado", "carregar", "inferir", "BASE_VIGENTE"]
 
-BASE_V0: Final[Path] = Path(__file__).parent / "regras" / "v0-provisoria.toml"
+# Base vigente. As versoes anteriores (v0-provisoria, v1-tercis) usavam a
+# condicao meteorologica, retirada na v2 (DIVERGENCIAS 49); ficam no historico
+# do git e registradas em versao_base_regras.
+BASE_VIGENTE: Final[Path] = Path(__file__).parent / "regras" / "v2-sem-meteorologia.toml"
 
 PASSO: Final[Decimal] = Decimal("0.001")  # mesma resolucao de NUMERIC(4,3)
 PLENO: Final[Decimal] = Decimal("1.000")
@@ -38,7 +41,6 @@ RESOLUCAO_SAIDA: Final[int] = 1001  # pontos do universo de saida (passo 0,001)
 _CATEGORICAS: Final[dict[str, tuple[str, str]]] = {
     # variavel: (termo quando 1, termo quando 0)
     "ocorrencia": ("sim", "nao"),
-    "meteorologia": ("adversa", "normal"),
 }
 _MOVIMENTACAO: Final[tuple[str, ...]] = ("observada", "prevista")
 _TERMOS_MOV: Final[tuple[str, ...]] = ("baixa", "media", "alta")
@@ -56,7 +58,6 @@ class Entrada:
     observada: float
     prevista: float | None
     ocorrencia: bool
-    meteorologia_adversa: bool
     momento: datetime
 
 
@@ -121,7 +122,7 @@ def _particoes_movimentacao(fronteiras: list[float], meia: float) -> dict[str, l
     }
 
 
-def carregar(caminho: Path = BASE_V0) -> BaseRegras:
+def carregar(caminho: Path = BASE_VIGENTE) -> BaseRegras:
     conteudo = caminho.read_bytes()
     dados = tomllib.loads(conteudo.decode("utf-8"))
 
@@ -190,7 +191,7 @@ def _pertinencias(base: BaseRegras, e: Entrada) -> dict[tuple[str, str], float]:
     for var, x in (("observada", e.observada), ("prevista", prevista)):
         for termo, p in base.mov.items():
             graus[(var, termo)] = _grau(p, x)
-    for var, valor in (("ocorrencia", e.ocorrencia), ("meteorologia", e.meteorologia_adversa)):
+    for var, valor in (("ocorrencia", e.ocorrencia),):
         pos, neg = _CATEGORICAS[var]
         graus[(var, pos)] = 1.0 if valor else 0.0
         graus[(var, neg)] = 0.0 if valor else 1.0

@@ -50,7 +50,6 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
   const corRestricao = {
     piso: "var(--color-piso)",
     taxa: "var(--color-taxa)",
-    meteorologia: "var(--color-meteo)",
   };
 
   return (

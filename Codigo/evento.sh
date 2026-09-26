@@ -3,8 +3,6 @@
 #
 #   ./evento.sh 0.05          movimentacao de 5 % (luz desce em rampa)
 #   ./evento.sh 0.8           movimentacao alta (luz sobe na hora)
-#   ./evento.sh chuva         condicao adversa: fluxo pleno obrigatorio
-#   ./evento.sh limpo         encerra a condicao adversa
 #   ./evento.sh seguranca     ocorrencia reportada: elevacao imediata
 #   ./evento.sh encerrada     encerra a ocorrencia
 #
@@ -19,10 +17,8 @@ VALOR=${1:-}
 
 case "$VALOR" in
   "")
-    echo "uso: ./evento.sh <0..1 | chuva | neblina | nevoeiro | limpo | seguranca | transito | encerrada>"
+    echo "uso: ./evento.sh <0..1 | seguranca | transito | encerrada>"
     exit 2 ;;
-  chuva|neblina|nevoeiro|limpo)
-    CORPO="{\"ocorrido_em\":\"$AGORA\",\"tipo\":\"meteorologia\",\"rotulo\":\"$VALOR\",\"origem\":\"evento.sh\"}" ;;
   seguranca|transito|encerrada)
     CORPO="{\"ocorrido_em\":\"$AGORA\",\"tipo\":\"ocorrencia\",\"rotulo\":\"$VALOR\",\"origem\":\"evento.sh\"}" ;;
   *)

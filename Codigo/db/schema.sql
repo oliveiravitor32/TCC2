@@ -71,9 +71,9 @@ CREATE TABLE evento_urbano (
     id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     ocorrido_em  TIMESTAMPTZ NOT NULL,
     recebido_em  TIMESTAMPTZ NOT NULL DEFAULT now(),
-    tipo         TEXT NOT NULL CHECK (tipo IN ('movimentacao','ocorrencia','meteorologia')),
+    tipo         TEXT NOT NULL CHECK (tipo IN ('movimentacao','ocorrencia')),
     valor        NUMERIC(10,3),
-    -- Rotulo textual: 'chuva', 'neblina', 'nevoeiro', 'acidente', 'limpo'...
+    -- Rotulo da ocorrencia: 'seguranca', 'transito', 'encerrada'.
     rotulo       TEXT,
     abrangencia  TEXT NOT NULL DEFAULT 'via'
                  CHECK (abrangencia IN ('via','quadra','bairro','municipio')),
@@ -173,7 +173,7 @@ CREATE TABLE decisao (
     nivel_emitido          NUMERIC(4,3) NOT NULL CHECK (nivel_emitido    BETWEEN 0 AND 1),
     -- Qual regra da camada de verificacao corrigiu o nivel pretendido.
     restricao_aplicada     TEXT NOT NULL DEFAULT 'nenhuma'
-                           CHECK (restricao_aplicada IN ('nenhuma','piso','taxa','meteorologia')),
+                           CHECK (restricao_aplicada IN ('nenhuma','piso','taxa')),
     -- Nivel emitido na decisao anterior, base do limite de taxa.
     nivel_anterior         NUMERIC(4,3) CHECK (nivel_anterior BETWEEN 0 AND 1),
     publicado_em           TIMESTAMPTZ,

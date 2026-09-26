@@ -33,7 +33,6 @@ export const RESTRICOES = {
   nenhuma: { texto: "sem correção", cor: "text-suave", fundo: "bg-borda/40" },
   piso: { texto: "piso da classe", cor: "text-piso", fundo: "bg-piso/15" },
   taxa: { texto: "taxa de descida", cor: "text-taxa", fundo: "bg-taxa/15" },
-  meteorologia: { texto: "meteorologia", cor: "text-meteo", fundo: "bg-meteo/15" },
 };
 
 export const ESTADOS = {

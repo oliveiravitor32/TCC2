@@ -61,7 +61,7 @@ def test_publica_movimentacao(cliente):
 
 
 @pytest.mark.parametrize(
-    "tipo,rotulo", [("meteorologia", "chuva"), ("meteorologia", "limpo"), ("ocorrencia", "seguranca")]
+    "tipo,rotulo", [("ocorrencia", "seguranca"), ("ocorrencia", "transito"), ("ocorrencia", "encerrada")]
 )
 def test_publica_categoricos(cliente, tipo, rotulo):
     ev = {"ocorrido_em": MOV["ocorrido_em"], "tipo": tipo, "rotulo": rotulo, "origem": "teste"}
@@ -76,7 +76,8 @@ def test_publica_categoricos(cliente, tipo, rotulo):
         {"valor": 1.5},  # fora do universo normalizado
         {"valor": None},  # movimentacao sem valor
         {"rotulo": "chuva"},  # movimentacao com rotulo
-        {"tipo": "meteorologia", "valor": None, "rotulo": "granizo"},  # fora do vocabulario
+        {"tipo": "meteorologia", "valor": None, "rotulo": "chuva"},  # fora do contrato (item 49)
+        {"tipo": "ocorrencia", "valor": None, "rotulo": "granizo"},  # fora do vocabulario
         {"tipo": "ocorrencia", "rotulo": "seguranca"},  # categorico com valor
         {"ocorrido_em": "2026-09-21T01:00:00"},  # sem fuso horario
         {"vigente_ate": "2026-09-21T00:00:00-03:00"},  # vigencia antes da ocorrencia
@@ -103,7 +104,7 @@ def test_consulta_filtra_por_intervalo_e_tipo(cliente):
     cliente.post("/eventos", json={**MOV, "ocorrido_em": "2026-09-21T03:00:00-03:00"})
     cliente.post(
         "/eventos",
-        json={"ocorrido_em": MOV["ocorrido_em"], "tipo": "meteorologia", "rotulo": "chuva", "origem": "t"},
+        json={"ocorrido_em": MOV["ocorrido_em"], "tipo": "ocorrencia", "rotulo": "seguranca", "origem": "t"},
     )
     r = cliente.get(
         "/eventos",
@@ -128,7 +129,7 @@ def _decisao_com_telemetria(conn) -> str:
                              classe_codigo, nivel_pretendido, nivel_emitido, restricao_aplicada)
         SELECT p.id, r.id, m.id, 'P3', 0.171, 0.500, 'piso'
           FROM ponto_de_luz p, versao_base_regras r, versao_modelo_previsao m
-         WHERE p.codigo = 'BANCADA-01' AND r.rotulo = 'v0-provisoria' AND m.rotulo = 'persistencia'
+         WHERE p.codigo = 'BANCADA-01' AND r.rotulo = 'v2-sem-meteorologia' AND m.rotulo = 'persistencia'
         RETURNING id
         """
     ).fetchone()["id"]
@@ -149,7 +150,7 @@ def test_decisoes_trazem_a_cadeia_de_auditoria(cliente, conn):
     assert linha["nivel_pretendido"] == 0.171
     assert linha["nivel_emitido"] == 0.5
     assert linha["restricao_aplicada"] == "piso"
-    assert linha["versao_base_regras"] == "v0-provisoria"
+    assert linha["versao_base_regras"] == "v2-sem-meteorologia"
     assert linha["versao_modelo"] == "persistencia"
     assert linha["evento_ids"] == [ev]
 
@@ -224,7 +225,7 @@ def _telemetria_em(conn, quando, nivel, lux, residual_sessao=None):
                              nivel_emitido, restricao_aplicada)
         SELECT %s, p.id, r.id, m.id, 'P3', %s, %s, 'nenhuma'
           FROM ponto_de_luz p, versao_base_regras r, versao_modelo_previsao m
-         WHERE p.codigo = 'BANCADA-01' AND r.rotulo = 'v0-provisoria'
+         WHERE p.codigo = 'BANCADA-01' AND r.rotulo = 'v2-sem-meteorologia'
            AND m.rotulo = 'persistencia'
         RETURNING id
         """,

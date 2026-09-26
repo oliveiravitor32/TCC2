@@ -48,6 +48,15 @@ VALUES ('v1-tercis', 9,
         'fronteiras em 0.1038 e 0.4053. Arquivo: decisao/regras/v1-tercis.toml.')
 ON CONFLICT (rotulo) DO NOTHING;
 
+-- Base vigente desde a retirada da condicao meteorologica (DIVERGENCIAS 49).
+-- Os arquivos da v0 e da v1 sairam do repositorio (ficam no historico do
+-- git); as linhas acima continuam porque decisoes antigas as referenciam.
+INSERT INTO versao_base_regras (rotulo, qtd_regras, resumo)
+VALUES ('v2-sem-meteorologia', 8,
+        'Tercis da serie de Melbourne (2026-09-23): fronteiras em 0.1038 e 0.4053; '
+        '8 regras, sem condicao meteorologica. Arquivo: decisao/regras/v2-sem-meteorologia.toml.')
+ON CONFLICT (rotulo) DO NOTHING;
+
 -- hash_regras e conferido pelo servico de decisao ao iniciar (passo 5).
 
 -- Camadas de previsao (3.6). A persistencia foi a previsao provisoria e

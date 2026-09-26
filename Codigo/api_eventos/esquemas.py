@@ -14,17 +14,16 @@ from uuid import UUID
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validator
 
-Tipo = Literal["movimentacao", "ocorrencia", "meteorologia"]
+Tipo = Literal["movimentacao", "ocorrencia"]
 Abrangencia = Literal["via", "quadra", "bairro", "municipio"]
 
-# Rotulos admitidos por tipo. "limpo" e "encerrada" existem para que a
-# plataforma possa declarar o FIM de uma condicao, e nao so o inicio.
+# Rotulos admitidos por tipo. "encerrada" existe para que a plataforma possa
+# declarar o FIM de uma ocorrencia, e nao so o inicio. A condicao
+# meteorologica nao faz parte do contrato: a plataforma de monitoramento nao
+# a produz (DIVERGENCIAS 49).
 ROTULOS: dict[str, frozenset[str]] = {
-    "meteorologia": frozenset({"chuva", "neblina", "nevoeiro", "limpo"}),
     "ocorrencia": frozenset({"seguranca", "transito", "encerrada"}),
 }
-# Condicoes em que a NBR 5101 (6.10) desaconselha dimerizar.
-METEOROLOGIA_ADVERSA: frozenset[str] = frozenset({"chuva", "neblina", "nevoeiro"})
 
 
 class EventoEntrada(BaseModel):
@@ -80,7 +79,7 @@ class Decisao(BaseModel):
     classe_codigo: str
     nivel_pretendido: float
     nivel_emitido: float
-    restricao_aplicada: Literal["nenhuma", "piso", "taxa", "meteorologia"]
+    restricao_aplicada: Literal["nenhuma", "piso", "taxa"]
     nivel_anterior: float | None
     previsao_movimentacao: float | None
     versao_base_regras: str

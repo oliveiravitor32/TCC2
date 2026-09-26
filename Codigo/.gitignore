@@ -12,3 +12,5 @@ cenarios/resultados/*.json
 .logs/
 # Segredos do no (Wi-Fi e credencial do broker): nunca versionar
 firmware/no/segredos.h
+# Backups do banco (podem ter dados de bancada): fora do git
+backups/

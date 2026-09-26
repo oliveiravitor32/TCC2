@@ -7,10 +7,8 @@ import {
   Activity,
   AlertTriangle,
   Brain,
-  CloudRain,
   Lightbulb,
   ShieldCheck,
-  Sun,
 } from "lucide-react";
 import { RESTRICOES, lux, pct } from "../api";
 
@@ -33,9 +31,7 @@ export function Cartao({ icone: Icone, titulo, children, destaque }) {
 export function EstadoDaVia({ eventos }) {
   const ultimo = (tipo) => eventos.find((e) => e.tipo === tipo);
   const mov = ultimo("movimentacao");
-  const met = ultimo("meteorologia");
   const oco = ultimo("ocorrencia");
-  const adversa = met && ["chuva", "neblina", "nevoeiro"].includes(met.rotulo);
   const emOcorrencia = oco && oco.rotulo !== "encerrada";
 
   return (
@@ -45,14 +41,6 @@ export function EstadoDaVia({ eventos }) {
       </p>
       <p className="text-xs text-suave">movimentação normalizada no ponto</p>
       <div className="mt-3 flex flex-wrap gap-2 text-xs">
-        <span
-          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 ${
-            adversa ? "bg-meteo/15 text-meteo" : "bg-borda/40 text-suave"
-          }`}
-        >
-          {adversa ? <CloudRain size={12} /> : <Sun size={12} />}
-          {met ? met.rotulo : "sem dado"}
-        </span>
         <span
           className={`inline-flex items-center gap-1 rounded-md px-2 py-1 ${
             emOcorrencia ? "bg-falha/15 text-falha" : "bg-borda/40 text-suave"

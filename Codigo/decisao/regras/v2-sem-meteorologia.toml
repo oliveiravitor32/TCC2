@@ -1,15 +1,24 @@
-# Base de regras Mamdani - versao v0-provisoria (TCC 3.7, RNF05)
+# Base de regras Mamdani - versao v2-sem-meteorologia (TCC 3.7, RNF05)
 #
 # Qualquer alteracao neste arquivo exige NOVA VERSAO (novo arquivo e nova
 # linha em versao_base_regras): o hash do conteudo e gravado no banco e a
 # decisao registra a versao que a produziu (RNF04).
 #
-# Particoes PROVISORIAS: fronteiras em 1/3 e 2/3 da movimentacao normalizada
-# no ponto (0 = minimo, 1 = maximo historico). Serao trocadas pelos tercis da
-# serie de Melbourne normalizada por ponto de medicao (3.6/3.7) na v1.
+# Diferenca para a v1-tercis: a condicao meteorologica deixou de ser entrada
+# (DIVERGENCIAS 49). A plataforma de monitoramento nao produz dado
+# meteorologico, e o trabalho nao integra uma terceira fonte. Sairam a regra
+# de chuva e a condicao "meteorologia = normal" das regras de atenuacao; as
+# regras foram renumeradas (v1 -> v2: R1->R1, R3->R2, R4->R3, R5->R4,
+# R6->R5, R7->R6, R8->R7, R9->R8).
+#
+# Fronteiras nos TERCIS da distribuicao observada (3.7), calculados por
+# modelo/treinar.py sobre a serie de Melbourne extraida em 2026-09-23
+# (49 pontos), normalizada por ponto de medicao pelo percentil 99. Nao sao
+# arbitrados pelos autores: qualquer leitor que aplique o mesmo procedimento
+# a mesma serie chega aos mesmos valores.
 
-rotulo = "v0-provisoria"
-resumo = "Particoes trapezoidais provisorias (tercis 1/3 e 2/3); 9 regras; atenuacao condicionada a ausencia de risco."
+rotulo = "v2-sem-meteorologia"
+resumo = "Tercis da serie de Melbourne (2026-09-23), normalizada por ponto; 8 regras; sem condicao meteorologica; atenuacao condicionada a ausencia de ocorrencia."
 
 # ---------------------------------------------------------------------------
 # Movimentacao observada e prevista: baixa / media / alta, trapezoidais.
@@ -17,8 +26,8 @@ resumo = "Particoes trapezoidais provisorias (tercis 1/3 e 2/3); 9 regras; atenu
 # cobrem `meia_largura_rampa` para cada lado da fronteira (3.7).
 # ---------------------------------------------------------------------------
 [movimentacao]
-fronteiras = [0.3333, 0.6667]
-meia_largura_rampa = 0.0833
+fronteiras = [0.1038, 0.4053]
+meia_largura_rampa = 0.05
 
 # ---------------------------------------------------------------------------
 # Faixa horaria (apoio, Quadro 7): horas decorridas desde as 18h, 0 a 12.
@@ -42,15 +51,14 @@ pleno         = [0.8, 0.95, 1.0, 1.0]
 # ---------------------------------------------------------------------------
 # Regras. Antecedentes ligados por E (minimo).
 #
-# As regras que ATENUAM abaixo do pleno (R6 a R9) exigem ocorrencia = nao e
-# meteorologia = normal: na agregacao por maximo com centroide, uma regra de
-# reducao ativa ao lado de uma de elevacao puxaria a saida para baixo, e a
-# evidencia de risco seria diluida. Condicionar a reducao a ausencia de risco
-# e restricao deliberada de interpretabilidade (PICKERING et al., 2026).
+# As regras que ATENUAM abaixo do pleno (R5 a R8) exigem ocorrencia = nao: na
+# agregacao por maximo com centroide, uma regra de reducao ativa ao lado de
+# uma de elevacao puxaria a saida para baixo, e a evidencia de risco seria
+# diluida. Condicionar a reducao a ausencia de risco e restricao deliberada
+# de interpretabilidade (PICKERING et al., 2026).
 #
 # Variaveis:
 #   ocorrencia     = sim | nao
-#   meteorologia   = adversa | normal
 #   observada      = baixa | media | alta
 #   prevista       = baixa | media | alta
 #   faixa_horaria  = inicio_noite | madrugada | pre_amanhecer
@@ -63,48 +71,42 @@ origem = "Dominio: ocorrencia reportada justifica elevacao independentemente da 
 
 [[regra]]
 id = "R2"
-se = { meteorologia = "adversa" }
-entao = "pleno"
-origem = "Norma: NBR 5101, 6.10 - nao dimerizar sob nevoeiro, neblina ou chuva"
-
-[[regra]]
-id = "R3"
 se = { observada = "alta" }
 entao = "pleno"
 origem = "Norma: NBR 5101, 6.10.3 - monitoramento do trafego determina o funcionamento"
 
 [[regra]]
-id = "R4"
+id = "R3"
 se = { prevista = "alta" }
 entao = "pleno"
 origem = "Literatura: antecipacao da demanda (2.7; BELLONI et al., 2024)"
 
 [[regra]]
-id = "R5"
+id = "R4"
 se = { observada = "media" }
 entao = "intermediario"
 origem = "Norma: NBR 5101, 6.10.3"
 
 [[regra]]
-id = "R6"
-se = { ocorrencia = "nao", meteorologia = "normal", observada = "baixa", prevista = "baixa" }
+id = "R5"
+se = { ocorrencia = "nao", observada = "baixa", prevista = "baixa" }
 entao = "reduzido"
 origem = "Norma: NBR 5101, 6.3 e 6.10.3 - reduzir nos horarios de baixa movimentacao"
 
 [[regra]]
-id = "R7"
-se = { ocorrencia = "nao", meteorologia = "normal", observada = "baixa", prevista = "media" }
+id = "R6"
+se = { ocorrencia = "nao", observada = "baixa", prevista = "media" }
 entao = "intermediario"
 origem = "Literatura: antecipacao da demanda (2.7; BELLONI et al., 2024)"
 
 [[regra]]
-id = "R8"
-se = { ocorrencia = "nao", meteorologia = "normal", faixa_horaria = "madrugada", observada = "baixa", prevista = "baixa" }
+id = "R7"
+se = { ocorrencia = "nao", faixa_horaria = "madrugada", observada = "baixa", prevista = "baixa" }
 entao = "reduzido"
 origem = "Norma: NBR 5101, 6.3 - baixa movimentacao"
 
 [[regra]]
-id = "R9"
-se = { ocorrencia = "nao", meteorologia = "normal", faixa_horaria = "inicio_noite", observada = "baixa" }
+id = "R8"
+se = { ocorrencia = "nao", faixa_horaria = "inicio_noite", observada = "baixa" }
 entao = "intermediario"
 origem = "Dominio: faixa horaria como evidencia de apoio (Quadro 7)"

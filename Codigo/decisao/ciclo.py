@@ -23,7 +23,6 @@ from .verificacao import PLENO, Criterio, verificar
 
 log = logging.getLogger(__name__)
 
-METEOROLOGIA_ADVERSA = ("chuva", "neblina", "nevoeiro")
 
 
 class BaseRegrasAlterada(RuntimeError):
@@ -41,7 +40,6 @@ class Ponto:
 class EstadoVia:
     observada: float | None  # None = sem dado de movimentacao vigente
     ocorrencia: bool
-    meteorologia_adversa: bool
     evento_ids: list[int] = field(default_factory=list)
 
 
@@ -133,9 +131,8 @@ def estado_via(
 
     - movimentacao sem vigente_ate vale VALIDADE_MOVIMENTACAO_S; vencida, nao
       ha dado (e o ciclo decide 1,0);
-    - ocorrencia e meteorologia sem vigente_ate valem ate o proximo evento do
-      mesmo tipo ('encerrada' / 'limpo'): na duvida, a condicao de risco
-      permanece.
+    - ocorrencia sem vigente_ate vale ate o proximo evento do mesmo tipo
+      ('encerrada'): na duvida, a condicao de risco permanece.
 
     `desde` limita a janela de eventos considerada. Em operacao e None (o
     estado da via nao "recomeca"). O executor de cenarios passa o inicio da
@@ -161,12 +158,10 @@ def estado_via(
     por_tipo = {tipo: (eid, valor, rotulo) for eid, tipo, valor, rotulo in linhas}
 
     mov = por_tipo.get("movimentacao")
-    met = por_tipo.get("meteorologia")
     oco = por_tipo.get("ocorrencia")
     return EstadoVia(
         observada=None if mov is None else float(mov[1]),
         ocorrencia=oco is not None and oco[2] != "encerrada",
-        meteorologia_adversa=met is not None and met[2] in METEOROLOGIA_ADVERSA,
         evento_ids=sorted(e[0] for e in por_tipo.values()),
     )
 
@@ -268,7 +263,6 @@ def decidir(
                 observada=estado.observada,
                 prevista=previsao,
                 ocorrencia=estado.ocorrencia,
-                meteorologia_adversa=estado.meteorologia_adversa,
                 momento=agora.astimezone(config.FUSO),
             ),
         ).nivel_pretendido
@@ -279,7 +273,6 @@ def decidir(
         criterio(conn, ponto.classe_codigo),
         nivel_anterior=anterior,
         segundos_desde_anterior=segundos,
-        meteorologia_adversa=estado.meteorologia_adversa,
     )
 
     did = uuid.uuid4()

@@ -89,6 +89,7 @@ TEXTO:   acrescentar a 4.7.2 que a decisao carrega a classe vigente, e que a
 4. VOCABULARIO FECHADO PARA A RESTRICAO APLICADA
    Trecho: Quadro 15 (entidade `decisao`)
    Acao: [ACRESCENTAR]
+    >>> ATUALIZADO PELO ITEM 49: o vocabulario de restricao_aplicada passou a ter TRES valores: 'nenhuma', 'piso' e 'taxa'.
 -------------------------------------------------------------------------------
 TCC:     o Quadro 15 lista o atributo como "restricao que motivou a correcao",
          sem enumerar valores.
@@ -126,6 +127,7 @@ TEXTO:   acrescentar a 3.7 a regra de composicao (maximo) e a de registro.
 6. METEOROLOGIA ADVERSA SOBREPOE-SE AOS DEMAIS LIMITES
    Trecho: secao 3.7
    Acao: [ACRESCENTAR]
+    >>> ATUALIZADO PELO ITEM 49: item SEM EFEITO: a regra meteorologica deixou de existir.
 -------------------------------------------------------------------------------
 TCC:     condicao adversa leva o nivel a 1,0.
 CODIGO:  quando ha meteorologia adversa, o nivel emitido e 1,0 e os limites de
@@ -183,6 +185,7 @@ TEXTO:   enunciar em 3.7 que a camada e monotonicamente nao decrescente em
 9. ATRIBUTOS ACRESCENTADOS AS ENTIDADES DO QUADRO 15
    Trecho: Quadro 15 e secao 4.7.2
    Acao: [ATUALIZAR TEXTO]
+    >>> ATUALIZADO PELO ITEM 49: evento_urbano.rotulo continua existindo, mas so para a ocorrencia ('seguranca', 'transito', 'encerrada').
 -------------------------------------------------------------------------------
 TCC:     o Quadro 15 lista os "atributos principais" de cada entidade.
 CODIGO:  o schema tem, alem deles:
@@ -377,6 +380,7 @@ TEXTO:   acrescentar a 3.9 (Etapa 6 ou nova etapa) a comparacao, com a metrica
 18. BASE DE REGRAS v0: ATENUACAO CONDICIONADA A AUSENCIA DE RISCO
     Trecho: 3.7 (paragrafos da base de regras e das funcoes de pertinencia)
     Acao: [ACRESCENTAR]
+    >>> ATUALIZADO PELO ITEM 49: a base vigente e a v2 (8 regras); as regras de atenuacao sao R5 a R8 e exigem so 'ocorrencia = nao'. O principio do item continua valendo para a ocorrencia.
 -------------------------------------------------------------------------------
 TCC:     base em forma linguistica, com origem declarada; agregacao e
          defuzificacao nao detalhadas.
@@ -440,6 +444,7 @@ TEXTO:   declarar em 3.7 a normalizacao por ponto e as faixas; em 3.9, que o
 21. CONTRATO DA INTERFACE DE EVENTOS: VOCABULARIO FECHADO
     Trecho: Quadro 14 (POST /eventos) e 5.4 (especificacao da interface)
     Acao: [ACRESCENTAR]
+    >>> ATUALIZADO PELO ITEM 49: o tipo 'meteorologia' e seus rotulos sairam do contrato; restam 'movimentacao' e 'ocorrencia'.
 -------------------------------------------------------------------------------
 TCC:     "carimbo de tempo, tipo do evento, valor, abrangencia e origem".
 CODIGO:  - tipo em {movimentacao, ocorrencia, meteorologia};
@@ -477,6 +482,7 @@ TEXTO:   se permanecer aberta, registrar entre as limitacoes (6.3).
 23. ENTRADA AUSENTE E VIGENCIA DOS EVENTOS
     Trecho: 3.7 (quarta regra) e LACUNAS 6 e 9
     Acao: [ACRESCENTAR]
+    >>> ATUALIZADO PELO ITEM 49: a vigencia 'ate o evento que encerra' vale agora so para a ocorrencia ('encerrada').
 -------------------------------------------------------------------------------
 CODIGO:  - movimentacao sem vigente_ate vale 15 min; vencida, o ciclo decide
            nivel pretendido 1,0 e CONTINUA publicando (a ausencia de dado fica
@@ -549,6 +555,7 @@ TEXTO:   acrescentar o topico de estado ao Quadro 14.
 27. R9 TAMBEM CONDICIONADA A AUSENCIA DE RISCO
     Trecho: 3.7 (complementa o item 18)
     Acao: [ACRESCENTAR]
+    >>> ATUALIZADO PELO ITEM 49: item SEM EFEITO na v2: a R9 virou R8, e a condicao 'meteorologia = normal' saiu; resta 'ocorrencia = nao'.
 -------------------------------------------------------------------------------
 CODIGO:  R9 (inicio da noite -> intermediario) passou a exigir ocorrencia =
          nao e meteorologia = normal, como R6 a R8.
@@ -673,6 +680,7 @@ DECISOES A REGISTRAR NO TEXTO:
 33. RELOGIO VIRTUAL E ISOLAMENTO DOS CENARIOS
     Trecho: 3.9 (Etapa 4) e a decisao em aberto sobre o relogio de cenario
     Acao: [ACRESCENTAR]
+    >>> ATUALIZADO PELO ITEM 49: o cenario 'chuva as 02h' que motivou o deslocamento em semanas foi retirado; o deslocamento continua necessario pela ocorrencia.
 -------------------------------------------------------------------------------
 CODIGO:  a suite roda em TEMPO SIMULADO, com passo igual ao periodo do ciclo
          (5 s). Uma rampa de cinco minutos continua tendo 60 passos e
@@ -714,6 +722,7 @@ TEXTO:   nao altera o texto; e implementacao. Serve como caso de teste em 4.8.
 35. RESULTADO DA SUITE DE CENARIOS (5.2, 5.4 e 5.5)
     Trecho: 5.2, 5.4, 5.5 e Capitulo 6
     Acao: [ACRESCENTAR - e resultado, nao divergencia]
+    >>> ATUALIZADO PELO ITEM 49: os NUMEROS deste item sao da suite com meteorologia (10 cenarios, 26.880 decisoes) e foram SUBSTITUIDOS pelos do item 50.
 -------------------------------------------------------------------------------
 10 cenarios (4 adversariais), base de regras v1-tercis, passo de 5 s,
 previsao pelo modelo treinado. Cada modo (antecipado e reativo) executa
@@ -771,6 +780,7 @@ TEXTO:   6.1 deve registrar H3 como nao confirmada, com esta explicacao;
 36. LIMIARES DO DIAGNOSTICO (RF11)
     Trecho: 3.4.5
     Acao: [ACRESCENTAR]
+    >>> ATUALIZADO PELO ITEM 49: item SUBSTITUIDO pelo item 47 (tolerancia com piso de resolucao do sensor).
 -------------------------------------------------------------------------------
 CODIGO:  tolerancia = 3 x a dispersao relativa medida no ensaio de
          repetibilidade (3 sigma), lida da tabela de calibracao; enquanto o
@@ -986,6 +996,7 @@ TEXTO:   explicitar na limitacao de 6.3 que, em campo, um ponto de luz
 43. POR QUE INFERENCIA NEBULOSA COM UMA UNICA CLASSE
     Trecho: 2.6 (escolha do modelo interpretavel) e 3.7 (mecanismo de decisao)
     Acao: [ACRESCENTAR]
+    >>> ATUALIZADO PELO ITEM 49: o texto aprovado cita 'condicao meteorologica'; na v2 fica: 'mesmo numa unica classe, o sistema compoe movimentacao observada, prevista e faixa horaria, e trata a ocorrencia reportada como condicao que suspende a atenuacao'.
     >>> PERGUNTA PENDENTE AO AUTOR - ver o fim deste item <<<
 -------------------------------------------------------------------------------
 TCC:     2.6 justifica a inferencia nebulosa pela composicao de evidencias
@@ -1165,6 +1176,7 @@ TEXTO:   em 3.4.5, completar: "fixada acima da dispersao apurada e nunca
 48. PRIMEIROS RESULTADOS COM O NO REAL (5.3, parcial)
     Trecho: 5.3 (latencia e diagnostico) e 3.9 (Etapa 5)
     Acao: [ACRESCENTAR - e resultado]
+    >>> ATUALIZADO PELO ITEM 49: o teste de subida imediata usou chuva; na v2 a subida imediata e demonstrada com ocorrencia (./evento.sh seguranca).
 -------------------------------------------------------------------------------
 SESSAO:  25/09/2026, 00:39 a 00:50, ESP32 real com o firmware da calibracao
          da sessao 72, rede Wi-Fi de 2,4 GHz, broker e servico no PC.
@@ -1199,6 +1211,77 @@ FAILSAFE (RNF07): o teste feito nao demonstrou o comportamento - o servico
          passou a imprimir no serial, a cada 2 s em failsafe, o nivel, o duty
          e o lux medido, porque o Quadro 11 pede a MEDICAO do estado assumido
          e no failsafe nao ha telemetria (nao ha decisao a responder).
+
+===============================================================================
+49. RETIRADA DA CONDICAO METEOROLOGICA
+    Trecho: 1.5.2 (objetivo d), 1.6 (segundo eixo), 2.5, 2.10 (H2), 3.2, 3.5,
+            3.7 (Quadro 7 e terceira restricao), 3.9 (Etapa 4), 3.10, 4.4
+            (Quadro 11), Quadro 14, Quadro 15, 5.2, 6.3
+    Acao: [ATUALIZAR TEXTO] - decisao do autor em 26/09/2026
+-------------------------------------------------------------------------------
+PROBLEMA: o texto atribuia a condicao meteorologica a "interface de dados
+         urbanos" (Quadro 7, 3.10, Quadro 15), que emula a plataforma
+         municipal de monitoramento (3.2). Essa plataforma nao produz dado
+         meteorologico: os analiticos exigidos dela (2.3, Quadro 1) sao
+         contagem de pessoas, densidade, fluxo de veiculos e congestionamento.
+DECISAO: retirar a variavel, em vez de integrar uma terceira fonte (CGE ou
+         INMET). Razao do autor: uma fonte externa a mais precisaria ser
+         justificada e defendida, e "uma tese mais fraca e defensavel e
+         melhor que uma mais forte e dificil de defender".
+CONSEQUENCIAS NO TRABALHO:
+         - a camada de verificacao passa a ter DUAS restricoes rigidas: piso
+           e taxa. A recomendacao da NBR 5101 (6.10) de nao dimerizar sob
+           nevoeiro, neblina ou chuva deixa de ser verificada e vira
+           LIMITACAO declarada;
+         - a norma diz "nao e aconselhavel": e recomendacao, nao proibicao.
+           O texto deve registrar isso para que a retirada nao pareca
+           violacao da norma;
+         - H2 passa a falar dos limites de piso e de taxa da NBR 5101;
+         - o objetivo especifico d) perde "a vedacao a dimerizacao sob
+           condicao meteorologica adversa";
+         - o eixo social de 1.6 perde "precipitacao que reduz a
+           visibilidade" como exemplo;
+         - a suite perde os cenarios "chuva com via ociosa" e "meteorologia
+           intermitente" (ficam 8, sendo 3 adversariais), e os resultados de
+           5.2, 5.4, 5.5 e H3 foram refeitos (item 50).
+CODIGO:  verificacao.py (sem o parametro), regras/v2-sem-meteorologia.toml
+         (8 regras, renumeradas: v1 -> v2 R1->R1, R3->R2, R4->R3, R5->R4,
+         R6->R5, R7->R6, R8->R7, R9->R8), inferencia.py, ciclo.py, API (tipo
+         'meteorologia' fora do contrato, recusado com 422), schema.sql (CHECK
+         de evento_urbano.tipo e de decisao.restricao_aplicada), seed.sql,
+         db/migracoes/001_retira_meteorologia.sql, cenarios, painel e
+         evento.sh. As bases v0 e v1 sairam do repositorio (ficam no
+         historico do git e em versao_base_regras). Firmware e calibracao:
+         sem mudanca.
+TEXTO SUGERIDO para a limitacao em 6.3:
+         "A recomendacao da subsecao 6.10 da ABNT NBR 5101 de nao dimerizar
+         sob nevoeiro, neblina ou chuva nao e verificada pelo sistema: a
+         plataforma municipal de monitoramento, cuja interface o trabalho
+         emula, nao produz dado meteorologico, e a integracao de uma fonte
+         meteorologica adicional ficou fora do escopo. Em operacao, a
+         condicao poderia ser incorporada como terceira restricao da camada
+         de verificacao, sem alteracao da inferencia."
+
+===============================================================================
+50. RESULTADOS DA SUITE SEM METEOROLOGIA (substituem os numeros do item 35)
+    Trecho: 5.2, 5.4, 5.5, 6.1 (H3)
+    Acao: [ATUALIZAR TEXTO] - rodada de 26/09/2026, base v2-sem-meteorologia
+-------------------------------------------------------------------------------
+8 cenarios (3 adversariais), 12.000 decisoes por modo, passo de 5 s.
+VIOLACOES: zero de piso e zero de taxa nos dois modos (24.000 decisoes).
+ENERGIA (REF-40W; razao identica a 440 W), suite inteira:
+         antecipado: 65,4 % do pleno constante e 93,1 % do horario fixo;
+         reativo:    63,4 % do pleno e 90,2 % do horario fixo.
+ADERENCIA AO ENVELOPE: antecipado 97,1 %; reativo 94,1 % (a diferenca vem
+         do cenario 'silencio da plataforma': 50,8 % no reativo, porque sem
+         previsao a regra de movimento baixo atenua quando a plataforma para
+         de publicar). Na noite tipica, 93,9 % nos dois modos.
+H3 (fracao da janela de baixa demanda gasta em transicao):
+         suite inteira: antecipado 18,3 % x reativo 7,5 %;
+         sem adversariais: antecipado 15,3 % x reativo 1,9 %.
+         H3 CONTINUA NAO CONFIRMADA: a previsao atrasa a descida (na noite
+         tipica o piso e alcancado aos 240 min no antecipado x 180 min no
+         reativo) e gasta mais energia. Reportar assim mesmo (3.6).
 
 ===============================================================================
 FIM

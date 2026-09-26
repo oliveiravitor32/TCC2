@@ -1,14 +1,16 @@
 """Camada de verificacao normativa (TCC 3.7).
 
-Invariante de seguranca: nenhum nivel emitido pelo sistema pode violar os tres
+Invariante de seguranca: nenhum nivel emitido pelo sistema pode violar os dois
 limites abaixo, quaisquer que sejam a previsao e a inferencia nebulosa.
 
     1. piso  - o nivel emitido nunca fica abaixo do piso da classe minima de
                dimerizacao admitida (NBR 5101, 6.10);
     2. taxa  - o DECRESCIMO nunca excede a taxa maxima por minuto da classe;
-               a elevacao do nivel e livre;
-    3. meteorologia - condicao adversa (chuva, neblina, nevoeiro) forca o
-               fluxo pleno.
+               a elevacao do nivel e livre.
+
+A recomendacao da 6.10 de nao dimerizar sob nevoeiro, neblina ou chuva nao e
+verificada: a plataforma de monitoramento nao produz dado meteorologico, e o
+trabalho nao integra uma terceira fonte (decisao do autor, DIVERGENCIAS 49).
 
 Este modulo e puro: nao le banco, nao faz E/S, nao conhece MQTT. Os valores
 normativos chegam prontos em `Criterio`, montado a partir da tabela
@@ -36,7 +38,6 @@ SEGUNDOS_POR_MINUTO: Final[Decimal] = Decimal(60)
 NENHUMA: Final[str] = "nenhuma"
 PISO: Final[str] = "piso"
 TAXA: Final[str] = "taxa"
-METEOROLOGIA: Final[str] = "meteorologia"
 
 
 class ViolacaoNormativa(AssertionError):
@@ -79,13 +80,11 @@ def verificar(
     *,
     nivel_anterior: Decimal | None = None,
     segundos_desde_anterior: Decimal | float | int | None = None,
-    meteorologia_adversa: bool = False,
 ) -> Resultado:
     """Corrige `nivel_pretendido` para o maior nivel admissivel.
 
     `nivel_anterior` e `segundos_desde_anterior` sao None na primeira decisao
-    do ponto (nao ha de onde medir taxa); nesse caso so o piso e a
-    meteorologia atuam.
+    do ponto (nao ha de onde medir taxa); nesse caso so o piso atua.
     """
     # Piso e arredondado para CIMA: a 3 casas, nunca fica abaixo do normativo.
     piso = _q(criterio.piso, ROUND_CEILING)
@@ -93,16 +92,6 @@ def verificar(
 
     if not (MINIMO <= pretendido <= PLENO):
         raise ValueError(f"nivel pretendido fora de [0,1]: {nivel_pretendido}")
-
-    # 3. Meteorologia adversa: fluxo pleno, sem discussao. Como e uma
-    # ELEVACAO, nao pode conflitar com o limite de taxa nem com o piso.
-    if meteorologia_adversa:
-        return Resultado(
-            nivel_emitido=PLENO,
-            restricao_aplicada=NENHUMA if pretendido == PLENO else METEOROLOGIA,
-            piso_efetivo=piso,
-            limite_taxa=None,
-        )
 
     # 2. Taxa: limite inferior imposto pela decisao anterior.
     limite_taxa: Decimal | None = None

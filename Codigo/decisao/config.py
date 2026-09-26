@@ -15,9 +15,10 @@ DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://iluminacao:iluminacao@localhost:5432/iluminacao"
 )
 
-# Base de regras vigente (3.7). A v0 continua no repositorio porque produziu
-# as primeiras decisoes; a v1 tem os tercis reais da serie (item 31).
-REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v1-tercis.toml")
+# Base de regras vigente (3.7): tercis reais da serie (item 31), sem a
+# condicao meteorologica (item 49). As versoes v0 e v1 ficam no historico do
+# git e registradas em versao_base_regras.
+REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v2-sem-meteorologia.toml")
 
 # Ciclo de decisao e failsafe do no (DIVERGENCIAS 1 e 2).
 PERIODO_S = float(os.environ.get("PERIODO_S", "5"))
