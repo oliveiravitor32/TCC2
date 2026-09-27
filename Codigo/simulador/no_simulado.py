@@ -18,6 +18,7 @@ import argparse
 import json
 import logging
 import random
+import ssl
 import threading
 import time
 from datetime import datetime, timezone
@@ -49,6 +50,9 @@ class NoSimulado:
         )
         if config.MQTT_USUARIO:
             self.cli.username_pw_set(config.MQTT_USUARIO, config.MQTT_SENHA)
+        if config.MQTT_CA:
+            # Broker da VM (porta 8883): TLS com a CA propria (deploy/preparar.sh).
+            self.cli.tls_set(ca_certs=config.MQTT_CA, tls_version=ssl.PROTOCOL_TLS_CLIENT)
         self.topico_estado = f"iluminacao/{ponto}/estado"
         self.cli.will_set(self.topico_estado, "offline", qos=1, retain=True)
         self.cli.on_connect = self._ao_conectar
