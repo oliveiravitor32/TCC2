@@ -4,7 +4,11 @@ Responda sempre em **português do Brasil**. O autor é iniciante em eletrônica
 
 ## Fonte da verdade
 
-A especificação vigente está em `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP.docx` (há também o `.pdf` com o mesmo conteúdo caso seja necessário verificar algo visual ou que teve problemas em visualizar no .docx). **Siga o TCC.**
+A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v2.docx` (26/09/2026, com as duas rodadas de revisão aceitas pelo autor). **Siga o TCC.**
+
+- `..._SP.docx` (e o `.pdf`) = versão anterior, mantida como histórico; não editar.
+- `..._SP_revisado.docx` = a mesma v2 com as alterações marcadas (registro do que mudou).
+- Novas mudanças no texto: com controle de alterações, sobre a v2, salvando como arquivo novo (nunca sobrescrever a versão vigente).
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
 
@@ -31,7 +35,9 @@ Seções mais importantes da versão nova:
 | Implantação em nuvem | 4.6.1 | 7.2.1 |
 | Contratos das interfaces (Quadro 14) | 4.6.2 | Quadro 13 |
 | Banco: entidades (Quadro 15), ER e modelo físico | 4.7.1 · 4.7.2 · 4.7.3 | 8.5 |
-| Casos de teste (ainda PENDENTE no texto) | 4.8 / 4.10 | — |
+| Modelo físico (Quadro 16) | 4.7.3 | — |
+| Casos de teste CT01–CT20 (Quadro 17) · resultado (4.10: CT15–CT20 PENDENTE) | 4.8 / 4.10 | — |
+| Matriz de uso de IA (renumerada) | Quadro 18 | Quadro 16 |
 
 Se o código precisar divergir do TCC, **avise explicitamente** qual trecho do texto (seção/quadro da versão nova) precisa ser atualizado.
 
@@ -58,7 +64,7 @@ Movimentação observada e prevista: conjuntos baixa/média/alta, **trapezoidais
 ### Previsão (3.6)
 
 - Série horária de pedestres de **Melbourne** (registrar data de extração; janela móvel de 24 meses; zero explícito = hora sem passagem).
-- Atributos: contagens das janelas anteriores + hora, dia da semana, feriado + meteorologia.
+- Atributos: atrasos de 1, 2, 3, 24 e 168 h, médias de 3 h e 24 h, hora, dia da semana, fim de semana e feriado (sem meteorologia).
 - **XGBoost** (o texto cita Chen e Guestrin, 2016 — não usar LightGBM sem avisar).
 - Partição **cronológica**; métricas MAE e RMSE; comparar com **persistência** e **média sazonal** (média daquela hora naquele dia da semana). Se não superar, reportar assim mesmo.
 
@@ -105,7 +111,7 @@ Movimentação observada e prevista: conjuntos baixa/média/alta, **trapezoidais
 
 ## Banco (Quadro 15 + 4.7.2)
 
-`classe_iluminacao`, `ponto_de_luz`, `evento_urbano`, `versao_base_regras`, `decisao`, `telemetria` **e a tabela associativa `decisao` ↔ `evento_urbano` (N:N)** — registra em quais eventos cada decisão se apoiou. Reclassificação de via = registro novo, nunca UPDATE do existente. A seção 4.7.3 (modelo físico) está PENDENTE no texto e deve ser escrita a partir do `schema.sql` real.
+`classe_iluminacao`, `ponto_de_luz`, `evento_urbano`, `versao_base_regras`, `decisao`, `telemetria` **e a tabela associativa `decisao` ↔ `evento_urbano` (N:N)** — registra em quais eventos cada decisão se apoiou. Reclassificação de via = registro novo, nunca UPDATE do existente. A seção 4.7.3 (Quadro 16) foi escrita a partir do `schema.sql`: mudança no schema exige atualizar o Quadro 16 (e a Figura 2, que ainda precisa ser redesenhada pelo autor).
 
 Entidades acrescentadas pelo código (item 16 do `DIVERGENCIAS_TCC.txt`): `versao_modelo_previsao` (RNF04), `execucao_cenario` (RF10, 3.11, H3: regime + modo antecipado/reativo), `sessao_medicao` (residual, descarte 5 %), `calibracao` (duty × lux por série; origem da tabela do firmware), `alerta_diagnostico` (RF11), `luminaria_referencia` (Quadro 9). A view `auditoria_decisao` dá a razão entregue/esperado e a latência evento → telemetria.
 
@@ -120,7 +126,7 @@ Decisões já tomadas: luminária de referência **em tabela**; calibração **n
 
 Tudo sobe em **Docker (docker compose) numa VM da Oracle Cloud (Always Free)**: API de eventos, serviço de decisão (worker sempre ligado), Mosquitto com TLS, PostgreSQL e painel. O ESP32 conecta pela internet ao Mosquitto da VM (porta 8883).
 
-> **Divergência a avisar no texto:** 4.6.1 e os Quadros 12 e 13 falam em "plataforma como serviço" e "PostgreSQL em instância gerenciada". Com a VM + Docker, esses trechos precisam passar a dizer "máquina virtual em nuvem com contêineres" e "PostgreSQL em contêiner". O argumento de 4.6.1 (nó comandado de fora da rede local) continua válido.
+> Já refletido na v2 (4.6.1 e Quadros 12 e 13): máquina virtual com contêineres, PostgreSQL em contêiner, painel estático na Vercel, nó em MQTT 3.1.1.
 
 ## Estrutura (dentro de `Codigo/`)
 

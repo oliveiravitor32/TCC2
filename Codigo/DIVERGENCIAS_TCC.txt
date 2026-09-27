@@ -1,7 +1,13 @@
 ===============================================================================
 DIVERGENCIAS E DECISOES DE IMPLEMENTACAO EM RELACAO AO TEXTO DO TCC
-Documento de referencia: Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP.docx
-Ultima atualizacao: 25/09/2026
+Documento de referencia: Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v2.docx
+Ultima atualizacao: 26/09/2026
+
+SITUACAO NA v2 (26/09/2026) - cada item ganhou uma linha '>>> v2:'
+  APLICADO   = o texto da v2 ja registra a decisao; nada a fazer.
+  PARCIAL    = parte aplicada; o que falta esta na linha.
+  PENDENTE   = ainda nao entrou no texto (em geral: Capitulos 5 e 6).
+  SEM EFEITO = item superado.
 ===============================================================================
 
 COMO LER ESTE ARQUIVO
@@ -22,6 +28,7 @@ Manter este arquivo atualizado a cada decisao nova.
 1. PASSO DA RAMPA DE DIMERIZACAO: 5 s (o TCC implica 1 s)
    Trecho: Quadro 6 / secao 3.7
    Acao: [ATUALIZAR TEXTO]
+    >>> v2: APLICADO (3.7 e Quadro 6)
 -------------------------------------------------------------------------------
 TCC:     o Quadro 6 expressa a taxa maxima de decrescimo como 0,017 lux/s, o
          que corresponde a um passo de rampa a cada 1 segundo.
@@ -47,6 +54,7 @@ VERIFICACAO: tests/test_verificacao.py::test_rampa_completa_de_pleno_ao_piso_nun
 2. PERIODO DO CICLO E TIMEOUT DO FAILSAFE: 5 s e 15 s
    Trecho: RNF07 (Quadro 11), secao 3.4
    Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.4 e Quadro 11)
 -------------------------------------------------------------------------------
 TCC:     RNF07 exige que o no assuma o fluxo pleno apos X segundos sem comando,
          sem fixar X.
@@ -66,6 +74,7 @@ TEXTO:   registrar em 3.4 o par (periodo 5 s, timeout 15 s) e a razao da
 3. A CLASSE DE ILUMINACAO E CONGELADA NA DECISAO
    Trecho: secao 4.7.2 (cardinalidade classe_iluminacao x ponto_de_luz)
    Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (4.7.2)
 -------------------------------------------------------------------------------
 TCC:     4.7.2 afirma que a relacao entre classe e ponto de luz permite recuperar
          por juncao o criterio normativo de qualquer decisao passada, "desde
@@ -89,6 +98,7 @@ TEXTO:   acrescentar a 4.7.2 que a decisao carrega a classe vigente, e que a
 4. VOCABULARIO FECHADO PARA A RESTRICAO APLICADA
    Trecho: Quadro 15 (entidade `decisao`)
    Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (Quadros 15 e 16)
     >>> ATUALIZADO PELO ITEM 49: o vocabulario de restricao_aplicada passou a ter TRES valores: 'nenhuma', 'piso' e 'taxa'.
 -------------------------------------------------------------------------------
 TCC:     o Quadro 15 lista o atributo como "restricao que motivou a correcao",
@@ -107,6 +117,7 @@ TEXTO:   enumerar os quatro valores no Quadro 15 ou em 4.7.2.
 5. PRIORIDADE ENTRE PISO E TAXA QUANDO OS DOIS ATUAM
    Trecho: secao 3.7
    Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7)
 -------------------------------------------------------------------------------
 TCC:     descreve os tres limites, mas nao diz o que registrar quando mais de
          um incide sobre a mesma decisao.
@@ -127,6 +138,7 @@ TEXTO:   acrescentar a 3.7 a regra de composicao (maximo) e a de registro.
 6. METEOROLOGIA ADVERSA SOBREPOE-SE AOS DEMAIS LIMITES
    Trecho: secao 3.7
    Acao: [ACRESCENTAR]
+    >>> v2: SEM EFEITO
     >>> ATUALIZADO PELO ITEM 49: item SEM EFEITO: a regra meteorologica deixou de existir.
 -------------------------------------------------------------------------------
 TCC:     condicao adversa leva o nivel a 1,0.
@@ -145,6 +157,7 @@ TEXTO:   registrar em 3.7 que a regra meteorologica e avaliada primeiro e que
 7. RESOLUCAO NUMERICA DE 0,001 E ARREDONDAMENTO SEMPRE NO SENTIDO SEGURO
    Trecho: secoes 3.7 e 4.7.2
    Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7)
 -------------------------------------------------------------------------------
 TCC:     trata o nivel como fracao continua do fluxo pleno, sem fixar precisao.
 CODIGO:  o nivel e um decimal de 3 casas (0,000 a 1,000), tanto na verificacao
@@ -167,6 +180,7 @@ TEXTO:   acrescentar a 3.7 a resolucao adotada e a politica de arredondamento.
 8. A CAMADA DE VERIFICACAO SO CORRIGE PARA CIMA
    Trecho: secao 3.7
    Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7)
 -------------------------------------------------------------------------------
 TCC:     descreve a camada como impeditiva de violacao, sem afirmar o sentido
          das correcoes.
@@ -185,6 +199,7 @@ TEXTO:   enunciar em 3.7 que a camada e monotonicamente nao decrescente em
 9. ATRIBUTOS ACRESCENTADOS AS ENTIDADES DO QUADRO 15
    Trecho: Quadro 15 e secao 4.7.2
    Acao: [ATUALIZAR TEXTO]
+    >>> v2: PARCIAL: Quadros 15 e 16 aplicados; falta redesenhar a Figura 2
     >>> ATUALIZADO PELO ITEM 49: evento_urbano.rotulo continua existindo, mas so para a ocorrencia ('seguranca', 'transito', 'encerrada').
 -------------------------------------------------------------------------------
 TCC:     o Quadro 15 lista os "atributos principais" de cada entidade.
@@ -230,6 +245,7 @@ TEXTO:   atualizar a Figura 2 e, se couber, o Quadro 15.
 10. VIEW DE AUDITORIA NAO PREVISTA NO MODELO
     Trecho: secao 4.7.2
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (4.7.2)
 -------------------------------------------------------------------------------
 TCC:     descreve entidades, nao visoes.
 CODIGO:  a view `auditoria_decisao` junta decisao, ponto, classe, telemetria,
@@ -250,6 +266,7 @@ TEXTO:   mencionar em 4.7.2 que a cadeia e exposta como visao; opcional.
 11. PISO DE DIMERIZACAO DAS CLASSES P5 E P6 NA CARGA INICIAL
     Trecho: Quadro 8 / secao 3.8
     Acao: [ACRESCENTAR]
+    >>> v2: PENDENTE (opcional: nota no Quadro 8)
 -------------------------------------------------------------------------------
 TCC:     o Quadro 8 reproduz as iluminancias de P3 a P6 e o texto fixa o par
          relevante: classe P3 com piso P5. Nao declara o piso das demais.
@@ -269,6 +286,7 @@ TEXTO:   nota de rodape no Quadro 8, se o autor julgar necessario. O valor
 12. TAXA MAXIMA DE DECRESCIMO REPLICADA EM TODAS AS CLASSES
     Trecho: Quadro 15 (entidade classe_iluminacao)
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7)
 -------------------------------------------------------------------------------
 TCC:     a taxa maxima de decrescimo e atributo da classe de iluminacao.
 CODIGO:  a coluna existe em todas as classes e o seed grava 0,100 em todas.
@@ -284,6 +302,7 @@ TEXTO:   registrar a origem do valor 0,1/min em 3.7, distinguindo-o das
 13. BROKER LOCAL SEM TLS E SEM CREDENCIAL POR DISPOSITIVO
     Trecho: secao 3.2 / RNF06
     Acao: [SO DESENVOLVIMENTO]
+    >>> v2: SO DESENVOLVIMENTO; resolver no deploy
 -------------------------------------------------------------------------------
 TCC:     o enlace MQTT usa TLS e credencial propria de cada dispositivo.
 CODIGO:  o Mosquitto do docker-compose esta com allow_anonymous e sem TLS.
@@ -300,6 +319,7 @@ TEXTO:   nenhuma alteracao. Verificar antes da defesa que o ambiente
 14. ORGANIZACAO DO REPOSITORIO
     Trecho: nenhum
     Acao: [SO DESENVOLVIMENTO]
+    >>> v2: SO DESENVOLVIMENTO
 -------------------------------------------------------------------------------
 Todo o codigo fica sob `Codigo/`, e nao na raiz do repositorio, para nao se
 misturar com `Docs/` e com o proprio .docx. A estrutura interna (db, decisao,
@@ -312,6 +332,7 @@ Sem efeito sobre o texto.
     Trecho: 4.6.1, Quadro 12 (linhas "Implantacao em nuvem" e "Banco de
             dados") e Quadro 13 (linha "Banco de dados")
     Acao: [ATUALIZAR TEXTO]
+    >>> v2: APLICADO (4.6.1, Quadros 12 e 13)
 -------------------------------------------------------------------------------
 TCC:     "toda a camada de software e implantada em provedor de nuvem, em
          modelo de plataforma como servico"; "PostgreSQL em instancia
@@ -333,6 +354,7 @@ TEXTO:   trocar "plataforma como servico" por "maquina virtual em nuvem, com
 16. ENTIDADES ACRESCENTADAS AO MODELO DE DADOS
     Trecho: Quadro 15, Figura 2 e 4.7.3 (PENDENTE)
     Acao: [ATUALIZAR TEXTO]
+    >>> v2: PARCIAL: Quadros 15 e 16 aplicados; falta redesenhar a Figura 2
 -------------------------------------------------------------------------------
 TCC:     o Quadro 15 lista seis entidades; a Figura 2 acrescenta a
          associativa decisao-evento.
@@ -364,6 +386,7 @@ TEXTO:   acrescentar as entidades ao Quadro 15 (ou declarar em 4.7.1 que o
 17. COMPARACAO ANTECIPADO x REATIVO NAO PREVISTA NAS ETAPAS
     Trecho: 3.9 (etapas 3 a 7) e 6.1
     Acao: [ATUALIZAR TEXTO]
+    >>> v2: APLICADO (3.9); resultado vai para 6.1
 -------------------------------------------------------------------------------
 TCC:     6.1 avalia H3 pela "comparacao entre o acionamento antecipado e o
          puramente reativo - comparacao que as etapas de 3.9 ainda nao
@@ -380,6 +403,7 @@ TEXTO:   acrescentar a 3.9 (Etapa 6 ou nova etapa) a comparacao, com a metrica
 18. BASE DE REGRAS v0: ATENUACAO CONDICIONADA A AUSENCIA DE RISCO
     Trecho: 3.7 (paragrafos da base de regras e das funcoes de pertinencia)
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7)
     >>> ATUALIZADO PELO ITEM 49: a base vigente e a v2 (8 regras); as regras de atenuacao sao R5 a R8 e exigem so 'ocorrencia = nao'. O principio do item continua valendo para a ocorrencia.
 -------------------------------------------------------------------------------
 TCC:     base em forma linguistica, com origem declarada; agregacao e
@@ -408,6 +432,7 @@ TEXTO:   acrescentar a 3.7 o metodo (min/max/centroide) e a frase: "as regras
 19. UNIVERSO DE SAIDA DA INFERENCIA DE 0 A 1, SEM CONHECER O PISO
     Trecho: 3.7 ("a saida e o nivel de fluxo luminoso pretendido")
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7)
 -------------------------------------------------------------------------------
 TCC:     saida = fracao continua do fluxo pleno.
 CODIGO:  o universo de saida vai de 0 a 1; a inferencia nao le o piso da
@@ -426,6 +451,7 @@ TEXTO:   registrar em 3.7 que o universo de saida e [0,1] e que o piso e
 20. PARTICOES PROVISORIAS, FAIXA HORARIA E MODO REATIVO
     Trecho: 3.7 (particoes) e Quadro 7 (faixa horaria)
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7 e 3.9)
 -------------------------------------------------------------------------------
 CODIGO:  - movimentacao chega normalizada no ponto (0 a 1); fronteiras
            provisorias em 1/3 e 2/3, rampas de +-0,083; a v1 troca pelos
@@ -444,6 +470,7 @@ TEXTO:   declarar em 3.7 a normalizacao por ponto e as faixas; em 3.9, que o
 21. CONTRATO DA INTERFACE DE EVENTOS: VOCABULARIO FECHADO
     Trecho: Quadro 14 (POST /eventos) e 5.4 (especificacao da interface)
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (Quadro 14); levar tambem a especificacao consolidada de 5.4
     >>> ATUALIZADO PELO ITEM 49: o tipo 'meteorologia' e seus rotulos sairam do contrato; restam 'movimentacao' e 'ocorrencia'.
 -------------------------------------------------------------------------------
 TCC:     "carimbo de tempo, tipo do evento, valor, abrangencia e origem".
@@ -469,6 +496,7 @@ TEXTO:   acrescentar o campo "rotulo" ao Quadro 14 e levar o vocabulario a
 22. POST /eventos SEM AUTENTICACAO
     Trecho: 4.6.1 / Quadro 14
     Acao: [ACRESCENTAR] (decisao do autor, com risco declarado)
+    >>> v2: PENDENTE: decidir no deploy; se ficar aberto, limitacao em 6.3
 -------------------------------------------------------------------------------
 CODIGO:  a interface REST nao exige credencial, nem para publicar.
 RISCO:   exposta na VM, qualquer pessoa na internet pode publicar eventos e
@@ -482,6 +510,7 @@ TEXTO:   se permanecer aberta, registrar entre as limitacoes (6.3).
 23. ENTRADA AUSENTE E VIGENCIA DOS EVENTOS
     Trecho: 3.7 (quarta regra) e LACUNAS 6 e 9
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7)
     >>> ATUALIZADO PELO ITEM 49: a vigencia 'ate o evento que encerra' vale agora so para a ocorrencia ('encerrada').
 -------------------------------------------------------------------------------
 CODIGO:  - movimentacao sem vigente_ate vale 15 min; vencida, o ciclo decide
@@ -504,6 +533,7 @@ VERIFICACAO: tests/test_ciclo.py (sem_dado, ocorrencia_persiste, expira,
 24. APOS O FAILSAFE, A RAMPA RECOMECA DO PLENO
     Trecho: 3.7 (taxa) e RNF02 / RNF07
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7)
 -------------------------------------------------------------------------------
 TCC:     taxa medida entre o nivel corrente e o decidido; failsafe leva a 1,0.
 CODIGO:  se a ultima decisao gravada e mais antiga que o timeout do failsafe
@@ -522,6 +552,7 @@ VERIFICACAO: tests/test_ciclo.py::test_apos_failsafe_a_rampa_recomeca_do_pleno
 25. EVENTO ACORDA O CICLO (RNF03)
     Trecho: RNF03 (Quadro 11) e 3.9 Etapa 5
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (4.6.1)
 -------------------------------------------------------------------------------
 TCC:     do evento a aplicacao do duty < 2 s.
 CODIGO:  alem do ciclo periodico de 5 s, um gatilho no banco (pg_notify)
@@ -540,6 +571,7 @@ TEXTO:   descrever em 4.6.1 que o servico reage ao evento e mantem o ciclo
 26. MQTT: QoS 1, SEM RETAIN NO COMANDO, ESTADO DO NO COM LAST WILL
     Trecho: Quadro 14 e LACUNA 2
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (Quadro 14)
 -------------------------------------------------------------------------------
 CODIGO:  comando e telemetria em QoS 1, sem retain. A reentrega possivel do
          QoS 1 e absorvida pela unicidade de decisao_id na telemetria. Novo
@@ -555,6 +587,7 @@ TEXTO:   acrescentar o topico de estado ao Quadro 14.
 27. R9 TAMBEM CONDICIONADA A AUSENCIA DE RISCO
     Trecho: 3.7 (complementa o item 18)
     Acao: [ACRESCENTAR]
+    >>> v2: SEM EFEITO
     >>> ATUALIZADO PELO ITEM 49: item SEM EFEITO na v2: a R9 virou R8, e a condicao 'meteorologia = normal' saiu; resta 'ocorrencia = nao'.
 -------------------------------------------------------------------------------
 CODIGO:  R9 (inicio da noite -> intermediario) passou a exigir ocorrencia =
@@ -571,6 +604,7 @@ VERIFICACAO: tests/test_inferencia.py::test_risco_no_inicio_da_noite_nao_e_dilui
             modo de alta resolucao 2 com o registrador de tempo de medicao no
             valor maximo")
     Acao: [ATUALIZAR TEXTO]
+    >>> v2: APLICADO (3.4.2)
 -------------------------------------------------------------------------------
 TCC:     as duas afirmacoes sao incompativeis: 120 ms e o tempo com o
          registrador no valor PADRAO (69), em que a resolucao do modo 2 e de
@@ -591,6 +625,7 @@ TEXTO:   em 3.4.2, trocar "120 ms de integracao" por "cerca de 440 ms de
     Trecho: 3.3 ("tabela de calibracao levantada por medicao"), 3.4.2 e
             3.4.4; LACUNA 1
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.3 e 3.4.4)
 -------------------------------------------------------------------------------
 CODIGO:  bancada/calibrar.py com o sketch bancada/calibracao/calibracao.ino:
          1. residual com o LED apagado (10 leituras); sessao descartada se
@@ -616,6 +651,7 @@ TEXTO:   descrever o procedimento em 3.4.4 e a interpolacao entre pontos
 30. NORMALIZACAO POR PONTO PELO PERCENTIL 99, E NAO PELO MAXIMO
     Trecho: 3.6 ("normalizadas em relacao a distribuicao do proprio ponto")
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.6)
 -------------------------------------------------------------------------------
 CODIGO:  nivel = contagem / percentil 99 do proprio ponto, limitado a [0,1].
 POR QUE: o maximo absoluto de um ponto e um evento isolado (um jogo, uma
@@ -630,6 +666,7 @@ TEXTO:   dizer em 3.6 que a normalizacao usa o percentil 99 do ponto.
 31. TERCIS REAIS DA SERIE: 0,10 E 0,41 (E NAO 1/3 E 2/3)
     Trecho: 3.7 (fronteiras nos tercis) e base de regras do Capitulo 5
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7); repetir no Capitulo 5
 -------------------------------------------------------------------------------
 CODIGO:  decisao/regras/v1-tercis.toml, com fronteiras em 0.1038 e
          0.4053, calculadas por modelo/treinar.py sobre a serie
@@ -650,6 +687,7 @@ TEXTO:   registrar os tercis efetivos em 3.7 e no Capitulo 5 (objetivo c),
 32. RESULTADO DA CAMADA DE PREVISAO (5.1)
     Trecho: 5.1, 6.1 (H3) e Quadro 15 (versao_modelo_previsao)
     Acao: [ACRESCENTAR - e resultado, nao divergencia]
+    >>> v2: APLICADO em 3.6 (atributos, feriados); numeros PENDENTES para 5.1
 -------------------------------------------------------------------------------
 Serie de Melbourne extraida em 2026-09-23, 49 pontos com cobertura
 >= 98 %, particao cronologica (645,237 linhas de treino,
@@ -680,6 +718,7 @@ DECISOES A REGISTRAR NO TEXTO:
 33. RELOGIO VIRTUAL E ISOLAMENTO DOS CENARIOS
     Trecho: 3.9 (Etapa 4) e a decisao em aberto sobre o relogio de cenario
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.9)
     >>> ATUALIZADO PELO ITEM 49: o cenario 'chuva as 02h' que motivou o deslocamento em semanas foi retirado; o deslocamento continua necessario pela ocorrencia.
 -------------------------------------------------------------------------------
 CODIGO:  a suite roda em TEMPO SIMULADO, com passo igual ao periodo do ciclo
@@ -703,6 +742,7 @@ TEXTO:   registrar em 3.9 que os cenarios correm em relogio virtual e que a
 34. REFERENCIA DE TAXA: ULTIMA DECISAO ANTERIOR AO INSTANTE ATUAL
     Trecho: 3.7 (taxa) / RNF02
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7)
 -------------------------------------------------------------------------------
 CODIGO:  o nivel anterior e o da ultima decisao com carimbo ANTERIOR ao
          instante da decisao corrente e, dentro de um cenario, da propria
@@ -722,6 +762,7 @@ TEXTO:   nao altera o texto; e implementacao. Serve como caso de teste em 4.8.
 35. RESULTADO DA SUITE DE CENARIOS (5.2, 5.4 e 5.5)
     Trecho: 5.2, 5.4, 5.5 e Capitulo 6
     Acao: [ACRESCENTAR - e resultado, nao divergencia]
+    >>> v2: SEM EFEITO (numeros substituidos pelo item 52)
     >>> ATUALIZADO PELO ITEM 49: os NUMEROS deste item sao da suite com meteorologia (10 cenarios, 26.880 decisoes) e foram SUBSTITUIDOS pelos do item 50.
 -------------------------------------------------------------------------------
 10 cenarios (4 adversariais), base de regras v1-tercis, passo de 5 s,
@@ -780,6 +821,7 @@ TEXTO:   6.1 deve registrar H3 como nao confirmada, com esta explicacao;
 36. LIMIARES DO DIAGNOSTICO (RF11)
     Trecho: 3.4.5
     Acao: [ACRESCENTAR]
+    >>> v2: SEM EFEITO (substituido pelo 47)
     >>> ATUALIZADO PELO ITEM 49: item SUBSTITUIDO pelo item 47 (tolerancia com piso de resolucao do sensor).
 -------------------------------------------------------------------------------
 CODIGO:  tolerancia = 3 x a dispersao relativa medida no ensaio de
@@ -801,6 +843,7 @@ TEXTO:   registrar em 3.4.5 os dois limiares, a regra do 3 sigma e a
 37. ENDPOINTS /pontos E /alertas, E CORS NA INTERFACE REST
     Trecho: Quadro 14 (contratos) e 4.6 (linha "Front end")
     Acao: [ATUALIZAR TEXTO]
+    >>> v2: APLICADO (Quadro 14)
 -------------------------------------------------------------------------------
 TCC:     o Quadro 14 especifica quatro operacoes: POST/GET /eventos,
          GET /decisoes e GET /telemetria.
@@ -827,6 +870,7 @@ TEXTO:   acrescentar os dois ao Quadro 14 marcando-os como de apresentacao,
 38. PAINEL PUBLICADO NA VERCEL, FORA DA VM
     Trecho: 4.6.1 (implantacao) e Quadro 12 (linha "Front end")
     Acao: [ATUALIZAR TEXTO]
+    >>> v2: APLICADO (Quadros 12 e 13, 4.6.1)
 -------------------------------------------------------------------------------
 TCC:     "painel web servido pelo mesmo ambiente".
 CODIGO:  o painel e um aplicativo estatico (Vite + React + Tailwind +
@@ -851,6 +895,7 @@ TEXTO:   em 4.6.1 e no Quadro 12, dizer que o painel e estatico e publicado
 39. CONSUMO EM TEMPO REAL NO PAINEL, DERIVADO DA ILUMINANCIA MEDIDA
     Trecho: 3.11 (verificacao cruzada entre as duas estimativas), RF08 e RF12
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO em 3.11; registrar tambem em 5.5
 -------------------------------------------------------------------------------
 TCC:     3.11 preve DUAS estimativas de energia - uma derivada do ciclo
          comandado e outra derivada da iluminancia medida - e manda reportar
@@ -887,6 +932,7 @@ TEXTO:   acrescentar o endpoint ao Quadro 14 (junto com /pontos e /alertas,
     Trecho: Quadro 5 (linha "Fonte de luz"), 3.4.2 (dimensionamento) e
             Quadro 4 (linha "Segmento de fita")
     Acao: [ATUALIZAR TEXTO]
+    >>> v2: APLICADO (Quadros 4 e 5, 3.4.2)
 -------------------------------------------------------------------------------
 TCC:     os calculos de ordem de grandeza supoem a luminaria a 1,5 m do plano
          de medicao: "dez centimetros a 1,5 m subtendem menos de quatro
@@ -937,6 +983,7 @@ CORRECAO (25/09/2026): o segmento medido tem 6 cm, e nao 5 cm. Potencia a
 41. "MOVIMENTACAO NA VIA" DE QUEM? PEDESTRES, NO CENARIO ADOTADO
     Trecho: Quadro 7 (linha "Nivel de movimentacao na via"), 3.6 e 3.7
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (Quadro 7)
 -------------------------------------------------------------------------------
 TCC:     o Quadro 7 chama a variavel de "nivel de movimentacao na via", sem
          dizer se de pedestres ou de veiculos, e a justifica pela subsecao
@@ -967,6 +1014,7 @@ TEXTO:   acrescentar ao Quadro 7 ou a 3.7 uma frase como: "No cenario
     Trecho: 3.8 (classe adotada), 6.3 (limitacao "uma unica classe de via")
             e 7.1 (recomendacoes)
     Acao: [ACRESCENTAR]
+    >>> v2: PENDENTE (6.3 e 7.1)
 -------------------------------------------------------------------------------
 TCC:     adota a calcada de via urbana local, classe P3, e declara em 6.3
          que "considera-se uma unica classe de via".
@@ -996,6 +1044,7 @@ TEXTO:   explicitar na limitacao de 6.3 que, em campo, um ponto de luz
 43. POR QUE INFERENCIA NEBULOSA COM UMA UNICA CLASSE
     Trecho: 2.6 (escolha do modelo interpretavel) e 3.7 (mecanismo de decisao)
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.7); pergunta respondida pelos itens 51 e 52
     >>> ATUALIZADO PELO ITEM 49: o texto aprovado cita 'condicao meteorologica'; na v2 fica: 'mesmo numa unica classe, o sistema compoe movimentacao observada, prevista e faixa horaria, e trata a ocorrencia reportada como condicao que suspende a atenuacao'.
     >>> PERGUNTA PENDENTE AO AUTOR - ver o fim deste item <<<
 -------------------------------------------------------------------------------
@@ -1046,6 +1095,7 @@ PERGUNTA PENDENTE - fazer ao autor quando as divergencias forem resolvidas:
 44. ENSAIO DE ESTABILIDADE E AQUECIMENTO DA BANCADA
     Trecho: 3.4.4 (repetibilidade e consistencia) e 3.4.3 (condicoes de medicao)
     Acao: [ACRESCENTAR - e resultado]
+    >>> v2: APLICADO (3.4.3 e 3.4.4)
 -------------------------------------------------------------------------------
 ENSAIO:  24/09/2026, fita a ciclo pleno (duty 4095) por 10 min, caixa
          fechada, sala escura; 1.355 leituras do BH1750 (alta resolucao 2,
@@ -1095,6 +1145,7 @@ CRITERIO DE ESTABILIDADE (corrigido): a bancada e considerada estavel
 45. O NO USA MQTT 3.1.1; BROKER E SERVICO USAM MQTT 5
     Trecho: Quadro 13 (linha "Intermediario de mensagens") e 4.6.1
     Acao: [ATUALIZAR TEXTO]
+    >>> v2: APLICADO (Quadro 13)
 -------------------------------------------------------------------------------
 TCC:     "Broker MQTT 5.0 sobre canal cifrado, com credencial por
          dispositivo".
@@ -1115,6 +1166,7 @@ TEXTO:   no Quadro 13, "Broker MQTT 5.0; o no conecta em MQTT 3.1.1, versao
 46. FIRMWARE DO NO: COMPORTAMENTOS QUE O TEXTO NAO FIXA
     Trecho: 3.4, RNF07, LACUNAS 1 e 3, Quadro 14
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.4 e 3.9)
 -------------------------------------------------------------------------------
 CODIGO:  firmware/no/no.ino (compilado para o DOIT ESP32 DEVKIT V1: 81 % da
          memoria de programa, 15 % da RAM).
@@ -1149,6 +1201,7 @@ TEXTO:   3.4, junto ao RNF07: o no parte do pleno ao energizar; 3.9 (Etapa
 47. TOLERANCIA DO DIAGNOSTICO: PISO DE RESOLUCAO DO SENSOR
     Trecho: 3.4.5 (complementa o item 36)
     Acao: [ACRESCENTAR]
+    >>> v2: APLICADO (3.4.5)
 -------------------------------------------------------------------------------
 TCC:     a tolerancia "e fixada acima da dispersao apurada no ensaio de
          repetibilidade, de modo que o alerta nao seja disparado pelo proprio
@@ -1176,6 +1229,7 @@ TEXTO:   em 3.4.5, completar: "fixada acima da dispersao apurada e nunca
 48. PRIMEIROS RESULTADOS COM O NO REAL (5.3, parcial)
     Trecho: 5.3 (latencia e diagnostico) e 3.9 (Etapa 5)
     Acao: [ACRESCENTAR - e resultado]
+    >>> v2: PENDENTE: refazer na sessao de bancada final e levar a 5.3
     >>> ATUALIZADO PELO ITEM 49: o teste de subida imediata usou chuva; na v2 a subida imediata e demonstrada com ocorrencia (./evento.sh seguranca).
 -------------------------------------------------------------------------------
 SESSAO:  25/09/2026, 00:39 a 00:50, ESP32 real com o firmware da calibracao
@@ -1218,6 +1272,7 @@ FAILSAFE (RNF07): o teste feito nao demonstrou o comportamento - o servico
             3.7 (Quadro 7 e terceira restricao), 3.9 (Etapa 4), 3.10, 4.4
             (Quadro 11), Quadro 14, Quadro 15, 5.2, 6.3
     Acao: [ATUALIZAR TEXTO] - decisao do autor em 26/09/2026
+    >>> v2: APLICADO nos Capitulos 1 a 4; falta a limitacao em 6.3 (texto sugerido no item)
 -------------------------------------------------------------------------------
 PROBLEMA: o texto atribuia a condicao meteorologica a "interface de dados
          urbanos" (Quadro 7, 3.10, Quadro 15), que emula a plataforma
@@ -1266,6 +1321,7 @@ TEXTO SUGERIDO para a limitacao em 6.3:
 50. RESULTADOS DA SUITE SEM METEOROLOGIA (substituem os numeros do item 35)
     Trecho: 5.2, 5.4, 5.5, 6.1 (H3)
     Acao: [ATUALIZAR TEXTO] - rodada de 26/09/2026, base v2-sem-meteorologia
+    >>> v2: SEM EFEITO (numeros substituidos pelo item 52)
     >>> CORRIGIDO PELO ITEM 51: os numeros do modo reativo foram refeitos com as
         execucoes isoladas (a primeira rodada estava contaminada).
 -------------------------------------------------------------------------------
@@ -1286,6 +1342,7 @@ H3 (fracao da janela de baixa demanda gasta em transicao):
 51. TABELA EM DEGRAUS x MAMDANI (responde ao item 43) + ISOLAMENTO DA SUITE
     Trecho: 3.7 (justificativa da logica nebulosa), 3.9, 5.4, 5.5, 6.3
     Acao: [DECIDIR COM O AUTOR] - rodada de 26/09/2026
+    >>> v2: APLICADO (3.7 e 3.9); numeros PENDENTES para 5.4 e 5.5
 -------------------------------------------------------------------------------
 EXPERIMENTO: a mesma base v2 rodada como TABELA EM DEGRAUS: mesmas 8 regras,
          pertinencias reduzidas a 0 ou 1 (movimentacao cortada nos tercis,
@@ -1329,6 +1386,7 @@ ISOLAMENTO DA SUITE (bug corrigido): o historico sintetico de 168 h gravado
 52. CENARIO 'RUIDO NA FRONTEIRA' (decisao do autor sobre o item 51)
     Trecho: 3.5 (suite), 3.7 (justificativa da logica nebulosa), 5.4, 5.5
     Acao: [ATUALIZAR TEXTO] - rodada de 26/09/2026
+    >>> v2: APLICADO (3.5, 3.7, 3.9); numeros vigentes PENDENTES para 5.2, 5.4, 5.5 e 6.1
 -------------------------------------------------------------------------------
 DECLARAR NO TEXTO: o cenario foi acrescentado DEPOIS de a comparacao do
          item 51 dar empate, para testar a afirmacao da 3.7 (resposta gradual
