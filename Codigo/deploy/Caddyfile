@@ -1,0 +1,5 @@
+# HTTPS da API. O Caddy obtem e renova sozinho o certificado Let's Encrypt
+# para o dominio (porta 80 aberta para a validacao).
+{$DOMINIO} {
+	reverse_proxy api:8000
+}

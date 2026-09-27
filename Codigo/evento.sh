@@ -7,6 +7,8 @@
 #   ./evento.sh encerrada     encerra a ocorrencia
 #
 # A movimentacao vale 15 min; as demais valem ate o evento que as encerra.
+#
+# Na VM:  API=https://seu-dominio CHAVE_API=... ./evento.sh 0.05
 
 set -u
 cd "$(dirname "$0")"
@@ -30,7 +32,7 @@ case "$VALOR" in
 esac
 
 RESP=$(curl -s -w "\n%{http_code}" -X POST "$API/eventos" \
-       -H "content-type: application/json" -d "$CORPO")
+       -H "content-type: application/json" -H "X-Chave-Api: ${CHAVE_API:-}" -d "$CORPO")
 CODIGO=$(echo "$RESP" | tail -1)
 CORPO_RESP=$(echo "$RESP" | sed '$d')
 

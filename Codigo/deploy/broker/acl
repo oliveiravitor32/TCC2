@@ -1,0 +1,13 @@
+# Permissoes por topico (RNF06, RNF09).
+#
+# O servico de decisao comanda todos os pontos e le toda a telemetria.
+user servico
+topic readwrite iluminacao/#
+
+# Cada no so enxerga o proprio ponto: o usuario do no e o codigo do ponto
+# de luz (%u), o mesmo PONTO do segredos.h. Um no novo precisa apenas de uma
+# linha no passwd e de um registro em ponto_de_luz - nada muda aqui nem no
+# servico (RNF09).
+pattern read iluminacao/%u/comando
+pattern write iluminacao/%u/telemetria
+pattern write iluminacao/%u/estado

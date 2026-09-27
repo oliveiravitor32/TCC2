@@ -154,7 +154,7 @@ docker-compose.yml
 7. Painel ✅ (`painel/`: Vite + React + Tailwind 4 + lucide; só leitura, atualiza a cada 2 s; **vai para a Vercel**, não para a VM; API ganhou CORS e os endpoints `/pontos` e `/alertas`; itens 37–38 do DIVERGENCIAS)
 8. Treino do modelo XGBoost (Etapa 3) e troca da previsão provisória ✅ (`modelo/baixar_dados.py` + `treinar.py`; MAE 0,0468 × 0,0572 sazonal × 0,0811 persistência; tercis reais 0,1038 e 0,4053 → `decisao/regras/v1-tercis.toml`; itens 30–32 do DIVERGENCIAS)
 9. Cenários (RF10, com modo reativo), diagnóstico (RF11), energia (RF12) ✅ (`cenarios/` 10 cenários com relógio virtual; `decisao/diagnostico.py`; `decisao/energia.py`; **zero violações em 26.880 decisões**; adaptativo = 67 % do pleno e 93 % do horário fixo; **H3 não confirmada**: antecipado 21,2 % × reativo 11,4 % da janela em transição; itens 33–36 do DIVERGENCIAS)
-10. Deploy na VM Oracle com Docker
+10. Deploy na VM Oracle com Docker — arquivos prontos e testados localmente (`docker-compose.prod.yml`, `deploy/ROTEIRO.md`, `deploy/preparar.sh`; VM ARM Ubuntu 24.04, DuckDNS + Caddy, MQTT TLS com CA própria, ACL por ponto, chave `X-Chave-Api` no POST; item 53 do DIVERGENCIAS). **Falta:** o autor executar o roteiro na VM
 
 ## Decisões em aberto (perguntar ao autor antes de assumir)
 

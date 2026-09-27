@@ -295,3 +295,29 @@ def test_energia_nos_dois_extremos_da_faixa_contratual(cliente, conn):
 
 def test_energia_com_luminaria_desconhecida(cliente):
     assert cliente.get("/energia", params={"luminaria": "REF-1W"}).status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# Chave de acesso no POST (DIVERGENCIAS 22)
+# ---------------------------------------------------------------------------
+@pytest.fixture
+def com_chave(monkeypatch):
+    import api_eventos.app as modulo
+    monkeypatch.setattr(modulo, "CHAVE_API", "segredo-de-teste")
+
+
+def test_post_sem_chave_e_recusado(cliente, com_chave, conn):
+    antes = conn.execute("SELECT count(*) AS n FROM evento_urbano").fetchone()["n"]
+    assert cliente.post("/eventos", json=MOV).status_code == 401
+    assert cliente.post("/eventos", json=MOV, headers={"X-Chave-Api": "errada"}).status_code == 401
+    assert conn.execute("SELECT count(*) AS n FROM evento_urbano").fetchone()["n"] == antes
+
+
+def test_post_com_chave_e_aceito(cliente, com_chave):
+    r = cliente.post("/eventos", json=MOV, headers={"X-Chave-Api": "segredo-de-teste"})
+    assert r.status_code == 201
+
+
+def test_consultas_nao_exigem_chave(cliente, com_chave):
+    assert cliente.get("/eventos").status_code == 200
+    assert cliente.get("/pontos").status_code == 200

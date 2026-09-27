@@ -302,7 +302,7 @@ TEXTO:   registrar a origem do valor 0,1/min em 3.7, distinguindo-o das
 13. BROKER LOCAL SEM TLS E SEM CREDENCIAL POR DISPOSITIVO
     Trecho: secao 3.2 / RNF06
     Acao: [SO DESENVOLVIMENTO]
-    >>> v2: SO DESENVOLVIMENTO; resolver no deploy
+    >>> v2: RESOLVIDO pelo item 53 (TLS e credencial por no na 8883)
 -------------------------------------------------------------------------------
 TCC:     o enlace MQTT usa TLS e credencial propria de cada dispositivo.
 CODIGO:  o Mosquitto do docker-compose esta com allow_anonymous e sem TLS.
@@ -496,7 +496,7 @@ TEXTO:   acrescentar o campo "rotulo" ao Quadro 14 e levar o vocabulario a
 22. POST /eventos SEM AUTENTICACAO
     Trecho: 4.6.1 / Quadro 14
     Acao: [ACRESCENTAR] (decisao do autor, com risco declarado)
-    >>> v2: PENDENTE: decidir no deploy; se ficar aberto, limitacao em 6.3
+    >>> v2: RESOLVIDO pelo item 53 (chave de acesso no POST); nao entra em 6.3
 -------------------------------------------------------------------------------
 CODIGO:  a interface REST nao exige credencial, nem para publicar.
 RISCO:   exposta na VM, qualquer pessoa na internet pode publicar eventos e
@@ -1420,6 +1420,37 @@ BANCADA: os ensaios de fluxo (rampa, subida imediata, falha induzida,
          apagados na migracao 001 e so existem no backup. A calibracao da
          sessao 72 continua valida (independe da logica); conferir residual
          e 2-3 pontos no inicio da sessao.
+
+===============================================================================
+53. IMPLANTACAO NA VM: CHAVE NO POST, TLS COM CA PROPRIA, ACL POR PONTO
+    Trecho: 4.6.1, Quadro 14 (POST /eventos), RNF06 (Quadro 11), 4.8 (CT19)
+    Acao: [ACRESCENTAR] - decisao do autor em 26/09/2026
+    >>> v2: PENDENTE (aplicar no texto depois da implantacao na VM)
+-------------------------------------------------------------------------------
+CODIGO:  docker-compose.prod.yml + deploy/ (roteiro, preparar.sh, Caddyfile,
+         broker). Testado localmente em 26/09/2026 com DOMINIO=localhost.
+         - POST /eventos exige o cabecalho X-Chave-Api (chave aleatoria no
+           .env; comparacao em tempo constante); as consultas GET continuam
+           abertas, porque o painel so le. Sem chave ou com chave errada:
+           401 e nada gravado (tests/test_api_eventos.py).
+         - HTTPS da API pelo Caddy, com certificado Let's Encrypt para o
+           subdominio DuckDNS; o painel (Vercel, HTTPS) exige isso.
+         - MQTT com TLS na 8883 com CA PROPRIA (certificado colado no
+           firmware), nao Let's Encrypt: o no confia so nessa CA, e o
+           certificado nao depende de renovacao a cada 90 dias.
+         - Usuario e senha por dispositivo; ACL: o usuario do no e o codigo
+           do ponto, e cada no so le o proprio comando e so escreve a propria
+           telemetria e estado. Verificado: sem credencial, senha errada e
+           conexao sem TLS sao recusadas; o no nao recebe comando de outro
+           ponto. Um no novo = uma linha no passwd + um registro em
+           ponto_de_luz, sem mudar ACL nem servico (RNF09).
+         - O servico de decisao fala com o broker pela porta 1883 INTERNA
+           (rede do docker, nao publicada), com senha e sem TLS: o trafego
+           nao sai da VM. O RNF06 trata do enlace no-intermediario.
+         - Banco sem porta publicada.
+TEXTO:   4.6.1: registrar a chave no POST, o TLS com CA propria e a ACL por
+         ponto; Quadro 14: "POST /eventos exige chave de acesso"; o item 22
+         deixa de ser limitacao.
 
 ===============================================================================
 FIM

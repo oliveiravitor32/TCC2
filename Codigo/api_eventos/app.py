@@ -6,17 +6,20 @@ decisoes e de telemetria para o painel (RF08).
 
 Execucao local:  uvicorn api_eventos.app:app --reload
 Banco: variavel DATABASE_URL (padrao: Postgres do docker-compose).
+Publicacao: com CHAVE_API definida, o POST /eventos exige o cabecalho
+X-Chave-Api (DIVERGENCIAS 22); as consultas continuam abertas ao painel.
 """
 
 from __future__ import annotations
 
 import os
+import secrets
 from collections.abc import Iterator
 from contextlib import asynccontextmanager
 from datetime import datetime, time, timedelta, timezone
 
 import psycopg
-from fastapi import Depends, FastAPI, HTTPException, Query, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
@@ -48,6 +51,8 @@ LIMITE_MAX = 5000
 ORIGENS = [o.strip() for o in os.environ.get("ORIGENS_PAINEL", "*").split(",") if o.strip()]
 # Linha de base por horario fixo (3.11): a programacao agendada que uma
 # telegestao sem dados urbanos faria.
+# Chave de publicacao (DIVERGENCIAS 22). Vazia = sem exigencia (desenvolvimento).
+CHAVE_API = os.environ.get("CHAVE_API", "")
 HORA_INICIO_ATENUACAO = time(0, 0)
 HORA_FIM_ATENUACAO = time(5, 0)
 
@@ -90,10 +95,21 @@ def conexao() -> Iterator[psycopg.Connection]:
 Conn = Depends(conexao)
 
 
+def exigir_chave(x_chave_api: str | None = Header(default=None)) -> None:
+    """So quem tem a chave publica eventos: sem ela, qualquer pessoa na
+    internet mudaria a luz. A comparacao em tempo constante nao entrega a
+    chave por diferenca de tempo de resposta."""
+    if not CHAVE_API:
+        return
+    if x_chave_api is None or not secrets.compare_digest(x_chave_api, CHAVE_API):
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "chave de acesso ausente ou invalida")
+
+
 # ---------------------------------------------------------------------------
 # Eventos
 # ---------------------------------------------------------------------------
-@app.post("/eventos", response_model=Evento, status_code=status.HTTP_201_CREATED)
+@app.post("/eventos", response_model=Evento, status_code=status.HTTP_201_CREATED,
+          dependencies=[Depends(exigir_chave)])
 def publicar_evento(evento: EventoEntrada, conn: psycopg.Connection = Conn) -> dict:
     return conn.execute(
         """

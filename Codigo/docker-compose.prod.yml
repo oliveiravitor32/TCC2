@@ -1,0 +1,88 @@
+# Implantacao na maquina virtual (TCC 4.6.1; passo 10).
+#
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# Os valores sensiveis vem do arquivo .env, gerado por deploy/preparar.sh e
+# fora do git. O painel NAO roda aqui: e publicado na Vercel (DIVERGENCIAS 38).
+#
+# Portas abertas para a internet: 80 e 443 (Caddy: HTTPS da API) e 8883
+# (MQTT com TLS, para os nos). O banco e a porta 1883 do broker ficam so na
+# rede interna do docker.
+name: iluminacao
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: iluminacao
+      POSTGRES_USER: iluminacao
+      POSTGRES_PASSWORD: ${SENHA_BANCO:?rode deploy/preparar.sh}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iluminacao -d iluminacao"]
+      interval: 5s
+      retries: 20
+
+  broker:
+    image: eclipse-mosquitto:2
+    restart: unless-stopped
+    ports:
+      - "8883:8883"
+    volumes:
+      - ./deploy/broker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./deploy/broker/acl:/mosquitto/config/acl:ro
+      - ./deploy/broker/passwd:/mosquitto/config/passwd:ro
+      - ./deploy/broker/certs:/mosquitto/certs:ro
+
+  api:
+    build: .
+    restart: unless-stopped
+    command: ["uvicorn", "api_eventos.app:app", "--host", "0.0.0.0", "--port", "8000",
+              "--proxy-headers", "--forwarded-allow-ips", "*"]
+    environment:
+      DATABASE_URL: postgresql://iluminacao:${SENHA_BANCO}@db:5432/iluminacao
+      CHAVE_API: ${CHAVE_API:?rode deploy/preparar.sh}
+      ORIGENS_PAINEL: ${ORIGENS_PAINEL:-*}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  decisao:
+    build: .
+    restart: unless-stopped
+    command: ["python", "-m", "decisao.servico"]
+    environment:
+      DATABASE_URL: postgresql://iluminacao:${SENHA_BANCO}@db:5432/iluminacao
+      MQTT_HOST: broker
+      MQTT_PORTA: "1883"
+      MQTT_USUARIO: servico
+      MQTT_SENHA: ${SENHA_MQTT_SERVICO:?rode deploy/preparar.sh}
+    depends_on:
+      db:
+        condition: service_healthy
+      broker:
+        condition: service_started
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMINIO: ${DOMINIO:?rode deploy/preparar.sh}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:
