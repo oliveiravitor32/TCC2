@@ -50,7 +50,9 @@ DATABASE_URL = os.environ.get(
 LIMITE_MAX = 5000
 # O painel e servido de outra origem (Vercel) e a API roda na VM: sem CORS o
 # navegador bloqueia a leitura. Lista separada por virgula; "*" libera todas.
-ORIGENS = [o.strip() for o in os.environ.get("ORIGENS_PAINEL", "*").split(",") if o.strip()]
+# O navegador envia a origem sem barra final ("https://x.vercel.app"), e a
+# comparacao e exata: uma barra no .env bloquearia o painel sem aviso.
+ORIGENS = [o.strip().rstrip("/") for o in os.environ.get("ORIGENS_PAINEL", "*").split(",") if o.strip()]
 # Linha de base por horario fixo (3.11): a programacao agendada que uma
 # telegestao sem dados urbanos faria.
 # Chave de publicacao (DIVERGENCIAS 22). Vazia = sem exigencia (desenvolvimento).
