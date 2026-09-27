@@ -1,0 +1,5 @@
+# Arquivos que rodam no Linux (VM e conteineres): sempre LF
+*.sh text eol=lf
+Codigo/Dockerfile text eol=lf
+Codigo/deploy/** text eol=lf
+Codigo/docker-compose*.yml text eol=lf
