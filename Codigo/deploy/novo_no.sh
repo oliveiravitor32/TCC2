@@ -21,9 +21,12 @@ if sudo grep -q "^$CODIGO:" "$PASSWD"; then
 fi
 
 SENHA=$(openssl rand -hex 24)
-# O passwd pertence ao usuario do Mosquitto (1883): o conteiner edita.
-docker run --rm --user 1883:1883 -v "$PWD/deploy/broker:/m" eclipse-mosquitto:2 \
+# O mosquitto_passwd grava um backup temporario na mesma pasta: roda como
+# root no conteiner, e o passwd volta a ser so do usuario do Mosquitto (1883).
+docker run --rm -v "$PWD/deploy/broker:/m" eclipse-mosquitto:2 \
   mosquitto_passwd -b /m/passwd "$CODIGO" "$SENHA"
+sudo chown 1883:1883 "$PASSWD"
+sudo chmod 600 "$PASSWD"
 # Recarrega usuarios sem derrubar as conexoes.
 docker compose -f docker-compose.prod.yml kill -s HUP broker >/dev/null
 
