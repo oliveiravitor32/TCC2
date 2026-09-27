@@ -32,7 +32,27 @@ COMMENT ON COLUMN classe_iluminacao.classe_min_dimerizacao IS
     'Piso admissivel: a fracao de fluxo pleno e a razao entre as iluminancias medias.';
 
 -- ---------------------------------------------------------------------------
--- Ponto de luz. Na bancada existe um unico registro; o modelo e o do parque.
+-- Trecho de via: segmento de logradouro do GeoSampa (DIVERGENCIAS 54). E a
+-- unidade espacial em que a plataforma de monitoramento publica o estado da
+-- via; qual camera cobre qual trecho e assunto interno dela.
+-- ---------------------------------------------------------------------------
+CREATE TABLE trecho_via (
+    -- cd_identificador do segmento no GeoSampa: o mesmo codigo nas duas pontas.
+    id               BIGINT PRIMARY KEY,
+    codlog           TEXT,            -- codigo oficial do logradouro
+    tipo_logradouro  TEXT,
+    nome_logradouro  TEXT NOT NULL,
+    numero_inicial   INTEGER,
+    numero_final     INTEGER,
+    -- LineString em SIRGAS 2000 / UTM 23S (EPSG:31983), como no GeoSampa.
+    geometria        JSONB NOT NULL,
+    fonte            TEXT NOT NULL,
+    extraido_em      DATE NOT NULL
+);
+
+-- ---------------------------------------------------------------------------
+-- Ponto de luz. Cada registro e uma luminaria comandada pelo sistema; na
+-- bancada, ela "representa" um poste real do cadastro (placa).
 -- ---------------------------------------------------------------------------
 CREATE TABLE ponto_de_luz (
     id                  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -47,8 +67,29 @@ CREATE TABLE ponto_de_luz (
     -- fixado por medicao (3.4.2). Base da estimativa de energia de bancada
     -- (RF12, 3.11); nao e medicao eletrica.
     potencia_plena_w    NUMERIC(7,2) CHECK (potencia_plena_w > 0),
+    -- Placa do poste (cd_placa do GeoSampa): o codigo cadastral pelo qual a
+    -- telegestao enderaca o ativo (Caderno de Encargos, 13 e 13.3).
+    placa               TEXT UNIQUE,
+    -- Posicao oficial em EPSG:31983 (metros), base da associacao espacial.
+    utm_e               NUMERIC(11,2),
+    utm_n               NUMERIC(11,2),
     criado_em           TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+-- ---------------------------------------------------------------------------
+-- Associacao trecho x ponto de luz (N:N), calculada a partir dos dois
+-- cadastros por cadastro/associar.py. Um poste de esquina fica em mais de um
+-- trecho. Novo ponto = novas linhas aqui, sem alterar o servico (RNF09).
+-- ---------------------------------------------------------------------------
+CREATE TABLE trecho_ponto (
+    trecho_id        BIGINT NOT NULL REFERENCES trecho_via (id),
+    ponto_de_luz_id  BIGINT NOT NULL REFERENCES ponto_de_luz (id),
+    distancia_m      NUMERIC(6,2) NOT NULL CHECK (distancia_m >= 0),
+    criterio         TEXT NOT NULL,   -- regra que produziu a associacao
+    associado_em     TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (trecho_id, ponto_de_luz_id)
+);
+CREATE INDEX trecho_ponto_ponto_idx ON trecho_ponto (ponto_de_luz_id);
 
 -- ---------------------------------------------------------------------------
 -- Luminaria de referencia (Quadro 9, 3.11): derivada do Caderno de Encargos,
@@ -78,6 +119,8 @@ CREATE TABLE evento_urbano (
     abrangencia  TEXT NOT NULL DEFAULT 'via'
                  CHECK (abrangencia IN ('via','quadra','bairro','municipio')),
     origem       TEXT NOT NULL,
+    -- Onde: o trecho de via a que o evento se refere (um por evento).
+    trecho_id    BIGINT NOT NULL REFERENCES trecho_via (id),
     -- Ate quando o evento permanece vigente para o ciclo de decisao.
     vigente_ate  TIMESTAMPTZ,
     CHECK (vigente_ate IS NULL OR vigente_ate >= ocorrido_em)
@@ -85,6 +128,7 @@ CREATE TABLE evento_urbano (
 
 CREATE INDEX evento_urbano_ocorrido_idx ON evento_urbano (ocorrido_em DESC);
 CREATE INDEX evento_urbano_tipo_idx     ON evento_urbano (tipo, ocorrido_em DESC);
+CREATE INDEX evento_urbano_trecho_idx   ON evento_urbano (trecho_id, tipo, ocorrido_em DESC);
 
 -- Evento novo acorda o servico de decisao na hora (LISTEN evento_urbano):
 -- esperar o proximo ciclo de 5 s estouraria o RNF03 (< 2 s).

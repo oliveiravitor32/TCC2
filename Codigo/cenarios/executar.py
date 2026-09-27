@@ -123,20 +123,32 @@ def carregar_suite(nome: str | None = None) -> list[Cenario]:
 # ---------------------------------------------------------------------------
 # Execucao
 # ---------------------------------------------------------------------------
-def _inserir_evento(conn, quando: datetime, tipo: str, valor=None, rotulo=None,
+def _inserir_evento(conn, quando: datetime, tipo: str, trecho_id: int, valor=None, rotulo=None,
                     vigente_ate=None, origem="cenario") -> None:
     conn.execute(
-        "INSERT INTO evento_urbano (ocorrido_em, tipo, valor, rotulo, origem, vigente_ate)"
-        " VALUES (%s, %s, %s, %s, %s, %s)",
-        (quando, tipo, valor, rotulo, origem, vigente_ate),
+        "INSERT INTO evento_urbano (ocorrido_em, tipo, valor, rotulo, origem, trecho_id, vigente_ate)"
+        " VALUES (%s, %s, %s, %s, %s, %s, %s)",
+        (quando, tipo, valor, rotulo, origem, trecho_id, vigente_ate),
     )
 
 
-def _semear_historico(conn, inicio: datetime, execucao_id: int) -> None:
+def trecho_principal(conn, ponto_id: int) -> int:
+    """Trecho mais proximo do ponto: onde caem os eventos que o cenario nao
+    localiza (DIVERGENCIAS 54). Os cenarios descrevem a via do ponto."""
+    linha = conn.execute(
+        "SELECT trecho_id FROM trecho_ponto WHERE ponto_de_luz_id = %s"
+        " ORDER BY distancia_m, trecho_id LIMIT 1", (ponto_id,),
+    ).fetchone()
+    if linha is None:
+        raise SystemExit("o ponto nao tem trecho associado: rode db/seed_cadastro.sql")
+    return linha[0]
+
+
+def _semear_historico(conn, inicio: datetime, execucao_id: int, trecho_id: int) -> None:
     """Uma leitura por hora nas 168 h anteriores ao cenario (perfil sintetico)."""
     for k in range(HORAS_HISTORICO, 0, -1):
         quando = (inicio - timedelta(hours=k)).replace(minute=0, second=0, microsecond=0)
-        _inserir_evento(conn, quando, "movimentacao", valor=perfil_horario(quando.astimezone(config.FUSO)),
+        _inserir_evento(conn, quando, "movimentacao", trecho_id, valor=perfil_horario(quando.astimezone(config.FUSO)),
                         vigente_ate=quando + timedelta(hours=1), origem=f"cenario-historico:{execucao_id}")
 
 
@@ -156,6 +168,7 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
         base = em_degraus(base)
     previsor = carregar_previsor(previsao)
     ponto = ciclo.pontos(conn)[0]
+    trecho = trecho_principal(conn, ponto.id)
     inicio = (cenario.inicio_local + timedelta(weeks=indice)).astimezone(timezone.utc)
     fim = inicio + timedelta(minutes=cenario.duracao_min)
 
@@ -166,7 +179,7 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
             (cenario.nome, "reativo" if reativo else "antecipado", inicio,
              f"relogio virtual, passo {config.PERIODO_S} s; previsao {previsor.rotulo}; regras {base.rotulo}; deslocamento de {indice} semana(s)"),
         ).fetchone()[0]
-        _semear_historico(conn, inicio, execucao_id)
+        _semear_historico(conn, inicio, execucao_id, trecho)
 
         pendentes = sorted(cenario.eventos, key=lambda e: e["em_min"])
         registro: list[dict] = []
@@ -179,7 +192,7 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
                 e = pendentes[i]
                 vig = e.get("vigente_min")
                 _inserir_evento(
-                    conn, agora, e["tipo"], e.get("valor"), e.get("rotulo"),
+                    conn, agora, e["tipo"], e.get("trecho", trecho), e.get("valor"), e.get("rotulo"),
                     agora + timedelta(minutes=vig) if vig else None,
                     origem=f"cenario:{execucao_id}",
                 )

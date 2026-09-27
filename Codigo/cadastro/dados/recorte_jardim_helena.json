@@ -1,0 +1,1427 @@
+{
+ "fonte": "GeoSampa (Prefeitura de Sao Paulo), servico WFS publico",
+ "extraido_em": "2026-09-27",
+ "crs": "EPSG:31983",
+ "bbox": [
+  354520,
+  7401880,
+  354730,
+  7402090
+ ],
+ "trechos": {
+  "camada": "geoportal:segmento_logradouro",
+  "consulta": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal%3Asegmento_logradouro&outputFormat=application%2Fjson&srsName=EPSG%3A31983&bbox=354520%2C7401880%2C354730%2C7402090%2Curn%3Aogc%3Adef%3Acrs%3AEPSG%3A%3A31983",
+  "total": 16,
+  "geojson": {
+   "type": "FeatureCollection",
+   "features": [
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.18571",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354569.15194316,
+        7401982.70567025
+       ],
+       [
+        354580.24274223,
+        7401872.01362025
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 18571,
+      "cd_identificador_logradouro": 96874,
+      "codlog": "784664",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "CARMO DE MINAS",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 0,
+      "cd_numero_final_par": 108,
+      "cd_numero_inicial_impar": 1,
+      "cd_numero_final_impar": 109,
+      "cd_numero_ordem_segmento": 1,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.20159",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354569.15194316,
+        7401982.70567025
+       ],
+       [
+        354640.5326595,
+        7401988.75352203
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 20159,
+      "cd_identificador_logradouro": 29943,
+      "codlog": "018902",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "ANTONIO VIANA",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 1128,
+      "cd_numero_final_par": 1198,
+      "cd_numero_inicial_impar": 1129,
+      "cd_numero_final_impar": 1199,
+      "cd_numero_ordem_segmento": 12,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.1411",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354637.96106562,
+        7402017.35270006
+       ],
+       [
+        354575.51761352,
+        7402012.34542973
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 1411,
+      "cd_identificador_logradouro": 23019,
+      "codlog": null,
+      "cd_tipo_logradouro": " ",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "SEM DENOMINACAO",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 0,
+      "cd_numero_final_par": 58,
+      "cd_numero_inicial_impar": 1,
+      "cd_numero_final_impar": 59,
+      "cd_numero_ordem_segmento": 1,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.20799",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354633.84686723,
+        7402063.10747266
+       ],
+       [
+        354637.37278077,
+        7402023.89512629
+       ],
+       [
+        354637.96106562,
+        7402017.35270006
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 20799,
+      "cd_identificador_logradouro": 30685,
+      "codlog": "023965",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "ASCENSO FERNANDES",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 862,
+      "cd_numero_final_par": 908,
+      "cd_numero_inicial_impar": 863,
+      "cd_numero_final_impar": 909,
+      "cd_numero_ordem_segmento": 13,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.19400",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354456.25128517,
+        7402048.11343895
+       ],
+       [
+        354558.05225665,
+        7402056.70828788
+       ],
+       [
+        354633.84686723,
+        7402063.10747266
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 19400,
+      "cd_identificador_logradouro": 96659,
+      "codlog": "782343",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "VARZEA DA PALMA",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 152,
+      "cd_numero_final_par": 328,
+      "cd_numero_inicial_impar": 153,
+      "cd_numero_final_impar": 329,
+      "cd_numero_ordem_segmento": 2,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.20345",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354463.26781156,
+        7401973.7344583
+       ],
+       [
+        354569.15194316,
+        7401982.70567025
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 20345,
+      "cd_identificador_logradouro": 29943,
+      "codlog": "018902",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "ANTONIO VIANA",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 1022,
+      "cd_numero_final_par": 1128,
+      "cd_numero_inicial_impar": 1023,
+      "cd_numero_final_impar": 1129,
+      "cd_numero_ordem_segmento": 11,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.20800",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354627.28447861,
+        7402139.27936199
+       ],
+       [
+        354630.1826196,
+        7402103.85825813
+       ],
+       [
+        354633.84686723,
+        7402063.10747266
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 20800,
+      "cd_identificador_logradouro": 30685,
+      "codlog": "023965",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "ASCENSO FERNANDES",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 788,
+      "cd_numero_final_par": 862,
+      "cd_numero_inicial_impar": 789,
+      "cd_numero_final_impar": 863,
+      "cd_numero_ordem_segmento": 12,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.19319",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354754.91576112,
+        7401913.52110712
+       ],
+       [
+        354748.40093298,
+        7401912.03774646
+       ],
+       [
+        354647.90225205,
+        7401903.50222214
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 19319,
+      "cd_identificador_logradouro": 112495,
+      "codlog": "039900",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "CAMOES",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 0,
+      "cd_numero_final_par": 104,
+      "cd_numero_inicial_impar": 1,
+      "cd_numero_final_impar": 105,
+      "cd_numero_ordem_segmento": 13,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.4646",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354690.65660851,
+        7402021.26104382
+       ],
+       [
+        354746.05168657,
+        7402025.95309831
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 4646,
+      "cd_identificador_logradouro": 31061,
+      "codlog": "026301",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "AVELINO MATOS MACHADO",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 52,
+      "cd_numero_final_par": 112,
+      "cd_numero_inicial_impar": 53,
+      "cd_numero_final_impar": 113,
+      "cd_numero_ordem_segmento": 2,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.4645",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354637.96106562,
+        7402017.35270006
+       ],
+       [
+        354638.06242405,
+        7402017.36082788
+       ],
+       [
+        354648.09319565,
+        7402017.65585254
+       ],
+       [
+        354690.65660851,
+        7402021.26104382
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 4645,
+      "cd_identificador_logradouro": 31061,
+      "codlog": "026301",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "AVELINO MATOS MACHADO",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 0,
+      "cd_numero_final_par": 52,
+      "cd_numero_inicial_impar": 1,
+      "cd_numero_final_impar": 53,
+      "cd_numero_ordem_segmento": 1,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.20121",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354643.11163362,
+        7401959.8361398
+       ],
+       [
+        354647.90225205,
+        7401903.50222214
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 20121,
+      "cd_identificador_logradouro": 30685,
+      "codlog": "023965",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "ASCENSO FERNANDES",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 968,
+      "cd_numero_final_par": 1022,
+      "cd_numero_inicial_impar": 969,
+      "cd_numero_final_impar": 1023,
+      "cd_numero_ordem_segmento": 16,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.22661",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354640.5326595,
+        7401988.75352203
+       ],
+       [
+        354642.7415453,
+        7401964.18808837
+       ],
+       [
+        354643.11163362,
+        7401959.8361398
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 22661,
+      "cd_identificador_logradouro": 30685,
+      "codlog": "023965",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "ASCENSO FERNANDES",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 938,
+      "cd_numero_final_par": 968,
+      "cd_numero_inicial_impar": 939,
+      "cd_numero_final_impar": 969,
+      "cd_numero_ordem_segmento": 15,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.20802",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354647.90225205,
+        7401903.50222214
+       ],
+       [
+        354648.48484875,
+        7401896.65134152
+       ],
+       [
+        354649.99351671,
+        7401878.21734953
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 20802,
+      "cd_identificador_logradouro": 30685,
+      "codlog": "023965",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "ASCENSO FERNANDES",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 1022,
+      "cd_numero_final_par": 1048,
+      "cd_numero_inicial_impar": 1023,
+      "cd_numero_final_impar": 1049,
+      "cd_numero_ordem_segmento": 17,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.21198",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354637.96106562,
+        7402017.35270006
+       ],
+       [
+        354640.5326595,
+        7401988.75352203
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 21198,
+      "cd_identificador_logradouro": 30685,
+      "codlog": "023965",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "ASCENSO FERNANDES",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 908,
+      "cd_numero_final_par": 938,
+      "cd_numero_inicial_impar": 909,
+      "cd_numero_final_impar": 939,
+      "cd_numero_ordem_segmento": 14,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.18570",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354750.31606573,
+        7401968.00882434
+       ],
+       [
+        354643.11163362,
+        7401959.8361398
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 18570,
+      "cd_identificador_logradouro": 79858,
+      "codlog": "603465",
+      "cd_tipo_logradouro": "R",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "VINHAIS",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 0,
+      "cd_numero_final_par": 102,
+      "cd_numero_inicial_impar": 1,
+      "cd_numero_final_impar": 103,
+      "cd_numero_ordem_segmento": 1,
+      "qt_leito_carrocavel": 1
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "segmento_logradouro.18459",
+     "geometry": {
+      "type": "LineString",
+      "coordinates": [
+       [
+        354682.71202436,
+        7402143.74888078
+       ],
+       [
+        354682.56542768,
+        7402135.09957626
+       ],
+       [
+        354684.97101547,
+        7402104.98257829
+       ],
+       [
+        354690.65660851,
+        7402021.26104382
+       ]
+      ]
+     },
+     "geometry_name": "ge_linha",
+     "properties": {
+      "cd_identificador": 18459,
+      "cd_identificador_logradouro": 61494,
+      "codlog": "317020",
+      "cd_tipo_logradouro": "TV",
+      "cd_titulo_logradouro": null,
+      "tx_preposicao_logradouro": null,
+      "nm_logradouro": "SUDAO",
+      "cd_origem_denominacao": null,
+      "cd_numero_inicial_par": 0,
+      "cd_numero_final_par": 120,
+      "cd_numero_inicial_impar": 1,
+      "cd_numero_final_impar": 121,
+      "cd_numero_ordem_segmento": 1,
+      "qt_leito_carrocavel": 1
+     }
+    }
+   ],
+   "totalFeatures": 16,
+   "numberMatched": 16,
+   "numberReturned": 16,
+   "timeStamp": "2026-09-27T20:43:37.148Z",
+   "crs": {
+    "type": "name",
+    "properties": {
+     "name": "urn:ogc:def:crs:EPSG::31983"
+    }
+   }
+  }
+ },
+ "postes": {
+  "camada": "geoportal:iluminacao_publica",
+  "consulta": "https://wfs.geosampa.prefeitura.sp.gov.br/geoserver/geoportal/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=geoportal%3Ailuminacao_publica&outputFormat=application%2Fjson&srsName=EPSG%3A31983&bbox=354520%2C7401880%2C354730%2C7402090%2Curn%3Aogc%3Adef%3Acrs%3AEPSG%3A%3A31983",
+  "total": 36,
+  "geojson": {
+   "type": "FeatureCollection",
+   "features": [
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.6286",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354691.15246692,
+       7402057.11925153
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 6286,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "VIA TV. SUD?O, 56 - JARDIM HELENA, S?O PAULO - SP, 08081-435, BRAZIL",
+      "cd_placa": "IP0714148",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.40393",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354575.59289498,
+       7402013.99519916
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 40393,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "TRAVESSA Avelino Matos Machado ",
+      "cd_placa": "IP0676488",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.54430",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354587.34460036,
+       7402020.26992204
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 54430,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA VÁRZEA DA PALMA",
+      "cd_placa": "IP0598561",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.54431",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354616.41453448,
+       7402021.29983253
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 54431,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA ANTÔNIO VIANA",
+      "cd_placa": "IP0598560",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.83470",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354642.64861337,
+       7402008.33828525
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 83470,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA ASCENSO FERNANDES",
+      "cd_placa": "IP0550388",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.184990",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354689.82459199,
+       7402083.43253025
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 184990,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "TRAVESSA SUDAO",
+      "cd_placa": "IP0412429",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.184991",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354690.45603017,
+       7402031.40829681
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 184991,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "TRAVESSA SUDAO",
+      "cd_placa": "IP0412428",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.184992",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354713.60071637,
+       7402017.88116458
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 184992,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA AVELINO MATOS MACHADO",
+      "cd_placa": "IP0412427",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.184993",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354686.89228965,
+       7402015.92798999
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 184993,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA AVELINO MATOS MACHADO",
+      "cd_placa": "IP0412426",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.184994",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354663.47432829,
+       7402014.65296541
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 184994,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA AVELINO MATOS MACHADO",
+      "cd_placa": "IP0412425",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.184995",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354642.76156489,
+       7402027.05129099
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 184995,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA ASCENSO FERNANDES",
+      "cd_placa": "IP0412424",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.184996",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354646.09284276,
+       7401984.1013117
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 184996,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA ASCENSO FERNANDES",
+      "cd_placa": "IP0412423",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.184997",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354711.49501178,
+       7401969.43334682
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 184997,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA VINHAIS",
+      "cd_placa": "IP0412422",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.184998",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354678.54979394,
+       7401966.76283198
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 184998,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA VINHAIS",
+      "cd_placa": "IP0412421",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.184999",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354652.73437162,
+       7401964.58476681
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 184999,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA VINHAIS",
+      "cd_placa": "IP0412420",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185000",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354647.73279983,
+       7401967.12768422
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185000,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA ASCENSO FERNANDES",
+      "cd_placa": "IP0412419",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185001",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354624.63401083,
+       7401981.79690553
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185001,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA ANTONIO VIANA",
+      "cd_placa": "IP0412418",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185002",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354585.96398574,
+       7401978.16583878
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185002,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA ANTONIO VIANA",
+      "cd_placa": "IP0412417",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185003",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354567.73884603,
+       7401968.45491485
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185003,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA CARMO DE MINAS",
+      "cd_placa": "IP0412416",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185004",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354567.73884603,
+       7401968.45491485
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185004,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA CARMO DE MINAS",
+      "cd_placa": "IP0412416",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185005",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354565.65826345,
+       7401976.59258467
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185005,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA CARMO DE MINAS",
+      "cd_placa": "IP0412415",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185006",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354531.68717972,
+       7401973.4409266
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185006,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA ANTONIO VIANA",
+      "cd_placa": "IP0412414",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185017",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354531.8922572,
+       7402051.2816564
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185017,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA VARZEA DA PALMA",
+      "cd_placa": "IP0412403",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185018",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354559.33752775,
+       7402053.82047823
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185018,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA VARZEA DA PALMA",
+      "cd_placa": "IP0412402",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185019",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354588.61136998,
+       7402056.85465554
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185019,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA VARZEA DA PALMA",
+      "cd_placa": "IP0412401",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185606",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354621.5354081,
+       7402059.724484
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185606,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA VARZEA DA PALMA",
+      "cd_placa": "IP0411800",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.185607",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354640.13669034,
+       7402060.8632819
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 185607,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA ASCENSO FERNANDES",
+      "cd_placa": "IP0411799",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.187137",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354571.00847149,
+       7401934.3270557
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 187137,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA CARMO DE MINAS",
+      "cd_placa": "IP0410184",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.187138",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354573.05811024,
+       7401909.82710621
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 187138,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA CARMO DE MINAS",
+      "cd_placa": "IP0410183",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.187139",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354575.10789749,
+       7401887.37365007
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 187139,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA CARMO DE MINAS",
+      "cd_placa": "IP0410182",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.187166",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354606.16229714,
+       7401881.58722189
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 187166,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA SILVEIRA PIRES",
+      "cd_placa": "IP0410156",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.187167",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354641.51224513,
+       7401885.03255008
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 187167,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA SILVEIRA PIRES",
+      "cd_placa": "IP0410155",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.187168",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354654.58014454,
+       7401900.62470925
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 187168,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA CAMOES",
+      "cd_placa": "IP0410154",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.187169",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354651.72154693,
+       7401923.0745892
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 187169,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA ASCENSO FERNANDES",
+      "cd_placa": "IP0410153",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.187170",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354662.63279148,
+       7401901.06213923
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 187170,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA CAMOES",
+      "cd_placa": "IP0410152",
+      "tx_unidade": " "
+     }
+    },
+    {
+     "type": "Feature",
+     "id": "iluminacao_publica.187172",
+     "geometry": {
+      "type": "Point",
+      "coordinates": [
+       354698.60136712,
+       7401904.2388143
+      ]
+     },
+     "geometry_name": "ge_ponto",
+     "properties": {
+      "cd_identificador_iluminacao_publica": 187172,
+      "cd_numero_imovel": null,
+      "dc_tipo_iluminacao_publica": "LED",
+      "dt_carga": "2026-07-14Z",
+      "sg_fonte_original": "SMUL/ILUME",
+      "tx_endereco": "RUA CAMOES",
+      "cd_placa": "IP0410150",
+      "tx_unidade": " "
+     }
+    }
+   ],
+   "totalFeatures": 36,
+   "numberMatched": 36,
+   "numberReturned": 36,
+   "timeStamp": "2026-09-27T20:43:37.227Z",
+   "crs": {
+    "type": "name",
+    "properties": {
+     "name": "urn:ogc:def:crs:EPSG::31983"
+    }
+   }
+  }
+ }
+}

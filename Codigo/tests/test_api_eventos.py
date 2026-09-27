@@ -23,6 +23,7 @@ MOV = {
     "tipo": "movimentacao",
     "valor": 0.12,
     "origem": "emulador-smart-sampa",
+    "trecho": 20159,  # R. Antonio Viana, trecho real do recorte (db/seed_cadastro.sql)
 }
 
 
@@ -64,7 +65,7 @@ def test_publica_movimentacao(cliente):
     "tipo,rotulo", [("ocorrencia", "seguranca"), ("ocorrencia", "transito"), ("ocorrencia", "encerrada")]
 )
 def test_publica_categoricos(cliente, tipo, rotulo):
-    ev = {"ocorrido_em": MOV["ocorrido_em"], "tipo": tipo, "rotulo": rotulo, "origem": "teste"}
+    ev = {"ocorrido_em": MOV["ocorrido_em"], "tipo": tipo, "rotulo": rotulo, "origem": "teste", "trecho": 20159}
     assert cliente.post("/eventos", json=ev).status_code == 201
 
 
@@ -82,6 +83,8 @@ def test_publica_categoricos(cliente, tipo, rotulo):
         {"ocorrido_em": "2026-09-21T01:00:00"},  # sem fuso horario
         {"vigente_ate": "2026-09-21T00:00:00-03:00"},  # vigencia antes da ocorrencia
         {"tipo": "bairro"},
+        {"trecho": None},  # sem trecho: o evento nao diz onde
+        {"trecho": 0},
     ],
 )
 def test_recusa_evento_fora_do_contrato(cliente, alteracao):
@@ -104,7 +107,7 @@ def test_consulta_filtra_por_intervalo_e_tipo(cliente):
     cliente.post("/eventos", json={**MOV, "ocorrido_em": "2026-09-21T03:00:00-03:00"})
     cliente.post(
         "/eventos",
-        json={"ocorrido_em": MOV["ocorrido_em"], "tipo": "ocorrencia", "rotulo": "seguranca", "origem": "t"},
+        json={"ocorrido_em": MOV["ocorrido_em"], "tipo": "ocorrencia", "rotulo": "seguranca", "origem": "t", "trecho": 20159},
     )
     r = cliente.get(
         "/eventos",
@@ -120,8 +123,8 @@ def test_consulta_filtra_por_intervalo_e_tipo(cliente):
 # --------------------------------------------------------------------------
 def _decisao_com_telemetria(conn) -> str:
     ev = conn.execute(
-        "INSERT INTO evento_urbano (ocorrido_em, tipo, valor, origem)"
-        " VALUES (now(), 'movimentacao', 0.1, 't') RETURNING id"
+        "INSERT INTO evento_urbano (ocorrido_em, tipo, valor, origem, trecho_id)"
+        " VALUES (now(), 'movimentacao', 0.1, 't', 20159) RETURNING id"
     ).fetchone()["id"]
     d = conn.execute(
         """
@@ -321,3 +324,38 @@ def test_post_com_chave_e_aceito(cliente, com_chave):
 def test_consultas_nao_exigem_chave(cliente, com_chave):
     assert cliente.get("/eventos").status_code == 200
     assert cliente.get("/pontos").status_code == 200
+
+
+# ---------------------------------------------------------------------------
+# Trecho de via (DIVERGENCIAS 54)
+# ---------------------------------------------------------------------------
+def test_evento_sem_trecho_e_recusado(cliente):
+    corpo = {k: v for k, v in MOV.items() if k != "trecho"}
+    assert cliente.post("/eventos", json=corpo).status_code == 422
+
+
+def test_trecho_fora_do_cadastro_e_recusado(cliente, conn):
+    antes = conn.execute("SELECT count(*) AS n FROM evento_urbano").fetchone()["n"]
+    r = cliente.post("/eventos", json={**MOV, "trecho": 999999999})
+    assert r.status_code == 422 and "nao cadastrado" in r.json()["detail"]
+    assert conn.execute("SELECT count(*) AS n FROM evento_urbano").fetchone()["n"] == antes
+
+
+def test_evento_devolve_e_filtra_por_trecho(cliente):
+    assert cliente.post("/eventos", json=MOV).json()["trecho"] == 20159
+    cliente.post("/eventos", json={**MOV, "trecho": 19400})
+    assert {e["trecho"] for e in cliente.get("/eventos", params={"trecho": 19400}).json()} == {19400}
+
+
+def test_trechos_lista_as_luminarias_associadas(cliente):
+    trechos = {t["id"]: t for t in cliente.get("/trechos").json()}
+    assert trechos[20159]["nome_logradouro"] == "ANTONIO VIANA"
+    assert trechos[20159]["pontos"] == ["BANCADA-01"]
+    assert trechos[19400]["pontos"] == ["SIMULADO-02"]
+    assert trechos[18570]["pontos"] == []  # R. Vinhais: nenhum poste com no
+
+
+def test_pontos_trazem_placa_e_trechos(cliente):
+    linha = next(p for p in cliente.get("/pontos").json() if p["codigo"] == "BANCADA-01")
+    assert linha["placa"] == "IP0412418"
+    assert linha["trechos"][0] == 20159  # o mais proximo primeiro

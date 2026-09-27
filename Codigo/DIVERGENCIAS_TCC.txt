@@ -1461,5 +1461,61 @@ TEXTO:   4.6.1: registrar a chave no POST, o TLS com CA propria e a ACL por
          deixa de ser limitacao.
 
 ===============================================================================
+54. IDENTIFICACAO ESPACIAL: TRECHO DE VIA -> LUMINARIA
+    Trecho: 3.2 (arquitetura), 3.3 (Quadro 3), 3.5, Quadro 14 (POST /eventos
+            e GET /trechos), Quadros 15 e 16, Figura 2, 4.8 (casos de teste),
+            6.3; e as correcoes do levantamento de 27/09/2026 (Quadro 1:
+            50 mil cameras, 662.945 pontos, frase "nao alcanca qualquer outro
+            sistema"; Quadro 3: ANSI C136.41)
+    Acao: [ATUALIZAR TEXTO] - decisao do autor em 27/09/2026
+    >>> v3: PENDENTE (proxima rodada do texto)
+-------------------------------------------------------------------------------
+PROBLEMA: o evento nao dizia ONDE aconteceu, e nada associava um lugar a
+         uma luminaria. Com um unico ponto, todo evento valia para ele. A
+         banca pode perguntar como a camera X vira o comando da luminaria Y.
+BASE DOCUMENTAL (levantamento de 27/09/2026, fontes primarias):
+         - cameras do Smart Sampa tem latitude, longitude, endereco, distrito,
+           subprefeitura e numero de serie (Edital de Chamamento 01/SMSU-
+           GAB/2024); o TR exige a base de logradouros do GeoSampa;
+         - cada ponto de luz tem posicao individual e codigo cadastral,
+           integrados a base cartografica do municipio; a telegestao atua em
+           cada ponto pelo Cadastro Tecnico (Caderno de Encargos 2015, itens
+           13, 13.1 e 13.3; 7.1.1: GPS/NFC no controlador);
+         - GeoSampa (WFS publico): camada iluminacao_publica, 662.945 pontos
+           com placa (cd_placa), endereco e coordenadas; camada
+           segmento_logradouro, 218.768 trechos com codlog e geometria;
+         - padrao TALQ 2.7.1 (16/04/2026): interface REST/JSON entre sistema
+           central e redes de dispositivos, com localizacao e grupos.
+DECISAO (autor): unidade espacial = segmento de logradouro do GeoSampa;
+         associacao por distancia a linha <= 25 m (poste de esquina fica em
+         mais de um trecho); um trecho por evento; dados reais.
+CODIGO:  - schema: trecho_via, trecho_ponto (N:N, com distancia e criterio),
+           ponto_de_luz.placa/utm_e/utm_n, evento_urbano.trecho_id NOT NULL;
+           migracoes 003 e 004 + db/seed_cadastro.sql;
+         - cadastro/associar.py (geometria pura) e cadastro/recorte.py
+           (baixa o recorte do WFS e gera o seed); recorte versionado em
+           cadastro/dados/recorte_jardim_helena.json: Jardim Helena, zona
+           leste, 16 trechos e 36 postes reais;
+         - BANCADA-01 representa o poste IP0412418 (R. Antonio Viana, perto
+           da esquina com a R. Ascenso Fernandes: 3 trechos); SIMULADO-02, o
+           IP0412401 (R. Varzea da Palma, 1 trecho);
+         - estado_via e historico por PONTO: em cada trecho, o ultimo evento
+           vigente de cada tipo; entre trechos, a MAIOR movimentacao e
+           QUALQUER ocorrencia aberta (lado seguro);
+         - API: 'trecho' obrigatorio no POST (sem ele ou fora do cadastro:
+           422); GET /trechos (vocabulario de lugares da integracao);
+           /pontos traz placa e trechos; evento.sh aceita o trecho.
+ACHADOS COM O DADO REAL (para o texto):
+         - os segmentos do GeoSampa sao curtos (30 a 100 m): com 25 m, 17 dos
+           36 postes caem em 3 ou mais trechos. E o lado conservador, mas o
+           raio e parametro declarado (gravado em trecho_ponto.criterio);
+         - o cadastro tem ruido: placa duplicada (IP0412416), poste a mais de
+           25 m de qualquer trecho (IP0410156), endereco em texto livre. A
+           associacao precisa ser geometrica, nao por nome de rua.
+PRODUCAO: o comando a luminaria real seria enderecado pelo codigo
+         cadastral na telegestao (TALQ, com grupos para comando coletivo);
+         o MQTT e o meio da bancada.
+
+===============================================================================
 FIM
 ===============================================================================

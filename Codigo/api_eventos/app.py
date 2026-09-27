@@ -21,6 +21,7 @@ from datetime import datetime, time, timedelta, timezone
 import psycopg
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
+from psycopg.errors import ForeignKeyViolation
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
 
@@ -40,6 +41,7 @@ from .esquemas import (
     Ponto,
     Telemetria,
     Tipo,
+    Trecho,
 )
 
 DATABASE_URL = os.environ.get(
@@ -111,16 +113,22 @@ def exigir_chave(x_chave_api: str | None = Header(default=None)) -> None:
 @app.post("/eventos", response_model=Evento, status_code=status.HTTP_201_CREATED,
           dependencies=[Depends(exigir_chave)])
 def publicar_evento(evento: EventoEntrada, conn: psycopg.Connection = Conn) -> dict:
-    return conn.execute(
-        """
-        INSERT INTO evento_urbano
-            (ocorrido_em, tipo, valor, rotulo, abrangencia, origem, vigente_ate)
-        VALUES (%(ocorrido_em)s, %(tipo)s, %(valor)s, %(rotulo)s,
-                %(abrangencia)s, %(origem)s, %(vigente_ate)s)
-        RETURNING *
-        """,
-        evento.model_dump(),
-    ).fetchone()
+    try:
+        with conn.transaction():
+            return conn.execute(
+                """
+                INSERT INTO evento_urbano
+                    (ocorrido_em, tipo, valor, rotulo, abrangencia, origem, trecho_id, vigente_ate)
+                VALUES (%(ocorrido_em)s, %(tipo)s, %(valor)s, %(rotulo)s,
+                        %(abrangencia)s, %(origem)s, %(trecho)s, %(vigente_ate)s)
+                RETURNING *, trecho_id AS trecho
+                """,
+                evento.model_dump(),
+            ).fetchone()
+    except ForeignKeyViolation:
+        # Trecho fora do cadastro: o evento nao tem a que luminaria se referir.
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT,
+                            f"trecho {evento.trecho} nao cadastrado") from None
 
 
 @app.get("/eventos", response_model=list[Evento])
@@ -128,19 +136,21 @@ def consultar_eventos(
     inicio: datetime | None = None,
     fim: datetime | None = None,
     tipo: Tipo | None = None,
+    trecho: int | None = None,
     limite: int = Query(500, ge=1, le=LIMITE_MAX),
     conn: psycopg.Connection = Conn,
 ) -> list[dict]:
     return conn.execute(
         """
-        SELECT * FROM evento_urbano
+        SELECT *, trecho_id AS trecho FROM evento_urbano
          WHERE (%(inicio)s::timestamptz IS NULL OR ocorrido_em >= %(inicio)s)
            AND (%(fim)s::timestamptz    IS NULL OR ocorrido_em <  %(fim)s)
            AND (%(tipo)s::text          IS NULL OR tipo = %(tipo)s)
+           AND (%(trecho)s::bigint      IS NULL OR trecho_id = %(trecho)s)
          ORDER BY ocorrido_em DESC, id DESC
          LIMIT %(limite)s
         """,
-        {"inicio": inicio, "fim": fim, "tipo": tipo, "limite": limite},
+        {"inicio": inicio, "fim": fim, "tipo": tipo, "trecho": trecho, "limite": limite},
     ).fetchall()
 
 
@@ -191,7 +201,9 @@ def consultar_pontos(conn: psycopg.Connection = Conn) -> list[dict]:
     """
     return conn.execute(
         """
-        SELECT p.codigo, p.logradouro, p.classe_codigo, p.estado_operacional,
+        SELECT p.codigo, p.placa, p.logradouro, p.classe_codigo, p.estado_operacional,
+               ARRAY(SELECT tp.trecho_id FROM trecho_ponto tp
+                      WHERE tp.ponto_de_luz_id = p.id ORDER BY tp.distancia_m) AS trechos,
                c.iluminancia_media_min_lux AS lux_pleno,
                cm.iluminancia_media_min_lux / c.iluminancia_media_min_lux AS piso_fracao,
                u.nivel_emitido, u.restricao_aplicada, u.criado_em AS decidido_em,
@@ -206,6 +218,26 @@ def consultar_pontos(conn: psycopg.Connection = Conn) -> list[dict]:
                ) u ON true
           LEFT JOIN telemetria t ON t.decisao_id = u.id
          ORDER BY p.codigo
+        """
+    ).fetchall()
+
+
+@app.get("/trechos", response_model=list[Trecho])
+def consultar_trechos(conn: psycopg.Connection = Conn) -> list[dict]:
+    """Trechos de via cadastrados e as luminarias associadas a cada um.
+
+    Parte da especificacao de integracao (DIVERGENCIAS 54): e o vocabulario
+    de lugares que a plataforma de monitoramento pode citar no POST /eventos.
+    """
+    return conn.execute(
+        """
+        SELECT t.id, t.codlog, t.tipo_logradouro, t.nome_logradouro,
+               t.numero_inicial, t.numero_final,
+               ARRAY(SELECT p.codigo FROM trecho_ponto tp
+                       JOIN ponto_de_luz p ON p.id = tp.ponto_de_luz_id
+                      WHERE tp.trecho_id = t.id ORDER BY p.codigo) AS pontos
+          FROM trecho_via t
+         ORDER BY t.nome_logradouro, t.numero_inicial NULLS LAST, t.id
         """
     ).fetchall()
 

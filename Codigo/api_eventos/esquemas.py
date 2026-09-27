@@ -38,6 +38,10 @@ class EventoEntrada(BaseModel):
     rotulo: str | None = None
     abrangencia: Abrangencia = "via"
     origem: str = Field(min_length=1, max_length=80)
+    # Onde: identificador do trecho de via (segmento de logradouro do
+    # GeoSampa). Um evento se refere a um trecho; o servico decide para as
+    # luminarias associadas a ele (DIVERGENCIAS 54).
+    trecho: int = Field(gt=0)
     vigente_ate: AwareDatetime | None = None
 
     @model_validator(mode="after")
@@ -67,6 +71,7 @@ class Evento(BaseModel):
     rotulo: str | None
     abrangencia: Abrangencia
     origem: str
+    trecho: int
     vigente_ate: datetime | None
 
 
@@ -103,7 +108,9 @@ class Ponto(BaseModel):
     """Linha do GET /pontos: estado atual do ponto de luz, para o painel."""
 
     codigo: str
+    placa: str | None
     logradouro: str | None
+    trechos: list[int]
     classe_codigo: str
     estado_operacional: Literal["operante", "falha", "manutencao", "sem_comunicacao"]
     lux_pleno: float
@@ -164,3 +171,15 @@ class Energia(BaseModel):
     razao_pleno: float | None
     razao_horario_fixo: float | None
     divergencia_entre_estimativas: float | None
+
+
+class Trecho(BaseModel):
+    """Linha do GET /trechos: trecho de via e as luminarias associadas."""
+
+    id: int
+    codlog: str | None
+    tipo_logradouro: str | None
+    nome_logradouro: str
+    numero_inicial: int | None
+    numero_final: int | None
+    pontos: list[str]

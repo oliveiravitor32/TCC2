@@ -139,71 +139,86 @@ def origens_da_execucao(execucao_id: int | None) -> list[str] | None:
 
 def estado_via(
     conn: psycopg.Connection, agora: datetime, desde: datetime | None = None,
-    origens: list[str] | None = None,
+    origens: list[str] | None = None, *, ponto_id: int,
 ) -> EstadoVia:
-    """Ultimo evento vigente de cada tipo.
+    """Estado da via para UM ponto de luz, a partir dos trechos dele.
 
-    - movimentacao sem vigente_ate vale VALIDADE_MOVIMENTACAO_S; vencida, nao
-      ha dado (e o ciclo decide 1,0);
-    - ocorrencia sem vigente_ate vale ate o proximo evento do mesmo tipo
+    O evento chega referido a um trecho de via; o ponto enxerga os eventos de
+    todos os trechos associados a ele em trecho_ponto (DIVERGENCIAS 54). Em
+    cada trecho vale o ultimo evento vigente de cada tipo, e os trechos se
+    combinam pelo lado seguro:
+    - movimentacao = a MAIOR entre os trechos com dado vigente; sem vigente
+      em nenhum, nao ha dado (e o ciclo decide 1,0). A movimentacao sem
+      vigente_ate vale VALIDADE_MOVIMENTACAO_S;
+    - ocorrencia = basta um trecho com ocorrencia nao encerrada. Sem
+      vigente_ate, vale ate o proximo evento do mesmo tipo no mesmo trecho
       ('encerrada'): na duvida, a condicao de risco permanece.
 
     `desde` limita a janela de eventos considerada. Em operacao e None (o
     estado da via nao "recomeca"). O executor de cenarios passa o inicio da
-    execucao: uma chuva declarada em outro cenario, e nunca encerrada, ficaria
-    vigente para sempre e contaminaria os cenarios seguintes.
+    execucao: uma ocorrencia declarada em outro cenario, e nunca encerrada,
+    ficaria vigente para sempre e contaminaria os cenarios seguintes.
     """
     linhas = conn.execute(
         """
-        SELECT DISTINCT ON (tipo) id, tipo, valor, rotulo
-          FROM evento_urbano
-         WHERE ocorrido_em <= %(agora)s
-           AND (%(desde)s::timestamptz IS NULL OR ocorrido_em >= %(desde)s)
-           AND (%(origens)s::text[] IS NULL OR origem = ANY(%(origens)s))
-           AND COALESCE(vigente_ate,
-                        CASE WHEN tipo = 'movimentacao'
-                             THEN ocorrido_em + %(validade)s
+        SELECT DISTINCT ON (e.trecho_id, e.tipo) e.id, e.tipo, e.valor, e.rotulo
+          FROM evento_urbano e
+          JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
+         WHERE tp.ponto_de_luz_id = %(ponto)s
+           AND e.ocorrido_em <= %(agora)s
+           AND (%(desde)s::timestamptz IS NULL OR e.ocorrido_em >= %(desde)s)
+           AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
+           AND COALESCE(e.vigente_ate,
+                        CASE WHEN e.tipo = 'movimentacao'
+                             THEN e.ocorrido_em + %(validade)s
                         END,
                         'infinity') > %(agora)s
-         ORDER BY tipo, ocorrido_em DESC, id DESC
+         ORDER BY e.trecho_id, e.tipo, e.ocorrido_em DESC, e.id DESC
         """,
-        {"agora": agora, "desde": desde, "origens": origens,
+        {"agora": agora, "desde": desde, "origens": origens, "ponto": ponto_id,
          "validade": timedelta(seconds=config.VALIDADE_MOVIMENTACAO_S)},
     ).fetchall()
-    por_tipo = {tipo: (eid, valor, rotulo) for eid, tipo, valor, rotulo in linhas}
 
-    mov = por_tipo.get("movimentacao")
-    oco = por_tipo.get("ocorrencia")
+    movimentos = [float(valor) for _, tipo, valor, _ in linhas if tipo == "movimentacao"]
+    ocorrencia = any(tipo == "ocorrencia" and rotulo != "encerrada" for _, tipo, _, rotulo in linhas)
     return EstadoVia(
-        observada=None if mov is None else float(mov[1]),
-        ocorrencia=oco is not None and oco[2] != "encerrada",
-        evento_ids=sorted(e[0] for e in por_tipo.values()),
+        observada=max(movimentos) if movimentos else None,
+        ocorrencia=ocorrencia,
+        evento_ids=sorted(eid for eid, *_ in linhas),
     )
 
 
 def historico_horario(
-    conn: psycopg.Connection, agora: datetime, horas: int, origens: list[str] | None = None
+    conn: psycopg.Connection, agora: datetime, horas: int, origens: list[str] | None = None,
+    *, ponto_id: int,
 ) -> dict[int, float]:
-    """Nivel medio de movimentacao por hora CHEIA DE RELOGIO anterior a `agora`.
+    """Nivel de movimentacao por hora CHEIA DE RELOGIO anterior a `agora`,
+    para um ponto de luz.
 
     Chave = atraso em horas (1 = hora de relogio anterior). O modelo foi
     treinado sobre janelas horarias fechadas (3.6), entao o agrupamento
     precisa ser por hora do relogio, e nao por diferenca corrida: a hora em
-    curso e incompleta e nao entra.
+    curso e incompleta e nao entra. Em cada hora, media por trecho e, entre
+    os trechos do ponto, a maior - a mesma regra de estado_via.
     """
     linhas = conn.execute(
         """
-        SELECT (extract(epoch FROM (date_trunc('hour', %(agora)s)
-                                    - date_trunc('hour', ocorrido_em))) / 3600)::int AS atraso,
-               avg(valor) AS nivel
-          FROM evento_urbano
-         WHERE tipo = 'movimentacao'
-           AND ocorrido_em <= %(agora)s
-           AND ocorrido_em > %(agora)s - make_interval(hours => %(horas)s)
-           AND (%(origens)s::text[] IS NULL OR origem = ANY(%(origens)s))
-         GROUP BY 1
+        SELECT atraso, max(nivel)
+          FROM (SELECT e.trecho_id,
+                       (extract(epoch FROM (date_trunc('hour', %(agora)s)
+                                            - date_trunc('hour', e.ocorrido_em))) / 3600)::int AS atraso,
+                       avg(e.valor) AS nivel
+                  FROM evento_urbano e
+                  JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
+                 WHERE tp.ponto_de_luz_id = %(ponto)s
+                   AND e.tipo = 'movimentacao'
+                   AND e.ocorrido_em <= %(agora)s
+                   AND e.ocorrido_em > %(agora)s - make_interval(hours => %(horas)s)
+                   AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
+                 GROUP BY 1, 2) por_trecho
+         GROUP BY atraso
         """,
-        {"agora": agora, "horas": horas + 1, "origens": origens},
+        {"agora": agora, "horas": horas + 1, "origens": origens, "ponto": ponto_id},
     ).fetchall()
     return {int(a): float(n) for a, n in linhas if a >= 1 and n is not None}
 
@@ -258,7 +273,7 @@ def decidir(
     desde: datetime | None = None,
 ) -> DecisaoTomada:
     origens = origens_da_execucao(execucao_id)
-    estado = estado_via(conn, agora, desde, origens)
+    estado = estado_via(conn, agora, desde, origens, ponto_id=ponto.id)
 
     previsao: float | None = None
     if estado.observada is None:
@@ -273,7 +288,7 @@ def decidir(
                 Historico(
                     momento=agora.astimezone(config.FUSO),
                     observada=estado.observada,
-                    serie=historico_horario(conn, agora, horas, origens),
+                    serie=historico_horario(conn, agora, horas, origens, ponto_id=ponto.id),
                 )
             )
         pretendido = inferir(

@@ -13,6 +13,7 @@ services:
       # Rodam uma unica vez, na criacao do volume, em ordem alfabetica.
       - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./db/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+      - ./db/seed_cadastro.sql:/docker-entrypoint-initdb.d/03-seed_cadastro.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U iluminacao -d iluminacao"]
       interval: 5s
