@@ -62,7 +62,7 @@ export function Eventos({ eventos }) {
             <span className="text-suave">
               {e.tipo === "movimentacao" ? pct(e.valor) : e.rotulo}
             </span>
-            <span className="ml-auto text-suave">{e.origem}</span>
+            <span className="ml-auto text-suave">trecho {e.trecho} · {e.origem}</span>
           </li>
         ))}
         {eventos.length === 0 && (

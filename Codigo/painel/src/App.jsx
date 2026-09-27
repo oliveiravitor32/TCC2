@@ -26,20 +26,29 @@ export default function App() {
   const [erro, setErro] = useState(null);
   const [rodando, setRodando] = useState(true);
   const [atualizadoEm, setAtualizadoEm] = useState(null);
+  // Ponto de luz exibido. Cada ponto tem os proprios trechos de via
+  // (DIVERGENCIAS 54): decisoes, telemetria e eventos sao filtrados por ele.
+  const [selecionado, setSelecionado] = useState(null);
   const carregando = useRef(false);
 
   const buscar = useCallback(async () => {
     if (carregando.current) return; // nao empilha requisicao lenta
     carregando.current = true;
     try {
-      const [pontos, decisoes, telemetria, eventos, alertas, energia] = await Promise.all([
-        api.pontos(),
-        api.decisoes({ limite: JANELA }),
-        api.telemetria({ limite: JANELA }),
-        api.eventos({ limite: 40 }),
+      const pontos = await api.pontos();
+      const atual = pontos.find((p) => p.codigo === selecionado) ?? pontos[0];
+      const ponto = atual?.codigo;
+      const [decisoes, telemetria, todosEventos, todosAlertas, energia] = await Promise.all([
+        api.decisoes({ ponto, limite: JANELA }),
+        api.telemetria({ ponto, limite: JANELA }),
+        api.eventos({ limite: 200 }),
         api.alertas({ abertos: true }),
-        api.energia({ janela_min: JANELA_ENERGIA_MIN }),
+        api.energia({ ponto, janela_min: JANELA_ENERGIA_MIN }),
       ]);
+      // So os eventos dos trechos deste ponto: sao os que a decisao dele viu.
+      const trechos = new Set(atual?.trechos ?? []);
+      const eventos = todosEventos.filter((e) => trechos.has(e.trecho));
+      const alertas = todosAlertas.filter((a) => a.ponto === ponto);
       setDados({ pontos, decisoes, telemetria, eventos, alertas, energia });
       setAtualizadoEm(new Date());
       setErro(null);
@@ -48,7 +57,7 @@ export default function App() {
     } finally {
       carregando.current = false;
     }
-  }, []);
+  }, [selecionado]);
 
   useEffect(() => {
     buscar();
@@ -57,7 +66,7 @@ export default function App() {
     return () => clearInterval(id);
   }, [buscar, rodando]);
 
-  const ponto = dados.pontos[0];
+  const ponto = dados.pontos.find((p) => p.codigo === selecionado) ?? dados.pontos[0];
   const decisao = dados.decisoes[0];
   const piso = ponto?.piso_fracao ?? null;
 
@@ -80,8 +89,26 @@ export default function App() {
           Iluminação adaptativa
         </h1>
         <span className="text-xs text-suave">
-          {ponto ? `${ponto.codigo} · classe ${ponto.classe_codigo} · pleno ${ponto.lux_pleno} lx` : "sem ponto de luz"}
+          {ponto
+            ? `${ponto.codigo}${ponto.placa ? ` (poste ${ponto.placa})` : ""} · classe ${ponto.classe_codigo} · pleno ${ponto.lux_pleno} lx`
+            : "sem ponto de luz"}
         </span>
+        {dados.pontos.length > 1 && (
+          <label className="inline-flex items-center gap-1 text-xs text-suave">
+            ponto
+            <select
+              value={ponto?.codigo ?? ""}
+              onChange={(e) => setSelecionado(e.target.value)}
+              className="rounded-md border border-borda bg-carta px-2 py-1 text-texto"
+            >
+              {dados.pontos.map((p) => (
+                <option key={p.codigo} value={p.codigo}>
+                  {p.codigo} · {p.logradouro ?? "sem endereço"}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
         <span className={`inline-flex items-center gap-1 text-xs ${estado.cor}`}>
           <CircleDot size={12} aria-hidden="true" />
           {estado.texto}
