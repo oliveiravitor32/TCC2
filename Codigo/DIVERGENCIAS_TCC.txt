@@ -1273,6 +1273,14 @@ FAILSAFE (RNF07): o teste feito nao demonstrou o comportamento - o servico
             (Quadro 11), Quadro 14, Quadro 15, 5.2, 6.3
     Acao: [ATUALIZAR TEXTO] - decisao do autor em 26/09/2026
     >>> v2: APLICADO nos Capitulos 1 a 4; falta a limitacao em 6.3 (texto sugerido no item)
+    >>> 27/09/2026: JUSTIFICATIVA REFORMULADA (v3_revisado.docx: 2.5, 6.3 e
+        referencia do TR). O TR do Smart Sampa (2022, Anexo XI, itens 16 e 17)
+        preve RECEBER dados de estacoes climaticas e do INMET; "a plataforma nao
+        produz dado meteorologico" deixou de ser argumento suficiente. Novo
+        criterio: o trabalho consome so os descritores que a plataforma produz
+        pelos analiticos de imagem (2.3); a integracao meteorologica e prevista,
+        sem evidencia publica de operacao, e seria terceira fonte. A limitacao
+        em 6.3 foi escrita. O TEXTO SUGERIDO abaixo esta superado.
 -------------------------------------------------------------------------------
 PROBLEMA: o texto atribuia a condicao meteorologica a "interface de dados
          urbanos" (Quadro 7, 3.10, Quadro 15), que emula a plataforma
