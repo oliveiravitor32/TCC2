@@ -1517,5 +1517,89 @@ PRODUCAO: o comando a luminaria real seria enderecado pelo codigo
          o MQTT e o meio da bancada.
 
 ===============================================================================
+55. LEITURA DO TRECHO POR PRESENCA (base v3-presenca) E PAINEL DE DEMONSTRACAO
+    Trecho: Quadro 7 (variaveis), 3.6 (serie da previsao), 3.7 (base de
+            regras, justificativa, degraus x Mamdani), 3.9 (H3: janela de
+            baixa demanda), 2.10 (H1/H3), Quadro 14 (POST /eventos, novo
+            GET /eventos/{id}/explicacao), Quadros 15 e 16 (evento_urbano,
+            decisao.entrada/ativacoes, trecho_via.referencia_pessoas),
+            4.6.1 e Quadros 12 e 13 (painel com modal de demonstracao), 4.8,
+            5.x e 6.3
+    Acao: [ATUALIZAR TEXTO] - decisao do autor em 27/09/2026
+    >>> v3: PENDENTE (proxima rodada do texto)
+-------------------------------------------------------------------------------
+DECISAO (autor): a plataforma envia, a cada poucos segundos, a LEITURA de
+         cada trecho: quantas pessoas ha na area agora, se ha ocorrencia e
+         onde. A IA decide por PRESENCA, e nao por volume relativo: uma ou
+         duas pessoas ja pedem luz plena, sobretudo de madrugada.
+         Rejeitada (a pedido da analise, com o autor): reduzir a luz com a
+         rua cheia "porque ainda e cedo" - contraria a NBR 5101, que exige
+         classe mais alta com mais atividade de pedestres (2.5).
+BASE NORMATIVA DA REGRA DE PRESENCA: a NBR 5101 fixa a iluminancia vertical
+         minima das classes P para o reconhecimento facial e a reacao do
+         pedestre (ja citado em 1.6): com alguem na via, a luz existe para
+         ele. "Ha alguem ou nao" vale igual em qualquer rua, sem normalizar.
+REGRAS v3 (6): R1 ocorrencia -> pleno; R2 presenca -> pleno; R3 prevista
+         alta -> pleno; R4 via vazia + prevista baixa -> reduzido; R5 via
+         vazia + prevista media -> intermediario; R6 via vazia + inicio da
+         noite -> intermediario. Toda regra de atenuacao exige presenca = nao
+         e ocorrencia = nao (verificado em teste).
+CONTRATO: POST /eventos = {ocorrido_em, pessoas (int >= 0), ocorrencia
+         (seguranca|transito|ausente), trecho, origem, vigente_ate?}. Uma
+         leitura vale 1 min (VALIDADE_LEITURA_S); sem leitura vigente, pleno.
+         O nivel normalizado 0-1 saiu do contrato: a plataforma entrega
+         contagem, e quem conhece a rua e o servico.
+PREVISAO: continua o XGBoost treinado em Melbourne, na mesma escala. O
+         servico agrega as leituras em media horaria por trecho e divide
+         pela REFERENCIA do trecho: o percentil 99 aprendido das leituras
+         (28 dias, minimo de 168 horas), como no treino (3.6); ate la, valor
+         inicial declarado de 5 pessoas (trecho_via.referencia_pessoas).
+         LIMITACAO a declarar: arranque a frio com referencia arbitrada.
+         Modo reativo (H3) = a previsao e substituida pelo nivel da ultima
+         hora; sem previsao nem historico, nenhuma regra de atenuacao
+         dispara (falta de informacao nunca atenua).
+H3: a janela de baixa demanda passa a ser "via vazia com leitura vigente e
+         sem ocorrencia" (antes: movimentacao abaixo do tercil inferior).
+DEGRAUS x MAMDANI: com presenca binaria, a logica nebulosa atua so na
+         previsao e na faixa horaria; o cenario "ruido na fronteira" (item
+         52) perdeu o sentido e foi substituido por "presenca intermitente".
+         As conclusoes dos itens 51 e 52 precisam ser refeitas com a v3.
+AUDITORIA: cada decisao grava entrada (presenca, pessoas por trecho,
+         ocorrencia, prevista, recente, faixa horaria, modo) e ativacoes (grau
+         de cada regra). GET /eventos/{id}/explicacao monta a cadeia inteira
+         para o painel. Fortalece o RNF04.
+PAINEL: botao "simular leitura" (modal: trecho, pessoas, ocorrencia,
+         vigencia; uma chamada) e aba "decisoes explicadas". A chave do
+         painel (CHAVE_DEMO) e separada da principal e fica PUBLICA no build
+         da Vercel por decisao do autor: qualquer visitante pode publicar
+         leituras; o pior caso e luz a mais (a verificacao garante a norma).
+         Desligar/trocar apos a banca. O item 53 continua valendo para a
+         chave principal.
+MIGRACAO 005: eventos e decisoes de desenvolvimento apagados (nivel nao
+         vira contagem); calibracao preservada. Backup antes.
+RESULTADOS DA SUITE v3 (27/09/2026; 9 cenarios, 13.440 decisoes por modo,
+         REF-40W; substituem os do item 52):
+                          viol  aderencia  %pleno   %fixo   H3 (suite/sem adv)
+         antecipado         0     100 %     72,1 %  101,8 %   38,8 % / 39,6 %
+         reativo            0     100 %     72,6 %  102,5 %   19,3 % / 16,9 %
+         degraus antecip.   0     100 %     72,1 %  101,8 %   38,8 % / 39,6 %
+         degraus reativo    0     100 %     72,8 %  102,7 %   24,3 % / 22,7 %
+LEITURA: (1) zero violacoes continua; (2) o regime por presenca GASTA MAIS
+         que a atenuacao por horario fixo (~102 %) e economiza menos sobre o
+         pleno (72 %, antes 64 %): e o preco de acender plenamente a cada
+         pedestre, a favor da seguranca. O texto nao pode prometer economia
+         sobre o horario fixo; a comparacao e seguranca x energia;
+         (3) H3 continua NAO confirmada, e a diferenca aumentou: com
+         previsao, a via vazia passa mais tempo acima do piso (a previsao de
+         movimento medio segura a descida). ATENCAO na leitura da metrica:
+         ciclos no "intermediario" por R5/R6 contam como "transicao", o que
+         pesa contra o modo antecipado; (4) degraus = Mamdani no modo
+         antecipado: com presenca binaria, a pertinencia parcial so atua na
+         previsao, e os tercis quase nao sao cruzados na suite;
+         (5) aderencia de 100 %: os envelopes da v3 sao largos (derivados
+         dos conjuntos de saida) - aderencia deixou de discriminar e deve
+         ser apresentada com essa ressalva.
+
+===============================================================================
 FIM
 ===============================================================================

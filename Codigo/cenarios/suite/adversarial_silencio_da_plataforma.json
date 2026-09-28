@@ -8,14 +8,12 @@
   "eventos": [
     {
       "em_min": 0,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 10
     },
     {
       "em_min": 5,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 10
     }
   ],

@@ -47,6 +47,8 @@ services:
     environment:
       DATABASE_URL: postgresql://iluminacao:${SENHA_BANCO}@db:5432/iluminacao
       CHAVE_API: ${CHAVE_API:?rode deploy/preparar.sh}
+      # Chave do painel de demonstracao (publica por decisao do autor); vazia = desligada.
+      CHAVE_DEMO: ${CHAVE_DEMO:-}
       ORIGENS_PAINEL: ${ORIGENS_PAINEL:-*}
     depends_on:
       db:

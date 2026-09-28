@@ -18,15 +18,23 @@ DATABASE_URL = os.environ.get(
 # Base de regras vigente (3.7): tercis reais da serie (item 31), sem a
 # condicao meteorologica (item 49). As versoes v0 e v1 ficam no historico do
 # git e registradas em versao_base_regras.
-REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v2-sem-meteorologia.toml")
+REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v3-presenca.toml")
 
 # Ciclo de decisao e failsafe do no (DIVERGENCIAS 1 e 2).
 PERIODO_S = float(os.environ.get("PERIODO_S", "5"))
 TIMEOUT_FAILSAFE_S = float(os.environ.get("TIMEOUT_FAILSAFE_S", "15"))
 
-# Evento de movimentacao sem vigente_ate vale por este tempo; depois disso o
-# ciclo considera que nao ha dado e decide 1,0 (DIVERGENCIAS 23).
-VALIDADE_MOVIMENTACAO_S = float(os.environ.get("VALIDADE_MOVIMENTACAO_S", "900"))
+# Leitura do trecho sem vigente_ate vale por este tempo. A plataforma publica
+# a cada poucos segundos; sem leitura nova por 1 min, o ciclo considera que
+# nao ha dado e decide 1,0 (DIVERGENCIAS 23 e 55).
+VALIDADE_LEITURA_S = float(os.environ.get("VALIDADE_LEITURA_S", "60"))
+
+# Referencia do trecho (media horaria de pessoas no percentil 99): aprendida
+# das leituras dos ultimos DIAS_REFERENCIA dias quando ha ao menos
+# HORAS_MINIMAS_REFERENCIA horas com leitura; antes disso, vale o valor
+# inicial de trecho_via.referencia_pessoas (DIVERGENCIAS 55).
+DIAS_REFERENCIA = int(os.environ.get("DIAS_REFERENCIA", "28"))
+HORAS_MINIMAS_REFERENCIA = int(os.environ.get("HORAS_MINIMAS_REFERENCIA", "168"))
 
 # Horario local do ponto de luz: a faixa horaria da inferencia depende dele.
 FUSO = ZoneInfo(os.environ.get("FUSO", "America/Sao_Paulo"))

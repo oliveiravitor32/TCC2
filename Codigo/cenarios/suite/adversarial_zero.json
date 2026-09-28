@@ -8,50 +8,42 @@
   "eventos": [
     {
       "em_min": 0,
-      "tipo": "movimentacao",
-      "valor": 0.0,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 5,
-      "tipo": "movimentacao",
-      "valor": 0.0,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 10,
-      "tipo": "movimentacao",
-      "valor": 0.0,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 15,
-      "tipo": "movimentacao",
-      "valor": 0.0,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 20,
-      "tipo": "movimentacao",
-      "valor": 0.0,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 25,
-      "tipo": "movimentacao",
-      "valor": 0.0,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 30,
-      "tipo": "movimentacao",
-      "valor": 0.0,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 35,
-      "tipo": "movimentacao",
-      "valor": 0.0,
+      "pessoas": 0,
       "vigente_min": 15
     }
   ],

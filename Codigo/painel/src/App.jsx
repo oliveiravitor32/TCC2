@@ -5,15 +5,19 @@
 // verificacao e a iluminancia medida - a cadeia que 4.6 chama de "a
 // interface pela qual a conformidade normativa se torna observavel".
 //
-// So leitura: o painel nao publica evento nem comanda nada.
+// O painel nao comanda nada nem decide nada. A unica escrita e a do modal de
+// demonstracao, que publica uma leitura como a plataforma de monitoramento
+// publicaria (DIVERGENCIAS 55); a decisao continua no servico.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CircleDot, Lightbulb, Pause, Play, RefreshCw, WifiOff } from "lucide-react";
+import { CircleDot, FlaskConical, Lightbulb, Pause, Play, RefreshCw, WifiOff } from "lucide-react";
 import { ESTADOS, api, hora } from "./api";
 import { Entregue, EstadoDaVia, Inferencia, Verificacao } from "./componentes/Cartoes";
 import { Alertas, Decisoes, Eventos } from "./componentes/Listas";
 import Energia from "./componentes/Energia";
 import Trajetoria from "./componentes/Trajetoria";
+import SimularLeitura from "./componentes/SimularLeitura";
+import Explicacoes from "./componentes/Explicacoes";
 
 const PERIODO_MS = 2000; // metade do ciclo de decisao (5 s), sem afoga-lo
 const JANELA = 240; // decisoes exibidas na trajetoria
@@ -21,8 +25,12 @@ const JANELA_ENERGIA_MIN = 30; // minutos integrados no cartao de consumo
 
 export default function App() {
   const [dados, setDados] = useState({
-    pontos: [], decisoes: [], telemetria: [], eventos: [], alertas: [], energia: null,
+    pontos: [], decisoes: [], telemetria: [], eventos: [], todosEventos: [], alertas: [], energia: null,
   });
+  const [trechos, setTrechos] = useState([]);
+  const [aba, setAba] = useState("monitoramento");
+  const [modalAberto, setModalAberto] = useState(false);
+  const [eventoExplicado, setEventoExplicado] = useState(null);
   const [erro, setErro] = useState(null);
   const [rodando, setRodando] = useState(true);
   const [atualizadoEm, setAtualizadoEm] = useState(null);
@@ -49,7 +57,7 @@ export default function App() {
       const trechos = new Set(atual?.trechos ?? []);
       const eventos = todosEventos.filter((e) => trechos.has(e.trecho));
       const alertas = todosAlertas.filter((a) => a.ponto === ponto);
-      setDados({ pontos, decisoes, telemetria, eventos, alertas, energia });
+      setDados({ pontos, decisoes, telemetria, eventos, todosEventos, alertas, energia });
       setAtualizadoEm(new Date());
       setErro(null);
     } catch (e) {
@@ -58,6 +66,11 @@ export default function App() {
       carregando.current = false;
     }
   }, [selecionado]);
+
+  // Trechos de via: mudam so com o cadastro, basta buscar uma vez.
+  useEffect(() => {
+    api.trechos().then(setTrechos).catch(() => setTrechos([]));
+  }, []);
 
   useEffect(() => {
     buscar();
@@ -115,6 +128,14 @@ export default function App() {
         </span>
 
         <div className="ml-auto flex items-center gap-3 text-xs text-suave">
+          <button
+            type="button"
+            onClick={() => setModalAberto(true)}
+            className="inline-flex items-center gap-1 rounded-md bg-luz px-3 py-1.5 font-medium text-fundo hover:opacity-90"
+          >
+            <FlaskConical size={14} />
+            simular leitura
+          </button>
           <span>atualizado {hora(atualizadoEm?.toISOString())}</span>
           <button
             type="button"
@@ -143,6 +164,43 @@ export default function App() {
         </p>
       )}
 
+      <nav className="flex gap-1 border-b border-borda text-sm" aria-label="visões do painel">
+        {[
+          { id: "monitoramento", rotulo: "monitoramento" },
+          { id: "explicacoes", rotulo: "decisões explicadas" },
+        ].map((a) => (
+          <button
+            key={a.id}
+            type="button"
+            onClick={() => setAba(a.id)}
+            className={`-mb-px border-b-2 px-3 py-2 ${aba === a.id ? "border-luz text-texto" : "border-transparent text-suave hover:text-texto"}`}
+          >
+            {a.rotulo}
+          </button>
+        ))}
+      </nav>
+
+      {modalAberto && (
+      <SimularLeitura
+        fechar={() => setModalAberto(false)}
+        trechos={trechos}
+        trechoInicial={ponto?.trechos?.[0]}
+        aoPublicar={(evento) => {
+          setEventoExplicado(evento.id);
+          setAba("explicacoes");
+          buscar();
+        }}
+      />
+      )}
+
+      {aba === "explicacoes" ? (
+        <Explicacoes
+          eventos={dados.todosEventos}
+          selecionado={eventoExplicado}
+          setSelecionado={setEventoExplicado}
+        />
+      ) : (
+      <>
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <EstadoDaVia eventos={dados.eventos} />
         <Inferencia decisao={decisao} />
@@ -173,9 +231,12 @@ export default function App() {
           <Eventos eventos={dados.eventos} />
         </div>
       </div>
+      </>
+      )}
 
       <footer className="pb-2 text-[11px] text-suave">
-        Painel de leitura. A decisão é produzida no serviço municipal e verificada contra
+        O painel não decide: o botão de simulação só publica uma leitura, como a plataforma
+        de monitoramento faria. A decisão é produzida no serviço municipal e verificada contra
         a ABNT NBR 5101 antes de qualquer comando; nenhum dado pessoal trafega aqui
         (RNF08).
       </footer>

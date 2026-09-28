@@ -1,0 +1,103 @@
+# Base de regras Mamdani - versao v3-presenca (TCC 3.7, RNF05)
+#
+# Qualquer alteracao neste arquivo exige NOVA VERSAO (novo arquivo e nova
+# linha em versao_base_regras): o hash do conteudo e gravado no banco e a
+# decisao registra a versao que a produziu (RNF04).
+#
+# Diferenca para a v2 (DIVERGENCIAS 55): a plataforma de monitoramento
+# publica, a cada poucos segundos, a LEITURA do trecho - quantas pessoas ha
+# na area agora e se ha ocorrencia. A inferencia passa a raciocinar por
+# PRESENCA, e nao por volume relativo:
+#   - havendo pedestre no trecho, nao se atenua. A NBR 5101 fixa a
+#     iluminancia vertical das classes P para o reconhecimento facial e a
+#     reacao do pedestre (1.6): com alguem na via, a luz existe para ele;
+#   - "ha alguem ou nao" vale igual em qualquer rua, sem normalizacao;
+#   - a atenuacao so acontece com a via vazia, e a previsao da proxima hora
+#     decide ate onde (antecipacao, H3); o inicio da noite segura a descida.
+# Nao ha regra que reduza a luz com a via movimentada: a norma exige classe
+# mais alta com mais atividade de pedestres (2.5).
+#
+# Fronteiras da movimentacao prevista nos TERCIS da serie de Melbourne
+# (extraida em 2026-09-23, 49 pontos), normalizada por ponto pelo percentil
+# 99 - as mesmas da v2 (3.7).
+
+rotulo = "v3-presenca"
+resumo = "Presenca de pedestre (leitura do trecho) em vez de volume observado; 6 regras; tercis de Melbourne na previsao; atenuacao so com via vazia e sem ocorrencia."
+
+# ---------------------------------------------------------------------------
+# Movimentacao PREVISTA (proxima hora): baixa / media / alta, trapezoidais,
+# no nivel horario normalizado por trecho, a mesma escala do treino (3.6).
+# O patamar de pertinencia plena cobre o interior de cada tercil; as rampas
+# cobrem `meia_largura_rampa` para cada lado da fronteira (3.7).
+# ---------------------------------------------------------------------------
+[movimentacao]
+fronteiras = [0.1038, 0.4053]
+meia_largura_rampa = 0.05
+
+# ---------------------------------------------------------------------------
+# Faixa horaria (apoio, Quadro 7): horas decorridas desde as 18h, 0 a 12.
+# Horarios fora de 18h-06h sao levados ao extremo mais proximo.
+# ---------------------------------------------------------------------------
+[faixa_horaria.conjuntos]
+inicio_noite  = [0.0, 0.0, 3.0, 5.0]    # 18h-21h pleno, sai ate 23h
+madrugada     = [4.0, 6.0, 9.0, 10.0]   # 00h-03h pleno
+pre_amanhecer = [9.0, 10.0, 12.0, 12.0] # 04h-06h pleno
+
+# ---------------------------------------------------------------------------
+# Saida: nivel pretendido, fracao do fluxo pleno, universo 0 a 1.
+# A inferencia NAO conhece o piso normativo: quem o impoe e a camada de
+# verificacao (separacao adaptativa x fixa, 3.7).
+# ---------------------------------------------------------------------------
+[saida.conjuntos]
+reduzido      = [0.0, 0.0, 0.2, 0.45]
+intermediario = [0.3, 0.5, 0.6, 0.8]
+pleno         = [0.8, 0.95, 1.0, 1.0]
+
+# ---------------------------------------------------------------------------
+# Regras. Antecedentes ligados por E (minimo).
+#
+# As regras que ATENUAM (R4 a R6) exigem ocorrencia = nao e presenca = nao:
+# evidencia de risco ou de pedestre nunca e diluida por uma regra de reducao
+# ativa ao mesmo tempo (PICKERING et al., 2026).
+#
+# Variaveis:
+#   ocorrencia     = sim | nao   (leitura do trecho)
+#   presenca       = sim | nao   (pessoas na area >= 1, leitura do trecho)
+#   prevista       = baixa | media | alta   (camada de previsao, 3.6)
+#   faixa_horaria  = inicio_noite | madrugada | pre_amanhecer
+# ---------------------------------------------------------------------------
+[[regra]]
+id = "R1"
+se = { ocorrencia = "sim" }
+entao = "pleno"
+origem = "Dominio: ocorrencia reportada justifica elevacao independentemente da movimentacao (Quadro 7, 1.6)"
+
+[[regra]]
+id = "R2"
+se = { presenca = "sim" }
+entao = "pleno"
+origem = "Norma: NBR 5101, iluminancia vertical minima das classes P para reconhecimento facial e reacao do pedestre (1.6)"
+
+[[regra]]
+id = "R3"
+se = { prevista = "alta" }
+entao = "pleno"
+origem = "Literatura: antecipacao da demanda (2.7; BELLONI et al., 2024)"
+
+[[regra]]
+id = "R4"
+se = { ocorrencia = "nao", presenca = "nao", prevista = "baixa" }
+entao = "reduzido"
+origem = "Norma: NBR 5101, 6.3 e 6.10.3 - reduzir nos horarios de baixa movimentacao"
+
+[[regra]]
+id = "R5"
+se = { ocorrencia = "nao", presenca = "nao", prevista = "media" }
+entao = "intermediario"
+origem = "Literatura: antecipacao da demanda (2.7; BELLONI et al., 2024)"
+
+[[regra]]
+id = "R6"
+se = { ocorrencia = "nao", presenca = "nao", faixa_horaria = "inicio_noite" }
+entao = "intermediario"
+origem = "Dominio: faixa horaria como evidencia de apoio (Quadro 7)"

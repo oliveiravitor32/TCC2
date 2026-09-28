@@ -31,6 +31,7 @@ else
 DOMINIO=$DOMINIO
 SENHA_BANCO=$(aleatorio)
 CHAVE_API=$(aleatorio)
+CHAVE_DEMO=$(aleatorio)
 SENHA_MQTT_SERVICO=$(aleatorio)
 SENHA_MQTT_NO=$(aleatorio)
 # Depois de publicar o painel, troque * pelo endereco dele na Vercel
@@ -94,6 +95,8 @@ sudo cat "$CERTS/ca.crt"
 cat <<EOF
 
 Para publicar eventos (evento.sh ou qualquer cliente):
-  API=https://$DOMINIO CHAVE_API=$CHAVE_API ./evento.sh 0.05
+  API=https://$DOMINIO CHAVE_API=$CHAVE_API ./evento.sh 0
+Chave do painel de demonstracao (VITE_CHAVE_DEMO na Vercel; fica publica):
+  $CHAVE_DEMO
 ==================================================================
 EOF

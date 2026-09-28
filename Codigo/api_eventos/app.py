@@ -8,11 +8,14 @@ Execucao local:  uvicorn api_eventos.app:app --reload
 Banco: variavel DATABASE_URL (padrao: Postgres do docker-compose).
 Publicacao: com CHAVE_API definida, o POST /eventos exige o cabecalho
 X-Chave-Api (DIVERGENCIAS 22); as consultas continuam abertas ao painel.
+CHAVE_DEMO, se definida, e uma segunda chave aceita no POST: a do painel de
+demonstracao, publica por decisao do autor e desligavel sem afetar a outra.
 """
 
 from __future__ import annotations
 
 import os
+from pathlib import Path
 import secrets
 from collections.abc import Iterator
 from contextlib import asynccontextmanager
@@ -25,6 +28,7 @@ from psycopg.errors import ForeignKeyViolation
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
 
+from decisao.inferencia import carregar as carregar_regras
 from decisao.energia import (
     energia_decisoes,
     energia_pleno_constante,
@@ -40,6 +44,7 @@ from .esquemas import (
     EventoEntrada,
     Ponto,
     Telemetria,
+    Explicacao,
     Tipo,
     Trecho,
 )
@@ -50,13 +55,13 @@ DATABASE_URL = os.environ.get(
 LIMITE_MAX = 5000
 # O painel e servido de outra origem (Vercel) e a API roda na VM: sem CORS o
 # navegador bloqueia a leitura. Lista separada por virgula; "*" libera todas.
-# O navegador envia a origem sem barra final ("https://x.vercel.app"), e a
-# comparacao e exata: uma barra no .env bloquearia o painel sem aviso.
-ORIGENS = [o.strip().rstrip("/") for o in os.environ.get("ORIGENS_PAINEL", "*").split(",") if o.strip()]
+ORIGENS = [o.strip() for o in os.environ.get("ORIGENS_PAINEL", "*").split(",") if o.strip()]
 # Linha de base por horario fixo (3.11): a programacao agendada que uma
 # telegestao sem dados urbanos faria.
 # Chave de publicacao (DIVERGENCIAS 22). Vazia = sem exigencia (desenvolvimento).
 CHAVE_API = os.environ.get("CHAVE_API", "")
+CHAVE_DEMO = os.environ.get("CHAVE_DEMO", "")
+REGRAS_DIR = Path(__file__).resolve().parent.parent / "decisao" / "regras"
 HORA_INICIO_ATENUACAO = time(0, 0)
 HORA_FIM_ATENUACAO = time(5, 0)
 
@@ -105,7 +110,8 @@ def exigir_chave(x_chave_api: str | None = Header(default=None)) -> None:
     chave por diferenca de tempo de resposta."""
     if not CHAVE_API:
         return
-    if x_chave_api is None or not secrets.compare_digest(x_chave_api, CHAVE_API):
+    validas = [c for c in (CHAVE_API, CHAVE_DEMO) if c]
+    if x_chave_api is None or not any(secrets.compare_digest(x_chave_api, c) for c in validas):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "chave de acesso ausente ou invalida")
 
 
@@ -120,8 +126,8 @@ def publicar_evento(evento: EventoEntrada, conn: psycopg.Connection = Conn) -> d
             return conn.execute(
                 """
                 INSERT INTO evento_urbano
-                    (ocorrido_em, tipo, valor, rotulo, abrangencia, origem, trecho_id, vigente_ate)
-                VALUES (%(ocorrido_em)s, %(tipo)s, %(valor)s, %(rotulo)s,
+                    (ocorrido_em, tipo, pessoas, ocorrencia, abrangencia, origem, trecho_id, vigente_ate)
+                VALUES (%(ocorrido_em)s, %(tipo)s, %(pessoas)s, %(ocorrencia)s,
                         %(abrangencia)s, %(origem)s, %(trecho)s, %(vigente_ate)s)
                 RETURNING *, trecho_id AS trecho
                 """,
@@ -174,7 +180,7 @@ def consultar_decisoes(
                d.nivel_pretendido, d.nivel_emitido, d.restricao_aplicada,
                d.nivel_anterior, d.previsao_movimentacao,
                r.rotulo AS versao_base_regras, m.rotulo AS versao_modelo,
-               d.execucao_id,
+               d.execucao_id, d.entrada, d.ativacoes,
                COALESCE(array_agg(de.evento_id ORDER BY de.evento_id)
                         FILTER (WHERE de.evento_id IS NOT NULL), '{}') AS evento_ids
           FROM decisao d
@@ -222,6 +228,109 @@ def consultar_pontos(conn: psycopg.Connection = Conn) -> list[dict]:
          ORDER BY p.codigo
         """
     ).fetchall()
+
+
+# ---------------------------------------------------------------------------
+# Explicacao: o que o sistema recebeu e por que decidiu (painel, RNF04)
+# ---------------------------------------------------------------------------
+_bases: dict[str, object] = {}
+
+
+def _base(rotulo: str):
+    """Base de regras de uma versao, lida do arquivo versionado."""
+    nome = rotulo.removesuffix("-degraus")
+    if nome not in _bases:
+        caminho = REGRAS_DIR / f"{nome}.toml"
+        _bases[nome] = carregar_regras(caminho) if caminho.exists() else None
+    return _bases[nome]
+
+
+def _motivo(restricao: str, pretendido: float, emitido: float, anterior: float | None,
+            piso: float | None) -> str:
+    if restricao == "piso":
+        return (f"a inferencia pediu {pretendido:.3f}, abaixo do piso da classe "
+                f"({piso:.3f}); a verificacao elevou ao piso")
+    if restricao == "taxa":
+        return (f"descer de {anterior:.3f} para {pretendido:.3f} de uma vez excederia 0,1 do "
+                f"pleno por minuto; a verificacao limitou a descida a {emitido:.3f}")
+    return "o nivel pedido respeita o piso e a taxa: emitido sem correcao"
+
+
+@app.get("/eventos/{evento_id}/explicacao", response_model=Explicacao)
+def explicar_evento(evento_id: int, conn: psycopg.Connection = Conn) -> dict:
+    evento = conn.execute(
+        "SELECT *, trecho_id AS trecho FROM evento_urbano WHERE id = %s", (evento_id,)
+    ).fetchone()
+    if evento is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, f"evento {evento_id} nao encontrado")
+    trecho = conn.execute(
+        "SELECT tipo_logradouro, nome_logradouro FROM trecho_via WHERE id = %s", (evento["trecho"],)
+    ).fetchone()
+
+    linhas = conn.execute(
+        """
+        SELECT p.codigo AS ponto, p.placa, tp.distancia_m,
+               d.id, d.criado_em, d.nivel_pretendido, d.nivel_emitido, d.restricao_aplicada,
+               d.nivel_anterior, d.entrada, d.ativacoes, r.rotulo AS versao_base_regras,
+               cm.iluminancia_media_min_lux / c.iluminancia_media_min_lux AS piso_fracao,
+               t.lux_medido, t.duty, c.iluminancia_media_min_lux AS lux_pleno
+          FROM trecho_ponto tp
+          JOIN ponto_de_luz p ON p.id = tp.ponto_de_luz_id
+          LEFT JOIN LATERAL (
+                SELECT d.* FROM decisao d
+                  JOIN decisao_evento de ON de.decisao_id = d.id AND de.evento_id = %(ev)s
+                 WHERE d.ponto_de_luz_id = p.id
+                 ORDER BY d.criado_em LIMIT 1
+               ) d ON true
+          LEFT JOIN versao_base_regras r ON r.id = d.versao_base_regras_id
+          LEFT JOIN classe_iluminacao c  ON c.codigo = COALESCE(d.classe_codigo, p.classe_codigo)
+          LEFT JOIN classe_iluminacao cm ON cm.codigo = c.classe_min_dimerizacao
+          LEFT JOIN telemetria t ON t.decisao_id = d.id
+         WHERE tp.trecho_id = %(trecho)s
+         ORDER BY tp.distancia_m
+        """,
+        {"ev": evento_id, "trecho": evento["trecho"]},
+    ).fetchall()
+
+    decisoes = []
+    for l in linhas:
+        item = {"ponto": l["ponto"], "placa": l["placa"], "distancia_m": float(l["distancia_m"])}
+        if l["id"] is None:
+            item["decidida"] = False
+            decisoes.append(item)
+            continue
+        base = _base(l["versao_base_regras"])
+        ativ = l["ativacoes"] or {}
+        regras = []
+        if base is not None:
+            for r in base.regras:
+                grau = float(ativ.get(r.id, 0.0))
+                if grau > 0:
+                    regras.append({"id": r.id, "texto": r.texto(), "origem": r.origem, "grau": grau})
+            regras.sort(key=lambda x: -x["grau"])
+        pret, emit = float(l["nivel_pretendido"]), float(l["nivel_emitido"])
+        ant = None if l["nivel_anterior"] is None else float(l["nivel_anterior"])
+        piso = None if l["piso_fracao"] is None else float(l["piso_fracao"])
+        item.update({
+            "decidida": True,
+            "decisao_id": str(l["id"]),
+            "criado_em": l["criado_em"],
+            "versao_base_regras": l["versao_base_regras"],
+            "entrada": l["entrada"],
+            "regras_ativadas": regras,
+            "nivel_pretendido": pret,
+            "restricao_aplicada": l["restricao_aplicada"],
+            "motivo_restricao": _motivo(l["restricao_aplicada"], pret, emit, ant, piso),
+            "nivel_anterior": ant,
+            "nivel_emitido": emit,
+            "lux_esperado": None if l["lux_pleno"] is None else round(emit * float(l["lux_pleno"]), 2),
+            "lux_medido": None if l["lux_medido"] is None else float(l["lux_medido"]),
+            "duty": None if l["duty"] is None else float(l["duty"]),
+        })
+        decisoes.append(item)
+
+    nome = None if trecho is None else " ".join(x for x in (trecho["tipo_logradouro"], trecho["nome_logradouro"]) if x)
+    return {"evento": evento, "trecho_nome": nome, "decisoes": decisoes}
 
 
 @app.get("/trechos", response_model=list[Trecho])

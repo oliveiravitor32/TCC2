@@ -47,7 +47,12 @@ CREATE TABLE trecho_via (
     -- LineString em SIRGAS 2000 / UTM 23S (EPSG:31983), como no GeoSampa.
     geometria        JSONB NOT NULL,
     fonte            TEXT NOT NULL,
-    extraido_em      DATE NOT NULL
+    extraido_em      DATE NOT NULL,
+    -- "Cheio" tipico do trecho (pessoas na area, media horaria), usado so para
+    -- normalizar a serie da previsao como no treino (3.6). O servico aprende o
+    -- percentil 99 das leituras apos 7 dias; ate la vale este valor inicial,
+    -- declarado para rua local (DIVERGENCIAS 55).
+    referencia_pessoas NUMERIC(8,2) NOT NULL DEFAULT 5 CHECK (referencia_pessoas > 0)
 );
 
 -- ---------------------------------------------------------------------------
@@ -106,16 +111,19 @@ CREATE TABLE luminaria_referencia (
 );
 
 -- ---------------------------------------------------------------------------
--- Eventos recebidos da interface de dados urbanos (REST).
+-- Leituras recebidas da interface de dados urbanos (REST). Cada evento e a
+-- leitura de um trecho num instante: quantas pessoas ha na area e se ha
+-- ocorrencia (DIVERGENCIAS 55). A plataforma publica a cada poucos segundos.
 -- ---------------------------------------------------------------------------
 CREATE TABLE evento_urbano (
     id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     ocorrido_em  TIMESTAMPTZ NOT NULL,
     recebido_em  TIMESTAMPTZ NOT NULL DEFAULT now(),
-    tipo         TEXT NOT NULL CHECK (tipo IN ('movimentacao','ocorrencia')),
-    valor        NUMERIC(10,3),
-    -- Rotulo da ocorrencia: 'seguranca', 'transito', 'encerrada'.
-    rotulo       TEXT,
+    tipo         TEXT NOT NULL DEFAULT 'leitura' CHECK (tipo IN ('leitura')),
+    -- Contagem instantanea de pessoas na area do trecho (analitico da camera).
+    pessoas      INTEGER NOT NULL CHECK (pessoas >= 0),
+    -- Ocorrencia em curso no trecho; NULL = nenhuma.
+    ocorrencia   TEXT CHECK (ocorrencia IN ('seguranca','transito')),
     abrangencia  TEXT NOT NULL DEFAULT 'via'
                  CHECK (abrangencia IN ('via','quadra','bairro','municipio')),
     origem       TEXT NOT NULL,
@@ -127,8 +135,7 @@ CREATE TABLE evento_urbano (
 );
 
 CREATE INDEX evento_urbano_ocorrido_idx ON evento_urbano (ocorrido_em DESC);
-CREATE INDEX evento_urbano_tipo_idx     ON evento_urbano (tipo, ocorrido_em DESC);
-CREATE INDEX evento_urbano_trecho_idx   ON evento_urbano (trecho_id, tipo, ocorrido_em DESC);
+CREATE INDEX evento_urbano_trecho_idx   ON evento_urbano (trecho_id, ocorrido_em DESC);
 
 -- Evento novo acorda o servico de decisao na hora (LISTEN evento_urbano):
 -- esperar o proximo ciclo de 5 s estouraria o RNF03 (< 2 s).
@@ -221,6 +228,11 @@ CREATE TABLE decisao (
     -- Nivel emitido na decisao anterior, base do limite de taxa.
     nivel_anterior         NUMERIC(4,3) CHECK (nivel_anterior BETWEEN 0 AND 1),
     publicado_em           TIMESTAMPTZ,
+    -- Por que (painel e RNF04): entradas da inferencia (presenca, pessoas por
+    -- trecho, ocorrencia, previsao, nivel recente, faixa horaria) e o grau de
+    -- ativacao de cada regra.
+    entrada                JSONB,
+    ativacoes              JSONB,
     -- Invariante estrutural: correcao registrada <=> nivel alterado.
     CHECK ((restricao_aplicada = 'nenhuma') = (nivel_emitido = nivel_pretendido))
 );

@@ -18,10 +18,10 @@ try:
 except psycopg.OperationalError:
     pytest.skip("Postgres indisponivel (docker compose up -d db)", allow_module_level=True)
 
+# Leitura do trecho (DIVERGENCIAS 55): pessoas na area + ocorrencia.
 MOV = {
     "ocorrido_em": "2026-09-21T01:00:00-03:00",
-    "tipo": "movimentacao",
-    "valor": 0.12,
+    "pessoas": 2,
     "origem": "emulador-smart-sampa",
     "trecho": 20159,  # R. Antonio Viana, trecho real do recorte (db/seed_cadastro.sql)
 }
@@ -54,19 +54,18 @@ def cliente(conn):
 # --------------------------------------------------------------------------
 # POST /eventos
 # --------------------------------------------------------------------------
-def test_publica_movimentacao(cliente):
+def test_publica_leitura(cliente):
     r = cliente.post("/eventos", json=MOV)
     assert r.status_code == 201
     corpo = r.json()
-    assert corpo["id"] > 0 and corpo["valor"] == 0.12 and corpo["abrangencia"] == "via"
+    assert corpo["id"] > 0 and corpo["pessoas"] == 2 and corpo["ocorrencia"] is None
+    assert corpo["tipo"] == "leitura" and corpo["abrangencia"] == "via"
 
 
-@pytest.mark.parametrize(
-    "tipo,rotulo", [("ocorrencia", "seguranca"), ("ocorrencia", "transito"), ("ocorrencia", "encerrada")]
-)
-def test_publica_categoricos(cliente, tipo, rotulo):
-    ev = {"ocorrido_em": MOV["ocorrido_em"], "tipo": tipo, "rotulo": rotulo, "origem": "teste", "trecho": 20159}
-    assert cliente.post("/eventos", json=ev).status_code == 201
+@pytest.mark.parametrize("ocorrencia", ["seguranca", "transito"])
+def test_publica_leitura_com_ocorrencia(cliente, ocorrencia):
+    r = cliente.post("/eventos", json={**MOV, "pessoas": 0, "ocorrencia": ocorrencia})
+    assert r.status_code == 201 and r.json()["ocorrencia"] == ocorrencia
 
 
 @pytest.mark.parametrize(
@@ -74,15 +73,17 @@ def test_publica_categoricos(cliente, tipo, rotulo):
     [
         {"placa": "ABC1D23"},  # campo fora do contrato (RNF08)
         {"imagem": "base64..."},
-        {"valor": 1.5},  # fora do universo normalizado
-        {"valor": None},  # movimentacao sem valor
-        {"rotulo": "chuva"},  # movimentacao com rotulo
-        {"tipo": "meteorologia", "valor": None, "rotulo": "chuva"},  # fora do contrato (item 49)
-        {"tipo": "ocorrencia", "valor": None, "rotulo": "granizo"},  # fora do vocabulario
-        {"tipo": "ocorrencia", "rotulo": "seguranca"},  # categorico com valor
+        {"rosto": "..."},
+        {"pessoas": -1},
+        {"pessoas": 1.5},
+        {"pessoas": None},
+        {"valor": 0.12},  # contrato antigo (nivel normalizado): nao existe mais
+        {"tipo": "movimentacao"},
+        {"tipo": "meteorologia"},  # fora do contrato (item 49)
+        {"ocorrencia": "granizo"},  # fora do vocabulario
+        {"ocorrencia": "encerrada"},  # ausencia de ocorrencia = campo ausente
         {"ocorrido_em": "2026-09-21T01:00:00"},  # sem fuso horario
         {"vigente_ate": "2026-09-21T00:00:00-03:00"},  # vigencia antes da ocorrencia
-        {"tipo": "bairro"},
         {"trecho": None},  # sem trecho: o evento nao diz onde
         {"trecho": 0},
     ],
@@ -90,6 +91,11 @@ def test_publica_categoricos(cliente, tipo, rotulo):
 def test_recusa_evento_fora_do_contrato(cliente, alteracao):
     r = cliente.post("/eventos", json={**MOV, **alteracao})
     assert r.status_code == 422, r.json()
+
+
+def test_leitura_sem_pessoas_e_recusada(cliente):
+    corpo = {k: v for k, v in MOV.items() if k != "pessoas"}
+    assert cliente.post("/eventos", json=corpo).status_code == 422
 
 
 def test_nenhum_evento_invalido_chega_ao_banco(cliente, conn):
@@ -102,20 +108,15 @@ def test_nenhum_evento_invalido_chega_ao_banco(cliente, conn):
 # --------------------------------------------------------------------------
 # GET /eventos
 # --------------------------------------------------------------------------
-def test_consulta_filtra_por_intervalo_e_tipo(cliente):
+def test_consulta_filtra_por_intervalo(cliente):
     cliente.post("/eventos", json=MOV)
     cliente.post("/eventos", json={**MOV, "ocorrido_em": "2026-09-21T03:00:00-03:00"})
-    cliente.post(
-        "/eventos",
-        json={"ocorrido_em": MOV["ocorrido_em"], "tipo": "ocorrencia", "rotulo": "seguranca", "origem": "t", "trecho": 20159},
-    )
     r = cliente.get(
         "/eventos",
-        params={"inicio": "2026-09-21T00:30:00-03:00", "fim": "2026-09-21T02:00:00-03:00",
-                "tipo": "movimentacao"},
+        params={"inicio": "2026-09-21T00:30:00-03:00", "fim": "2026-09-21T02:00:00-03:00"},
     )
     assert r.status_code == 200
-    assert [e["tipo"] for e in r.json()] == ["movimentacao"]
+    assert len(r.json()) == 1 and r.json()[0]["pessoas"] == 2
 
 
 # --------------------------------------------------------------------------
@@ -123,8 +124,8 @@ def test_consulta_filtra_por_intervalo_e_tipo(cliente):
 # --------------------------------------------------------------------------
 def _decisao_com_telemetria(conn) -> str:
     ev = conn.execute(
-        "INSERT INTO evento_urbano (ocorrido_em, tipo, valor, origem, trecho_id)"
-        " VALUES (now(), 'movimentacao', 0.1, 't', 20159) RETURNING id"
+        "INSERT INTO evento_urbano (ocorrido_em, pessoas, origem, trecho_id)"
+        " VALUES (now(), 0, 't', 20159) RETURNING id"
     ).fetchone()["id"]
     d = conn.execute(
         """
@@ -132,7 +133,7 @@ def _decisao_com_telemetria(conn) -> str:
                              classe_codigo, nivel_pretendido, nivel_emitido, restricao_aplicada)
         SELECT p.id, r.id, m.id, 'P3', 0.171, 0.500, 'piso'
           FROM ponto_de_luz p, versao_base_regras r, versao_modelo_previsao m
-         WHERE p.codigo = 'BANCADA-01' AND r.rotulo = 'v2-sem-meteorologia' AND m.rotulo = 'persistencia'
+         WHERE p.codigo = 'BANCADA-01' AND r.rotulo = 'v3-presenca' AND m.rotulo = 'persistencia'
         RETURNING id
         """
     ).fetchone()["id"]
@@ -153,7 +154,7 @@ def test_decisoes_trazem_a_cadeia_de_auditoria(cliente, conn):
     assert linha["nivel_pretendido"] == 0.171
     assert linha["nivel_emitido"] == 0.5
     assert linha["restricao_aplicada"] == "piso"
-    assert linha["versao_base_regras"] == "v2-sem-meteorologia"
+    assert linha["versao_base_regras"] == "v3-presenca"
     assert linha["versao_modelo"] == "persistencia"
     assert linha["evento_ids"] == [ev]
 
@@ -228,7 +229,7 @@ def _telemetria_em(conn, quando, nivel, lux, residual_sessao=None):
                              nivel_emitido, restricao_aplicada)
         SELECT %s, p.id, r.id, m.id, 'P3', %s, %s, 'nenhuma'
           FROM ponto_de_luz p, versao_base_regras r, versao_modelo_previsao m
-         WHERE p.codigo = 'BANCADA-01' AND r.rotulo = 'v2-sem-meteorologia'
+         WHERE p.codigo = 'BANCADA-01' AND r.rotulo = 'v3-presenca'
            AND m.rotulo = 'persistencia'
         RETURNING id
         """,
@@ -359,3 +360,50 @@ def test_pontos_trazem_placa_e_trechos(cliente):
     linha = next(p for p in cliente.get("/pontos").json() if p["codigo"] == "BANCADA-01")
     assert linha["placa"] == "IP0412418"
     assert linha["trechos"][0] == 20159  # o mais proximo primeiro
+
+
+# ---------------------------------------------------------------------------
+# Chave do painel de demonstracao e explicacao da decisao (DIVERGENCIAS 55)
+# ---------------------------------------------------------------------------
+def test_chave_demo_tambem_publica(cliente, com_chave, monkeypatch):
+    import api_eventos.app as modulo
+    monkeypatch.setattr(modulo, "CHAVE_DEMO", "chave-do-painel")
+    assert cliente.post("/eventos", json=MOV, headers={"X-Chave-Api": "chave-do-painel"}).status_code == 201
+    monkeypatch.setattr(modulo, "CHAVE_DEMO", "")  # desligada
+    assert cliente.post("/eventos", json=MOV, headers={"X-Chave-Api": "chave-do-painel"}).status_code == 401
+
+
+def test_explicacao_mostra_regras_e_correcao(cliente, conn):
+    from decisao import ciclo
+    from decisao.inferencia import carregar
+    from decisao.previsao import Persistencia
+
+    ev = cliente.post("/eventos", json={**MOV, "pessoas": 0,
+                                        "ocorrido_em": "2031-03-10T01:00:00-03:00"}).json()
+    from datetime import datetime, timezone
+
+    from psycopg.rows import tuple_row
+
+    base = carregar()
+    conn.row_factory = tuple_row  # o ciclo trabalha com tuplas; a API, com dicionarios
+    ponto = next(p for p in ciclo.pontos(conn) if p.codigo == "BANCADA-01")
+    ciclo.decidir(conn, base=base, previsor=Persistencia(), ponto=ponto,
+                  agora=datetime(2031, 3, 10, 4, 0, 5, tzinfo=timezone.utc),
+                  versao_regras_id=ciclo.registrar_versao_regras(conn, base),
+                  versao_modelo_id=ciclo.id_modelo(conn, "persistencia"))
+    conn.row_factory = dict_row
+    r = cliente.get(f"/eventos/{ev['id']}/explicacao")
+    assert r.status_code == 200
+    corpo = r.json()
+    assert corpo["trecho_nome"] == "R ANTONIO VIANA"
+    d = corpo["decisoes"][0]
+    assert d["ponto"] == "BANCADA-01" and d["decidida"]
+    assert d["entrada"]["presenca"] is False
+    assert d["regras_ativadas"][0]["id"] == "R4"  # via vazia, previsao baixa: reduzido
+    assert "presenca = nao" in d["regras_ativadas"][0]["texto"]
+    assert d["restricao_aplicada"] == "piso" and "piso" in d["motivo_restricao"]
+    assert d["nivel_emitido"] == 0.5
+
+
+def test_explicacao_de_evento_inexistente(cliente):
+    assert cliente.get("/eventos/999999999/explicacao").status_code == 404

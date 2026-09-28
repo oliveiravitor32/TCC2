@@ -45,7 +45,8 @@ def test_cenario_bem_formado(arquivo):
     # O envelope nunca admite nivel abaixo do piso da classe adotada (3.8).
     assert all(f["min"] >= 0.5 for f in faixas)
     for e in c.eventos:
-        assert e["tipo"] in ("movimentacao", "ocorrencia")
+        assert isinstance(e["pessoas"], int) and e["pessoas"] >= 0
+        assert e.get("ocorrencia") in (None, "seguranca", "transito")
         assert 0 <= e["em_min"] <= c.duracao_min
 
 
@@ -59,11 +60,11 @@ def test_perfil_horario_tem_vale_de_madrugada_e_pico_de_tarde():
 # --------------------------------------------------------------------------
 # Avaliacao
 # --------------------------------------------------------------------------
-def registro(niveis, observada=0.02, ocorrencia=False):
+def registro(niveis, presenca=False, ocorrencia=False, sem_dado=False):
     return [
         {"minuto": i * 5 / 60, "nivel_pretendido": n, "nivel_emitido": n,
          "nivel_anterior": niveis[i - 1] if i else None, "restricao": "nenhuma",
-         "observada": observada, "ocorrencia": ocorrencia,
+         "presenca": presenca, "sem_dado": sem_dado, "ocorrencia": ocorrencia,
          "criado_em": T0 + timedelta(seconds=5 * i)}
         for i, n in enumerate(niveis)
     ]
@@ -80,7 +81,7 @@ def avaliar_simples(niveis, **kw):
     reg = registro(niveis, **kw)
     fim = T0 + timedelta(seconds=5 * len(niveis))
     return avaliar(cenario_simples(len(niveis) * 5 / 60), reg, 1, P3, "teste", False,
-                   T0, fim, fronteira_baixa=0.1)
+                   T0, fim)
 
 
 def test_conta_violacao_de_piso():
@@ -113,14 +114,14 @@ def test_aderencia_ao_envelope():
 # Metrica de H3
 # --------------------------------------------------------------------------
 def test_h3_conta_transicao_so_na_janela_de_baixa_demanda():
-    # Movimentacao alta: nao ha janela de baixa demanda a consumir.
-    r = avaliar_simples([1.0, 1.0], observada=0.9)
+    # Pedestre na via: nao ha janela de baixa demanda a consumir.
+    r = avaliar_simples([1.0, 1.0], presenca=True)
     assert r["h3"]["ciclos_em_janela_baixa"] == 0
     assert r["h3"]["fracao_em_transicao"] is None
 
 
 def test_h3_transicao_e_o_que_esta_acima_do_piso():
-    r = avaliar_simples([0.9, 0.8, 0.5, 0.5], observada=0.02)
+    r = avaliar_simples([0.9, 0.8, 0.5, 0.5])
     assert r["h3"]["ciclos_em_janela_baixa"] == 4
     assert r["h3"]["ciclos_em_transicao"] == 2  # os dois primeiros
     assert r["h3"]["fracao_em_transicao"] == 0.5
@@ -129,7 +130,12 @@ def test_h3_transicao_e_o_que_esta_acima_do_piso():
 def test_h3_ignora_ciclos_em_que_o_pleno_e_imposto():
     # Sob ocorrencia o nivel alto vem da regra de dominio, nao de falta de
     # antecipacao: medir isso seria medir a regra.
-    r = avaliar_simples([1.0, 1.0], observada=0.02, ocorrencia=True)
+    r = avaliar_simples([1.0, 1.0], ocorrencia=True)
+    assert r["h3"]["ciclos_em_janela_baixa"] == 0
+
+
+def test_h3_ignora_ciclos_sem_leitura():
+    r = avaliar_simples([1.0, 1.0], sem_dado=True)
     assert r["h3"]["ciclos_em_janela_baixa"] == 0
 
 

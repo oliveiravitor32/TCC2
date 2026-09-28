@@ -1,60 +1,48 @@
 {
   "nome": "fluxo_intenso_de_madrugada",
-  "descricao": "Horario avancado com fluxo intenso: o horario nao pode mandar sozinho.",
+  "descricao": "Madrugada com pedestres na via: o horario nao pode mandar sozinho.",
   "origem": "Combinacao conflitante prevista em 3.5.",
   "inicio_local": "2026-09-23T03:00:00",
   "duracao_min": 60,
   "eventos": [
     {
       "em_min": 0,
-      "tipo": "movimentacao",
-      "valor": 0.62,
+      "pessoas": 6,
       "vigente_min": 15
     },
     {
       "em_min": 10,
-      "tipo": "movimentacao",
-      "valor": 0.62,
+      "pessoas": 6,
       "vigente_min": 15
     },
     {
       "em_min": 20,
-      "tipo": "movimentacao",
-      "valor": 0.62,
+      "pessoas": 6,
       "vigente_min": 15
     },
     {
       "em_min": 30,
-      "tipo": "movimentacao",
-      "valor": 0.62,
+      "pessoas": 6,
       "vigente_min": 15
     },
     {
       "em_min": 40,
-      "tipo": "movimentacao",
-      "valor": 0.62,
+      "pessoas": 6,
       "vigente_min": 15
     },
     {
       "em_min": 50,
-      "tipo": "movimentacao",
-      "valor": 0.62,
+      "pessoas": 6,
       "vigente_min": 15
     }
   ],
   "envelope": [
     {
       "de_min": 0,
-      "ate_min": 5,
-      "min": 0.5,
-      "max": 1.0
-    },
-    {
-      "de_min": 5,
       "ate_min": 60,
-      "min": 0.85,
+      "min": 0.9,
       "max": 1.0,
-      "nota": "movimentacao alta"
+      "nota": "pedestres presentes: pleno"
     }
   ]
 }

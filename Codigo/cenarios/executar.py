@@ -123,12 +123,13 @@ def carregar_suite(nome: str | None = None) -> list[Cenario]:
 # ---------------------------------------------------------------------------
 # Execucao
 # ---------------------------------------------------------------------------
-def _inserir_evento(conn, quando: datetime, tipo: str, trecho_id: int, valor=None, rotulo=None,
-                    vigente_ate=None, origem="cenario") -> None:
+def _inserir_leitura(conn, quando: datetime, trecho_id: int, pessoas: int, ocorrencia=None,
+                     vigente_ate=None, origem="cenario") -> None:
+    """Leitura do trecho: pessoas na area e ocorrencia em curso (item 55)."""
     conn.execute(
-        "INSERT INTO evento_urbano (ocorrido_em, tipo, valor, rotulo, origem, trecho_id, vigente_ate)"
-        " VALUES (%s, %s, %s, %s, %s, %s, %s)",
-        (quando, tipo, valor, rotulo, origem, trecho_id, vigente_ate),
+        "INSERT INTO evento_urbano (ocorrido_em, pessoas, ocorrencia, origem, trecho_id, vigente_ate)"
+        " VALUES (%s, %s, %s, %s, %s, %s)",
+        (quando, pessoas, ocorrencia, origem, trecho_id, vigente_ate),
     )
 
 
@@ -144,12 +145,28 @@ def trecho_principal(conn, ponto_id: int) -> int:
     return linha[0]
 
 
+LEITURAS_POR_HORA = 12  # historico sintetico: uma leitura a cada 5 min
+
+
 def _semear_historico(conn, inicio: datetime, execucao_id: int, trecho_id: int) -> None:
-    """Uma leitura por hora nas 168 h anteriores ao cenario (perfil sintetico)."""
+    """Leituras nas 168 h anteriores ao cenario, pelo perfil sintetico.
+
+    Em cada hora, 12 leituras cuja media de pessoas e o perfil daquela hora
+    vezes a referencia do trecho: a serie normalizada que chega a previsao e
+    o proprio perfil (3.6). As leituras antigas vencem em 1 min e nao
+    aparecem como presenca no cenario.
+    """
+    ref = float(conn.execute(
+        "SELECT referencia_pessoas FROM trecho_via WHERE id = %s", (trecho_id,)
+    ).fetchone()[0])
     for k in range(HORAS_HISTORICO, 0, -1):
-        quando = (inicio - timedelta(hours=k)).replace(minute=0, second=0, microsecond=0)
-        _inserir_evento(conn, quando, "movimentacao", trecho_id, valor=perfil_horario(quando.astimezone(config.FUSO)),
-                        vigente_ate=quando + timedelta(hours=1), origem=f"cenario-historico:{execucao_id}")
+        hora = (inicio - timedelta(hours=k)).replace(minute=0, second=0, microsecond=0)
+        total = round(perfil_horario(hora.astimezone(config.FUSO)) * ref * LEITURAS_POR_HORA)
+        base, resto = divmod(total, LEITURAS_POR_HORA)
+        for n in range(LEITURAS_POR_HORA):
+            _inserir_leitura(conn, hora + timedelta(minutes=5 * n), trecho_id,
+                             base + (1 if n < resto else 0),
+                             origem=f"cenario-historico:{execucao_id}")
 
 
 def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
@@ -191,8 +208,8 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
             while i < len(pendentes) and pendentes[i]["em_min"] <= minuto:
                 e = pendentes[i]
                 vig = e.get("vigente_min")
-                _inserir_evento(
-                    conn, agora, e["tipo"], e.get("trecho", trecho), e.get("valor"), e.get("rotulo"),
+                _inserir_leitura(
+                    conn, agora, e.get("trecho", trecho), e["pessoas"], e.get("ocorrencia"),
                     agora + timedelta(minutes=vig) if vig else None,
                     origem=f"cenario:{execucao_id}",
                 )
@@ -208,7 +225,8 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
                 "nivel_emitido": float(d.nivel_emitido),
                 "nivel_anterior": float(d.nivel_anterior) if d.nivel_anterior is not None else None,
                 "restricao": d.restricao_aplicada,
-                "observada": d.estado.observada,
+                "presenca": d.estado.presenca,
+                "sem_dado": d.estado.sem_dado,
                 "ocorrencia": d.estado.ocorrencia,
                 "criado_em": agora,
             })
@@ -216,18 +234,13 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
         conn.execute("UPDATE execucao_cenario SET encerrada_em = %s WHERE id = %s", (fim, execucao_id))
 
     criterio = ciclo.criterio(conn, ponto.classe_codigo)
-    # Fronteira "baixa/media" da base vigente: e ela que define o que conta
-    # como janela de baixa demanda (2.10), e nao o julgamento dos autores.
-    fronteira_baixa = (base.mov["baixa"][2] + base.mov["baixa"][3]) / 2
-    return avaliar(cenario, registro, execucao_id, criterio, previsor.rotulo, reativo,
-                   inicio, fim, fronteira_baixa)
+    return avaliar(cenario, registro, execucao_id, criterio, previsor.rotulo, reativo, inicio, fim)
 
 
 # ---------------------------------------------------------------------------
 # Avaliacao
 # ---------------------------------------------------------------------------
-def avaliar(cenario, registro, execucao_id, criterio, modelo, reativo, inicio, fim,
-            fronteira_baixa: float) -> dict:
+def avaliar(cenario, registro, execucao_id, criterio, modelo, reativo, inicio, fim) -> dict:
     piso = float(criterio.piso)
     taxa_passo = float(criterio.taxa_max_decrescimo_min) * config.PERIODO_S / 60
 
@@ -249,17 +262,15 @@ def avaliar(cenario, registro, execucao_id, criterio, modelo, reativo, inicio, f
             fora.append({"minuto": r["minuto"], "nivel": r["nivel_emitido"],
                          "esperado": [faixa["min"], faixa["max"]]})
 
-    # H3 (2.10): janela de baixa demanda = ciclos em que a movimentacao
-    # observada fica abaixo da fronteira "baixa/media" da base de regras.
-    # Deriva do dado do cenario, nao do envelope. "Em transicao" = ainda
-    # acima do piso, isto e, a janela sendo gasta descendo em vez de no
-    # nivel que ela justificaria.
+    # H3 (2.10): janela de baixa demanda = ciclos com a via VAZIA (leitura
+    # vigente, ninguem na area). Deriva do dado do cenario, nao do envelope.
+    # "Em transicao" = ainda acima do piso, isto e, a janela sendo gasta
+    # descendo em vez de no nivel que ela justificaria.
     margem = 0.02
-    # Ciclos sob ocorrencia ficam de fora: neles o pleno e imposto pela regra
-    # de dominio, e conta-los mediria essa regra, nao o efeito da previsao.
+    # Ciclos sob ocorrencia ou sem leitura ficam de fora: neles o pleno e
+    # imposto pela regra, e conta-los mediria a regra, nao a previsao.
     em_baixa = [r for r in registro
-                if r["observada"] is not None and r["observada"] < fronteira_baixa
-                and not r["ocorrencia"]]
+                if not r["sem_dado"] and not r["presenca"] and not r["ocorrencia"]]
     em_transicao = [r for r in em_baixa if r["nivel_emitido"] > piso + margem]
 
     # Mudancas de nivel (item 51). A descida e limitada pela taxa; o que pode
@@ -321,7 +332,7 @@ def avaliar(cenario, registro, execucao_id, criterio, modelo, reativo, inicio, f
             "discordancias": fora[:20],
         },
         "h3": {
-            "fronteira_baixa": round(fronteira_baixa, 4),
+            "janela": "via vazia, com leitura vigente e sem ocorrencia",
             "ciclos_em_janela_baixa": len(em_baixa),
             "ciclos_em_transicao": len(em_transicao),
             "fracao_em_transicao": round(len(em_transicao) / len(em_baixa), 4) if em_baixa else None,

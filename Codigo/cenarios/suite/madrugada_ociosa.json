@@ -7,74 +7,62 @@
   "eventos": [
     {
       "em_min": 0,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 10,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 20,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 30,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 40,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 50,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 60,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 70,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 80,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 90,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 100,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 110,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     }
   ],

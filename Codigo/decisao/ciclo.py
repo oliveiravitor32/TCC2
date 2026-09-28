@@ -15,9 +15,10 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 
 import psycopg
+from psycopg.types.json import Jsonb
 
 from . import config
-from .inferencia import BaseRegras, Entrada, inferir
+from .inferencia import BaseRegras, Entrada, horas_desde_18h, inferir
 from .previsao import Historico, Previsor
 from .verificacao import PLENO, Criterio, verificar
 
@@ -38,9 +39,17 @@ class Ponto:
 
 @dataclass(frozen=True)
 class EstadoVia:
-    observada: float | None  # None = sem dado de movimentacao vigente
+    """Leituras vigentes dos trechos de um ponto (DIVERGENCIAS 55)."""
+
+    presenca: bool  # alguma pessoa em algum trecho do ponto
     ocorrencia: bool
+    # Pessoas na leitura vigente de cada trecho; vazio = sem dado vigente.
+    pessoas: dict[int, int] = field(default_factory=dict)
     evento_ids: list[int] = field(default_factory=list)
+
+    @property
+    def sem_dado(self) -> bool:
+        return not self.pessoas
 
 
 @dataclass(frozen=True)
@@ -143,84 +152,133 @@ def estado_via(
 ) -> EstadoVia:
     """Estado da via para UM ponto de luz, a partir dos trechos dele.
 
-    O evento chega referido a um trecho de via; o ponto enxerga os eventos de
-    todos os trechos associados a ele em trecho_ponto (DIVERGENCIAS 54). Em
-    cada trecho vale o ultimo evento vigente de cada tipo, e os trechos se
-    combinam pelo lado seguro:
-    - movimentacao = a MAIOR entre os trechos com dado vigente; sem vigente
-      em nenhum, nao ha dado (e o ciclo decide 1,0). A movimentacao sem
-      vigente_ate vale VALIDADE_MOVIMENTACAO_S;
-    - ocorrencia = basta um trecho com ocorrencia nao encerrada. Sem
-      vigente_ate, vale ate o proximo evento do mesmo tipo no mesmo trecho
-      ('encerrada'): na duvida, a condicao de risco permanece.
+    Cada evento e a leitura de um trecho: pessoas na area e ocorrencia em
+    curso (DIVERGENCIAS 55). O ponto enxerga os trechos associados a ele em
+    trecho_ponto (DIVERGENCIAS 54). Em cada trecho vale a leitura mais recente
+    ainda vigente (sem vigente_ate, VALIDADE_LEITURA_S); entre os trechos,
+    pelo lado seguro: ha presenca se houver alguem em QUALQUER trecho, e
+    ocorrencia se QUALQUER trecho a reportar. Sem leitura vigente em nenhum
+    trecho, nao ha dado (e o ciclo decide 1,0).
 
-    `desde` limita a janela de eventos considerada. Em operacao e None (o
-    estado da via nao "recomeca"). O executor de cenarios passa o inicio da
-    execucao: uma ocorrencia declarada em outro cenario, e nunca encerrada,
-    ficaria vigente para sempre e contaminaria os cenarios seguintes.
+    `desde` limita a janela de eventos considerada. Em operacao e None. O
+    executor de cenarios passa o inicio da execucao, para que um cenario nao
+    enxergue as leituras de outro.
     """
     linhas = conn.execute(
         """
-        SELECT DISTINCT ON (e.trecho_id, e.tipo) e.id, e.tipo, e.valor, e.rotulo
+        SELECT DISTINCT ON (e.trecho_id) e.id, e.trecho_id, e.pessoas, e.ocorrencia
           FROM evento_urbano e
           JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
          WHERE tp.ponto_de_luz_id = %(ponto)s
            AND e.ocorrido_em <= %(agora)s
            AND (%(desde)s::timestamptz IS NULL OR e.ocorrido_em >= %(desde)s)
            AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
-           AND COALESCE(e.vigente_ate,
-                        CASE WHEN e.tipo = 'movimentacao'
-                             THEN e.ocorrido_em + %(validade)s
-                        END,
-                        'infinity') > %(agora)s
-         ORDER BY e.trecho_id, e.tipo, e.ocorrido_em DESC, e.id DESC
+           AND COALESCE(e.vigente_ate, e.ocorrido_em + %(validade)s) > %(agora)s
+         ORDER BY e.trecho_id, e.ocorrido_em DESC, e.id DESC
         """,
         {"agora": agora, "desde": desde, "origens": origens, "ponto": ponto_id,
-         "validade": timedelta(seconds=config.VALIDADE_MOVIMENTACAO_S)},
+         "validade": timedelta(seconds=config.VALIDADE_LEITURA_S)},
     ).fetchall()
-
-    movimentos = [float(valor) for _, tipo, valor, _ in linhas if tipo == "movimentacao"]
-    ocorrencia = any(tipo == "ocorrencia" and rotulo != "encerrada" for _, tipo, _, rotulo in linhas)
     return EstadoVia(
-        observada=max(movimentos) if movimentos else None,
-        ocorrencia=ocorrencia,
+        presenca=any(pessoas >= 1 for _, _, pessoas, _ in linhas),
+        ocorrencia=any(oc is not None for *_, oc in linhas),
+        pessoas={trecho: pessoas for _, trecho, pessoas, _ in linhas},
         evento_ids=sorted(eid for eid, *_ in linhas),
     )
 
 
-def historico_horario(
-    conn: psycopg.Connection, agora: datetime, horas: int, origens: list[str] | None = None,
-    *, ponto_id: int,
+def referencias(
+    conn: psycopg.Connection, agora: datetime, ponto_id: int, origens: list[str] | None = None
 ) -> dict[int, float]:
-    """Nivel de movimentacao por hora CHEIA DE RELOGIO anterior a `agora`,
-    para um ponto de luz.
+    """Referencia de cada trecho do ponto: o "cheio" tipico daquela via.
 
-    Chave = atraso em horas (1 = hora de relogio anterior). O modelo foi
-    treinado sobre janelas horarias fechadas (3.6), entao o agrupamento
-    precisa ser por hora do relogio, e nao por diferenca corrida: a hora em
-    curso e incompleta e nao entra. Em cada hora, media por trecho e, entre
-    os trechos do ponto, a maior - a mesma regra de estado_via.
+    Percentil 99 da media horaria de pessoas nos ultimos DIAS_REFERENCIA dias
+    - o mesmo criterio da normalizacao do treino (3.6) -, quando ha ao menos
+    HORAS_MINIMAS_REFERENCIA horas com leitura; antes disso, o valor inicial
+    declarado em trecho_via.referencia_pessoas.
     """
     linhas = conn.execute(
         """
-        SELECT atraso, max(nivel)
-          FROM (SELECT e.trecho_id,
-                       (extract(epoch FROM (date_trunc('hour', %(agora)s)
-                                            - date_trunc('hour', e.ocorrido_em))) / 3600)::int AS atraso,
-                       avg(e.valor) AS nivel
-                  FROM evento_urbano e
-                  JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
-                 WHERE tp.ponto_de_luz_id = %(ponto)s
-                   AND e.tipo = 'movimentacao'
-                   AND e.ocorrido_em <= %(agora)s
-                   AND e.ocorrido_em > %(agora)s - make_interval(hours => %(horas)s)
-                   AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
-                 GROUP BY 1, 2) por_trecho
-         GROUP BY atraso
+        SELECT t.id, t.referencia_pessoas,
+               (SELECT percentile_cont(0.99) WITHIN GROUP (ORDER BY h.media)
+                  FROM (SELECT avg(e.pessoas) AS media
+                          FROM evento_urbano e
+                         WHERE e.trecho_id = t.id
+                           AND e.ocorrido_em <= %(agora)s
+                           AND e.ocorrido_em > %(agora)s - make_interval(days => %(dias)s)
+                           AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
+                         GROUP BY date_trunc('hour', e.ocorrido_em)) h
+                HAVING count(*) >= %(minimo)s) AS aprendida
+          FROM trecho_via t
+          JOIN trecho_ponto tp ON tp.trecho_id = t.id AND tp.ponto_de_luz_id = %(ponto)s
+        """,
+        {"agora": agora, "dias": config.DIAS_REFERENCIA, "minimo": config.HORAS_MINIMAS_REFERENCIA,
+         "origens": origens, "ponto": ponto_id},
+    ).fetchall()
+    return {t: float(aprendida) if aprendida and aprendida > 0 else float(inicial)
+            for t, inicial, aprendida in linhas}
+
+
+def historico_horario(
+    conn: psycopg.Connection, agora: datetime, horas: int, origens: list[str] | None = None,
+    *, ponto_id: int, refs: dict[int, float] | None = None,
+) -> dict[int, float]:
+    """Nivel de movimentacao por hora CHEIA DE RELOGIO anterior a `agora`,
+    para um ponto de luz - a serie que alimenta a previsao.
+
+    Chave = atraso em horas (1 = hora de relogio anterior); a hora em curso,
+    incompleta, nao entra. Em cada hora e trecho, media de pessoas das
+    leituras dividida pela referencia do trecho (limitada a 1); entre os
+    trechos do ponto, a maior. E a mesma escala do treino (3.6).
+    """
+    refs = refs if refs is not None else referencias(conn, agora, ponto_id, origens)
+    linhas = conn.execute(
+        """
+        SELECT e.trecho_id,
+               (extract(epoch FROM (date_trunc('hour', %(agora)s)
+                                    - date_trunc('hour', e.ocorrido_em))) / 3600)::int AS atraso,
+               avg(e.pessoas) AS media
+          FROM evento_urbano e
+          JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
+         WHERE tp.ponto_de_luz_id = %(ponto)s
+           AND e.ocorrido_em <= %(agora)s
+           AND e.ocorrido_em > %(agora)s - make_interval(hours => %(horas)s)
+           AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
+         GROUP BY 1, 2
         """,
         {"agora": agora, "horas": horas + 1, "origens": origens, "ponto": ponto_id},
     ).fetchall()
-    return {int(a): float(n) for a, n in linhas if a >= 1 and n is not None}
+    serie: dict[int, float] = {}
+    for trecho, atraso, media in linhas:
+        if atraso < 1 or media is None or trecho not in refs:
+            continue
+        nivel = min(float(media) / refs[trecho], 1.0)
+        serie[atraso] = max(serie.get(atraso, 0.0), nivel)
+    return serie
+
+
+def nivel_recente(
+    conn: psycopg.Connection, agora: datetime, origens: list[str] | None = None,
+    *, ponto_id: int, refs: dict[int, float] | None = None, minutos: int = 60,
+) -> float | None:
+    """Nivel normalizado da ultima hora corrida: entra no lugar da previsao no
+    modo reativo (H3) e quando o modelo nao tem historico. None sem leitura."""
+    refs = refs if refs is not None else referencias(conn, agora, ponto_id, origens)
+    linhas = conn.execute(
+        """
+        SELECT e.trecho_id, avg(e.pessoas)
+          FROM evento_urbano e
+          JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
+         WHERE tp.ponto_de_luz_id = %(ponto)s
+           AND e.ocorrido_em <= %(agora)s
+           AND e.ocorrido_em > %(agora)s - make_interval(mins => %(minutos)s)
+           AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
+         GROUP BY 1
+        """,
+        {"agora": agora, "minutos": minutos, "origens": origens, "ponto": ponto_id},
+    ).fetchall()
+    niveis = [min(float(m) / refs[tr], 1.0) for tr, m in linhas if m is not None and tr in refs]
+    return max(niveis) if niveis else None
 
 
 # ---------------------------------------------------------------------------
@@ -274,32 +332,45 @@ def decidir(
 ) -> DecisaoTomada:
     origens = origens_da_execucao(execucao_id)
     estado = estado_via(conn, agora, desde, origens, ponto_id=ponto.id)
+    local = agora.astimezone(config.FUSO)
 
     previsao: float | None = None
-    if estado.observada is None:
-        # Sem dado de movimentacao nao se dimeriza (DIVERGENCIAS 23).
+    recente: float | None = None
+    ativacoes: dict[str, float] = {}
+    if estado.sem_dado:
+        # Sem leitura vigente nao se dimeriza (DIVERGENCIAS 23).
         pretendido = PLENO
     else:
-        if reativo:
-            previsao = None
-        else:
+        refs = referencias(conn, agora, ponto.id, origens)
+        recente = nivel_recente(conn, agora, origens, ponto_id=ponto.id, refs=refs)
+        if not reativo and recente is not None:
             horas = getattr(previsor, "horas_necessarias", lambda: 24)()
             previsao = previsor.prever(
                 Historico(
-                    momento=agora.astimezone(config.FUSO),
-                    observada=estado.observada,
-                    serie=historico_horario(conn, agora, horas, origens, ponto_id=ponto.id),
+                    momento=local,
+                    observada=recente,
+                    serie=historico_horario(conn, agora, horas, origens, ponto_id=ponto.id, refs=refs),
                 )
             )
-        pretendido = inferir(
+        resultado = inferir(
             base,
-            Entrada(
-                observada=estado.observada,
-                prevista=previsao,
-                ocorrencia=estado.ocorrencia,
-                momento=agora.astimezone(config.FUSO),
-            ),
-        ).nivel_pretendido
+            Entrada(presenca=estado.presenca, prevista=previsao, ocorrencia=estado.ocorrencia,
+                    momento=local, recente=recente),
+        )
+        pretendido = resultado.nivel_pretendido
+        ativacoes = {k: round(v, 4) for k, v in resultado.ativacoes.items()}
+
+    # O porque da decisao, gravado junto dela (painel e RNF04).
+    entrada = {
+        "presenca": estado.presenca,
+        "ocorrencia": estado.ocorrencia,
+        "pessoas_por_trecho": {str(k): v for k, v in estado.pessoas.items()},
+        "prevista": None if previsao is None else round(previsao, 4),
+        "recente": None if recente is None else round(recente, 4),
+        "horas_desde_18h": horas_desde_18h(local),
+        "modo": "reativo" if reativo else "antecipado",
+        "sem_dado": estado.sem_dado,
+    }
 
     anterior, segundos = _referencia_de_taxa(conn, ponto, agora, execucao_id)
     r = verificar(
@@ -315,12 +386,12 @@ def decidir(
         INSERT INTO decisao
             (id, criado_em, ponto_de_luz_id, versao_base_regras_id, versao_modelo_id,
              execucao_id, classe_codigo, previsao_movimentacao, nivel_pretendido,
-             nivel_emitido, restricao_aplicada, nivel_anterior)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+             nivel_emitido, restricao_aplicada, nivel_anterior, entrada, ativacoes)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """,
         (did, agora, ponto.id, versao_regras_id, versao_modelo_id, execucao_id,
          ponto.classe_codigo, previsao, pretendido, r.nivel_emitido,
-         r.restricao_aplicada, anterior),
+         r.restricao_aplicada, anterior, Jsonb(entrada), Jsonb(ativacoes) if ativacoes else None),
     )
     for eid in estado.evento_ids:
         conn.execute("INSERT INTO decisao_evento VALUES (%s, %s)", (did, eid))

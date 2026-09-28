@@ -14,49 +14,37 @@ from uuid import UUID
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validator
 
-Tipo = Literal["movimentacao", "ocorrencia"]
+# Um so tipo: a LEITURA do trecho num instante (DIVERGENCIAS 55). A
+# plataforma publica a cada poucos segundos quantas pessoas ha na area e se
+# ha ocorrencia; o servico de decisao cuida do resto. A condicao
+# meteorologica nao faz parte do contrato (DIVERGENCIAS 49).
+Tipo = Literal["leitura"]
 Abrangencia = Literal["via", "quadra", "bairro", "municipio"]
-
-# Rotulos admitidos por tipo. "encerrada" existe para que a plataforma possa
-# declarar o FIM de uma ocorrencia, e nao so o inicio. A condicao
-# meteorologica nao faz parte do contrato: a plataforma de monitoramento nao
-# a produz (DIVERGENCIAS 49).
-ROTULOS: dict[str, frozenset[str]] = {
-    "ocorrencia": frozenset({"seguranca", "transito", "encerrada"}),
-}
+Ocorrencia = Literal["seguranca", "transito"]
 
 
 class EventoEntrada(BaseModel):
-    """Corpo do POST /eventos."""
+    """Corpo do POST /eventos: a leitura de um trecho de via."""
 
     model_config = ConfigDict(extra="forbid")
 
     ocorrido_em: AwareDatetime
-    tipo: Tipo
-    # Movimentacao normalizada no ponto: 0 = minimo, 1 = maximo historico.
-    valor: float | None = Field(default=None, ge=0, le=1)
-    rotulo: str | None = None
+    tipo: Tipo = "leitura"
+    # Contagem instantanea de pessoas na area do trecho (analitico de camera
+    # ja exigido da plataforma, 2.3). Nenhuma identificacao: so o numero.
+    pessoas: int = Field(ge=0, le=10_000)
+    # Ocorrencia em curso no trecho; ausente = nenhuma.
+    ocorrencia: Ocorrencia | None = None
     abrangencia: Abrangencia = "via"
     origem: str = Field(min_length=1, max_length=80)
     # Onde: identificador do trecho de via (segmento de logradouro do
-    # GeoSampa). Um evento se refere a um trecho; o servico decide para as
-    # luminarias associadas a ele (DIVERGENCIAS 54).
+    # GeoSampa). O servico decide para as luminarias associadas a ele
+    # (DIVERGENCIAS 54).
     trecho: int = Field(gt=0)
     vigente_ate: AwareDatetime | None = None
 
     @model_validator(mode="after")
-    def _coerente_com_o_tipo(self) -> EventoEntrada:
-        if self.tipo == "movimentacao":
-            if self.valor is None:
-                raise ValueError("movimentacao exige 'valor' em [0,1]")
-            if self.rotulo is not None:
-                raise ValueError("movimentacao nao admite 'rotulo'")
-        else:
-            if self.rotulo not in ROTULOS[self.tipo]:
-                admitidos = ", ".join(sorted(ROTULOS[self.tipo]))
-                raise ValueError(f"{self.tipo} exige 'rotulo' em: {admitidos}")
-            if self.valor is not None:
-                raise ValueError(f"{self.tipo} nao admite 'valor'")
+    def _vigencia_coerente(self) -> EventoEntrada:
         if self.vigente_ate is not None and self.vigente_ate < self.ocorrido_em:
             raise ValueError("'vigente_ate' anterior a 'ocorrido_em'")
         return self
@@ -67,8 +55,8 @@ class Evento(BaseModel):
     ocorrido_em: datetime
     recebido_em: datetime
     tipo: Tipo
-    valor: float | None
-    rotulo: str | None
+    pessoas: int
+    ocorrencia: Ocorrencia | None
     abrangencia: Abrangencia
     origem: str
     trecho: int
@@ -91,6 +79,9 @@ class Decisao(BaseModel):
     versao_modelo: str
     execucao_id: int | None
     evento_ids: list[int]
+    # O porque (DIVERGENCIAS 55): entradas da inferencia e grau de cada regra.
+    entrada: dict | None = None
+    ativacoes: dict[str, float] | None = None
 
 
 class Telemetria(BaseModel):
@@ -183,3 +174,24 @@ class Trecho(BaseModel):
     numero_inicial: int | None
     numero_final: int | None
     pontos: list[str]
+
+
+class RegraAtivada(BaseModel):
+    id: str
+    texto: str
+    origem: str
+    grau: float
+
+
+class Explicacao(BaseModel):
+    """GET /eventos/{id}/explicacao: o que o sistema recebeu e por que decidiu.
+
+    Para cada luminaria do trecho da leitura, a primeira decisao que a usou:
+    entradas da inferencia, regras ativadas (texto, origem e grau), nivel
+    pretendido, correcao da camada de verificacao e o motivo, nivel emitido
+    e o que o sensor mediu.
+    """
+
+    evento: Evento
+    trecho_nome: str | None
+    decisoes: list[dict]

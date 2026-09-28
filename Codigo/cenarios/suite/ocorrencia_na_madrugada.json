@@ -1,73 +1,57 @@
 {
   "nome": "ocorrencia_na_madrugada",
-  "descricao": "Movimentacao baixa com ocorrencia reportada: elevacao imediata e retorno apos o encerramento.",
+  "descricao": "Via vazia de madrugada com ocorrencia reportada: elevacao imediata e retorno apos o fim.",
   "origem": "Alerta automatico que a plataforma municipal ja produz (2.3, Quadro 7).",
   "inicio_local": "2026-09-23T01:00:00",
   "duracao_min": 90,
   "eventos": [
     {
       "em_min": 0,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 10,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 20,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 30,
-      "tipo": "movimentacao",
-      "valor": 0.02,
-      "vigente_min": 15
+      "pessoas": 0,
+      "vigente_min": 15,
+      "ocorrencia": "seguranca"
     },
     {
       "em_min": 40,
-      "tipo": "movimentacao",
-      "valor": 0.02,
-      "vigente_min": 15
+      "pessoas": 0,
+      "vigente_min": 15,
+      "ocorrencia": "seguranca"
     },
     {
       "em_min": 50,
-      "tipo": "movimentacao",
-      "valor": 0.02,
-      "vigente_min": 15
+      "pessoas": 0,
+      "vigente_min": 15,
+      "ocorrencia": "seguranca"
     },
     {
       "em_min": 60,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 70,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 80,
-      "tipo": "movimentacao",
-      "valor": 0.02,
+      "pessoas": 0,
       "vigente_min": 15
-    },
-    {
-      "em_min": 30,
-      "tipo": "ocorrencia",
-      "rotulo": "seguranca"
-    },
-    {
-      "em_min": 60,
-      "tipo": "ocorrencia",
-      "rotulo": "encerrada"
     }
   ],
   "envelope": [

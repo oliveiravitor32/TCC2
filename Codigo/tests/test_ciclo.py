@@ -1,4 +1,4 @@
-"""Ciclo de decisao contra o Postgres (passo 5).
+"""Ciclo de decisao contra o Postgres (passo 5; leitura por presenca, item 55).
 
 Cada teste roda numa transacao desfeita ao final e comeca com as tabelas de
 movimento vazias (o DELETE tambem e desfeito). Sem banco, os testes pulam.
@@ -25,6 +25,13 @@ except psycopg.OperationalError:
 BASE = carregar()
 # 04:00 UTC = 01:00 em Sao Paulo: madrugada.
 T0 = datetime(2031, 3, 10, 4, 0, tzinfo=timezone.utc)
+UMA_HORA = timedelta(hours=1)
+
+# Trechos reais do recorte do Jardim Helena (db/seed_cadastro.sql).
+ANTONIO_VIANA = 20159      # trecho principal de BANCADA-01 (5,6 m)
+ASCENSO_FERNANDES = 22661  # tambem de BANCADA-01 (16,5 m): poste perto da esquina
+VARZEA_DA_PALMA = 19400    # so de SIMULADO-02
+VINHAIS = 18570            # nenhum ponto com no
 
 
 @pytest.fixture
@@ -45,19 +52,18 @@ def ponto(conn):
     return next(p for p in ciclo.pontos(conn) if p.codigo == "BANCADA-01")
 
 
-# Trechos reais do recorte do Jardim Helena (db/seed_cadastro.sql).
-ANTONIO_VIANA = 20159      # trecho principal de BANCADA-01 (5,6 m)
-ASCENSO_FERNANDES = 22661  # tambem de BANCADA-01 (16,5 m): poste perto da esquina
-VARZEA_DA_PALMA = 19400    # so de SIMULADO-02
-VINHAIS = 18570            # nenhum ponto com no
+@pytest.fixture
+def simulado(conn):
+    return next(p for p in ciclo.pontos(conn) if p.codigo == "SIMULADO-02")
 
 
-def evento(conn, tipo, *, em, valor=None, rotulo=None, vigente_ate=None, origem="teste",
-           trecho=ANTONIO_VIANA) -> int:
+def leitura(conn, *, em, pessoas=0, ocorrencia=None, vigente_ate=None, origem="teste",
+            trecho=ANTONIO_VIANA) -> int:
+    """Leitura do trecho: pessoas na area e ocorrencia em curso."""
     return conn.execute(
-        "INSERT INTO evento_urbano (ocorrido_em, tipo, valor, rotulo, origem, trecho_id, vigente_ate)"
-        " VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id",
-        (em, tipo, valor, rotulo, origem, trecho, vigente_ate),
+        "INSERT INTO evento_urbano (ocorrido_em, pessoas, ocorrencia, origem, trecho_id, vigente_ate)"
+        " VALUES (%s, %s, %s, %s, %s, %s) RETURNING id",
+        (em, pessoas, ocorrencia, origem, trecho, vigente_ate),
     ).fetchone()[0]
 
 
@@ -98,15 +104,16 @@ def test_hash_da_base_e_gravado_e_conferido(conn):
 # --------------------------------------------------------------------------
 # Decisoes
 # --------------------------------------------------------------------------
-def test_sem_dado_de_movimentacao_decide_pleno(conn, ponto):
+def test_sem_leitura_decide_pleno(conn, ponto):
     d = decidir(conn, ponto, T0)
-    assert d.estado.observada is None
+    assert d.estado.sem_dado
     assert d.nivel_pretendido == Decimal("1.000") and d.nivel_emitido == Decimal("1.000")
 
 
-def test_movimentacao_baixa_na_madrugada_vai_ao_piso(conn, ponto):
-    ev = evento(conn, "movimentacao", em=T0 - timedelta(minutes=1), valor=0.02)
+def test_via_vazia_de_madrugada_vai_ao_piso(conn, ponto):
+    ev = leitura(conn, em=T0 - timedelta(seconds=10))
     d = decidir(conn, ponto, T0)
+    assert not d.estado.presenca
     assert d.nivel_pretendido < Decimal("0.5")
     assert d.nivel_emitido == Decimal("0.500") and d.restricao_aplicada == "piso"
     ligados = conn.execute(
@@ -115,9 +122,16 @@ def test_movimentacao_baixa_na_madrugada_vai_ao_piso(conn, ponto):
     assert ligados == [(ev,)]
 
 
+@pytest.mark.parametrize("pessoas", [1, 2, 30])
+def test_uma_pessoa_ja_leva_ao_pleno(conn, ponto, pessoas):
+    leitura(conn, em=T0, pessoas=pessoas)
+    d = decidir(conn, ponto, T0 + timedelta(seconds=1))
+    assert d.estado.presenca and d.nivel_emitido > Decimal("0.9")
+
+
 def test_descida_respeita_a_taxa_entre_ciclos(conn, ponto):
     decidir(conn, ponto, T0)  # sem dado: 1,0
-    evento(conn, "movimentacao", em=T0, valor=0.02)
+    leitura(conn, em=T0, vigente_ate=T0 + UMA_HORA)
     d = decidir(conn, ponto, T0 + timedelta(seconds=5))
     assert d.nivel_anterior == Decimal("1.000")
     assert d.nivel_emitido == Decimal("0.992") and d.restricao_aplicada == "taxa"
@@ -125,7 +139,7 @@ def test_descida_respeita_a_taxa_entre_ciclos(conn, ponto):
 
 def test_rampa_completa_leva_pelo_menos_cinco_minutos(conn, ponto):
     decidir(conn, ponto, T0)
-    evento(conn, "movimentacao", em=T0, valor=0.02)
+    leitura(conn, em=T0, vigente_ate=T0 + UMA_HORA)
     agora, niveis = T0, []
     for _ in range(80):  # 80 x 5 s = 6 min 40 s
         agora += timedelta(seconds=5)
@@ -135,9 +149,22 @@ def test_rampa_completa_leva_pelo_menos_cinco_minutos(conn, ponto):
     assert all(a - b <= Decimal("0.0084") for a, b in zip(niveis, niveis[1:]))
 
 
+def test_pedestre_eleva_na_hora_e_a_saida_libera_em_rampa(conn, ponto):
+    leitura(conn, em=T0, vigente_ate=T0 + UMA_HORA)
+    for s in range(0, 400, 5):
+        decidir(conn, ponto, T0 + timedelta(seconds=s))  # desce ao piso
+    leitura(conn, em=T0 + timedelta(seconds=401), pessoas=1)
+    d = decidir(conn, ponto, T0 + timedelta(seconds=405))
+    assert d.nivel_emitido > Decimal("0.9")  # elevacao imediata, sem limite de taxa
+    elevado = d.nivel_emitido
+    leitura(conn, em=T0 + timedelta(seconds=406), pessoas=0, vigente_ate=T0 + UMA_HORA)
+    d = decidir(conn, ponto, T0 + timedelta(seconds=410))
+    assert d.nivel_emitido == elevado - Decimal("0.008")  # volta a descer, em rampa
+
+
 def test_apos_failsafe_a_rampa_recomeca_do_pleno(conn, ponto):
     # Servico estava parado: ultima decisao (0,5) ha 60 s, mais que o timeout.
-    evento(conn, "movimentacao", em=T0, valor=0.02)
+    leitura(conn, em=T0, vigente_ate=T0 + UMA_HORA)
     for s in range(0, 400, 5):
         decidir(conn, ponto, T0 + timedelta(seconds=s))
     volta = T0 + timedelta(seconds=395 + 60)
@@ -146,40 +173,33 @@ def test_apos_failsafe_a_rampa_recomeca_do_pleno(conn, ponto):
     assert d.nivel_emitido == Decimal("0.992")  # e nao 0,5 de uma vez
 
 
-def test_ocorrencia_eleva_e_encerrada_libera_em_rampa(conn, ponto):
-    evento(conn, "movimentacao", em=T0, valor=0.02, vigente_ate=T0 + timedelta(hours=1))
-    evento(conn, "ocorrencia", em=T0, rotulo="seguranca")
+def test_ocorrencia_com_via_vazia_eleva(conn, ponto):
+    leitura(conn, em=T0, ocorrencia="seguranca")
     d = decidir(conn, ponto, T0 + timedelta(seconds=5))
-    assert d.estado.ocorrencia
+    assert d.estado.ocorrencia and not d.estado.presenca
     assert d.nivel_emitido > Decimal("0.9")  # R1: pleno, sem diluicao
-    elevado = d.nivel_emitido
-    evento(conn, "ocorrencia", em=T0 + timedelta(seconds=6), rotulo="encerrada")
-    d = decidir(conn, ponto, T0 + timedelta(seconds=10))
-    assert not d.estado.ocorrencia
-    assert d.nivel_emitido == elevado - Decimal("0.008")  # volta a descer, em rampa
 
 
-def test_ocorrencia_persiste_ate_encerrada(conn, ponto):
-    evento(conn, "movimentacao", em=T0, valor=0.02, vigente_ate=T0 + timedelta(hours=2))
-    evento(conn, "ocorrencia", em=T0, rotulo="seguranca")
-    assert ciclo.estado_via(conn, T0 + timedelta(hours=1), ponto_id=ponto.id).ocorrencia
-    evento(conn, "ocorrencia", em=T0 + timedelta(hours=1, seconds=1), rotulo="encerrada")
-    assert not ciclo.estado_via(conn, T0 + timedelta(hours=1, seconds=2), ponto_id=ponto.id).ocorrencia
+def test_leitura_sem_vigencia_expira(conn, ponto):
+    leitura(conn, em=T0, pessoas=2)
+    assert ciclo.estado_via(conn, T0 + timedelta(seconds=config.VALIDADE_LEITURA_S - 1), ponto_id=ponto.id).presenca
+    assert ciclo.estado_via(conn, T0 + timedelta(seconds=config.VALIDADE_LEITURA_S + 1), ponto_id=ponto.id).sem_dado
 
 
-def test_movimentacao_sem_vigencia_expira(conn, ponto):
-    evento(conn, "movimentacao", em=T0, valor=0.02)
-    assert ciclo.estado_via(conn, T0 + timedelta(seconds=config.VALIDADE_MOVIMENTACAO_S - 1), ponto_id=ponto.id).observada == 0.02
-    assert ciclo.estado_via(conn, T0 + timedelta(seconds=config.VALIDADE_MOVIMENTACAO_S + 1), ponto_id=ponto.id).observada is None
+def test_leitura_mais_recente_do_trecho_prevalece(conn, ponto):
+    leitura(conn, em=T0, pessoas=3)
+    leitura(conn, em=T0 + timedelta(seconds=5), pessoas=0)
+    e = ciclo.estado_via(conn, T0 + timedelta(seconds=6), ponto_id=ponto.id)
+    assert not e.presenca and e.pessoas == {ANTONIO_VIANA: 0}
 
 
-def test_evento_futuro_nao_entra(conn, ponto):
-    evento(conn, "ocorrencia", em=T0 + timedelta(minutes=5), rotulo="seguranca")
-    assert not ciclo.estado_via(conn, T0, ponto_id=ponto.id).ocorrencia
+def test_leitura_futura_nao_entra(conn, ponto):
+    leitura(conn, em=T0 + timedelta(minutes=5), ocorrencia="seguranca")
+    assert ciclo.estado_via(conn, T0, ponto_id=ponto.id).sem_dado
 
 
 def test_modo_reativo_nao_grava_previsao(conn, ponto):
-    evento(conn, "movimentacao", em=T0, valor=0.4)
+    leitura(conn, em=T0, pessoas=0)
     d = decidir(conn, ponto, T0, reativo=True)
     prev = conn.execute(
         "SELECT previsao_movimentacao FROM decisao WHERE id = %s", (d.id,)
@@ -187,18 +207,40 @@ def test_modo_reativo_nao_grava_previsao(conn, ponto):
     assert prev is None
 
 
-def test_historico_horario_agrega_por_hora(conn, ponto):
-    # Agrupamento por hora de relogio (T0 = 04:00 UTC). Duas leituras na
-    # mesma hora viram media; a hora sem evento nao aparece, e a hora em
-    # curso (incompleta) tambem nao.
-    evento(conn, "movimentacao", em=T0 - timedelta(minutes=70), valor=0.2)   # 02:50 -> 2
-    evento(conn, "movimentacao", em=T0 - timedelta(minutes=100), valor=0.4)  # 02:20 -> 2
-    evento(conn, "movimentacao", em=T0 - timedelta(hours=3), valor=0.8)      # 01:00 -> 3
-    evento(conn, "movimentacao", em=T0, valor=0.02)                           # hora em curso
+def test_decisao_grava_o_porque(conn, ponto):
+    leitura(conn, em=T0, pessoas=2, ocorrencia="transito")
+    d = decidir(conn, ponto, T0 + timedelta(seconds=1))
+    entrada, ativacoes = conn.execute(
+        "SELECT entrada, ativacoes FROM decisao WHERE id = %s", (d.id,)
+    ).fetchone()
+    assert entrada["presenca"] and entrada["ocorrencia"]
+    assert entrada["pessoas_por_trecho"] == {str(ANTONIO_VIANA): 2}
+    assert ativacoes["R1"] == 1.0 and ativacoes["R2"] == 1.0 and ativacoes["R4"] == 0.0
+
+
+# --------------------------------------------------------------------------
+# Serie para a previsao (normalizada por trecho, 3.6)
+# --------------------------------------------------------------------------
+def test_historico_horario_normaliza_pela_referencia_do_trecho(conn, ponto):
+    # Referencia inicial do trecho = 5 pessoas (trecho_via.referencia_pessoas).
+    # Duas leituras na mesma hora viram media; a hora em curso nao entra.
+    leitura(conn, em=T0 - timedelta(minutes=70), pessoas=1)   # 02:50 -> atraso 2
+    leitura(conn, em=T0 - timedelta(minutes=100), pessoas=3)  # 02:20 -> atraso 2
+    leitura(conn, em=T0 - timedelta(hours=3), pessoas=8)      # 01:00 -> atraso 3 (satura)
+    leitura(conn, em=T0, pessoas=0)                           # hora em curso
     h = ciclo.historico_horario(conn, T0, horas=24, ponto_id=ponto.id)
-    assert h[2] == pytest.approx(0.3)   # media de 0,2 e 0,4
-    assert h[3] == pytest.approx(0.8)
+    assert h[2] == pytest.approx(2 / 5)
+    assert h[3] == pytest.approx(1.0)
     assert 1 not in h and 0 not in h
+
+
+def test_referencia_e_aprendida_com_historico_suficiente(conn, ponto):
+    # 168 horas com media de 2 pessoas: a referencia aprendida e 2, e nao 5.
+    for k in range(1, 170):
+        leitura(conn, em=T0 - timedelta(hours=k), pessoas=2)
+    refs = ciclo.referencias(conn, T0, ponto.id)
+    assert refs[ANTONIO_VIANA] == pytest.approx(2.0)
+    assert refs[ASCENSO_FERNANDES] == pytest.approx(5.0)  # sem historico: valor inicial
 
 
 def test_previsao_do_modelo_e_gravada(conn, ponto):
@@ -213,8 +255,8 @@ def test_previsao_do_modelo_e_gravada(conn, ponto):
             return sum(h.serie.values()) / len(h.serie)
 
     for k in range(1, 25):
-        evento(conn, "movimentacao", em=T0 - timedelta(hours=k), valor=0.4)
-    evento(conn, "movimentacao", em=T0, valor=0.9)
+        leitura(conn, em=T0 - timedelta(hours=k), pessoas=2)  # 2/5 = 0,4
+    leitura(conn, em=T0, pessoas=0)
     d = ciclo.decidir(
         conn, base=BASE, previsor=Media(), ponto=ponto, agora=T0,
         versao_regras_id=ciclo.registrar_versao_regras(conn, BASE),
@@ -276,68 +318,59 @@ def test_last_will_marca_sem_comunicacao(conn, ponto):
 
 def test_execucao_de_cenario_so_enxerga_os_proprios_eventos(conn, ponto):
     # DIVERGENCIAS 51: o historico sintetico de uma execucao nao pode virar
-    # "movimentacao observada" de outra.
-    evento(conn, "movimentacao", em=T0, valor=0.7, origem="cenario-historico:1",
-           vigente_ate=T0 + timedelta(hours=1))
-    evento(conn, "movimentacao", em=T0 - timedelta(hours=2), valor=0.7, origem="cenario:1")
+    # leitura de outra.
+    leitura(conn, em=T0, pessoas=3, origem="cenario-historico:1", vigente_ate=T0 + UMA_HORA)
+    leitura(conn, em=T0 - timedelta(hours=2), pessoas=3, origem="cenario:1")
     origens = ciclo.origens_da_execucao(2)
-    assert ciclo.estado_via(conn, T0 + timedelta(minutes=1), origens=origens, ponto_id=ponto.id).observada is None
+    assert ciclo.estado_via(conn, T0 + timedelta(minutes=1), origens=origens, ponto_id=ponto.id).sem_dado
     assert ciclo.historico_horario(conn, T0 + timedelta(minutes=1), 24, origens, ponto_id=ponto.id) == {}
     # Em operacao (sem execucao) todas as origens valem.
-    assert ciclo.estado_via(conn, T0 + timedelta(minutes=1), ponto_id=ponto.id).observada == 0.7
+    assert ciclo.estado_via(conn, T0 + timedelta(minutes=1), ponto_id=ponto.id).presenca
 
 
 # --------------------------------------------------------------------------
 # Associacao espacial trecho x ponto (DIVERGENCIAS 54)
 # --------------------------------------------------------------------------
-@pytest.fixture
-def simulado(conn):
-    return next(p for p in ciclo.pontos(conn) if p.codigo == "SIMULADO-02")
-
-
-def test_evento_de_outro_trecho_nao_afeta_o_ponto(conn, ponto, simulado):
-    evento(conn, "ocorrencia", em=T0, rotulo="seguranca", trecho=VARZEA_DA_PALMA)
+def test_leitura_de_outro_trecho_nao_afeta_o_ponto(conn, ponto, simulado):
+    leitura(conn, em=T0, ocorrencia="seguranca", trecho=VARZEA_DA_PALMA)
     assert ciclo.estado_via(conn, T0, ponto_id=simulado.id).ocorrencia
-    assert not ciclo.estado_via(conn, T0, ponto_id=ponto.id).ocorrencia
+    assert ciclo.estado_via(conn, T0, ponto_id=ponto.id).sem_dado
 
 
 def test_poste_perto_da_esquina_responde_aos_dois_trechos(conn, ponto):
-    evento(conn, "ocorrencia", em=T0, rotulo="transito", trecho=ASCENSO_FERNANDES)
-    assert ciclo.estado_via(conn, T0, ponto_id=ponto.id).ocorrencia
+    leitura(conn, em=T0, pessoas=1, trecho=ASCENSO_FERNANDES)
+    assert ciclo.estado_via(conn, T0, ponto_id=ponto.id).presenca
 
 
-def test_trechos_combinam_pela_maior_movimentacao(conn, ponto):
-    evento(conn, "movimentacao", em=T0, valor=0.02, trecho=ANTONIO_VIANA)
-    evento(conn, "movimentacao", em=T0, valor=0.60, trecho=ASCENSO_FERNANDES)
+def test_basta_um_trecho_com_pedestre(conn, ponto):
+    leitura(conn, em=T0, pessoas=0, trecho=ANTONIO_VIANA)
+    leitura(conn, em=T0, pessoas=1, trecho=ASCENSO_FERNANDES)
     e = ciclo.estado_via(conn, T0 + timedelta(seconds=1), ponto_id=ponto.id)
-    assert e.observada == 0.60
+    assert e.presenca
+    assert e.pessoas == {ANTONIO_VIANA: 0, ASCENSO_FERNANDES: 1}
     assert len(e.evento_ids) == 2  # a auditoria registra os dois trechos
 
 
-def test_ocorrencia_encerrada_num_trecho_nao_encerra_a_do_outro(conn, ponto):
-    evento(conn, "ocorrencia", em=T0, rotulo="seguranca", trecho=ANTONIO_VIANA)
-    evento(conn, "ocorrencia", em=T0, rotulo="seguranca", trecho=ASCENSO_FERNANDES)
-    evento(conn, "ocorrencia", em=T0 + timedelta(seconds=1), rotulo="encerrada", trecho=ANTONIO_VIANA)
-    assert ciclo.estado_via(conn, T0 + timedelta(seconds=2), ponto_id=ponto.id).ocorrencia
+def test_ocorrencia_num_trecho_vale_mesmo_com_outro_sem(conn, ponto):
+    leitura(conn, em=T0, ocorrencia=None, trecho=ANTONIO_VIANA)
+    leitura(conn, em=T0, ocorrencia="seguranca", trecho=ASCENSO_FERNANDES)
+    assert ciclo.estado_via(conn, T0 + timedelta(seconds=1), ponto_id=ponto.id).ocorrencia
 
 
 def test_trecho_sem_ponto_nao_gera_estado(conn, ponto, simulado):
-    evento(conn, "ocorrencia", em=T0, rotulo="seguranca", trecho=VINHAIS)
+    leitura(conn, em=T0, ocorrencia="seguranca", trecho=VINHAIS)
     for p in (ponto, simulado):
-        assert not ciclo.estado_via(conn, T0, ponto_id=p.id).ocorrencia
+        assert ciclo.estado_via(conn, T0, ponto_id=p.id).sem_dado
 
 
 def test_decisoes_independentes_por_ponto(conn, ponto, simulado):
     # A mesma rodada decide cada ponto pelo proprio trecho: a Varzea da Palma
-    # vazia desce, a Antonio Viana com ocorrencia fica no pleno.
-    evento(conn, "movimentacao", em=T0, valor=0.02, trecho=VARZEA_DA_PALMA,
-           vigente_ate=T0 + timedelta(hours=1))
-    evento(conn, "movimentacao", em=T0, valor=0.02, trecho=ANTONIO_VIANA,
-           vigente_ate=T0 + timedelta(hours=1))
-    evento(conn, "ocorrencia", em=T0, rotulo="seguranca", trecho=ANTONIO_VIANA)
+    # vazia desce, a Antonio Viana com pedestre fica no pleno.
+    leitura(conn, em=T0, pessoas=0, trecho=VARZEA_DA_PALMA, vigente_ate=T0 + UMA_HORA)
+    leitura(conn, em=T0, pessoas=1, trecho=ANTONIO_VIANA, vigente_ate=T0 + UMA_HORA)
     for k in range(1, 13):
         agora = T0 + timedelta(seconds=5 * k)
         a = decidir(conn, ponto, agora)
         b = decidir(conn, simulado, agora)
-    assert a.estado.ocorrencia and a.nivel_emitido > Decimal("0.9")
-    assert not b.estado.ocorrencia and b.nivel_emitido == Decimal("0.500")  # piso
+    assert a.estado.presenca and a.nivel_emitido > Decimal("0.9")
+    assert not b.estado.presenca and b.nivel_emitido == Decimal("0.500")  # piso

@@ -34,10 +34,10 @@ import skfuzzy as fuzz
 
 __all__ = ["BaseRegras", "Entrada", "Resultado", "carregar", "em_degraus", "inferir", "BASE_VIGENTE"]
 
-# Base vigente. As versoes anteriores (v0-provisoria, v1-tercis) usavam a
-# condicao meteorologica, retirada na v2 (DIVERGENCIAS 49); ficam no historico
-# do git e registradas em versao_base_regras.
-BASE_VIGENTE: Final[Path] = Path(__file__).parent / "regras" / "v2-sem-meteorologia.toml"
+# Base vigente: v3, por presenca (DIVERGENCIAS 55). A v2 (volume observado)
+# continua no repositorio e em versao_base_regras, para reconstituir as
+# decisoes antigas (RNF04); a v0 e a v1 ficam no historico do git.
+BASE_VIGENTE: Final[Path] = Path(__file__).parent / "regras" / "v3-presenca.toml"
 
 PASSO: Final[Decimal] = Decimal("0.001")  # mesma resolucao de NUMERIC(4,3)
 PLENO: Final[Decimal] = Decimal("1.000")
@@ -47,8 +47,9 @@ RESOLUCAO_SAIDA: Final[int] = 1001  # pontos do universo de saida (passo 0,001)
 _CATEGORICAS: Final[dict[str, tuple[str, str]]] = {
     # variavel: (termo quando 1, termo quando 0)
     "ocorrencia": ("sim", "nao"),
+    "presenca": ("sim", "nao"),
 }
-_MOVIMENTACAO: Final[tuple[str, ...]] = ("observada", "prevista")
+_MOVIMENTACAO: Final[tuple[str, ...]] = ("prevista",)
 _TERMOS_MOV: Final[tuple[str, ...]] = ("baixa", "media", "alta")
 
 
@@ -56,15 +57,20 @@ _TERMOS_MOV: Final[tuple[str, ...]] = ("baixa", "media", "alta")
 class Entrada:
     """Estado da via no instante da decisao (Quadro 7).
 
-    `prevista` None = modo reativo (H3): a inferencia recebe a propria
-    observada no lugar da previsao, com a mesma base de regras.
+    `presenca`: ha ao menos uma pessoa na area de algum trecho do ponto
+    (leitura mais recente). `prevista`: nivel de movimentacao previsto para a
+    proxima hora, normalizado por trecho (3.6). `prevista` None = modo
+    reativo (H3): entra no lugar dela `recente`, o nivel da ultima hora, com
+    a mesma base de regras. Sem nenhum dos dois, nenhuma regra de atenuacao
+    dispara (falta de informacao nunca produz atenuacao).
     `momento` deve estar no horario local do ponto de luz.
     """
 
-    observada: float
+    presenca: bool
     prevista: float | None
     ocorrencia: bool
     momento: datetime
+    recente: float | None = None
 
 
 @dataclass(frozen=True)
@@ -199,13 +205,19 @@ def _grau(p: list[float], x: float) -> float:
 
 
 def _pertinencias(base: BaseRegras, e: Entrada) -> dict[tuple[str, str], float]:
-    for nome, v in (("observada", e.observada), ("prevista", e.prevista)):
+    for nome, v in (("recente", e.recente), ("prevista", e.prevista)):
         if v is not None and not (0.0 <= v <= 1.0):
             raise ValueError(f"{nome} fora de [0,1]: {v}")
 
-    prevista = e.observada if e.prevista is None else e.prevista
+    prevista = e.recente if e.prevista is None else e.prevista
     graus: dict[tuple[str, str], float] = {}
-    for var, x in (("observada", e.observada), ("prevista", prevista)):
+    for var, x in (("prevista", prevista),):
+        if x is None:
+            # Sem previsao e sem historico: nenhum conjunto de movimentacao
+            # ativa, e as regras que dependem dela ficam em zero.
+            for termo in base.mov:
+                graus[(var, termo)] = 0.0
+            continue
         if base.metodo == "degraus":
             # Corte seco no tercil (meio da rampa).
             f1 = (base.mov["baixa"][2] + base.mov["baixa"][3]) / 2
@@ -216,7 +228,7 @@ def _pertinencias(base: BaseRegras, e: Entrada) -> dict[tuple[str, str], float]:
             continue
         for termo, p in base.mov.items():
             graus[(var, termo)] = _grau(p, x)
-    for var, valor in (("ocorrencia", e.ocorrencia),):
+    for var, valor in (("ocorrencia", e.ocorrencia), ("presenca", e.presenca)):
         pos, neg = _CATEGORICAS[var]
         graus[(var, pos)] = 1.0 if valor else 0.0
         graus[(var, neg)] = 0.0 if valor else 1.0

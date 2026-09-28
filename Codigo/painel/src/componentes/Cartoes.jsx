@@ -10,7 +10,7 @@ import {
   Lightbulb,
   ShieldCheck,
 } from "lucide-react";
-import { RESTRICOES, lux, pct } from "../api";
+import { OCORRENCIAS, RESTRICOES, lux, pct } from "../api";
 
 export function Cartao({ icone: Icone, titulo, children, destaque }) {
   return (
@@ -29,25 +29,36 @@ export function Cartao({ icone: Icone, titulo, children, destaque }) {
 }
 
 export function EstadoDaVia({ eventos }) {
-  const ultimo = (tipo) => eventos.find((e) => e.tipo === tipo);
-  const mov = ultimo("movimentacao");
-  const oco = ultimo("ocorrencia");
-  const emOcorrencia = oco && oco.rotulo !== "encerrada";
+  // Leitura mais recente de cada trecho do ponto (DIVERGENCIAS 54 e 55).
+  const porTrecho = new Map();
+  for (const e of eventos) if (!porTrecho.has(e.trecho)) porTrecho.set(e.trecho, e);
+  const leituras = [...porTrecho.values()];
+  const pessoas = leituras.reduce((s, e) => s + e.pessoas, 0);
+  const oco = leituras.find((e) => e.ocorrencia);
 
   return (
-    <Cartao icone={Activity} titulo="dado recebido da via">
-      <p className="text-3xl font-semibold tabular-nums">
-        {mov ? pct(mov.valor) : "--"}
+    <Cartao icone={Activity} titulo="leitura recebida da via">
+      <p className="text-3xl font-semibold tabular-nums">{leituras.length ? pessoas : "--"}</p>
+      <p className="text-xs text-suave">
+        {leituras.length
+          ? `pessoas na área · ${leituras.length} trecho${leituras.length > 1 ? "s" : ""}`
+          : "nenhuma leitura ainda"}
       </p>
-      <p className="text-xs text-suave">movimentação normalizada no ponto</p>
       <div className="mt-3 flex flex-wrap gap-2 text-xs">
         <span
           className={`inline-flex items-center gap-1 rounded-md px-2 py-1 ${
-            emOcorrencia ? "bg-falha/15 text-falha" : "bg-borda/40 text-suave"
+            pessoas > 0 ? "bg-luz/15 text-luz" : "bg-borda/40 text-suave"
+          }`}
+        >
+          {pessoas > 0 ? "pedestre presente" : "via vazia"}
+        </span>
+        <span
+          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 ${
+            oco ? "bg-falha/15 text-falha" : "bg-borda/40 text-suave"
           }`}
         >
           <AlertTriangle size={12} />
-          {emOcorrencia ? `ocorrência: ${oco.rotulo}` : "sem ocorrência"}
+          {oco ? `ocorrência: ${OCORRENCIAS[oco.ocorrencia]}` : "sem ocorrência"}
         </span>
       </div>
     </Cartao>

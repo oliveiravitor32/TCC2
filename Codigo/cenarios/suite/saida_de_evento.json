@@ -1,62 +1,53 @@
 {
   "nome": "saida_de_evento",
-  "descricao": "Via calma que recebe fluxo subito (saida de evento) e volta a esvaziar.",
+  "descricao": "Via vazia que recebe pedestres de repente (saida de evento) e volta a esvaziar.",
   "origem": "Contagem de pessoas por area, exigida da plataforma (2.3).",
   "inicio_local": "2026-09-22T22:00:00",
   "duracao_min": 90,
   "eventos": [
     {
       "em_min": 0,
-      "tipo": "movimentacao",
-      "valor": 0.05,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 10,
-      "tipo": "movimentacao",
-      "valor": 0.05,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 20,
-      "tipo": "movimentacao",
-      "valor": 0.05,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 30,
-      "tipo": "movimentacao",
-      "valor": 0.72,
+      "pessoas": 7,
       "vigente_min": 15
     },
     {
       "em_min": 40,
-      "tipo": "movimentacao",
-      "valor": 0.72,
+      "pessoas": 7,
       "vigente_min": 15
     },
     {
       "em_min": 50,
-      "tipo": "movimentacao",
-      "valor": 0.72,
+      "pessoas": 7,
       "vigente_min": 15
     },
     {
       "em_min": 60,
-      "tipo": "movimentacao",
-      "valor": 0.08,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 70,
-      "tipo": "movimentacao",
-      "valor": 0.08,
+      "pessoas": 0,
       "vigente_min": 15
     },
     {
       "em_min": 80,
-      "tipo": "movimentacao",
-      "valor": 0.08,
+      "pessoas": 0,
       "vigente_min": 15
     }
   ],
@@ -66,22 +57,21 @@
       "ate_min": 30,
       "min": 0.5,
       "max": 0.8,
-      "janela_baixa": true,
-      "nota": "via calma no fim da noite"
+      "nota": "via vazia no inicio da noite: entre o piso e o intermediario"
     },
     {
       "de_min": 30,
       "ate_min": 60,
-      "min": 0.85,
+      "min": 0.9,
       "max": 1.0,
-      "nota": "fluxo intenso: elevacao imediata"
+      "nota": "pedestres: elevacao livre e imediata"
     },
     {
       "de_min": 60,
       "ate_min": 90,
       "min": 0.5,
       "max": 1.0,
-      "nota": "descida sob rampa"
+      "nota": "volta a descer sob rampa"
     }
   ]
 }
