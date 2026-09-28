@@ -1433,7 +1433,7 @@ BANCADA: os ensaios de fluxo (rampa, subida imediata, falha induzida,
 53. IMPLANTACAO NA VM: CHAVE NO POST, TLS COM CA PROPRIA, ACL POR PONTO
     Trecho: 4.6.1, Quadro 14 (POST /eventos), RNF06 (Quadro 11), 4.8 (CT19)
     Acao: [ACRESCENTAR] - decisao do autor em 26/09/2026
-    >>> v2: PENDENTE (aplicar no texto depois da implantacao na VM)
+    >>> v3: APLICADO em 28/09/2026 (4.6.1, Quadro 14, CT01) - _SP_v3_revisado.docx
 -------------------------------------------------------------------------------
 CODIGO:  docker-compose.prod.yml + deploy/ (roteiro, preparar.sh, Caddyfile,
          broker). Testado localmente em 26/09/2026 com DOMINIO=localhost.
@@ -1468,7 +1468,8 @@ TEXTO:   4.6.1: registrar a chave no POST, o TLS com CA propria e a ACL por
             50 mil cameras, 662.945 pontos, frase "nao alcanca qualquer outro
             sistema"; Quadro 3: ANSI C136.41)
     Acao: [ATUALIZAR TEXTO] - decisao do autor em 27/09/2026
-    >>> v3: PENDENTE (proxima rodada do texto)
+    >>> v3: APLICADO em 28/09/2026 (3.2, Quadros 1, 2, 3, 14, 15, 16, nova 3.5.2,
+        2.3, 6.3, referencias) - _SP_v3_revisado.docx; Figura 2 PENDENTE (autor)
 -------------------------------------------------------------------------------
 PROBLEMA: o evento nao dizia ONDE aconteceu, e nada associava um lugar a
          uma luminaria. Com um unico ponto, todo evento valia para ele. A
@@ -1526,7 +1527,9 @@ PRODUCAO: o comando a luminaria real seria enderecado pelo codigo
             4.6.1 e Quadros 12 e 13 (painel com modal de demonstracao), 4.8,
             5.x e 6.3
     Acao: [ATUALIZAR TEXTO] - decisao do autor em 27/09/2026
-    >>> v3: PENDENTE (proxima rodada do texto)
+    >>> v3: APLICADO em 28/09/2026 (Quadro 7, 3.5.1, 3.6, 3.7, 3.9, 3.10, 3.11,
+        Quadros 12-17, 4.6.1, 6.3) - _SP_v3_revisado.docx; numeros PENDENTES
+        para 5.x e 6.1 (Capitulos 5 e 6)
 -------------------------------------------------------------------------------
 DECISAO (autor): a plataforma envia, a cada poucos segundos, a LEITURA de
          cada trecho: quantas pessoas ha na area agora, se ha ocorrencia e
