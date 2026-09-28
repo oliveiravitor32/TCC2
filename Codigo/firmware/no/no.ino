@@ -258,6 +258,15 @@ void setup() {
   }
 
   configTime(0, 0, "pool.ntp.org", "time.google.com");  // hora UTC para medido_em
+  // Com TLS, o certificado do broker so e aceito com a data certa: com o
+  // relogio em 1970, ele parece "ainda nao valido". Espera o NTP ate 15 s;
+  // sem hora, conecta mesmo assim (a reconexao automatica tenta de novo).
+  Serial.print("acertando o relogio (NTP)");
+  for (int i = 0; i < 30 && time(nullptr) < 1700000000; i++) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println(time(nullptr) >= 1700000000 ? " ok" : " sem resposta; segue");
   iniciarMqtt();
 }
 
