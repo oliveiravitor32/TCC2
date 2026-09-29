@@ -5,6 +5,12 @@ pleno no universo 0 a 1. A inferencia nao conhece o piso normativo: o nivel
 que ela produz passa obrigatoriamente pela camada de verificacao
 (`decisao.verificacao`) antes de virar comando.
 
+Saida em DEGRAUS DE CLASSE (base v4, DIVERGENCIAS 56): o universo de saida e
+o degrau - 0 = classe da via, 1 = uma classe abaixo, 2 = classe minima
+admitida. O degrau defuzificado vira fracao do pleno pela interpolacao entre
+os `niveis` da classe do ponto, que quem chama le de classe_iluminacao (RF09):
+nenhum valor normativo mora aqui.
+
 Metodo: E = minimo, implicacao = minimo, agregacao = maximo, defuzificacao
 pelo centroide, com as funcoes de pertinencia do scikit-fuzzy. A base de
 regras e as particoes vem de um arquivo TOML versionado (RNF05); o grau de
@@ -25,19 +31,22 @@ import hashlib
 import tomllib
 from dataclasses import dataclass, replace
 from datetime import datetime
-from decimal import ROUND_HALF_UP, Decimal
+from decimal import ROUND_CEILING, Decimal
 from pathlib import Path
 from typing import Final, Mapping
 
 import numpy as np
 import skfuzzy as fuzz
 
-__all__ = ["BaseRegras", "Entrada", "Resultado", "carregar", "em_degraus", "inferir", "BASE_VIGENTE"]
+__all__ = ["BaseRegras", "Entrada", "Resultado", "carregar", "em_degraus", "fracao_do_degrau",
+           "inferir", "BASE_VIGENTE"]
 
-# Base vigente: v3, por presenca (DIVERGENCIAS 55). A v2 (volume observado)
-# continua no repositorio e em versao_base_regras, para reconstituir as
-# decisoes antigas (RNF04); a v0 e a v1 ficam no historico do git.
-BASE_VIGENTE: Final[Path] = Path(__file__).parent / "regras" / "v3-presenca.toml"
+# Base vigente: v4, por volume de movimento com saida em degraus de classe
+# (DIVERGENCIAS 56). A v2 e a v3 continuam no repositorio e em
+# versao_base_regras, para o texto das regras de decisoes antigas (RNF04); a
+# inferencia so executa bases com saida em degraus de classe.
+BASE_VIGENTE: Final[Path] = Path(__file__).parent / "regras" / "v4-volume.toml"
+SAIDA_DEGRAU: Final[str] = "degrau_de_classe"
 
 PASSO: Final[Decimal] = Decimal("0.001")  # mesma resolucao de NUMERIC(4,3)
 PLENO: Final[Decimal] = Decimal("1.000")
@@ -47,9 +56,9 @@ RESOLUCAO_SAIDA: Final[int] = 1001  # pontos do universo de saida (passo 0,001)
 _CATEGORICAS: Final[dict[str, tuple[str, str]]] = {
     # variavel: (termo quando 1, termo quando 0)
     "ocorrencia": ("sim", "nao"),
-    "presenca": ("sim", "nao"),
+    "presenca": ("sim", "nao"),  # so para ler a v3 (historico)
 }
-_MOVIMENTACAO: Final[tuple[str, ...]] = ("prevista",)
+_MOVIMENTACAO: Final[tuple[str, ...]] = ("observada", "prevista")
 _TERMOS_MOV: Final[tuple[str, ...]] = ("baixa", "media", "alta")
 
 
@@ -57,25 +66,26 @@ _TERMOS_MOV: Final[tuple[str, ...]] = ("baixa", "media", "alta")
 class Entrada:
     """Estado da via no instante da decisao (Quadro 7).
 
-    `presenca`: ha ao menos uma pessoa na area de algum trecho do ponto
-    (leitura mais recente). `prevista`: nivel de movimentacao previsto para a
-    proxima hora, normalizado por trecho (3.6). `prevista` None = modo
-    reativo (H3): entra no lugar dela `recente`, o nivel da ultima hora, com
-    a mesma base de regras. Sem nenhum dos dois, nenhuma regra de atenuacao
-    dispara (falta de informacao nunca produz atenuacao).
+    `observada`: media de pessoas do ultimo periodo publicado (5 min),
+    normalizada pela referencia do trecho - a maior entre os trechos do
+    ponto. `prevista`: nivel previsto para a proxima hora, na mesma escala
+    (3.6). `prevista` None = modo reativo (H3): a observada ocupa o lugar
+    dela, com a mesma base de regras. Sem observada, nenhuma regra de
+    movimentacao dispara (falta de informacao nunca produz atenuacao).
     `momento` deve estar no horario local do ponto de luz.
     """
 
-    presenca: bool
+    observada: float | None
     prevista: float | None
     ocorrencia: bool
     momento: datetime
-    recente: float | None = None
 
 
 @dataclass(frozen=True)
 class Resultado:
     nivel_pretendido: Decimal
+    # Degrau de classe defuzificado: 0 = classe da via, 2 = classe minima.
+    degrau: float
     # Grau de ativacao de cada regra (0 a 1), na ordem da base.
     ativacoes: dict[str, float]
     # True se nenhuma regra ativou: o nivel devolvido e o pleno (lado seguro).
@@ -105,6 +115,9 @@ class BaseRegras:
     regras: tuple[Regra, ...]
     # "mamdani" (vigente) ou "degraus" (comparacao do item 51).
     metodo: str = "mamdani"
+    # "degrau_de_classe" (v4) ou "fracao" (v2/v3: so leitura do historico).
+    saida_tipo: str = "fracao"
+    universo: tuple[float, float] = (0.0, 1.0)
 
     def texto(self) -> str:
         """Base inteira em linguagem natural (RNF05)."""
@@ -145,10 +158,12 @@ def carregar(caminho: Path = BASE_VIGENTE) -> BaseRegras:
     )
     faixa = dados["faixa_horaria"]["conjuntos"]
     saida = dados["saida"]["conjuntos"]
+    saida_tipo = dados["saida"].get("tipo", "fracao")
+    universo = tuple(dados["saida"].get("universo", [0.0, 1.0]))
     for nome, p in faixa.items():
         _trapezio_ok(f"faixa_horaria.{nome}", p, 0.0, 12.0)
     for nome, p in saida.items():
-        _trapezio_ok(f"saida.{nome}", p, 0.0, 1.0)
+        _trapezio_ok(f"saida.{nome}", p, *universo)
 
     termos: dict[str, set[str]] = {v: set(t) for v, t in _CATEGORICAS.items()}
     termos.update({v: set(_TERMOS_MOV) for v in _MOVIMENTACAO})
@@ -176,6 +191,8 @@ def carregar(caminho: Path = BASE_VIGENTE) -> BaseRegras:
         faixa=faixa,
         saida=saida,
         regras=tuple(regras),
+        saida_tipo=saida_tipo,
+        universo=universo,
     )
 
 
@@ -205,16 +222,17 @@ def _grau(p: list[float], x: float) -> float:
 
 
 def _pertinencias(base: BaseRegras, e: Entrada) -> dict[tuple[str, str], float]:
-    for nome, v in (("recente", e.recente), ("prevista", e.prevista)):
+    for nome, v in (("observada", e.observada), ("prevista", e.prevista)):
         if v is not None and not (0.0 <= v <= 1.0):
             raise ValueError(f"{nome} fora de [0,1]: {v}")
 
-    prevista = e.recente if e.prevista is None else e.prevista
+    # Modo reativo (H3): sem previsao, a observada ocupa o lugar dela.
+    prevista = e.observada if e.prevista is None else e.prevista
     graus: dict[tuple[str, str], float] = {}
-    for var, x in (("prevista", prevista),):
+    for var, x in (("observada", e.observada), ("prevista", prevista)):
         if x is None:
-            # Sem previsao e sem historico: nenhum conjunto de movimentacao
-            # ativa, e as regras que dependem dela ficam em zero.
+            # Sem dado de movimentacao: nenhum conjunto ativa, e as regras
+            # que dependem dele ficam em zero.
             for termo in base.mov:
                 graus[(var, termo)] = 0.0
             continue
@@ -228,10 +246,9 @@ def _pertinencias(base: BaseRegras, e: Entrada) -> dict[tuple[str, str], float]:
             continue
         for termo, p in base.mov.items():
             graus[(var, termo)] = _grau(p, x)
-    for var, valor in (("ocorrencia", e.ocorrencia), ("presenca", e.presenca)):
-        pos, neg = _CATEGORICAS[var]
-        graus[(var, pos)] = 1.0 if valor else 0.0
-        graus[(var, neg)] = 0.0 if valor else 1.0
+    pos, neg = _CATEGORICAS["ocorrencia"]
+    graus[("ocorrencia", pos)] = 1.0 if e.ocorrencia else 0.0
+    graus[("ocorrencia", neg)] = 0.0 if e.ocorrencia else 1.0
     h = horas_desde_18h(e.momento)
     for termo, p in base.faixa.items():
         graus[("faixa_horaria", termo)] = _grau(p, h)
@@ -244,9 +261,27 @@ def _pertinencias(base: BaseRegras, e: Entrada) -> dict[tuple[str, str], float]:
     return graus
 
 
-def inferir(base: BaseRegras, e: Entrada) -> Resultado:
+def fracao_do_degrau(degrau: float, niveis: tuple[Decimal, Decimal, Decimal]) -> Decimal:
+    """Degrau 0..2 -> fracao do pleno, linear entre os niveis da classe.
+
+    `niveis` = (classe da via, uma abaixo, minima), como fracao do pleno; em
+    classe com menos degraus os valores se repetem (nao dimerizavel = 1, 1,
+    1). Arredonda para cima: o lado seguro.
+    """
+    d = min(max(degrau, 0.0), 2.0)
+    i = min(int(d), 1)
+    a, b = float(niveis[i]), float(niveis[i + 1])
+    valor = a + (b - a) * (d - i)
+    return Decimal(str(round(valor, 9))).quantize(PASSO, rounding=ROUND_CEILING)
+
+
+def inferir(base: BaseRegras, e: Entrada, niveis: tuple[Decimal, Decimal, Decimal]) -> Resultado:
+    if base.saida_tipo != SAIDA_DEGRAU:
+        raise ValueError(f"{base.rotulo}: so bases com saida em degraus de classe executam")
+    if not (PLENO >= niveis[0] >= niveis[1] >= niveis[2] > 0):
+        raise ValueError(f"niveis de classe incoerentes: {niveis}")
     graus = _pertinencias(base, e)
-    universo = np.linspace(0.0, 1.0, RESOLUCAO_SAIDA)
+    universo = np.linspace(base.universo[0], base.universo[1], RESOLUCAO_SAIDA)
     agregado = np.zeros_like(universo)
     ativacoes: dict[str, float] = {}
 
@@ -259,12 +294,13 @@ def inferir(base: BaseRegras, e: Entrada) -> Resultado:
 
     if not agregado.any():
         # Sem evidencia, o lado seguro e o pleno (mesma logica do RNF07).
-        return Resultado(nivel_pretendido=PLENO, ativacoes=ativacoes, sem_regra_ativa=True)
+        return Resultado(nivel_pretendido=niveis[0], degrau=0.0, ativacoes=ativacoes,
+                         sem_regra_ativa=True)
 
-    nivel = fuzz.defuzz(universo, agregado, "centroid")
-    nivel = min(max(float(nivel), 0.0), 1.0)
+    degrau = round(min(max(float(fuzz.defuzz(universo, agregado, "centroid")), 0.0), 2.0), 4)
     return Resultado(
-        nivel_pretendido=Decimal(str(nivel)).quantize(PASSO, rounding=ROUND_HALF_UP),
+        nivel_pretendido=fracao_do_degrau(degrau, niveis),
+        degrau=degrau,
         ativacoes=ativacoes,
         sem_regra_ativa=False,
     )

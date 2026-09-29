@@ -21,13 +21,18 @@ from collections.abc import Iterator
 from contextlib import asynccontextmanager
 from datetime import datetime, time, timedelta, timezone
 
+from typing import Any
+
 import psycopg
-from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
+from fastapi import Body, Depends, FastAPI, Header, HTTPException, Query, Response, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg.errors import ForeignKeyViolation
 from psycopg.rows import dict_row
 from psycopg_pool import ConnectionPool
+from pydantic import ValidationError
 
+from decisao import config
 from decisao.inferencia import carregar as carregar_regras
 from decisao.energia import (
     energia_decisoes,
@@ -43,6 +48,7 @@ from .esquemas import (
     Evento,
     EventoEntrada,
     Ponto,
+    ResultadoPacote,
     Telemetria,
     Explicacao,
     Tipo,
@@ -118,25 +124,62 @@ def exigir_chave(x_chave_api: str | None = Header(default=None)) -> None:
 # ---------------------------------------------------------------------------
 # Eventos
 # ---------------------------------------------------------------------------
-@app.post("/eventos", response_model=Evento, status_code=status.HTTP_201_CREATED,
+def _gravar(conn: psycopg.Connection, evento: EventoEntrada) -> dict:
+    """Grava um item; ForeignKeyViolation = trecho fora do cadastro."""
+    with conn.transaction():
+        return conn.execute(
+            """
+            INSERT INTO evento_urbano
+                (ocorrido_em, tipo, pessoas_media, periodo_s, ocorrencia, abrangencia,
+                 origem, trecho_id, vigente_ate)
+            VALUES (%(ocorrido_em)s, %(tipo)s, %(pessoas_media)s, %(periodo_s)s, %(ocorrencia)s,
+                    %(abrangencia)s, %(origem)s, %(trecho)s, %(vigente_ate)s)
+            RETURNING *, trecho_id AS trecho
+            """,
+            evento.model_dump(),
+        ).fetchone()
+
+
+@app.post("/eventos", response_model=Evento | ResultadoPacote, status_code=status.HTTP_201_CREATED,
           dependencies=[Depends(exigir_chave)])
-def publicar_evento(evento: EventoEntrada, conn: psycopg.Connection = Conn) -> dict:
-    try:
-        with conn.transaction():
-            return conn.execute(
-                """
-                INSERT INTO evento_urbano
-                    (ocorrido_em, tipo, pessoas, ocorrencia, abrangencia, origem, trecho_id, vigente_ate)
-                VALUES (%(ocorrido_em)s, %(tipo)s, %(pessoas)s, %(ocorrencia)s,
-                        %(abrangencia)s, %(origem)s, %(trecho)s, %(vigente_ate)s)
-                RETURNING *, trecho_id AS trecho
-                """,
-                evento.model_dump(),
-            ).fetchone()
-    except ForeignKeyViolation:
-        # Trecho fora do cadastro: o evento nao tem a que luminaria se referir.
+def publicar_evento(
+    response: Response, corpo: Any = Body(...), conn: psycopg.Connection = Conn
+) -> dict:
+    """Um item ou um pacote (lista) de itens (DIVERGENCIAS 56).
+
+    Item unico: 201 com o evento gravado, ou 422. Pacote: 200 com os itens
+    aceitos e os recusados (indice e motivo) - um item errado nao derruba os
+    outros. A especificacao pede que cada trecho seja atualizado a cada 5 min
+    e que os envios sejam distribuidos no periodo, sem pico.
+    """
+    if isinstance(corpo, dict):
+        try:
+            evento = EventoEntrada.model_validate(corpo)
+        except ValidationError as erro:
+            raise RequestValidationError(erro.errors()) from None
+        try:
+            return _gravar(conn, evento)
+        except ForeignKeyViolation:
+            # Trecho fora do cadastro: o evento nao tem a que luminaria se referir.
+            raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT,
+                                f"trecho {evento.trecho} nao cadastrado") from None
+    if not isinstance(corpo, list) or not 1 <= len(corpo) <= config.MAX_ITENS_PACOTE:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT,
-                            f"trecho {evento.trecho} nao cadastrado") from None
+                            f"o corpo deve ser um item ou uma lista de 1 a "
+                            f"{config.MAX_ITENS_PACOTE} itens")
+    aceitos, recusados = [], []
+    for i, item in enumerate(corpo):
+        try:
+            evento = EventoEntrada.model_validate(item)
+        except ValidationError as erro:
+            recusados.append({"indice": i, "erro": "; ".join(e["msg"] for e in erro.errors())})
+            continue
+        try:
+            aceitos.append(_gravar(conn, evento))
+        except ForeignKeyViolation:
+            recusados.append({"indice": i, "erro": f"trecho {evento.trecho} nao cadastrado"})
+    response.status_code = status.HTTP_200_OK
+    return {"aceitos": aceitos, "recusados": recusados}
 
 
 @app.get("/eventos", response_model=list[Evento])

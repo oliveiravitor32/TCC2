@@ -45,9 +45,23 @@ def test_cenario_bem_formado(arquivo):
     # O envelope nunca admite nivel abaixo do piso da classe adotada (3.8).
     assert all(f["min"] >= 0.5 for f in faixas)
     for e in c.eventos:
-        assert isinstance(e["pessoas"], int) and e["pessoas"] >= 0
-        assert e.get("ocorrencia") in (None, "seguranca", "transito")
+        # Volume (nivel normalizado do trecho) ou ocorrencia, nunca os dois.
+        assert ("nivel" in e) != ("ocorrencia" in e), e
+        if "nivel" in e:
+            assert 0 <= e["nivel"] <= 1
+        else:
+            assert e["ocorrencia"] in ("seguranca", "transito", "encerrada")
         assert 0 <= e["em_min"] <= c.duracao_min
+
+
+def test_volume_publicado_a_cada_5_min_exceto_no_adversarial():
+    # A especificacao pede um volume por trecho a cada 5 min; so o
+    # adversarial 'serra' publica fora dela, de proposito.
+    for c in carregar_suite():
+        if c.nome == "adversarial_serra":
+            continue
+        minutos = [e["em_min"] for e in c.eventos if "nivel" in e]
+        assert all(m % 5 == 0 for m in minutos), c.nome
 
 
 def test_perfil_horario_tem_vale_de_madrugada_e_pico_de_tarde():
@@ -60,11 +74,15 @@ def test_perfil_horario_tem_vale_de_madrugada_e_pico_de_tarde():
 # --------------------------------------------------------------------------
 # Avaliacao
 # --------------------------------------------------------------------------
-def registro(niveis, presenca=False, ocorrencia=False, sem_dado=False):
+FRONTEIRA = 0.1038
+
+
+def registro(niveis, observada=0.02, ocorrencia=False, sem_dado=False):
     return [
         {"minuto": i * 5 / 60, "nivel_pretendido": n, "nivel_emitido": n,
          "nivel_anterior": niveis[i - 1] if i else None, "restricao": "nenhuma",
-         "presenca": presenca, "sem_dado": sem_dado, "ocorrencia": ocorrencia,
+         "observada": None if sem_dado else observada, "degrau": None,
+         "sem_dado": sem_dado, "ocorrencia": ocorrencia,
          "criado_em": T0 + timedelta(seconds=5 * i)}
         for i, n in enumerate(niveis)
     ]
@@ -81,7 +99,7 @@ def avaliar_simples(niveis, **kw):
     reg = registro(niveis, **kw)
     fim = T0 + timedelta(seconds=5 * len(niveis))
     return avaliar(cenario_simples(len(niveis) * 5 / 60), reg, 1, P3, "teste", False,
-                   T0, fim)
+                   T0, fim, fronteira_baixa=FRONTEIRA)
 
 
 def test_conta_violacao_de_piso():
@@ -114,8 +132,8 @@ def test_aderencia_ao_envelope():
 # Metrica de H3
 # --------------------------------------------------------------------------
 def test_h3_conta_transicao_so_na_janela_de_baixa_demanda():
-    # Pedestre na via: nao ha janela de baixa demanda a consumir.
-    r = avaliar_simples([1.0, 1.0], presenca=True)
+    # Volume medio: nao ha janela de baixa demanda a consumir.
+    r = avaliar_simples([1.0, 1.0], observada=0.25)
     assert r["h3"]["ciclos_em_janela_baixa"] == 0
     assert r["h3"]["fracao_em_transicao"] is None
 
@@ -134,7 +152,7 @@ def test_h3_ignora_ciclos_em_que_o_pleno_e_imposto():
     assert r["h3"]["ciclos_em_janela_baixa"] == 0
 
 
-def test_h3_ignora_ciclos_sem_leitura():
+def test_h3_ignora_ciclos_sem_dado():
     r = avaliar_simples([1.0, 1.0], sem_dado=True)
     assert r["h3"]["ciclos_em_janela_baixa"] == 0
 

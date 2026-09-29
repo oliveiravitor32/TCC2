@@ -8,7 +8,8 @@ A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Tra
 
 - `..._SP.docx` (e o `.pdf`) = versão anterior, mantida como histórico; não editar.
 - `..._SP_revisado.docx` = a mesma v2 com as alterações marcadas (registro do que mudou).
-- `..._SP_v3_revisado.docx` = v2 + rodadas de 27 e 28/09/2026 marcadas (meteorologia, itens 49, 53, 54 e 55 do DIVERGENCIAS: identificação espacial, base v3 por presença, painel de demonstração, correções do levantamento). `..._SP_v3.docx` = a mesma com tudo aceito; **passa a ser a vigente quando o autor aprovar a revisão no Word**.
+- `..._SP_v3_revisado.docx` = v2 + rodadas de 27 e 28/09/2026 marcadas (meteorologia, itens 49, 53, 54 e 55 do DIVERGENCIAS). `..._SP_v3.docx` = a mesma com tudo aceito e a Figura 2 nova.
+- `..._SP_v4_revisado.docx` = v3 aceito + rodada de 29/09/2026 marcada (item 56: volume de 5 min, degraus de classe, pacote, Quadro 18 da especificação da interface; 1.4; previsão como segunda evidência). `..._SP_v4.docx` = a mesma com tudo aceito; **passa a ser a vigente quando o autor aprovar a revisão no Word**.
 - Novas mudanças no texto: com controle de alterações, sobre a versão com tudo aceito, salvando como arquivo novo (nunca sobrescrever a versão vigente).
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
@@ -25,7 +26,8 @@ Seções mais importantes da versão nova:
 | Nó de bancada (Quadros 4, 5, 6) | 3.4 a 3.4.4 | 7.3 |
 | Funções de diagnóstico | 3.4.5 | 7.3.5 |
 | Dados urbanos e cenários | 3.5 / 3.5.1 | — |
-| **Leitura do trecho e identificação espacial (v3)** | **3.5.2** | nova |
+| **Publicação por trecho e identificação espacial** | **3.5.2** | nova |
+| **Especificação da interface de integração (Quadro 18)** | **5.4** | nova |
 | Previsão (Melbourne, avaliação contra persistência e média sazonal) | 3.6 | 7.5 |
 | Inferência Mamdani + verificação normativa + failsafe (Quadro 7) | 3.7 | 7.6 |
 | Classe P3/P5 (Quadro 8) | 3.8 | 7.7 |
@@ -39,7 +41,7 @@ Seções mais importantes da versão nova:
 | Banco: entidades (Quadro 15), ER e modelo físico | 4.7.1 · 4.7.2 · 4.7.3 | 8.5 |
 | Modelo físico (Quadro 16) | 4.7.3 | — |
 | Casos de teste CT01–CT20 (Quadro 17) · resultado (4.10: CT15–CT20 PENDENTE) | 4.8 / 4.10 | — |
-| Matriz de uso de IA (renumerada) | Quadro 18 | Quadro 16 |
+| Matriz de uso de IA (renumerada) | Quadro 19 | Quadro 16 |
 
 Se o código precisar divergir do TCC, **avise explicitamente** qual trecho do texto (seção/quadro da versão nova) precisa ser atualizado.
 
@@ -58,19 +60,24 @@ Fluxo: evento urbano (REST) → serviço de decisão [previsão → inferência 
 - `decisao_id` trafega no comando e volta na telemetria. Telemetria de decisão é **1:1** com decisão; leituras periódicas sem comando **não** vão para essa tabela (4.7.2).
 - Nenhum dado pessoal, imagem, áudio ou identificador trafega ou é salvo (RNF08, 3.10).
 
-### Leitura do trecho e identificação espacial (3.5.2, itens 54 e 55)
+### Publicação por trecho e identificação espacial (3.5.2, itens 54 e 56)
 
-- A plataforma publica, a cada poucos segundos, a **leitura de um trecho**: `POST /eventos {ocorrido_em, pessoas (int ≥ 0), ocorrencia (seguranca|transito|ausente), trecho, origem, vigente_ate?}`. Vale 60 s (`VALIDADE_LEITURA_S`); sem leitura vigente → pleno.
-- Trecho = segmento de logradouro do **GeoSampa**; ponto de luz = poste do GeoSampa (placa). `trecho_ponto` N:N por distância ≤ 25 m. Por ponto: presença se alguém em **qualquer** trecho; ocorrência se **qualquer** trecho reporta.
+- A plataforma publica, por trecho, dois tipos (`POST /eventos`, um item ou pacote de até 500):
+  - **volume**: `{ocorrido_em (fim do período), tipo: "volume", pessoas_media (≥ 0), periodo_s (padrão 300), trecho, origem, vigente_ate?}` — média de pessoas na área em 5 min = **ocupação, não soma de passagens**. Vale 15 min (3 períodos, `VALIDADE_VOLUME_S`); sem volume vigente → pleno.
+  - **ocorrência**: `{tipo: "ocorrencia", ocorrencia: seguranca|transito|encerrada, ...}` na hora; vale até `encerrada` ou até `vigente_ate`, o que vier primeiro; sem vigência, 15 min.
+  - 5 min = tempo mínimo da rampa P3→P5 (6.10.2). Envios espalhados no período; pacote recusa só o item errado. ~170 msg/s para 50 mil câmeras (cálculo, não teste).
+- Trecho = segmento de logradouro do **GeoSampa**; ponto de luz = poste do GeoSampa (placa). `trecho_ponto` N:N por distância ≤ 25 m. Por ponto: **maior volume** entre os trechos; ocorrência se **qualquer** trecho reporta.
 - Recorte real: Jardim Helena (16 trechos, 36 postes). BANCADA-01 = poste IP0412418 (3 trechos); SIMULADO-02 = IP0412401.
 - Na implantação, o comando iria ao código cadastral na telegestão (referência: TALQ 2.7.1); o MQTT é o meio da bancada.
 
-### Variáveis de entrada da inferência (Quadro 7) — base vigente `v3-presenca` (6 regras)
+### Variáveis de entrada da inferência (Quadro 7) — base vigente `v4-volume` (7 regras)
 
-presença de pedestre no trecho (sim/não) · movimentação prevista (próxima hora) · ocorrência reportada (categórica) · faixa horária (relógio do serviço) · classe da via (atributo do ponto de luz).
-- R1 ocorrência → pleno; R2 presença → pleno (NBR 5101, reconhecimento facial nas classes P); R3 prevista alta → pleno; R4/R5/R6 **só com via vazia e sem ocorrência**: prevista baixa → reduzido, média → intermediário, início da noite → intermediário. Nenhuma regra atenua com a via ocupada.
-- Prevista: conjuntos baixa/média/alta, **trapezoidais**, fronteiras nos **tercis** de Melbourne (0,1038 e 0,4053). Série em operação = média horária de pessoas por trecho ÷ referência do trecho (p99 de 28 dias, mínimo 168 h; antes, 5 pessoas); maior entre os trechos. Sem previsão nem histórico, nenhuma regra de atenuação dispara.
-- Regras só de origem normativa ou de literatura (nunca de decisões rotuladas pelos autores); base pequena e legível (RNF05). Cada decisão grava `entrada` e `ativacoes` (JSON); `GET /eventos/{id}/explicacao` monta a cadeia para o painel.
+volume observado (média de 5 min ÷ referência do trecho) · movimentação prevista (próxima hora) · ocorrência reportada (categórica) · faixa horária (relógio do serviço) · classe da via (atributo do ponto de luz).
+- **Saída em degraus de classe** (0 = classe da via, 1 = uma abaixo, 2 = classe mínima), convertida em fração por interpolação entre as classes **lidas de `classe_iluminacao`** (`ciclo.niveis_classe`): P3 → 1,0 / 0,75 / 0,5 (P3, P4, P5). Três degraus porque a norma admite descer no máximo duas classes. Classe sem degraus → sempre pleno.
+- R1 ocorrência → classe da via; R2 observada alta → classe da via; R3 prevista alta → classe da via; R4 observada média → uma abaixo; R5 observada baixa + prevista baixa → mínima; R6 observada baixa + prevista média → uma abaixo; R7 observada baixa + início da noite → uma abaixo. **Toda regra que desce exige ocorrência = não.** Uma pessoa sozinha NÃO força o pleno (P5 já é classe de pedestres).
+- Observada e prevista: baixa/média/alta, **trapezoidais**, fronteiras nos **tercis** de Melbourne (0,1038 e 0,4053). A norma não dá números para pouco/muito movimento: tercis por trecho = critério dos autores (limitação em 6.3). Reativo = prevista ← observada. Sem volume, nenhuma regra de movimentação dispara.
+- Série da previsão = média horária dos volumes ÷ referência do trecho (p99 de 28 dias, mínimo 168 h; antes, 5 pessoas); maior entre os trechos. A previsão é também "segunda evidência" contra erro de contagem.
+- Regras só de origem normativa ou de literatura (nunca de decisões rotuladas pelos autores); base pequena e legível (RNF05). Cada decisão grava `entrada` (inclui `niveis_classe` e `degrau`) e `ativacoes`; `GET /eventos/{id}/explicacao` monta a cadeia para o painel.
 
 ### Previsão (3.6)
 
@@ -113,7 +120,7 @@ presença de pedestre no trecho (sim/não) · movimentação prevista (próxima 
 
 ## Contratos (Quadro 14)
 
-- `POST /eventos` — leitura do trecho (ver acima); exige `X-Chave-Api` (`CHAVE_API` ou `CHAVE_DEMO`, esta pública no painel — revogar após a banca)
+- `POST /eventos` — volume ou ocorrência do trecho, item ou pacote (ver acima); exige `X-Chave-Api` (`CHAVE_API` ou `CHAVE_DEMO`, esta pública no painel — revogar após a banca)
 - `GET /eventos` — coleção filtrada por intervalo de tempo e por trecho
 - `GET /trechos` — cadastro espacial (vocabulário de lugares da integração)
 - `GET /eventos/{id}/explicacao` — cadeia da decisão para o painel
@@ -124,7 +131,7 @@ presença de pedestre no trecho (sim/não) · movimentação prevista (próxima 
 
 ## Banco (Quadro 15 + 4.7.2)
 
-`classe_iluminacao`, `ponto_de_luz` (com placa e UTM), `trecho_via`, `trecho_ponto`, `evento_urbano` (pessoas, ocorrência, trecho obrigatório), `versao_base_regras`, `decisao`, `telemetria` **e a tabela associativa `decisao` ↔ `evento_urbano` (N:N)** — registra em quais eventos cada decisão se apoiou. Reclassificação de via = registro novo, nunca UPDATE do existente. A seção 4.7.3 (Quadro 16) foi escrita a partir do `schema.sql`: mudança no schema exige atualizar o Quadro 16 (e a Figura 2, que ainda precisa ser redesenhada pelo autor).
+`classe_iluminacao`, `ponto_de_luz` (com placa e UTM), `trecho_via`, `trecho_ponto`, `evento_urbano` (tipo volume|ocorrencia, pessoas_media, periodo_s, ocorrência, trecho obrigatório), `versao_base_regras`, `decisao`, `telemetria` **e a tabela associativa `decisao` ↔ `evento_urbano` (N:N)** — registra em quais eventos cada decisão se apoiou. Reclassificação de via = registro novo, nunca UPDATE do existente. A seção 4.7.3 (Quadro 16) foi escrita a partir do `schema.sql`: mudança no schema exige atualizar o Quadro 16 (e a Figura 2, gerada por script a partir do schema).
 
 Entidades acrescentadas pelo código (item 16 do `DIVERGENCIAS_TCC.txt`): `versao_modelo_previsao` (RNF04), `execucao_cenario` (RF10, 3.11, H3: regime + modo antecipado/reativo), `sessao_medicao` (residual, descarte 5 %), `calibracao` (duty × lux por série; origem da tabela do firmware), `alerta_diagnostico` (RF11), `luminaria_referencia` (Quadro 9). A view `auditoria_decisao` dá a razão entregue/esperado e a latência evento → telemetria.
 
@@ -168,12 +175,13 @@ docker-compose.yml
 8. Treino do modelo XGBoost (Etapa 3) e troca da previsão provisória ✅ (`modelo/baixar_dados.py` + `treinar.py`; MAE 0,0468 × 0,0572 sazonal × 0,0811 persistência; tercis reais 0,1038 e 0,4053 → `decisao/regras/v1-tercis.toml`; itens 30–32 do DIVERGENCIAS)
 9. Cenários (RF10, com modo reativo), diagnóstico (RF11), energia (RF12) ✅ (`cenarios/` 10 cenários com relógio virtual; `decisao/diagnostico.py`; `decisao/energia.py`; **zero violações em 26.880 decisões**; adaptativo = 67 % do pleno e 93 % do horário fixo; **H3 não confirmada**: antecipado 21,2 % × reativo 11,4 % da janela em transição; itens 33–36 do DIVERGENCIAS)
 10. Deploy na VM Oracle com Docker ✅ (`docker-compose.prod.yml`, `deploy/ROTEIRO.md`; VM ARM Ubuntu 24.04, DuckDNS `tcc-iluminacao-publica.duckdns.org` + Caddy, MQTT TLS com CA própria na 8883, ACL por ponto, chave `X-Chave-Api` no POST; painel na Vercel; ESP32 ligado à VM; item 53). Migrações num banco existente: 003 → `seed_cadastro.sql` → 004 → 005 (backup antes; **nunca** `down -v` na VM)
-11. Identificação espacial e base por presença ✅ (itens 54 e 55: `cadastro/`, base `v3-presenca`, modal "simular leitura" e aba "decisões explicadas" no painel). Suíte v3: **zero violações**; 72,1 % do pleno e **101,8 % do horário fixo** (gasta mais que a programação horária: não prometer economia sobre ela); **H3 não confirmada** (antecipado 38,8 % × reativo 19,3 %); degraus = Mamdani; aderência 100 % com envelopes largos
-12. **Falta:** sessão final de bancada (CT15–CT20: calibração, failsafe do piso, latência ~30 repetições, recusa sem credencial, segundo nó), Capítulos 5 e 6, Figura 2 (autor)
+11. Identificação espacial e base por presença ✅ (substituída pela v4 no passo 12) (itens 54 e 55: `cadastro/`, base `v3-presenca`, modal "simular leitura" e aba "decisões explicadas" no painel). Suíte v3: **zero violações**; 72,1 % do pleno e **101,8 % do horário fixo** (gasta mais que a programação horária: não prometer economia sobre ela); **H3 não confirmada** (antecipado 38,8 % × reativo 19,3 %); degraus = Mamdani; aderência 100 % com envelopes largos
+12. Volume de 5 min, degraus de classe e pacote ✅ (item 56: base `v4-volume`, migração 006, Quadro 18 da especificação da interface). Suíte v4: **zero violações em 53.760 decisões**; 72,5 % do pleno e **102,3 % do horário fixo** (não prometer economia sobre ele); **H3 não confirmada** (antecipado 53,9 % × reativo 52,8 %); Mamdani ≈ degraus em energia, difere só na forma da resposta na fronteira
+13. **Falta:** sessão final de bancada (CT15–CT20: calibração, failsafe do piso, latência ~30 repetições, recusa sem credencial, segundo nó), Capítulos 5 e 6, Figura 2 (autor)
 
 ## Decisões em aberto (perguntar ao autor antes de assumir)
 
-- Confirmado pelo autor: passo da rampa de 5 s, failsafe de 15 s, raio de 25 m, um trecho por leitura, presença binária (1 pessoa → pleno).
+- Confirmado pelo autor: passo da rampa de 5 s, failsafe de 15 s, raio de 25 m, um trecho por publicação, decisão por **volume** (não por presença), volume a cada 5 min válido 15 min, ocorrência na hora (encerrada ou prazo), pacote aceito, níveis = classes da norma. Rejeitado pelo autor (complexo demais): campos de qualidade da leitura/condição adversa e detecção de contagem suspeita — fica como limitação em 6.3.
 
 
 ## Hardware atual (já montado e testado)

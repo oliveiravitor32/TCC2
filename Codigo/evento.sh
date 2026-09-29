@@ -1,41 +1,47 @@
 #!/usr/bin/env bash
-# Publica a LEITURA de um trecho na API, com o carimbo de tempo de agora:
-# quantas pessoas ha na area e se ha ocorrencia (DIVERGENCIAS 55).
+# Publica na API, com o carimbo de tempo de agora, o que a plataforma de
+# monitoramento publicaria para um trecho (DIVERGENCIAS 56):
 #
-#   ./evento.sh 0                  via vazia (a luz desce em rampa)
-#   ./evento.sh 2                  duas pessoas: pleno na hora
-#   ./evento.sh 0 seguranca        via vazia com ocorrencia: pleno
-#   ./evento.sh 0 - 19400          no trecho 19400 (R. Varzea da Palma, SIMULADO-02)
+#   ./evento.sh volume 0.2            media de 0,2 pessoa nos ultimos 5 min
+#   ./evento.sh volume 4              movimento alto: classe da via
+#   ./evento.sh ocorrencia seguranca  ocorrencia: classe da via na hora
+#   ./evento.sh ocorrencia encerrada  fecha a ocorrencia do trecho
+#   ./evento.sh volume 0 19400        no trecho 19400 (R. Varzea da Palma, SIMULADO-02)
 #
-# Argumentos: pessoas, ocorrencia (seguranca | transito | - para nenhuma) e
-# trecho (GET /trechos lista os validos; sem ele, TRECHO do ambiente ou 20159,
-# R. Antonio Viana, BANCADA-01). A leitura vale 1 min: a plataforma real
-# publica a cada poucos segundos.
+# Terceiro argumento: o trecho (GET /trechos lista os validos; sem ele, TRECHO
+# do ambiente ou 20159, R. Antonio Viana, BANCADA-01). O volume vale 15 min
+# (3 periodos de 5 min); a ocorrencia, ate 'encerrada' ou 15 min.
 #
-# Na VM:  API=https://seu-dominio CHAVE_API=... ./evento.sh 0
+# Na VM:  API=https://seu-dominio CHAVE_API=... ./evento.sh volume 0
 
 set -u
 cd "$(dirname "$0")"
 
 API=${API:-http://localhost:8000}
 AGORA=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-PESSOAS=${1:-}
-OCORRENCIA=${2:--}
+TIPO=${1:-}
+VALOR=${2:-}
 TRECHO=${3:-${TRECHO:-20159}}
+USO="uso: ./evento.sh volume <media de pessoas> [trecho]  |  ./evento.sh ocorrencia <seguranca|transito|encerrada> [trecho]"
 
-case "$PESSOAS" in
-  ''|*[!0-9]*) echo "uso: ./evento.sh <pessoas> [seguranca|transito|-] [trecho]"; exit 2 ;;
-esac
 case "$TRECHO" in
   ''|*[!0-9]*) echo "trecho invalido: $TRECHO (use o numero do trecho; veja GET /trechos)"; exit 2 ;;
 esac
-case "$OCORRENCIA" in
-  -) OC=null ;;
-  seguranca|transito) OC="\"$OCORRENCIA\"" ;;
-  *) echo "ocorrencia invalida: $OCORRENCIA (seguranca, transito ou -)"; exit 2 ;;
+case "$TIPO" in
+  volume)
+    case "$VALOR" in
+      ''|*[!0-9.]*|*.*.*) echo "$USO"; exit 2 ;;
+    esac
+    CAMPOS="\"tipo\":\"volume\",\"pessoas_media\":$VALOR,\"periodo_s\":300" ;;
+  ocorrencia)
+    case "$VALOR" in
+      seguranca|transito|encerrada) CAMPOS="\"tipo\":\"ocorrencia\",\"ocorrencia\":\"$VALOR\"" ;;
+      *) echo "$USO"; exit 2 ;;
+    esac ;;
+  *) echo "$USO"; exit 2 ;;
 esac
 
-CORPO="{\"ocorrido_em\":\"$AGORA\",\"pessoas\":$PESSOAS,\"ocorrencia\":$OC,\"origem\":\"evento.sh\",\"trecho\":$TRECHO}"
+CORPO="{\"ocorrido_em\":\"$AGORA\",$CAMPOS,\"origem\":\"evento.sh\",\"trecho\":$TRECHO}"
 
 RESP=$(curl -s -w "\n%{http_code}" -X POST "$API/eventos" \
        -H "content-type: application/json" -H "X-Chave-Api: ${CHAVE_API:-}" -d "$CORPO")

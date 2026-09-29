@@ -1,69 +1,105 @@
 {
   "nome": "madrugada_ociosa",
   "descricao": "Via praticamente vazia por duas horas: o sistema deve ficar no piso da classe.",
-  "origem": "Vale de madrugada (3.5).",
+  "origem": "Vale de madrugada (3.5). Convertido da suite v2 para a publicacao em volume de 5 min (DIVERGENCIAS 56): nivel normalizado do trecho; envelope refeito pelas regras da v4 antes da execucao.",
   "inicio_local": "2026-09-23T01:00:00",
   "duracao_min": 120,
   "eventos": [
     {
       "em_min": 0,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 5,
+      "nivel": 0.02
     },
     {
       "em_min": 10,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 15,
+      "nivel": 0.02
     },
     {
       "em_min": 20,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 25,
+      "nivel": 0.02
     },
     {
       "em_min": 30,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 35,
+      "nivel": 0.02
     },
     {
       "em_min": 40,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 45,
+      "nivel": 0.02
     },
     {
       "em_min": 50,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 55,
+      "nivel": 0.02
     },
     {
       "em_min": 60,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 65,
+      "nivel": 0.02
     },
     {
       "em_min": 70,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 75,
+      "nivel": 0.02
     },
     {
       "em_min": 80,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 85,
+      "nivel": 0.02
     },
     {
       "em_min": 90,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 95,
+      "nivel": 0.02
     },
     {
       "em_min": 100,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 105,
+      "nivel": 0.02
     },
     {
       "em_min": 110,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 115,
+      "nivel": 0.02
     }
   ],
   "envelope": [
@@ -79,8 +115,8 @@
       "ate_min": 120,
       "min": 0.5,
       "max": 0.55,
-      "janela_baixa": true,
-      "nota": "piso P5"
+      "nota": "classe minima (P5)",
+      "janela_baixa": true
     }
   ]
 }

@@ -1,309 +1,369 @@
 {
   "nome": "adversarial_serra",
-  "descricao": "ADVERSARIAL: movimentacao alternando entre vazio e cheio a cada minuto, para induzir violacao de taxa.",
-  "origem": "Cenario construido para submeter a camada de verificacao a esforco (3.9, Etapa 4).",
-  "adversarial": true,
+  "descricao": "ADVERSARIAL: movimentacao alternando entre vazio e cheio a cada minuto, para induzir violacao de taxa. A plataforma publica a cada minuto, fora da especificacao de 5 min.",
+  "origem": "Cenario construido para submeter a camada de verificacao a esforco (3.9, Etapa 4). Convertido da suite v2 para a publicacao em volume de 5 min (DIVERGENCIAS 56): nivel normalizado do trecho; envelope refeito pelas regras da v4 antes da execucao.",
   "inicio_local": "2026-09-23T00:00:00",
   "duracao_min": 60,
+  "adversarial": true,
   "eventos": [
     {
       "em_min": 0,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 1,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 2,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 3,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 4,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 5,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 6,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 7,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 8,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 9,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 10,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 11,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 12,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 13,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 14,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 15,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 16,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 17,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 18,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 19,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 20,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 21,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 22,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 23,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 24,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 25,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 26,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 27,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 28,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 29,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 30,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 31,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 32,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 33,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 34,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 35,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 36,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 37,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 38,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 39,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 40,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 41,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 42,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 43,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 44,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 45,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 46,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 47,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 48,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 49,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 50,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 51,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 52,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 53,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 54,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 55,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 56,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 57,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 58,
-      "pessoas": 0,
+      "nivel": 0.01,
+      "periodo_s": 60,
       "vigente_min": 2
     },
     {
       "em_min": 59,
-      "pessoas": 10,
+      "nivel": 0.95,
+      "periodo_s": 60,
       "vigente_min": 2
     }
   ],

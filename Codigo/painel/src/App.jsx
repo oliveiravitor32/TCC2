@@ -6,8 +6,9 @@
 // interface pela qual a conformidade normativa se torna observavel".
 //
 // O painel nao comanda nada nem decide nada. A unica escrita e a do modal de
-// demonstracao, que publica uma leitura como a plataforma de monitoramento
-// publicaria (DIVERGENCIAS 55); a decisao continua no servico.
+// demonstracao, que publica o volume ou a ocorrencia de um trecho como a
+// plataforma de monitoramento publicaria (DIVERGENCIAS 55 e 56); a decisao
+// continua no servico.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CircleDot, FlaskConical, Lightbulb, Pause, Play, RefreshCw, WifiOff } from "lucide-react";
@@ -134,7 +135,7 @@ export default function App() {
             className="inline-flex items-center gap-1 rounded-md bg-luz px-3 py-1.5 font-medium text-fundo hover:opacity-90"
           >
             <FlaskConical size={14} />
-            simular leitura
+            simular publicação
           </button>
           <span>atualizado {hora(atualizadoEm?.toISOString())}</span>
           <button
@@ -235,7 +236,7 @@ export default function App() {
       )}
 
       <footer className="pb-2 text-[11px] text-suave">
-        O painel não decide: o botão de simulação só publica uma leitura, como a plataforma
+        O painel não decide: o botão de simulação só publica o volume ou a ocorrência de um trecho, como a plataforma
         de monitoramento faria. A decisão é produzida no serviço municipal e verificada contra
         a ABNT NBR 5101 antes de qualquer comando; nenhum dado pessoal trafega aqui
         (RNF08).

@@ -15,19 +15,27 @@ DATABASE_URL = os.environ.get(
     "DATABASE_URL", "postgresql://iluminacao:iluminacao@localhost:5432/iluminacao"
 )
 
-# Base de regras vigente (3.7): tercis reais da serie (item 31), sem a
-# condicao meteorologica (item 49). As versoes v0 e v1 ficam no historico do
-# git e registradas em versao_base_regras.
-REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v3-presenca.toml")
+# Base de regras vigente (3.7): volume de movimento com saida em degraus de
+# classe (DIVERGENCIAS 56). As anteriores ficam registradas em
+# versao_base_regras.
+REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v4-volume.toml")
 
 # Ciclo de decisao e failsafe do no (DIVERGENCIAS 1 e 2).
 PERIODO_S = float(os.environ.get("PERIODO_S", "5"))
 TIMEOUT_FAILSAFE_S = float(os.environ.get("TIMEOUT_FAILSAFE_S", "15"))
 
-# Leitura do trecho sem vigente_ate vale por este tempo. A plataforma publica
-# a cada poucos segundos; sem leitura nova por 1 min, o ciclo considera que
-# nao ha dado e decide 1,0 (DIVERGENCIAS 23 e 55).
-VALIDADE_LEITURA_S = float(os.environ.get("VALIDADE_LEITURA_S", "60"))
+# Volume (DIVERGENCIAS 56): a plataforma publica a media de pessoas de cada
+# trecho a cada PERIODO_VOLUME_S - 5 min, o tempo minimo que a norma impoe
+# para descer do pleno ao piso. A media vale 3 periodos (a logica do
+# failsafe do no: tolera duas publicacoes perdidas); vencida sem renovacao, o
+# ciclo considera que nao ha dado e decide o pleno (DIVERGENCIAS 23).
+PERIODO_VOLUME_S = int(os.environ.get("PERIODO_VOLUME_S", "300"))
+VALIDADE_VOLUME_S = float(os.environ.get("VALIDADE_VOLUME_S", str(3 * PERIODO_VOLUME_S)))
+# Ocorrencia: vale ate a plataforma publicar o encerramento ou ate vencer a
+# vigencia informada, o que vier primeiro; sem vigencia, este prazo.
+VALIDADE_OCORRENCIA_S = float(os.environ.get("VALIDADE_OCORRENCIA_S", "900"))
+# Um POST pode trazer um trecho ou um pacote (envio por regiao).
+MAX_ITENS_PACOTE = int(os.environ.get("MAX_ITENS_PACOTE", "500"))
 
 # Referencia do trecho (media horaria de pessoas no percentil 99): aprendida
 # das leituras dos ultimos DIAS_REFERENCIA dias quando ha ao menos

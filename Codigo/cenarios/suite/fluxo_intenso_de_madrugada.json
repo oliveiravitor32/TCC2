@@ -1,48 +1,73 @@
 {
   "nome": "fluxo_intenso_de_madrugada",
-  "descricao": "Madrugada com pedestres na via: o horario nao pode mandar sozinho.",
-  "origem": "Combinacao conflitante prevista em 3.5.",
+  "descricao": "Horario avancado com fluxo intenso: o horario nao pode mandar sozinho.",
+  "origem": "Combinacao conflitante prevista em 3.5. Convertido da suite v2 para a publicacao em volume de 5 min (DIVERGENCIAS 56): nivel normalizado do trecho; envelope refeito pelas regras da v4 antes da execucao.",
   "inicio_local": "2026-09-23T03:00:00",
   "duracao_min": 60,
   "eventos": [
     {
       "em_min": 0,
-      "pessoas": 6,
-      "vigente_min": 15
+      "nivel": 0.62
+    },
+    {
+      "em_min": 5,
+      "nivel": 0.62
     },
     {
       "em_min": 10,
-      "pessoas": 6,
-      "vigente_min": 15
+      "nivel": 0.62
+    },
+    {
+      "em_min": 15,
+      "nivel": 0.62
     },
     {
       "em_min": 20,
-      "pessoas": 6,
-      "vigente_min": 15
+      "nivel": 0.62
+    },
+    {
+      "em_min": 25,
+      "nivel": 0.62
     },
     {
       "em_min": 30,
-      "pessoas": 6,
-      "vigente_min": 15
+      "nivel": 0.62
+    },
+    {
+      "em_min": 35,
+      "nivel": 0.62
     },
     {
       "em_min": 40,
-      "pessoas": 6,
-      "vigente_min": 15
+      "nivel": 0.62
+    },
+    {
+      "em_min": 45,
+      "nivel": 0.62
     },
     {
       "em_min": 50,
-      "pessoas": 6,
-      "vigente_min": 15
+      "nivel": 0.62
+    },
+    {
+      "em_min": 55,
+      "nivel": 0.62
     }
   ],
   "envelope": [
     {
       "de_min": 0,
-      "ate_min": 60,
-      "min": 0.9,
+      "ate_min": 5,
+      "min": 0.5,
       "max": 1.0,
-      "nota": "pedestres presentes: pleno"
+      "nota": "primeiro ciclo"
+    },
+    {
+      "de_min": 5,
+      "ate_min": 60,
+      "min": 0.95,
+      "max": 1.0,
+      "nota": "movimentacao alta: classe da via, o horario nao manda sozinho"
     }
   ]
 }

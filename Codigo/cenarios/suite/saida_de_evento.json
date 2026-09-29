@@ -1,54 +1,81 @@
 {
   "nome": "saida_de_evento",
-  "descricao": "Via vazia que recebe pedestres de repente (saida de evento) e volta a esvaziar.",
-  "origem": "Contagem de pessoas por area, exigida da plataforma (2.3).",
+  "descricao": "Via calma que recebe fluxo subito (saida de evento) e volta a esvaziar.",
+  "origem": "Contagem de pessoas por area, exigida da plataforma (2.3). Convertido da suite v2 para a publicacao em volume de 5 min (DIVERGENCIAS 56): nivel normalizado do trecho; envelope refeito pelas regras da v4 antes da execucao.",
   "inicio_local": "2026-09-22T22:00:00",
   "duracao_min": 90,
   "eventos": [
     {
       "em_min": 0,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.05
+    },
+    {
+      "em_min": 5,
+      "nivel": 0.05
     },
     {
       "em_min": 10,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.05
+    },
+    {
+      "em_min": 15,
+      "nivel": 0.05
     },
     {
       "em_min": 20,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.05
+    },
+    {
+      "em_min": 25,
+      "nivel": 0.05
     },
     {
       "em_min": 30,
-      "pessoas": 7,
-      "vigente_min": 15
+      "nivel": 0.72
+    },
+    {
+      "em_min": 35,
+      "nivel": 0.72
     },
     {
       "em_min": 40,
-      "pessoas": 7,
-      "vigente_min": 15
+      "nivel": 0.72
+    },
+    {
+      "em_min": 45,
+      "nivel": 0.72
     },
     {
       "em_min": 50,
-      "pessoas": 7,
-      "vigente_min": 15
+      "nivel": 0.72
+    },
+    {
+      "em_min": 55,
+      "nivel": 0.72
     },
     {
       "em_min": 60,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.08
+    },
+    {
+      "em_min": 65,
+      "nivel": 0.08
     },
     {
       "em_min": 70,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.08
+    },
+    {
+      "em_min": 75,
+      "nivel": 0.08
     },
     {
       "em_min": 80,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.08
+    },
+    {
+      "em_min": 85,
+      "nivel": 0.08
     }
   ],
   "envelope": [
@@ -56,22 +83,23 @@
       "de_min": 0,
       "ate_min": 30,
       "min": 0.5,
-      "max": 0.8,
-      "nota": "via vazia no inicio da noite: entre o piso e o intermediario"
+      "max": 0.75,
+      "nota": "via calma no fim do inicio da noite",
+      "janela_baixa": true
     },
     {
       "de_min": 30,
       "ate_min": 60,
-      "min": 0.9,
+      "min": 0.95,
       "max": 1.0,
-      "nota": "pedestres: elevacao livre e imediata"
+      "nota": "fluxo intenso: classe da via, elevacao imediata"
     },
     {
       "de_min": 60,
       "ate_min": 90,
       "min": 0.5,
       "max": 1.0,
-      "nota": "volta a descer sob rampa"
+      "nota": "descida sob rampa"
     }
   ]
 }

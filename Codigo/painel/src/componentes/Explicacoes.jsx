@@ -1,12 +1,12 @@
-// Aba "decisões explicadas": para cada leitura recebida, o que o sistema fez
-// e por que (DIVERGENCIAS 55). A cadeia inteira, na ordem em que acontece:
-// leitura -> luminarias do trecho -> entradas da inferencia -> regras que
+// Aba "decisões explicadas": para cada publicacao recebida, o que o sistema
+// fez e por que (DIVERGENCIAS 55 e 56). A cadeia inteira, na ordem em que
+// acontece: publicacao -> luminarias do trecho -> entradas da inferencia -> regras que
 // dispararam -> nivel pretendido -> correcao da verificacao -> nivel emitido
 // -> luz medida. Tudo vem do registro de auditoria (GET /eventos/{id}/explicacao).
 
 import { useEffect, useState } from "react";
 import { ArrowRight, Brain, Lightbulb, ShieldCheck } from "lucide-react";
-import { OCORRENCIAS, RESTRICOES, api, faixaHoraria, faixaMov, hora, lux, pct } from "../api";
+import { RESTRICOES, api, descreverDegrau, descreverEvento, faixaHoraria, faixaMov, hora, lux, pct } from "../api";
 
 function Etapa({ icone: Icone, titulo, children }) {
   return (
@@ -24,14 +24,16 @@ function Decisao({ d }) {
   if (!d.decidida) {
     return (
       <p className="rounded-lg border border-borda p-3 text-xs text-suave">
-        {d.ponto} ({d.placa ?? "sem placa"}): ainda não decidiu com esta leitura.
+        {d.ponto} ({d.placa ?? "sem placa"}): nenhuma decisão usou esta publicação
+        {" "}(ainda não decidiu, ou é o encerramento de uma ocorrência).
       </p>
     );
   }
   const e = d.entrada ?? {};
   const restr = RESTRICOES[d.restricao_aplicada] ?? RESTRICOES.nenhuma;
-  const pessoas = Object.entries(e.pessoas_por_trecho ?? {});
-  const prev = e.modo === "reativo" ? e.recente : e.prevista;
+  const volumes = Object.entries(e.pessoas_media_por_trecho ?? {});
+  const prev = e.modo === "reativo" ? e.observada : e.prevista;
+  const niveis = e.niveis_classe ?? [];
 
   return (
     <div className="space-y-2 rounded-xl border border-borda p-3">
@@ -45,23 +47,30 @@ function Decisao({ d }) {
         <Etapa icone={ArrowRight} titulo="entradas da IA">
           <ul className="space-y-1 text-xs">
             <li>
-              presença:{" "}
-              <b className={e.presenca ? "text-luz" : ""}>{e.presenca ? "sim" : "não"}</b>
-              {pessoas.length > 0 && (
-                <span className="text-suave"> ({pessoas.map(([t, n]) => `trecho ${t}: ${n}`).join("; ")})</span>
+              movimento agora: <b>{faixaMov(e.observada)}</b>{" "}
+              <span className="text-suave">({pct(e.observada)} do cheio da rua)</span>
+              {volumes.length > 0 && (
+                <span className="block text-suave">
+                  média de pessoas em 5 min: {volumes.map(([t, n]) => `trecho ${t}: ${n}`).join("; ")}
+                </span>
               )}
             </li>
             <li>
               ocorrência: <b className={e.ocorrencia ? "text-falha" : ""}>{e.ocorrencia ? "sim" : "não"}</b>
             </li>
             <li>
-              {e.modo === "reativo" ? "movimentação da última hora" : "movimentação prevista"}:{" "}
+              {e.modo === "reativo" ? "sem previsão (modo reativo): usa o movimento agora" : "movimento previsto"}:{" "}
               <b>{faixaMov(prev)}</b> <span className="text-suave">({pct(prev)})</span>
             </li>
             <li>
               horário: <b>{faixaHoraria(e.horas_desde_18h)}</b>
             </li>
-            {e.sem_dado && <li className="text-falha">sem leitura vigente: pleno por segurança</li>}
+            {niveis.length === 3 && (
+              <li className="text-suave">
+                classes da via: {niveis.map((n) => n.toFixed(3)).join(" → ")} do pleno
+              </li>
+            )}
+            {e.sem_dado && <li className="text-falha">sem volume vigente: pleno por segurança</li>}
           </ul>
         </Etapa>
         <ArrowRight className="hidden self-center text-suave md:block" size={16} aria-hidden="true" />
@@ -85,6 +94,9 @@ function Decisao({ d }) {
             </ul>
           )}
           <p className="mt-2 border-t border-borda pt-2 text-xs">
+            degrau: <b>{descreverDegrau(e.degrau)}</b>
+            {e.degrau != null && <span className="text-suave"> ({e.degrau.toFixed(2)})</span>}
+            <br />
             nível pretendido: <b className="tabular-nums">{d.nivel_pretendido.toFixed(3)}</b>
           </p>
         </Etapa>
@@ -122,7 +134,7 @@ export default function Explicacoes({ eventos, selecionado, setSelecionado }) {
         .then((x) => vivo && (setExplicacao(x), setErro(null)))
         .catch((e) => vivo && setErro(e.message));
     buscar();
-    // A decisao chega logo depois da leitura: tenta de novo ate aparecer.
+    // A decisao chega logo depois da publicacao: tenta de novo ate aparecer.
     const id = setInterval(buscar, 2000);
     return () => {
       vivo = false;
@@ -133,7 +145,7 @@ export default function Explicacoes({ eventos, selecionado, setSelecionado }) {
   return (
     <div className="grid gap-4 lg:grid-cols-[18rem_1fr]">
       <section className="rounded-xl border border-borda bg-carta p-3">
-        <h2 className="mb-2 text-xs font-medium tracking-wide text-suave uppercase">leituras recebidas</h2>
+        <h2 className="mb-2 text-xs font-medium tracking-wide text-suave uppercase">publicações recebidas</h2>
         <ul className="max-h-[32rem] space-y-1 overflow-y-auto text-xs">
           {eventos.map((e) => (
             <li key={e.id}>
@@ -143,28 +155,24 @@ export default function Explicacoes({ eventos, selecionado, setSelecionado }) {
                 className={`flex w-full items-baseline gap-2 rounded-md px-2 py-1 text-left ${e.id === atual ? "bg-luz/15 text-luz" : "hover:bg-borda/40"}`}
               >
                 <span className="tabular-nums text-suave">{hora(e.ocorrido_em)}</span>
-                <span className="font-medium">
-                  {e.pessoas} {e.pessoas === 1 ? "pessoa" : "pessoas"}
+                <span className={`font-medium ${e.tipo === "ocorrencia" && e.ocorrencia !== "encerrada" ? "text-falha" : ""}`}>
+                  {descreverEvento(e)}
                 </span>
-                {e.ocorrencia && <span className="text-falha">{OCORRENCIAS[e.ocorrencia]}</span>}
                 <span className="ml-auto text-suave">trecho {e.trecho}</span>
               </button>
             </li>
           ))}
-          {eventos.length === 0 && <li className="py-3 text-center text-suave">nenhuma leitura ainda</li>}
+          {eventos.length === 0 && <li className="py-3 text-center text-suave">nenhuma publicação ainda</li>}
         </ul>
       </section>
 
       <section className="space-y-3 rounded-xl border border-borda bg-carta p-4">
         {erro && <p className="text-xs text-falha">{erro}</p>}
-        {!explicacao && !erro && <p className="text-sm text-suave">escolha uma leitura à esquerda</p>}
+        {!explicacao && !erro && <p className="text-sm text-suave">escolha uma publicação à esquerda</p>}
         {explicacao && (
           <>
             <div>
-              <h2 className="text-base font-semibold">
-                {explicacao.evento.pessoas} {explicacao.evento.pessoas === 1 ? "pessoa" : "pessoas"}
-                {explicacao.evento.ocorrencia && ` · ocorrência de ${OCORRENCIAS[explicacao.evento.ocorrencia]}`}
-              </h2>
+              <h2 className="text-base font-semibold">{descreverEvento(explicacao.evento)}</h2>
               <p className="text-xs text-suave">
                 {explicacao.trecho_nome ?? "trecho"} (trecho {explicacao.evento.trecho}) · recebida às{" "}
                 {hora(explicacao.evento.recebido_em)} · origem {explicacao.evento.origem}
@@ -172,7 +180,7 @@ export default function Explicacoes({ eventos, selecionado, setSelecionado }) {
             </div>
             {explicacao.decisoes.length === 0 ? (
               <p className="text-sm text-suave">
-                Nenhuma luminária do sistema neste trecho: a leitura fica registrada, mas não gera decisão.
+                Nenhuma luminária do sistema neste trecho: a publicação fica registrada, mas não gera decisão.
               </p>
             ) : (
               explicacao.decisoes.map((d) => <Decisao key={d.ponto} d={d} />)

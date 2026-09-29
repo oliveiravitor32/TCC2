@@ -1,120 +1,424 @@
 {
   "nome": "noite_tipica",
-  "descricao": "Pedestres diminuindo ao longo da noite ate a via vazia da madrugada e voltando ao amanhecer.",
-  "origem": "Perfil diario observado na serie de pedestres (3.5, 3.6).",
+  "descricao": "Movimentacao caindo ao longo da noite ate o vale da madrugada e voltando ao amanhecer.",
+  "origem": "Perfil diario observado na serie de pedestres (3.5, 3.6). Convertido da suite v2 para a publicacao em volume de 5 min (DIVERGENCIAS 56): nivel normalizado do trecho; envelope refeito pelas regras da v4 antes da execucao.",
   "inicio_local": "2026-09-22T18:00:00",
   "duracao_min": 480,
   "eventos": [
     {
       "em_min": 0,
-      "pessoas": 6,
-      "vigente_min": 35
+      "nivel": 0.55
+    },
+    {
+      "em_min": 5,
+      "nivel": 0.55
+    },
+    {
+      "em_min": 10,
+      "nivel": 0.55
+    },
+    {
+      "em_min": 15,
+      "nivel": 0.55
+    },
+    {
+      "em_min": 20,
+      "nivel": 0.55
+    },
+    {
+      "em_min": 25,
+      "nivel": 0.55
     },
     {
       "em_min": 30,
-      "pessoas": 5,
-      "vigente_min": 35
+      "nivel": 0.48
+    },
+    {
+      "em_min": 35,
+      "nivel": 0.48
+    },
+    {
+      "em_min": 40,
+      "nivel": 0.48
+    },
+    {
+      "em_min": 45,
+      "nivel": 0.48
+    },
+    {
+      "em_min": 50,
+      "nivel": 0.48
+    },
+    {
+      "em_min": 55,
+      "nivel": 0.48
     },
     {
       "em_min": 60,
-      "pessoas": 4,
-      "vigente_min": 35
+      "nivel": 0.4
+    },
+    {
+      "em_min": 65,
+      "nivel": 0.4
+    },
+    {
+      "em_min": 70,
+      "nivel": 0.4
+    },
+    {
+      "em_min": 75,
+      "nivel": 0.4
+    },
+    {
+      "em_min": 80,
+      "nivel": 0.4
+    },
+    {
+      "em_min": 85,
+      "nivel": 0.4
     },
     {
       "em_min": 90,
-      "pessoas": 3,
-      "vigente_min": 35
+      "nivel": 0.3
+    },
+    {
+      "em_min": 95,
+      "nivel": 0.3
+    },
+    {
+      "em_min": 100,
+      "nivel": 0.3
+    },
+    {
+      "em_min": 105,
+      "nivel": 0.3
+    },
+    {
+      "em_min": 110,
+      "nivel": 0.3
+    },
+    {
+      "em_min": 115,
+      "nivel": 0.3
     },
     {
       "em_min": 120,
-      "pessoas": 2,
-      "vigente_min": 35
+      "nivel": 0.2
+    },
+    {
+      "em_min": 125,
+      "nivel": 0.2
+    },
+    {
+      "em_min": 130,
+      "nivel": 0.2
+    },
+    {
+      "em_min": 135,
+      "nivel": 0.2
+    },
+    {
+      "em_min": 140,
+      "nivel": 0.2
+    },
+    {
+      "em_min": 145,
+      "nivel": 0.2
     },
     {
       "em_min": 150,
-      "pessoas": 1,
-      "vigente_min": 35
+      "nivel": 0.12
+    },
+    {
+      "em_min": 155,
+      "nivel": 0.12
+    },
+    {
+      "em_min": 160,
+      "nivel": 0.12
+    },
+    {
+      "em_min": 165,
+      "nivel": 0.12
+    },
+    {
+      "em_min": 170,
+      "nivel": 0.12
+    },
+    {
+      "em_min": 175,
+      "nivel": 0.12
     },
     {
       "em_min": 180,
-      "pessoas": 0,
-      "vigente_min": 35
+      "nivel": 0.07
+    },
+    {
+      "em_min": 185,
+      "nivel": 0.07
+    },
+    {
+      "em_min": 190,
+      "nivel": 0.07
+    },
+    {
+      "em_min": 195,
+      "nivel": 0.07
+    },
+    {
+      "em_min": 200,
+      "nivel": 0.07
+    },
+    {
+      "em_min": 205,
+      "nivel": 0.07
     },
     {
       "em_min": 210,
-      "pessoas": 0,
-      "vigente_min": 35
+      "nivel": 0.04
+    },
+    {
+      "em_min": 215,
+      "nivel": 0.04
+    },
+    {
+      "em_min": 220,
+      "nivel": 0.04
+    },
+    {
+      "em_min": 225,
+      "nivel": 0.04
+    },
+    {
+      "em_min": 230,
+      "nivel": 0.04
+    },
+    {
+      "em_min": 235,
+      "nivel": 0.04
     },
     {
       "em_min": 240,
-      "pessoas": 0,
-      "vigente_min": 35
+      "nivel": 0.03
+    },
+    {
+      "em_min": 245,
+      "nivel": 0.03
+    },
+    {
+      "em_min": 250,
+      "nivel": 0.03
+    },
+    {
+      "em_min": 255,
+      "nivel": 0.03
+    },
+    {
+      "em_min": 260,
+      "nivel": 0.03
+    },
+    {
+      "em_min": 265,
+      "nivel": 0.03
     },
     {
       "em_min": 270,
-      "pessoas": 0,
-      "vigente_min": 35
+      "nivel": 0.03
+    },
+    {
+      "em_min": 275,
+      "nivel": 0.03
+    },
+    {
+      "em_min": 280,
+      "nivel": 0.03
+    },
+    {
+      "em_min": 285,
+      "nivel": 0.03
+    },
+    {
+      "em_min": 290,
+      "nivel": 0.03
+    },
+    {
+      "em_min": 295,
+      "nivel": 0.03
     },
     {
       "em_min": 300,
-      "pessoas": 0,
-      "vigente_min": 35
+      "nivel": 0.04
+    },
+    {
+      "em_min": 305,
+      "nivel": 0.04
+    },
+    {
+      "em_min": 310,
+      "nivel": 0.04
+    },
+    {
+      "em_min": 315,
+      "nivel": 0.04
+    },
+    {
+      "em_min": 320,
+      "nivel": 0.04
+    },
+    {
+      "em_min": 325,
+      "nivel": 0.04
     },
     {
       "em_min": 330,
-      "pessoas": 0,
-      "vigente_min": 35
+      "nivel": 0.06
+    },
+    {
+      "em_min": 335,
+      "nivel": 0.06
+    },
+    {
+      "em_min": 340,
+      "nivel": 0.06
+    },
+    {
+      "em_min": 345,
+      "nivel": 0.06
+    },
+    {
+      "em_min": 350,
+      "nivel": 0.06
+    },
+    {
+      "em_min": 355,
+      "nivel": 0.06
     },
     {
       "em_min": 360,
-      "pessoas": 1,
-      "vigente_min": 35
+      "nivel": 0.1
+    },
+    {
+      "em_min": 365,
+      "nivel": 0.1
+    },
+    {
+      "em_min": 370,
+      "nivel": 0.1
+    },
+    {
+      "em_min": 375,
+      "nivel": 0.1
+    },
+    {
+      "em_min": 380,
+      "nivel": 0.1
+    },
+    {
+      "em_min": 385,
+      "nivel": 0.1
     },
     {
       "em_min": 390,
-      "pessoas": 2,
-      "vigente_min": 35
+      "nivel": 0.18
+    },
+    {
+      "em_min": 395,
+      "nivel": 0.18
+    },
+    {
+      "em_min": 400,
+      "nivel": 0.18
+    },
+    {
+      "em_min": 405,
+      "nivel": 0.18
+    },
+    {
+      "em_min": 410,
+      "nivel": 0.18
+    },
+    {
+      "em_min": 415,
+      "nivel": 0.18
     },
     {
       "em_min": 420,
-      "pessoas": 3,
-      "vigente_min": 35
+      "nivel": 0.3
+    },
+    {
+      "em_min": 425,
+      "nivel": 0.3
+    },
+    {
+      "em_min": 430,
+      "nivel": 0.3
+    },
+    {
+      "em_min": 435,
+      "nivel": 0.3
+    },
+    {
+      "em_min": 440,
+      "nivel": 0.3
+    },
+    {
+      "em_min": 445,
+      "nivel": 0.3
     },
     {
       "em_min": 450,
-      "pessoas": 4,
-      "vigente_min": 35
+      "nivel": 0.45
+    },
+    {
+      "em_min": 455,
+      "nivel": 0.45
+    },
+    {
+      "em_min": 460,
+      "nivel": 0.45
+    },
+    {
+      "em_min": 465,
+      "nivel": 0.45
+    },
+    {
+      "em_min": 470,
+      "nivel": 0.45
+    },
+    {
+      "em_min": 475,
+      "nivel": 0.45
     }
   ],
   "envelope": [
     {
       "de_min": 0,
-      "ate_min": 180,
-      "min": 0.9,
+      "ate_min": 90,
+      "min": 0.7,
       "max": 1.0,
-      "nota": "pedestres presentes: pleno"
+      "nota": "movimentacao alta ou media: classe da via ou uma abaixo"
+    },
+    {
+      "de_min": 90,
+      "ate_min": 180,
+      "min": 0.5,
+      "max": 1.0,
+      "nota": "transicao sob rampa normativa"
     },
     {
       "de_min": 180,
-      "ate_min": 210,
+      "ate_min": 330,
       "min": 0.5,
-      "max": 1.0,
-      "nota": "via esvazia: descida sob rampa normativa"
-    },
-    {
-      "de_min": 210,
-      "ate_min": 360,
-      "min": 0.5,
-      "max": 0.8,
-      "nota": "via vazia: entre o piso e o intermediario",
+      "max": 0.75,
+      "nota": "vale: entre a classe minima e uma abaixo (fim do inicio da noite)",
       "janela_baixa": true
     },
     {
-      "de_min": 360,
+      "de_min": 330,
       "ate_min": 480,
-      "min": 0.9,
+      "min": 0.5,
       "max": 1.0,
-      "nota": "pedestres de volta: pleno"
+      "nota": "retomada ao amanhecer"
     }
   ]
 }

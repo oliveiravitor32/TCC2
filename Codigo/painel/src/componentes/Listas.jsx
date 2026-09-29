@@ -4,7 +4,7 @@
 
 import { AlertOctagon, Radio, ScrollText } from "lucide-react";
 import { Cartao } from "./Cartoes";
-import { OCORRENCIAS, RESTRICOES, hora, lux, pct } from "../api";
+import { RESTRICOES, descreverEvento, hora, lux, pct } from "../api";
 
 export function Decisoes({ decisoes, telemetria }) {
   const porDecisao = new Map(telemetria.map((t) => [t.decisao_id, t]));
@@ -53,15 +53,14 @@ export function Decisoes({ decisoes, telemetria }) {
 
 export function Eventos({ eventos }) {
   return (
-    <Cartao icone={Radio} titulo="eventos urbanos recebidos">
+    <Cartao icone={Radio} titulo="publicações recebidas da plataforma">
       <ul className="max-h-72 space-y-1 overflow-y-auto text-xs">
         {eventos.slice(0, 40).map((e) => (
           <li key={e.id} className="flex items-baseline gap-2 border-t border-borda/60 py-1">
             <span className="text-suave tabular-nums">{hora(e.ocorrido_em)}</span>
-            <span className="font-medium tabular-nums">
-              {e.pessoas} {e.pessoas === 1 ? "pessoa" : "pessoas"}
+            <span className={`font-medium tabular-nums ${e.tipo === "ocorrencia" && e.ocorrencia !== "encerrada" ? "text-falha" : ""}`}>
+              {descreverEvento(e)}
             </span>
-            {e.ocorrencia && <span className="text-falha">{OCORRENCIAS[e.ocorrencia]}</span>}
             <span className="ml-auto text-suave">trecho {e.trecho} · {e.origem}</span>
           </li>
         ))}

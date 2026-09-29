@@ -76,10 +76,10 @@ export const pct = (v) => (v === null || v === undefined ? "--" : `${(v * 100).t
 export const lux = (v, casas = 2) =>
   v === null || v === undefined ? "--" : `${Number(v).toFixed(casas)} lx`;
 
-// Fronteiras da movimentacao prevista: os tercis da serie adotada (3.7).
+// Fronteiras da movimentacao (observada e prevista): os tercis da serie adotada (3.7).
 export const TERCIS = [0.1038, 0.4053];
 export const faixaMov = (v) =>
-  v === null || v === undefined ? "sem previsão" : v < TERCIS[0] ? "baixa" : v < TERCIS[1] ? "média" : "alta";
+  v === null || v === undefined ? "sem dado" : v < TERCIS[0] ? "baixa" : v < TERCIS[1] ? "média" : "alta";
 
 // Faixa horaria em horas desde as 18h (0 a 12), com as mesmas fronteiras
 // dos conjuntos da base de regras: inicio da noite ate 3 h (pleno) e saindo
@@ -98,4 +98,26 @@ export const faixaHoraria = (h) => {
   return faixa;
 };
 
-export const OCORRENCIAS = { seguranca: "segurança", transito: "trânsito" };
+export const OCORRENCIAS = { seguranca: "segurança", transito: "trânsito", encerrada: "encerrada" };
+
+// Publicacao da plataforma (DIVERGENCIAS 56): volume de 5 min ou ocorrencia.
+const num = (v, casas = 1) => Number(v).toLocaleString("pt-BR", { maximumFractionDigits: casas });
+export const descreverEvento = (e) =>
+  e.tipo === "ocorrencia"
+    ? e.ocorrencia === "encerrada"
+      ? "ocorrência encerrada"
+      : `ocorrência: ${OCORRENCIAS[e.ocorrencia]}`
+    : `${num(e.pessoas_media)} ${Number(e.pessoas_media) === 1 ? "pessoa" : "pessoas"} em média`;
+
+// Degrau de classe da inferencia (3.7): 0 = classe da via, 1 = uma abaixo,
+// 2 = classe minima admitida. Valores intermediarios = mistura das regras.
+export const descreverDegrau = (d) =>
+  d === null || d === undefined
+    ? "--"
+    : d < 0.05
+      ? "classe da via"
+      : Math.abs(d - 1) < 0.05
+        ? "uma classe abaixo"
+        : d > 1.95
+          ? "classe mínima"
+          : `entre ${d < 1 ? "a classe da via e uma abaixo" : "uma abaixo e a mínima"}`;

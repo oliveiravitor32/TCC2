@@ -63,12 +63,20 @@ VALUES ('v2-sem-meteorologia-degraus', 8,
         'Mesma base v2 como tabela em degraus (corte seco nos tercis, faixa horaria no conjunto de maior grau); so para comparacao com a Mamdani.')
 ON CONFLICT (rotulo) DO NOTHING;
 
--- Base por presenca (DIVERGENCIAS 55): a vigente.
+-- Base por presenca (DIVERGENCIAS 55), substituida pela v4.
 INSERT INTO versao_base_regras (rotulo, qtd_regras, resumo)
 VALUES ('v3-presenca', 6,
         'Presenca de pedestre na leitura do trecho em vez de volume observado; 6 regras; tercis de Melbourne na previsao. Arquivo: decisao/regras/v3-presenca.toml.'),
        ('v3-presenca-degraus', 6,
         'Mesma base v3 como tabela em degraus; so para comparacao com a Mamdani.')
+ON CONFLICT (rotulo) DO NOTHING;
+
+-- Base por volume com saida em degraus de classe (DIVERGENCIAS 56): a vigente.
+INSERT INTO versao_base_regras (rotulo, qtd_regras, resumo)
+VALUES ('v4-volume', 7,
+        'Volume de movimento (media de 5 min por trecho) observado e previsto; 7 regras; saida em degraus de classe lidos de classe_iluminacao. Arquivo: decisao/regras/v4-volume.toml.'),
+       ('v4-volume-degraus', 7,
+        'Mesma base v4 como tabela em degraus; so para comparacao com a Mamdani.')
 ON CONFLICT (rotulo) DO NOTHING;
 
 -- hash_regras e conferido pelo servico de decisao ao iniciar (passo 5).

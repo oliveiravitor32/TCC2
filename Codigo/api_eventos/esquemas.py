@@ -14,26 +14,34 @@ from uuid import UUID
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, model_validator
 
-# Um so tipo: a LEITURA do trecho num instante (DIVERGENCIAS 55). A
-# plataforma publica a cada poucos segundos quantas pessoas ha na area e se
-# ha ocorrencia; o servico de decisao cuida do resto. A condicao
-# meteorologica nao faz parte do contrato (DIVERGENCIAS 49).
-Tipo = Literal["leitura"]
+# Dois tipos por trecho de via (DIVERGENCIAS 56):
+#   volume     - media de pessoas na area do trecho num periodo (5 min). E a
+#                OCUPACAO medida pela contagem instantanea da camera, e nao a
+#                soma de passagens: quem vai e volta nao conta duas vezes;
+#   ocorrencia - seguranca ou transito, publicada na hora; 'encerrada' fecha
+#                a anterior do mesmo trecho.
+# A condicao meteorologica nao faz parte do contrato (DIVERGENCIAS 49).
+Tipo = Literal["volume", "ocorrencia"]
 Abrangencia = Literal["via", "quadra", "bairro", "municipio"]
-Ocorrencia = Literal["seguranca", "transito"]
+Ocorrencia = Literal["seguranca", "transito", "encerrada"]
 
 
 class EventoEntrada(BaseModel):
-    """Corpo do POST /eventos: a leitura de um trecho de via."""
+    """Um item do POST /eventos: o volume ou a ocorrencia de um trecho.
+
+    O corpo do POST e um item ou uma lista de itens (pacote por regiao).
+    """
 
     model_config = ConfigDict(extra="forbid")
 
+    # Volume: fim do periodo medido. Ocorrencia: instante do aviso.
     ocorrido_em: AwareDatetime
-    tipo: Tipo = "leitura"
-    # Contagem instantanea de pessoas na area do trecho (analitico de camera
-    # ja exigido da plataforma, 2.3). Nenhuma identificacao: so o numero.
-    pessoas: int = Field(ge=0, le=10_000)
-    # Ocorrencia em curso no trecho; ausente = nenhuma.
+    tipo: Tipo
+    # Volume: media de pessoas na area no periodo (analitico de contagem por
+    # area ja exigido da plataforma, 2.3). Nenhuma identificacao: so o numero.
+    pessoas_media: float | None = Field(default=None, ge=0, le=10_000)
+    # Volume: duracao do periodo; a especificacao pede 5 min.
+    periodo_s: int | None = Field(default=None, ge=1, le=3600)
     ocorrencia: Ocorrencia | None = None
     abrangencia: Abrangencia = "via"
     origem: str = Field(min_length=1, max_length=80)
@@ -44,10 +52,34 @@ class EventoEntrada(BaseModel):
     vigente_ate: AwareDatetime | None = None
 
     @model_validator(mode="after")
-    def _vigencia_coerente(self) -> EventoEntrada:
+    def _coerente(self) -> EventoEntrada:
         if self.vigente_ate is not None and self.vigente_ate < self.ocorrido_em:
             raise ValueError("'vigente_ate' anterior a 'ocorrido_em'")
+        if self.tipo == "volume":
+            if self.pessoas_media is None:
+                raise ValueError("volume exige 'pessoas_media'")
+            if self.ocorrencia is not None:
+                raise ValueError("volume nao leva 'ocorrencia': publique-a como tipo 'ocorrencia'")
+            if self.periodo_s is None:
+                self.periodo_s = 300
+        else:
+            if self.ocorrencia is None:
+                raise ValueError("ocorrencia exige o campo 'ocorrencia'")
+            if self.pessoas_media is not None or self.periodo_s is not None:
+                raise ValueError("ocorrencia nao leva 'pessoas_media' nem 'periodo_s'")
         return self
+
+
+class ItemRecusado(BaseModel):
+    indice: int
+    erro: str
+
+
+class ResultadoPacote(BaseModel):
+    """Resposta do POST /eventos com lista: so o item com erro e recusado."""
+
+    aceitos: list["Evento"]
+    recusados: list[ItemRecusado]
 
 
 class Evento(BaseModel):
@@ -55,7 +87,8 @@ class Evento(BaseModel):
     ocorrido_em: datetime
     recebido_em: datetime
     tipo: Tipo
-    pessoas: int
+    pessoas_media: float | None
+    periodo_s: int | None
     ocorrencia: Ocorrencia | None
     abrangencia: Abrangencia
     origem: str
@@ -181,6 +214,9 @@ class RegraAtivada(BaseModel):
     texto: str
     origem: str
     grau: float
+
+
+ResultadoPacote.model_rebuild()
 
 
 class Explicacao(BaseModel):

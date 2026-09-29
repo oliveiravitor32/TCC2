@@ -1,0 +1,115 @@
+{
+  "nome": "ruido_na_fronteira",
+  "descricao": "Madrugada com o volume oscilando em torno do tercil inferior: a tabela em degraus alterna entre classes; a logica nebulosa deve ficar estavel.",
+  "origem": "Retomado da v2 (DIVERGENCIAS 52), acrescentado depois da primeira comparacao Mamdani x degraus, e convertido para volume de 5 min (DIVERGENCIAS 56): nivel sorteado de normal(0,1038; 0,025), semente 51.",
+  "inicio_local": "2026-09-23T01:00:00",
+  "duracao_min": 120,
+  "eventos": [
+    {
+      "em_min": 0,
+      "nivel": 0.105
+    },
+    {
+      "em_min": 5,
+      "nivel": 0.1333
+    },
+    {
+      "em_min": 10,
+      "nivel": 0.1282
+    },
+    {
+      "em_min": 15,
+      "nivel": 0.1433
+    },
+    {
+      "em_min": 20,
+      "nivel": 0.1075
+    },
+    {
+      "em_min": 25,
+      "nivel": 0.1353
+    },
+    {
+      "em_min": 30,
+      "nivel": 0.1263
+    },
+    {
+      "em_min": 35,
+      "nivel": 0.0926
+    },
+    {
+      "em_min": 40,
+      "nivel": 0.1435
+    },
+    {
+      "em_min": 45,
+      "nivel": 0.0957
+    },
+    {
+      "em_min": 50,
+      "nivel": 0.0702
+    },
+    {
+      "em_min": 55,
+      "nivel": 0.0933
+    },
+    {
+      "em_min": 60,
+      "nivel": 0.0835
+    },
+    {
+      "em_min": 65,
+      "nivel": 0.0916
+    },
+    {
+      "em_min": 70,
+      "nivel": 0.1292
+    },
+    {
+      "em_min": 75,
+      "nivel": 0.1033
+    },
+    {
+      "em_min": 80,
+      "nivel": 0.1525
+    },
+    {
+      "em_min": 85,
+      "nivel": 0.0988
+    },
+    {
+      "em_min": 90,
+      "nivel": 0.1228
+    },
+    {
+      "em_min": 95,
+      "nivel": 0.1072
+    },
+    {
+      "em_min": 100,
+      "nivel": 0.0584
+    },
+    {
+      "em_min": 105,
+      "nivel": 0.1102
+    },
+    {
+      "em_min": 110,
+      "nivel": 0.119
+    },
+    {
+      "em_min": 115,
+      "nivel": 0.1349
+    }
+  ],
+  "envelope": [
+    {
+      "de_min": 0,
+      "ate_min": 120,
+      "min": 0.5,
+      "max": 0.75,
+      "nota": "volume na fronteira baixa/media: entre a classe minima e uma abaixo",
+      "janela_baixa": true
+    }
+  ]
+}

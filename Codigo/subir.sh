@@ -89,7 +89,7 @@ fi
 [ "$COM_PAINEL" = 1 ] && echo "  painel ....... http://localhost:5173"
 echo "  logs ......... $LOGS/"
 echo
-echo "publicar um evento de teste (movimentacao baixa: a luz desce em rampa):"
-echo "  ./evento.sh 0.05"
+echo "publicar um volume de teste (movimento baixo: a luz desce em rampa):"
+echo "  ./evento.sh volume 0.05"
 echo "encerrar tudo:"
 echo "  ./parar.sh"

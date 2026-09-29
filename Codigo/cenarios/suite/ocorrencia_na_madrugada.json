@@ -1,57 +1,90 @@
 {
   "nome": "ocorrencia_na_madrugada",
-  "descricao": "Via vazia de madrugada com ocorrencia reportada: elevacao imediata e retorno apos o fim.",
-  "origem": "Alerta automatico que a plataforma municipal ja produz (2.3, Quadro 7).",
+  "descricao": "Movimentacao baixa com ocorrencia reportada: elevacao imediata e retorno apos o encerramento.",
+  "origem": "Alerta automatico que a plataforma municipal ja produz (2.3, Quadro 7). Convertido da suite v2 para a publicacao em volume de 5 min (DIVERGENCIAS 56): nivel normalizado do trecho; envelope refeito pelas regras da v4 antes da execucao.",
   "inicio_local": "2026-09-23T01:00:00",
   "duracao_min": 90,
   "eventos": [
     {
       "em_min": 0,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 5,
+      "nivel": 0.02
     },
     {
       "em_min": 10,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 15,
+      "nivel": 0.02
     },
     {
       "em_min": 20,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 25,
+      "nivel": 0.02
     },
     {
       "em_min": 30,
-      "pessoas": 0,
-      "vigente_min": 15,
-      "ocorrencia": "seguranca"
+      "nivel": 0.02
+    },
+    {
+      "em_min": 30,
+      "ocorrencia": "seguranca",
+      "vigente_min": 45
+    },
+    {
+      "em_min": 35,
+      "nivel": 0.02
     },
     {
       "em_min": 40,
-      "pessoas": 0,
-      "vigente_min": 15,
-      "ocorrencia": "seguranca"
+      "nivel": 0.02
+    },
+    {
+      "em_min": 45,
+      "nivel": 0.02
     },
     {
       "em_min": 50,
-      "pessoas": 0,
-      "vigente_min": 15,
-      "ocorrencia": "seguranca"
+      "nivel": 0.02
+    },
+    {
+      "em_min": 55,
+      "nivel": 0.02
     },
     {
       "em_min": 60,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 60,
+      "ocorrencia": "encerrada"
+    },
+    {
+      "em_min": 65,
+      "nivel": 0.02
     },
     {
       "em_min": 70,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 75,
+      "nivel": 0.02
     },
     {
       "em_min": 80,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.02
+    },
+    {
+      "em_min": 85,
+      "nivel": 0.02
     }
   ],
   "envelope": [
@@ -59,23 +92,23 @@
       "de_min": 0,
       "ate_min": 30,
       "min": 0.5,
-      "max": 0.6,
-      "janela_baixa": true,
-      "nota": "piso antes da ocorrencia"
+      "max": 0.55,
+      "nota": "classe minima antes da ocorrencia",
+      "janela_baixa": true
     },
     {
       "de_min": 30,
       "ate_min": 60,
-      "min": 0.9,
+      "min": 0.95,
       "max": 1.0,
-      "nota": "ocorrencia: elevacao livre e imediata"
+      "nota": "ocorrencia: elevacao livre e imediata a classe da via"
     },
     {
       "de_min": 60,
       "ate_min": 90,
       "min": 0.5,
       "max": 1.0,
-      "nota": "volta a descer sob rampa"
+      "nota": "encerrada: volta a descer sob rampa"
     }
   ]
 }

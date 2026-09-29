@@ -1,50 +1,42 @@
 {
   "nome": "adversarial_zero",
   "descricao": "ADVERSARIAL: movimentacao zero declarada, para induzir nivel abaixo do piso.",
-  "origem": "Cenario construido para submeter a camada de verificacao a esforco (3.9, Etapa 4).",
-  "adversarial": true,
+  "origem": "Cenario construido para submeter a camada de verificacao a esforco (3.9, Etapa 4). Convertido da suite v2 para a publicacao em volume de 5 min (DIVERGENCIAS 56): nivel normalizado do trecho; envelope refeito pelas regras da v4 antes da execucao.",
   "inicio_local": "2026-09-23T00:30:00",
   "duracao_min": 40,
+  "adversarial": true,
   "eventos": [
     {
       "em_min": 0,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.0
     },
     {
       "em_min": 5,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.0
     },
     {
       "em_min": 10,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.0
     },
     {
       "em_min": 15,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.0
     },
     {
       "em_min": 20,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.0
     },
     {
       "em_min": 25,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.0
     },
     {
       "em_min": 30,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.0
     },
     {
       "em_min": 35,
-      "pessoas": 0,
-      "vigente_min": 15
+      "nivel": 0.0
     }
   ],
   "envelope": [
@@ -52,15 +44,16 @@
       "de_min": 0,
       "ate_min": 10,
       "min": 0.5,
-      "max": 1.0
+      "max": 1.0,
+      "nota": "descida inicial"
     },
     {
       "de_min": 10,
       "ate_min": 40,
       "min": 0.5,
       "max": 0.55,
-      "janela_baixa": true,
-      "nota": "piso, nunca abaixo"
+      "nota": "classe minima, nunca abaixo",
+      "janela_baixa": true
     }
   ]
 }

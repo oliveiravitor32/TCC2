@@ -18,12 +18,20 @@ try:
 except psycopg.OperationalError:
     pytest.skip("Postgres indisponivel (docker compose up -d db)", allow_module_level=True)
 
-# Leitura do trecho (DIVERGENCIAS 55): pessoas na area + ocorrencia.
+# Volume do trecho (DIVERGENCIAS 56): media de pessoas na area em 5 min.
 MOV = {
     "ocorrido_em": "2026-09-21T01:00:00-03:00",
-    "pessoas": 2,
+    "tipo": "volume",
+    "pessoas_media": 2,
     "origem": "emulador-smart-sampa",
     "trecho": 20159,  # R. Antonio Viana, trecho real do recorte (db/seed_cadastro.sql)
+}
+OCO = {
+    "ocorrido_em": "2026-09-21T01:00:00-03:00",
+    "tipo": "ocorrencia",
+    "ocorrencia": "seguranca",
+    "origem": "emulador-smart-sampa",
+    "trecho": 20159,
 }
 
 
@@ -54,18 +62,20 @@ def cliente(conn):
 # --------------------------------------------------------------------------
 # POST /eventos
 # --------------------------------------------------------------------------
-def test_publica_leitura(cliente):
+def test_publica_volume(cliente):
     r = cliente.post("/eventos", json=MOV)
     assert r.status_code == 201
     corpo = r.json()
-    assert corpo["id"] > 0 and corpo["pessoas"] == 2 and corpo["ocorrencia"] is None
-    assert corpo["tipo"] == "leitura" and corpo["abrangencia"] == "via"
+    assert corpo["id"] > 0 and corpo["pessoas_media"] == 2 and corpo["ocorrencia"] is None
+    assert corpo["tipo"] == "volume" and corpo["periodo_s"] == 300  # 5 min por padrao
+    assert corpo["abrangencia"] == "via"
 
 
-@pytest.mark.parametrize("ocorrencia", ["seguranca", "transito"])
-def test_publica_leitura_com_ocorrencia(cliente, ocorrencia):
-    r = cliente.post("/eventos", json={**MOV, "pessoas": 0, "ocorrencia": ocorrencia})
-    assert r.status_code == 201 and r.json()["ocorrencia"] == ocorrencia
+@pytest.mark.parametrize("ocorrencia", ["seguranca", "transito", "encerrada"])
+def test_publica_ocorrencia(cliente, ocorrencia):
+    r = cliente.post("/eventos", json={**OCO, "ocorrencia": ocorrencia})
+    assert r.status_code == 201
+    assert r.json()["ocorrencia"] == ocorrencia and r.json()["pessoas_media"] is None
 
 
 @pytest.mark.parametrize(
@@ -74,28 +84,68 @@ def test_publica_leitura_com_ocorrencia(cliente, ocorrencia):
         {"placa": "ABC1D23"},  # campo fora do contrato (RNF08)
         {"imagem": "base64..."},
         {"rosto": "..."},
-        {"pessoas": -1},
-        {"pessoas": 1.5},
-        {"pessoas": None},
-        {"valor": 0.12},  # contrato antigo (nivel normalizado): nao existe mais
-        {"tipo": "movimentacao"},
+        {"pessoas_media": -1},
+        {"pessoas_media": None},  # volume sem media
+        {"pessoas": 2},  # contrato antigo (leitura instantanea): nao existe mais
+        {"valor": 0.12},  # contrato mais antigo (nivel normalizado)
+        {"tipo": "leitura"},
         {"tipo": "meteorologia"},  # fora do contrato (item 49)
-        {"ocorrencia": "granizo"},  # fora do vocabulario
-        {"ocorrencia": "encerrada"},  # ausencia de ocorrencia = campo ausente
+        {"ocorrencia": "seguranca"},  # ocorrencia vai em publicacao propria
+        {"periodo_s": 0},
+        {"periodo_s": 4000},
         {"ocorrido_em": "2026-09-21T01:00:00"},  # sem fuso horario
-        {"vigente_ate": "2026-09-21T00:00:00-03:00"},  # vigencia antes da ocorrencia
+        {"vigente_ate": "2026-09-21T00:00:00-03:00"},  # vigencia antes do fim do periodo
         {"trecho": None},  # sem trecho: o evento nao diz onde
         {"trecho": 0},
     ],
 )
-def test_recusa_evento_fora_do_contrato(cliente, alteracao):
+def test_recusa_volume_fora_do_contrato(cliente, alteracao):
     r = cliente.post("/eventos", json={**MOV, **alteracao})
     assert r.status_code == 422, r.json()
 
 
-def test_leitura_sem_pessoas_e_recusada(cliente):
-    corpo = {k: v for k, v in MOV.items() if k != "pessoas"}
+@pytest.mark.parametrize(
+    "alteracao",
+    [{"ocorrencia": "granizo"}, {"ocorrencia": None}, {"pessoas_media": 1}, {"periodo_s": 300}],
+)
+def test_recusa_ocorrencia_fora_do_contrato(cliente, alteracao):
+    assert cliente.post("/eventos", json={**OCO, **alteracao}).status_code == 422
+
+
+def test_trecho_fora_do_cadastro_e_recusado(cliente):
+    r = cliente.post("/eventos", json={**MOV, "trecho": 999999999})
+    assert r.status_code == 422 and "nao cadastrado" in r.json()["detail"]
+
+
+# --------------------------------------------------------------------------
+# Pacote por regiao (DIVERGENCIAS 56): so o item errado e recusado
+# --------------------------------------------------------------------------
+def test_pacote_grava_os_validos_e_recusa_so_os_errados(cliente, conn):
+    pacote = [
+        MOV,
+        {**MOV, "placa": "ABC1D23"},
+        {**MOV, "trecho": 999999999},
+        {**OCO, "trecho": 22661},
+    ]
+    r = cliente.post("/eventos", json=pacote)
+    assert r.status_code == 200
+    corpo = r.json()
+    assert [e["trecho"] for e in corpo["aceitos"]] == [20159, 22661]
+    assert [x["indice"] for x in corpo["recusados"]] == [1, 2]
+    assert "nao cadastrado" in corpo["recusados"][1]["erro"]
+    n = conn.execute("SELECT count(*) AS n FROM evento_urbano").fetchone()["n"]
+    assert n == 2
+
+
+@pytest.mark.parametrize("corpo", [[], "texto", 3])
+def test_pacote_vazio_ou_corpo_invalido_e_recusado(cliente, corpo):
     assert cliente.post("/eventos", json=corpo).status_code == 422
+
+
+def test_pacote_acima_do_limite_e_recusado(cliente, monkeypatch):
+    from decisao import config
+    monkeypatch.setattr(config, "MAX_ITENS_PACOTE", 2)
+    assert cliente.post("/eventos", json=[MOV, MOV, MOV]).status_code == 422
 
 
 def test_nenhum_evento_invalido_chega_ao_banco(cliente, conn):
@@ -116,7 +166,7 @@ def test_consulta_filtra_por_intervalo(cliente):
         params={"inicio": "2026-09-21T00:30:00-03:00", "fim": "2026-09-21T02:00:00-03:00"},
     )
     assert r.status_code == 200
-    assert len(r.json()) == 1 and r.json()[0]["pessoas"] == 2
+    assert len(r.json()) == 1 and r.json()[0]["pessoas_media"] == 2
 
 
 # --------------------------------------------------------------------------
@@ -124,8 +174,8 @@ def test_consulta_filtra_por_intervalo(cliente):
 # --------------------------------------------------------------------------
 def _decisao_com_telemetria(conn) -> str:
     ev = conn.execute(
-        "INSERT INTO evento_urbano (ocorrido_em, pessoas, origem, trecho_id)"
-        " VALUES (now(), 0, 't', 20159) RETURNING id"
+        "INSERT INTO evento_urbano (ocorrido_em, tipo, pessoas_media, periodo_s, origem, trecho_id)"
+        " VALUES (now(), 'volume', 0, 300, 't', 20159) RETURNING id"
     ).fetchone()["id"]
     d = conn.execute(
         """
@@ -363,7 +413,7 @@ def test_pontos_trazem_placa_e_trechos(cliente):
 
 
 # ---------------------------------------------------------------------------
-# Chave do painel de demonstracao e explicacao da decisao (DIVERGENCIAS 55)
+# Chave do painel de demonstracao e explicacao da decisao (DIVERGENCIAS 55 e 56)
 # ---------------------------------------------------------------------------
 def test_chave_demo_tambem_publica(cliente, com_chave, monkeypatch):
     import api_eventos.app as modulo
@@ -378,7 +428,7 @@ def test_explicacao_mostra_regras_e_correcao(cliente, conn):
     from decisao.inferencia import carregar
     from decisao.previsao import Persistencia
 
-    ev = cliente.post("/eventos", json={**MOV, "pessoas": 0,
+    ev = cliente.post("/eventos", json={**MOV, "pessoas_media": 0,
                                         "ocorrido_em": "2031-03-10T01:00:00-03:00"}).json()
     from datetime import datetime, timezone
 
@@ -398,10 +448,11 @@ def test_explicacao_mostra_regras_e_correcao(cliente, conn):
     assert corpo["trecho_nome"] == "R ANTONIO VIANA"
     d = corpo["decisoes"][0]
     assert d["ponto"] == "BANCADA-01" and d["decidida"]
-    assert d["entrada"]["presenca"] is False
-    assert d["regras_ativadas"][0]["id"] == "R4"  # via vazia, previsao baixa: reduzido
-    assert "presenca = nao" in d["regras_ativadas"][0]["texto"]
-    assert d["restricao_aplicada"] == "piso" and "piso" in d["motivo_restricao"]
+    assert d["entrada"]["observada"] == 0.0
+    assert d["entrada"]["niveis_classe"] == [1.0, 0.75, 0.5]
+    assert d["regras_ativadas"][0]["id"] == "R5"  # volume baixo, previsao baixa: classe minima
+    assert "observada = baixa" in d["regras_ativadas"][0]["texto"]
+    assert d["restricao_aplicada"] == "nenhuma" and "sem correcao" in d["motivo_restricao"]
     assert d["nivel_emitido"] == 0.5
 
 

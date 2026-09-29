@@ -1530,6 +1530,7 @@ PRODUCAO: o comando a luminaria real seria enderecado pelo codigo
     >>> v3: APLICADO em 28/09/2026 (Quadro 7, 3.5.1, 3.6, 3.7, 3.9, 3.10, 3.11,
         Quadros 12-17, 4.6.1, 6.3) - _SP_v3_revisado.docx; numeros PENDENTES
         para 5.x e 6.1 (Capitulos 5 e 6)
+    >>> SUBSTITUIDO PELO ITEM 56 em 29/09/2026 (presenca -> volume de 5 min).
 -------------------------------------------------------------------------------
 DECISAO (autor): a plataforma envia, a cada poucos segundos, a LEITURA de
          cada trecho: quantas pessoas ha na area agora, se ha ocorrencia e
@@ -1602,6 +1603,89 @@ LEITURA: (1) zero violacoes continua; (2) o regime por presenca GASTA MAIS
          (5) aderencia de 100 %: os envelopes da v3 sao largos (derivados
          dos conjuntos de saida) - aderencia deixou de discriminar e deve
          ser apresentada com essa ressalva.
+
+===============================================================================
+56. VOLUME DE 5 MIN, SAIDA EM DEGRAUS DE CLASSE E PACOTE (base v4-volume)
+    Trecho: 1.4, 3.2, 3.5.1, 3.5.2, 3.6, Quadro 7, 3.7, 3.9, 3.10, 3.11,
+            Quadros 12-17, 4.6.1, 5.4 (Quadro 18 novo), 6.3, Figura 2;
+            Matriz de IA renumerada para Quadro 19
+    Acao: [ATUALIZAR TEXTO] - decisao do autor em 29/09/2026
+    >>> v4: APLICADO em 29/09/2026 - _SP_v4_revisado.docx (marcado) e
+        _SP_v4.docx (aceito); numeros PENDENTES para 5.x e 6.1
+-------------------------------------------------------------------------------
+DECISAO (autor, depois de debate): a regra "1 pessoa -> pleno" (item 55) ia
+         alem da norma: a NBR 5101 6.3 recomenda reduzir nos horarios de baixa
+         movimentacao, e a classe minima (P5) ja e classe de pedestres, com
+         iluminancia vertical para reconhecimento facial (Quadro 8). Presenca
+         binaria tambem esvaziava a logica nebulosa (quase um "if"). Volta a
+         decisao pelo VOLUME de movimentacao.
+CONTRATO: POST /eventos aceita um item ou uma lista (pacote de ate 500; so o
+         item errado e recusado). Dois tipos por trecho:
+         - volume: {tipo:"volume", pessoas_media, periodo_s=300, ...} = media
+           de pessoas PRESENTES na area no periodo (ocupacao, nao soma de
+           passagens: quem vai e volta nao conta duas vezes). A cada 5 min
+           (tempo minimo da descida P3->P5, 6.10.2); vale 15 min (3 periodos,
+           logica do failsafe); vencido -> pleno.
+         - ocorrencia: {tipo:"ocorrencia", ocorrencia: seguranca|transito|
+           encerrada} na hora; vale ate 'encerrada' OU vigente_ate, o que vier
+           primeiro; sem vigencia, 15 min.
+         Envios espalhados no periodo (~170 msg/s para 50 mil cameras -
+           calculo, sem teste de carga). Precedente: Array of Things.
+         Dado de origem: contagem de pessoas por area (TR do Smart Sampa);
+           densidade serviria se vier como numero; contagem de passagens nao.
+SAIDA EM DEGRAUS DE CLASSE: a inferencia devolve o degrau (0 = classe da
+         via, 1 = uma abaixo, 2 = minima), convertido em fracao pelas classes
+         LIDAS de classe_iluminacao (ciclo.niveis_classe): P3 -> 1 / 0,75 /
+         0,5 = P3, P4, P5. Conjuntos simetricos: uma regra sozinha da
+         exatamente a classe (corrige o 0,93 do pleno nas bases antigas).
+         Tres degraus porque a norma admite descer no maximo duas classes;
+         classe sem degraus -> sempre pleno. A norma nao da numeros para
+         pouco/muito movimento: tercis por trecho = criterio dos autores (6.3).
+REGRAS v4 (7): R1 ocorrencia, R2 observada alta, R3 prevista alta -> classe
+         da via; R4 observada media -> uma abaixo; R5 baixa+prevista baixa ->
+         minima; R6 baixa+prevista media -> uma abaixo; R7 baixa+inicio da
+         noite -> uma abaixo. Toda regra que desce exige ocorrencia = nao.
+         Reativo = prevista <- observada. A previsao e segunda evidencia contra
+         erro de contagem (paragrafo novo na 3.7).
+CODIGO:  decisao/regras/v4-volume.toml; inferencia.py (Entrada observada,
+         fracao_do_degrau); ciclo.py (estado_via por tipo, observada,
+         niveis_classe); config (PERIODO_VOLUME_S, VALIDADE_VOLUME_S,
+         VALIDADE_OCORRENCIA_S, MAX_ITENS_PACOTE); API (pacote); migracao 006
+         (apaga eventos/decisoes de dev, preserva calibracao); cenarios (volume
+         como nivel normalizado, convertido pela referencia do trecho;
+         'ruido_na_fronteira' volta, 'presenca_intermitente' sai); painel
+         (modal volume/ocorrencia, explicacao com degrau); evento.sh
+         (./evento.sh volume 0.3 | ./evento.sh ocorrencia seguranca [trecho]).
+         226 testes passando.
+CENARIOS: convertidos da v2, volume a cada 5 min; envelopes refeitos pelas
+         regras da v4 ANTES da execucao. Duas correcoes de conversao depois da
+         1a rodada (nao de envelope): o 'silencio da plataforma' voltou a
+         publicar so nos minutos 0 e 5, como na v2; a ocorrencia da madrugada
+         passou a declarar vigencia de 45 min (o encerramento no minuto 60
+         fecha antes), como a especificacao pede.
+RESULTADOS DA SUITE v4 (29/09/2026; 9 cenarios, 13.440 decisoes por modo,
+         REF-40W):
+                          viol  aderencia  %pleno   %fixo   H3 (suite/sem adv)
+         antecipado         0     100 %     72,5 %  102,3 %   53,9 % / 57,8 %
+         reativo            0     100 %     71,3 %  100,6 %   52,8 % / 56,6 %
+         degraus antecip.   0     100 %     72,1 %  101,8 %   29,5 % / 29,0 %
+         degraus reativo    0     100 %     71,1 %  100,4 %   29,5 % / 29,0 %
+         Ruido na fronteira: Mamdani variacao total 1,47 e 16 inversoes;
+         degraus 2,50 e 9 inversoes (a tabela salta em degraus inteiros; a
+         Mamdani faz ajustes menores e mais frequentes).
+LEITURA: (1) zero violacoes em 53.760 decisoes; (2) o adaptativo continua
+         ~no mesmo consumo do horario fixo (100,4 a 102,3 %): a programacao
+         horaria atenua as cegas das 0h as 5h, e as regras seguram uma classe
+         abaixo com volume medio, previsao media ou inicio da noite; o texto
+         (3.11) mantem a ressalva "aderencia x energia, nao economia";
+         (3) H3 NAO confirmada (antecipado >= reativo); a metrica conta como
+         transicao todo ciclo acima da minima na janela, inclusive o degrau
+         intermediario - pesa contra o antecipado e contra a Mamdani;
+         (4) Mamdani ~ degraus em energia e aderencia; diferenca so de forma
+         da resposta na fronteira, pequena; (5) aderencia 100 %: envelopes
+         largos nas transicoes, ressalva mantida em 3.9.
+PENDENTE: reaplicar na VM (backup, migracao 006, up --build) e redeploy na
+         Vercel; numeros nos Capitulos 5 e 6.
 
 ===============================================================================
 FIM

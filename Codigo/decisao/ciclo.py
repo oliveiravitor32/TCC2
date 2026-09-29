@@ -39,17 +39,16 @@ class Ponto:
 
 @dataclass(frozen=True)
 class EstadoVia:
-    """Leituras vigentes dos trechos de um ponto (DIVERGENCIAS 55)."""
+    """Publicacoes vigentes dos trechos de um ponto (DIVERGENCIAS 56)."""
 
-    presenca: bool  # alguma pessoa em algum trecho do ponto
-    ocorrencia: bool
-    # Pessoas na leitura vigente de cada trecho; vazio = sem dado vigente.
-    pessoas: dict[int, int] = field(default_factory=dict)
+    ocorrencia: bool  # alguma ocorrencia aberta em algum trecho do ponto
+    # Media de pessoas do volume vigente de cada trecho; vazio = sem dado.
+    volumes: dict[int, float] = field(default_factory=dict)
     evento_ids: list[int] = field(default_factory=list)
 
     @property
     def sem_dado(self) -> bool:
-        return not self.pessoas
+        return not self.volumes
 
 
 @dataclass(frozen=True)
@@ -62,6 +61,9 @@ class DecisaoTomada:
     restricao_aplicada: str
     nivel_anterior: Decimal | None
     estado: EstadoVia
+    # Volume observado normalizado (None sem dado) e degrau defuzificado.
+    observada: float | None = None
+    degrau: float | None = None
 
     def comando(self) -> dict:
         """Carga do topico iluminacao/{ponto}/comando (Quadro 14)."""
@@ -130,6 +132,38 @@ def criterio(conn: psycopg.Connection, classe: str) -> Criterio:
     return Criterio(piso=piso, taxa_max_decrescimo_min=Decimal(taxa))
 
 
+def niveis_classe(conn: psycopg.Connection, classe: str) -> tuple[Decimal, Decimal, Decimal]:
+    """Os tres degraus da saida da inferencia, como fracao do pleno (RF09).
+
+    (classe da via, uma classe abaixo, classe minima admitida), lidos de
+    classe_iluminacao: "uma abaixo" e a classe de maior iluminancia menor que
+    a da via e nao menor que a minima. Com menos degraus, os valores se
+    repetem (ex.: P3 -> 1, 0,75, 0,5; nao dimerizavel -> 1, 1, 1). A norma
+    admite descer no maximo duas classes (6.10.2): tres degraus bastam.
+    """
+    lux, lux_min = conn.execute(
+        """
+        SELECT c.iluminancia_media_min_lux, cm.iluminancia_media_min_lux
+          FROM classe_iluminacao c
+          LEFT JOIN classe_iluminacao cm ON cm.codigo = c.classe_min_dimerizacao
+         WHERE c.codigo = %s
+        """,
+        (classe,),
+    ).fetchone()
+    if lux_min is None:
+        return PLENO, PLENO, PLENO
+    (lux_meio,) = conn.execute(
+        """
+        SELECT max(iluminancia_media_min_lux) FROM classe_iluminacao
+         WHERE iluminancia_media_min_lux < %(lux)s AND iluminancia_media_min_lux >= %(min)s
+        """,
+        {"lux": lux, "min": lux_min},
+    ).fetchone()
+    lux, lux_min = Decimal(lux), Decimal(lux_min)
+    meio = Decimal(lux_meio) if lux_meio is not None else lux_min
+    return PLENO, meio / lux, lux_min / lux
+
+
 # ---------------------------------------------------------------------------
 # Estado da via
 # ---------------------------------------------------------------------------
@@ -152,39 +186,70 @@ def estado_via(
 ) -> EstadoVia:
     """Estado da via para UM ponto de luz, a partir dos trechos dele.
 
-    Cada evento e a leitura de um trecho: pessoas na area e ocorrencia em
-    curso (DIVERGENCIAS 55). O ponto enxerga os trechos associados a ele em
-    trecho_ponto (DIVERGENCIAS 54). Em cada trecho vale a leitura mais recente
-    ainda vigente (sem vigente_ate, VALIDADE_LEITURA_S); entre os trechos,
-    pelo lado seguro: ha presenca se houver alguem em QUALQUER trecho, e
-    ocorrencia se QUALQUER trecho a reportar. Sem leitura vigente em nenhum
-    trecho, nao ha dado (e o ciclo decide 1,0).
+    Dois tipos de publicacao por trecho (DIVERGENCIAS 56): o VOLUME - media
+    de pessoas na area num periodo de 5 min - e a OCORRENCIA, publicada na
+    hora. O ponto enxerga os trechos associados a ele em trecho_ponto
+    (DIVERGENCIAS 54).
+
+    - Volume: em cada trecho vale o mais recente ainda vigente (sem
+      vigente_ate, VALIDADE_VOLUME_S). Sem volume vigente em nenhum trecho,
+      nao ha dado (e o ciclo decide o pleno).
+    - Ocorrencia: em cada trecho vale a publicacao mais recente; esta aberta
+      se nao for 'encerrada' e ainda estiver vigente (sem vigente_ate,
+      VALIDADE_OCORRENCIA_S) - encerra o que vier primeiro. Ha ocorrencia se
+      QUALQUER trecho tiver uma aberta (lado seguro).
 
     `desde` limita a janela de eventos considerada. Em operacao e None. O
     executor de cenarios passa o inicio da execucao, para que um cenario nao
-    enxergue as leituras de outro.
+    enxergue as publicacoes de outro.
     """
-    linhas = conn.execute(
+    filtro = {"agora": agora, "desde": desde, "origens": origens, "ponto": ponto_id}
+    volumes = conn.execute(
         """
-        SELECT DISTINCT ON (e.trecho_id) e.id, e.trecho_id, e.pessoas, e.ocorrencia
+        SELECT DISTINCT ON (e.trecho_id) e.id, e.trecho_id, e.pessoas_media
           FROM evento_urbano e
           JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
          WHERE tp.ponto_de_luz_id = %(ponto)s
+           AND e.tipo = 'volume'
            AND e.ocorrido_em <= %(agora)s
            AND (%(desde)s::timestamptz IS NULL OR e.ocorrido_em >= %(desde)s)
            AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
            AND COALESCE(e.vigente_ate, e.ocorrido_em + %(validade)s) > %(agora)s
          ORDER BY e.trecho_id, e.ocorrido_em DESC, e.id DESC
         """,
-        {"agora": agora, "desde": desde, "origens": origens, "ponto": ponto_id,
-         "validade": timedelta(seconds=config.VALIDADE_LEITURA_S)},
+        {**filtro, "validade": timedelta(seconds=config.VALIDADE_VOLUME_S)},
+    ).fetchall()
+    ocorrencias = conn.execute(
+        """
+        SELECT o.id FROM (
+            SELECT DISTINCT ON (e.trecho_id) e.id, e.ocorrencia, e.ocorrido_em, e.vigente_ate
+              FROM evento_urbano e
+              JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
+             WHERE tp.ponto_de_luz_id = %(ponto)s
+               AND e.tipo = 'ocorrencia'
+               AND e.ocorrido_em <= %(agora)s
+               AND (%(desde)s::timestamptz IS NULL OR e.ocorrido_em >= %(desde)s)
+               AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
+             ORDER BY e.trecho_id, e.ocorrido_em DESC, e.id DESC
+        ) o
+         WHERE o.ocorrencia <> 'encerrada'
+           AND COALESCE(o.vigente_ate, o.ocorrido_em + %(validade)s) > %(agora)s
+        """,
+        {**filtro, "validade": timedelta(seconds=config.VALIDADE_OCORRENCIA_S)},
     ).fetchall()
     return EstadoVia(
-        presenca=any(pessoas >= 1 for _, _, pessoas, _ in linhas),
-        ocorrencia=any(oc is not None for *_, oc in linhas),
-        pessoas={trecho: pessoas for _, trecho, pessoas, _ in linhas},
-        evento_ids=sorted(eid for eid, *_ in linhas),
+        ocorrencia=bool(ocorrencias),
+        volumes={trecho: float(media) for _, trecho, media in volumes},
+        evento_ids=sorted([eid for eid, *_ in volumes] + [eid for (eid,) in ocorrencias]),
     )
+
+
+def observada(estado: EstadoVia, refs: dict[int, float]) -> float | None:
+    """Volume observado do ponto, na escala do treino (3.6): media de cada
+    trecho dividida pela referencia dele (limitada a 1); entre os trechos, a
+    maior - o lado seguro."""
+    niveis = [min(m / refs[t], 1.0) for t, m in estado.volumes.items() if t in refs]
+    return max(niveis) if niveis else None
 
 
 def referencias(
@@ -201,9 +266,9 @@ def referencias(
         """
         SELECT t.id, t.referencia_pessoas,
                (SELECT percentile_cont(0.99) WITHIN GROUP (ORDER BY h.media)
-                  FROM (SELECT avg(e.pessoas) AS media
+                  FROM (SELECT avg(e.pessoas_media) AS media
                           FROM evento_urbano e
-                         WHERE e.trecho_id = t.id
+                         WHERE e.trecho_id = t.id AND e.tipo = 'volume'
                            AND e.ocorrido_em <= %(agora)s
                            AND e.ocorrido_em > %(agora)s - make_interval(days => %(dias)s)
                            AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
@@ -237,10 +302,10 @@ def historico_horario(
         SELECT e.trecho_id,
                (extract(epoch FROM (date_trunc('hour', %(agora)s)
                                     - date_trunc('hour', e.ocorrido_em))) / 3600)::int AS atraso,
-               avg(e.pessoas) AS media
+               avg(e.pessoas_media) AS media
           FROM evento_urbano e
           JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
-         WHERE tp.ponto_de_luz_id = %(ponto)s
+         WHERE tp.ponto_de_luz_id = %(ponto)s AND e.tipo = 'volume'
            AND e.ocorrido_em <= %(agora)s
            AND e.ocorrido_em > %(agora)s - make_interval(hours => %(horas)s)
            AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
@@ -261,15 +326,15 @@ def nivel_recente(
     conn: psycopg.Connection, agora: datetime, origens: list[str] | None = None,
     *, ponto_id: int, refs: dict[int, float] | None = None, minutos: int = 60,
 ) -> float | None:
-    """Nivel normalizado da ultima hora corrida: entra no lugar da previsao no
-    modo reativo (H3) e quando o modelo nao tem historico. None sem leitura."""
+    """Nivel normalizado da ultima hora corrida (media dos volumes), para
+    consulta e auditoria. None sem volume na janela."""
     refs = refs if refs is not None else referencias(conn, agora, ponto_id, origens)
     linhas = conn.execute(
         """
-        SELECT e.trecho_id, avg(e.pessoas)
+        SELECT e.trecho_id, avg(e.pessoas_media)
           FROM evento_urbano e
           JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
-         WHERE tp.ponto_de_luz_id = %(ponto)s
+         WHERE tp.ponto_de_luz_id = %(ponto)s AND e.tipo = 'volume'
            AND e.ocorrido_em <= %(agora)s
            AND e.ocorrido_em > %(agora)s - make_interval(mins => %(minutos)s)
            AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
@@ -334,42 +399,47 @@ def decidir(
     estado = estado_via(conn, agora, desde, origens, ponto_id=ponto.id)
     local = agora.astimezone(config.FUSO)
 
+    niveis = niveis_classe(conn, ponto.classe_codigo)
     previsao: float | None = None
-    recente: float | None = None
+    obs: float | None = None
+    degrau: float | None = None
     ativacoes: dict[str, float] = {}
     if estado.sem_dado:
-        # Sem leitura vigente nao se dimeriza (DIVERGENCIAS 23).
+        # Sem volume vigente nao se dimeriza (DIVERGENCIAS 23); ocorrencia
+        # aberta, com ou sem volume, tambem leva ao pleno.
         pretendido = PLENO
     else:
         refs = referencias(conn, agora, ponto.id, origens)
-        recente = nivel_recente(conn, agora, origens, ponto_id=ponto.id, refs=refs)
-        if not reativo and recente is not None:
+        obs = observada(estado, refs)
+        if not reativo and obs is not None:
             horas = getattr(previsor, "horas_necessarias", lambda: 24)()
             previsao = previsor.prever(
                 Historico(
                     momento=local,
-                    observada=recente,
+                    observada=obs,
                     serie=historico_horario(conn, agora, horas, origens, ponto_id=ponto.id, refs=refs),
                 )
             )
         resultado = inferir(
             base,
-            Entrada(presenca=estado.presenca, prevista=previsao, ocorrencia=estado.ocorrencia,
-                    momento=local, recente=recente),
+            Entrada(observada=obs, prevista=previsao, ocorrencia=estado.ocorrencia, momento=local),
+            niveis,
         )
         pretendido = resultado.nivel_pretendido
+        degrau = resultado.degrau
         ativacoes = {k: round(v, 4) for k, v in resultado.ativacoes.items()}
 
     # O porque da decisao, gravado junto dela (painel e RNF04).
     entrada = {
-        "presenca": estado.presenca,
         "ocorrencia": estado.ocorrencia,
-        "pessoas_por_trecho": {str(k): v for k, v in estado.pessoas.items()},
+        "pessoas_media_por_trecho": {str(k): v for k, v in estado.volumes.items()},
+        "observada": None if obs is None else round(obs, 4),
         "prevista": None if previsao is None else round(previsao, 4),
-        "recente": None if recente is None else round(recente, 4),
         "horas_desde_18h": horas_desde_18h(local),
         "modo": "reativo" if reativo else "antecipado",
         "sem_dado": estado.sem_dado,
+        "niveis_classe": [float(n) for n in niveis],
+        "degrau": degrau,
     }
 
     anterior, segundos = _referencia_de_taxa(conn, ponto, agora, execucao_id)
@@ -405,6 +475,8 @@ def decidir(
         restricao_aplicada=r.restricao_aplicada,
         nivel_anterior=anterior,
         estado=estado,
+        observada=obs,
+        degrau=degrau,
     )
 
 

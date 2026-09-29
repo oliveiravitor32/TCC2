@@ -29,29 +29,29 @@ export function Cartao({ icone: Icone, titulo, children, destaque }) {
 }
 
 export function EstadoDaVia({ eventos }) {
-  // Leitura mais recente de cada trecho do ponto (DIVERGENCIAS 54 e 55).
-  const porTrecho = new Map();
-  for (const e of eventos) if (!porTrecho.has(e.trecho)) porTrecho.set(e.trecho, e);
-  const leituras = [...porTrecho.values()];
-  const pessoas = leituras.reduce((s, e) => s + e.pessoas, 0);
-  const oco = leituras.find((e) => e.ocorrencia);
+  // Publicacao mais recente de cada trecho do ponto, por tipo (DIVERGENCIAS
+  // 54 e 56): o volume de 5 min e a ocorrencia ('encerrada' fecha).
+  const volumes = new Map();
+  const ocorrencias = new Map();
+  for (const e of eventos) {
+    const alvo = e.tipo === "ocorrencia" ? ocorrencias : volumes;
+    if (!alvo.has(e.trecho)) alvo.set(e.trecho, e);
+  }
+  const vols = [...volumes.values()];
+  const maior = vols.reduce((m, e) => Math.max(m, Number(e.pessoas_media)), 0);
+  const oco = [...ocorrencias.values()].find((e) => e.ocorrencia !== "encerrada");
 
   return (
-    <Cartao icone={Activity} titulo="leitura recebida da via">
-      <p className="text-3xl font-semibold tabular-nums">{leituras.length ? pessoas : "--"}</p>
+    <Cartao icone={Activity} titulo="volume recebido da via">
+      <p className="text-3xl font-semibold tabular-nums">
+        {vols.length ? maior.toLocaleString("pt-BR", { maximumFractionDigits: 1 }) : "--"}
+      </p>
       <p className="text-xs text-suave">
-        {leituras.length
-          ? `pessoas na área · ${leituras.length} trecho${leituras.length > 1 ? "s" : ""}`
-          : "nenhuma leitura ainda"}
+        {vols.length
+          ? `pessoas em média (5 min) · maior de ${vols.length} trecho${vols.length > 1 ? "s" : ""}`
+          : "nenhum volume ainda"}
       </p>
       <div className="mt-3 flex flex-wrap gap-2 text-xs">
-        <span
-          className={`inline-flex items-center gap-1 rounded-md px-2 py-1 ${
-            pessoas > 0 ? "bg-luz/15 text-luz" : "bg-borda/40 text-suave"
-          }`}
-        >
-          {pessoas > 0 ? "pedestre presente" : "via vazia"}
-        </span>
         <span
           className={`inline-flex items-center gap-1 rounded-md px-2 py-1 ${
             oco ? "bg-falha/15 text-falha" : "bg-borda/40 text-suave"
