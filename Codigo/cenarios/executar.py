@@ -89,6 +89,10 @@ class Cenario:
     eventos: list[dict]
     envelope: list[dict]
     adversarial: bool = False
+    # Nivel normalizado de cada uma das 168 h anteriores (mais antiga
+    # primeiro). Ausente = perfil sintetico. As noites reais de Melbourne
+    # (avaliacao_ia/, DIVERGENCIAS 57) trazem o historico real.
+    historico: list[float] | None = None
 
     @staticmethod
     def de_arquivo(p: Path) -> "Cenario":
@@ -102,6 +106,7 @@ class Cenario:
             eventos=d["eventos"],
             envelope=d["envelope"],
             adversarial=bool(d.get("adversarial", False)),
+            historico=d.get("historico"),
         )
 
     def faixa(self, minuto: float) -> dict | None:
@@ -111,12 +116,12 @@ class Cenario:
         return None
 
 
-def carregar_suite(nome: str | None = None) -> list[Cenario]:
-    arquivos = sorted(SUITE.glob("*.json"))
+def carregar_suite(nome: str | None = None, pasta: Path = SUITE) -> list[Cenario]:
+    arquivos = sorted(pasta.glob("*.json"))
     if nome:
         arquivos = [p for p in arquivos if p.stem == nome]
         if not arquivos:
-            raise SystemExit(f"cenario {nome!r} nao encontrado em {SUITE}")
+            raise SystemExit(f"cenario {nome!r} nao encontrado em {pasta}")
     return [Cenario.de_arquivo(p) for p in arquivos]
 
 
@@ -159,7 +164,8 @@ def trecho_principal(conn, ponto_id: int) -> int:
 VOLUMES_POR_HORA = 3600 // config.PERIODO_VOLUME_S  # historico: um volume a cada 5 min
 
 
-def _semear_historico(conn, inicio: datetime, execucao_id: int, trecho_id: int) -> None:
+def _semear_historico(conn, inicio: datetime, execucao_id: int, trecho_id: int,
+                      historico: list[float] | None = None) -> None:
     """Volumes nas 168 h anteriores ao cenario, pelo perfil sintetico.
 
     Um volume a cada 5 min, com a media de pessoas igual ao perfil daquela
@@ -170,16 +176,20 @@ def _semear_historico(conn, inicio: datetime, execucao_id: int, trecho_id: int) 
     ref = float(conn.execute(
         "SELECT referencia_pessoas FROM trecho_via WHERE id = %s", (trecho_id,)
     ).fetchone()[0])
+    if historico is not None and len(historico) != HORAS_HISTORICO:
+        raise ValueError(f"historico deve ter {HORAS_HISTORICO} horas")
     for k in range(HORAS_HISTORICO, 0, -1):
         hora = (inicio - timedelta(hours=k)).replace(minute=0, second=0, microsecond=0)
-        media = perfil_horario(hora.astimezone(config.FUSO)) * ref
+        nivel = (historico[HORAS_HISTORICO - k] if historico is not None
+                 else perfil_horario(hora.astimezone(config.FUSO)))
+        media = nivel * ref
         for n in range(VOLUMES_POR_HORA):
             _inserir_volume(conn, hora + timedelta(seconds=config.PERIODO_VOLUME_S * n),
                             trecho_id, media, origem=f"cenario-historico:{execucao_id}")
 
 
 def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
-             indice: int = 0, degraus: bool = False) -> dict:
+             indice: int = 0, degraus: bool = False, serie: bool = False) -> dict:
     """Roda um cenario no relogio virtual.
 
     `indice` desloca o cenario em SEMANAS inteiras. Os cenarios declaram
@@ -205,7 +215,7 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
             (cenario.nome, "reativo" if reativo else "antecipado", inicio,
              f"relogio virtual, passo {config.PERIODO_S} s; previsao {previsor.rotulo}; regras {base.rotulo}; deslocamento de {indice} semana(s)"),
         ).fetchone()[0]
-        _semear_historico(conn, inicio, execucao_id, trecho)
+        _semear_historico(conn, inicio, execucao_id, trecho, cenario.historico)
         # Os cenarios declaram o volume como NIVEL normalizado (a escala das
         # fronteiras); aqui ele vira media de pessoas pela referencia que o
         # servico usa para o trecho no inicio da execucao.
@@ -252,8 +262,12 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
         conn.execute("UPDATE execucao_cenario SET encerrada_em = %s WHERE id = %s", (fim, execucao_id))
 
     criterio = ciclo.criterio(conn, ponto.classe_codigo)
-    return avaliar(cenario, registro, execucao_id, criterio, previsor.rotulo, reativo, inicio, fim,
-                   fronteira_baixa=fronteira_baixa(base))
+    r = avaliar(cenario, registro, execucao_id, criterio, previsor.rotulo, reativo, inicio, fim,
+                fronteira_baixa=fronteira_baixa(base))
+    if serie:
+        r["serie"] = [{"minuto": x["minuto"], "emitido": x["nivel_emitido"],
+                       "observada": x["observada"], "degrau": x["degrau"]} for x in registro]
+    return r
 
 
 def fronteira_baixa(base) -> float:
@@ -379,14 +393,19 @@ def main() -> None:
                    help="mesma base como tabela em degraus, sem logica nebulosa (item 51)")
     p.add_argument("--previsao", choices=["persistencia", "xgboost"], default=None)
     p.add_argument("--saida", default=None, help="arquivo do relatorio")
+    p.add_argument("--pasta", default=None,
+                   help="pasta de cenarios (padrao: suite/); ex.: avaliacao_ia/melbourne")
+    p.add_argument("--serie", action="store_true",
+                   help="inclui no relatorio o nivel emitido de cada ciclo (avaliacao das IAs)")
     args = p.parse_args()
 
-    cenarios = carregar_suite(args.cenario)
+    pasta = AQUI / args.pasta if args.pasta else SUITE
+    cenarios = carregar_suite(args.cenario, pasta)
     relatorios = []
     with psycopg.connect(config.DATABASE_URL, connect_timeout=5) as conn:
         for i, c in enumerate(cenarios):
             r = executar(conn, c, reativo=args.reativo, previsao=args.previsao, indice=i,
-                         degraus=args.degraus)
+                         degraus=args.degraus, serie=args.serie)
             relatorios.append(r)
             v = r["violacoes"]
             print(f"{c.nome:34s} decisoes={r['decisoes']:4d} "
@@ -408,7 +427,8 @@ def main() -> None:
         "relatorios": relatorios,
     }
     RESULTADOS.mkdir(exist_ok=True)
-    nome = args.saida or (f"suite_{'reativo' if args.reativo else 'antecipado'}"
+    prefixo = args.pasta.replace("/", "_") if args.pasta else "suite"
+    nome = args.saida or (f"{prefixo}_{'reativo' if args.reativo else 'antecipado'}"
                           f"{'_degraus' if args.degraus else ''}.json")
     (RESULTADOS / nome).write_text(
         json.dumps(total, indent=2, ensure_ascii=False, default=str), encoding="utf-8"

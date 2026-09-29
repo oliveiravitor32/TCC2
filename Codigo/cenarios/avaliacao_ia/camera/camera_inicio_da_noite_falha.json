@@ -1,0 +1,262 @@
+{
+  "nome": "camera_inicio_da_noite_falha",
+  "descricao": "Camera contando zero entre os minutos 30 e 150; movimento real pelo perfil da suite (inicio da noite).",
+  "origem": "Avaliacao da previsao como segunda evidencia (DIVERGENCIAS 57).",
+  "inicio_local": "2026-09-22T18:00:00",
+  "duracao_min": 240,
+  "falha_min": [
+    30,
+    150
+  ],
+  "eventos": [
+    {
+      "em_min": 0,
+      "nivel": 0.799,
+      "nivel_real": 0.799
+    },
+    {
+      "em_min": 5,
+      "nivel": 0.789,
+      "nivel_real": 0.789
+    },
+    {
+      "em_min": 10,
+      "nivel": 0.776,
+      "nivel_real": 0.776
+    },
+    {
+      "em_min": 15,
+      "nivel": 0.763,
+      "nivel_real": 0.763
+    },
+    {
+      "em_min": 20,
+      "nivel": 0.748,
+      "nivel_real": 0.748
+    },
+    {
+      "em_min": 25,
+      "nivel": 0.732,
+      "nivel_real": 0.732
+    },
+    {
+      "em_min": 30,
+      "nivel": 0.0,
+      "nivel_real": 0.715
+    },
+    {
+      "em_min": 35,
+      "nivel": 0.0,
+      "nivel_real": 0.697
+    },
+    {
+      "em_min": 40,
+      "nivel": 0.0,
+      "nivel_real": 0.678
+    },
+    {
+      "em_min": 45,
+      "nivel": 0.0,
+      "nivel_real": 0.658
+    },
+    {
+      "em_min": 50,
+      "nivel": 0.0,
+      "nivel_real": 0.638
+    },
+    {
+      "em_min": 55,
+      "nivel": 0.0,
+      "nivel_real": 0.617
+    },
+    {
+      "em_min": 60,
+      "nivel": 0.0,
+      "nivel_real": 0.595
+    },
+    {
+      "em_min": 65,
+      "nivel": 0.0,
+      "nivel_real": 0.574
+    },
+    {
+      "em_min": 70,
+      "nivel": 0.0,
+      "nivel_real": 0.552
+    },
+    {
+      "em_min": 75,
+      "nivel": 0.0,
+      "nivel_real": 0.53
+    },
+    {
+      "em_min": 80,
+      "nivel": 0.0,
+      "nivel_real": 0.508
+    },
+    {
+      "em_min": 85,
+      "nivel": 0.0,
+      "nivel_real": 0.487
+    },
+    {
+      "em_min": 90,
+      "nivel": 0.0,
+      "nivel_real": 0.465
+    },
+    {
+      "em_min": 95,
+      "nivel": 0.0,
+      "nivel_real": 0.444
+    },
+    {
+      "em_min": 100,
+      "nivel": 0.0,
+      "nivel_real": 0.423
+    },
+    {
+      "em_min": 105,
+      "nivel": 0.0,
+      "nivel_real": 0.403
+    },
+    {
+      "em_min": 110,
+      "nivel": 0.0,
+      "nivel_real": 0.383
+    },
+    {
+      "em_min": 115,
+      "nivel": 0.0,
+      "nivel_real": 0.363
+    },
+    {
+      "em_min": 120,
+      "nivel": 0.0,
+      "nivel_real": 0.345
+    },
+    {
+      "em_min": 125,
+      "nivel": 0.0,
+      "nivel_real": 0.327
+    },
+    {
+      "em_min": 130,
+      "nivel": 0.0,
+      "nivel_real": 0.309
+    },
+    {
+      "em_min": 135,
+      "nivel": 0.0,
+      "nivel_real": 0.293
+    },
+    {
+      "em_min": 140,
+      "nivel": 0.0,
+      "nivel_real": 0.277
+    },
+    {
+      "em_min": 145,
+      "nivel": 0.0,
+      "nivel_real": 0.262
+    },
+    {
+      "em_min": 150,
+      "nivel": 0.247,
+      "nivel_real": 0.247
+    },
+    {
+      "em_min": 155,
+      "nivel": 0.234,
+      "nivel_real": 0.234
+    },
+    {
+      "em_min": 160,
+      "nivel": 0.221,
+      "nivel_real": 0.221
+    },
+    {
+      "em_min": 165,
+      "nivel": 0.209,
+      "nivel_real": 0.209
+    },
+    {
+      "em_min": 170,
+      "nivel": 0.198,
+      "nivel_real": 0.198
+    },
+    {
+      "em_min": 175,
+      "nivel": 0.187,
+      "nivel_real": 0.187
+    },
+    {
+      "em_min": 180,
+      "nivel": 0.177,
+      "nivel_real": 0.177
+    },
+    {
+      "em_min": 185,
+      "nivel": 0.168,
+      "nivel_real": 0.168
+    },
+    {
+      "em_min": 190,
+      "nivel": 0.16,
+      "nivel_real": 0.16
+    },
+    {
+      "em_min": 195,
+      "nivel": 0.152,
+      "nivel_real": 0.152
+    },
+    {
+      "em_min": 200,
+      "nivel": 0.145,
+      "nivel_real": 0.145
+    },
+    {
+      "em_min": 205,
+      "nivel": 0.138,
+      "nivel_real": 0.138
+    },
+    {
+      "em_min": 210,
+      "nivel": 0.132,
+      "nivel_real": 0.132
+    },
+    {
+      "em_min": 215,
+      "nivel": 0.127,
+      "nivel_real": 0.127
+    },
+    {
+      "em_min": 220,
+      "nivel": 0.122,
+      "nivel_real": 0.122
+    },
+    {
+      "em_min": 225,
+      "nivel": 0.117,
+      "nivel_real": 0.117
+    },
+    {
+      "em_min": 230,
+      "nivel": 0.113,
+      "nivel_real": 0.113
+    },
+    {
+      "em_min": 235,
+      "nivel": 0.109,
+      "nivel_real": 0.109
+    }
+  ],
+  "envelope": [
+    {
+      "de_min": 0,
+      "ate_min": 240,
+      "min": 0.5,
+      "max": 1.0,
+      "nota": "comparacao controle x falha; aderencia nao avaliada"
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+{
+  "semente": 57,
+  "melbourne": [
+    {
+      "cenario": "melbourne_movimentado_36_dia_util",
+      "sensor": 36,
+      "grupo": "movimentado",
+      "tipo": "dia_util",
+      "inicio": "2026-07-14 18:00:00",
+      "media_noite": 0.138
+    },
+    {
+      "cenario": "melbourne_movimentado_36_fim_de_semana",
+      "sensor": 36,
+      "grupo": "movimentado",
+      "tipo": "fim_de_semana",
+      "inicio": "2026-07-25 18:00:00",
+      "media_noite": 0.3565
+    },
+    {
+      "cenario": "melbourne_movimentado_41_dia_util",
+      "sensor": 41,
+      "grupo": "movimentado",
+      "tipo": "dia_util",
+      "inicio": "2026-07-02 18:00:00",
+      "media_noite": 0.1769
+    },
+    {
+      "cenario": "melbourne_movimentado_41_fim_de_semana",
+      "sensor": 41,
+      "grupo": "movimentado",
+      "tipo": "fim_de_semana",
+      "inicio": "2026-08-15 18:00:00",
+      "media_noite": 0.3702
+    },
+    {
+      "cenario": "melbourne_calmo_162_dia_util",
+      "sensor": 162,
+      "grupo": "calmo",
+      "tipo": "dia_util",
+      "inicio": "2026-06-18 18:00:00",
+      "media_noite": 0.1181
+    },
+    {
+      "cenario": "melbourne_calmo_162_fim_de_semana",
+      "sensor": 162,
+      "grupo": "calmo",
+      "tipo": "fim_de_semana",
+      "inicio": "2026-06-06 18:00:00",
+      "media_noite": 0.1591
+    },
+    {
+      "cenario": "melbourne_calmo_58_dia_util",
+      "sensor": 58,
+      "grupo": "calmo",
+      "tipo": "dia_util",
+      "inicio": "2026-05-11 18:00:00",
+      "media_noite": 0.109
+    },
+    {
+      "cenario": "melbourne_calmo_58_fim_de_semana",
+      "sensor": 58,
+      "grupo": "calmo",
+      "tipo": "fim_de_semana",
+      "inicio": "2026-09-19 18:00:00",
+      "media_noite": 0.1962
+    }
+  ],
+  "camera": [
+    {
+      "cenario": "camera_inicio_da_noite_controle",
+      "falha_min": [
+        30,
+        150
+      ]
+    },
+    {
+      "cenario": "camera_inicio_da_noite_falha",
+      "falha_min": [
+        30,
+        150
+      ]
+    },
+    {
+      "cenario": "camera_madrugada_controle",
+      "falha_min": [
+        30,
+        150
+      ]
+    },
+    {
+      "cenario": "camera_madrugada_falha",
+      "falha_min": [
+        30,
+        150
+      ]
+    }
+  ]
+}
