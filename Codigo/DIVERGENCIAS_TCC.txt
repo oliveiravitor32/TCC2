@@ -1688,5 +1688,56 @@ PENDENTE: reaplicar na VM (backup, migracao 006, up --build) e redeploy na
          Vercel; numeros nos Capitulos 5 e 6.
 
 ===============================================================================
+57. AVALIACAO DAS IAS: NOITES REAIS DE MELBOURNE E CAMERA ERRANDO
+    Trecho: 3.5.1/3.9 (cenarios acrescentados), 3.6, 3.7, 3.11, 5.1, 5.4,
+            5.5, 6.1 (H3), 6.2, 6.3
+    Acao: [DECIDIR COM O AUTOR] - execucao de 29/09/2026
+    >>> PENDENTE: levar ao texto (Capitulos 5 e 6) depois da conversa com o
+        autor sobre o papel de cada IA
+-------------------------------------------------------------------------------
+PERGUNTA (autor/orientador): se a previsao (XGBoost) ou a logica nebulosa
+         fossem retiradas, o sistema perderia algo mensuravel?
+PROTOCOLO: cenarios/avaliacao_ia/PROTOCOLO.md, commitado ANTES da execucao
+         (d6e31d0); sorteio com semente 57 (sorteio.json). Retirar a previsao
+         = modo reativo; retirar a logica nebulosa = modo degraus.
+         Unico ajuste depois de rodar: a metrica 5 (acerto da contencao)
+         precisava do volume real da hora apos a noite (06h-07h), que nao
+         esta no cenario; o script passou a busca-lo na mesma serie real,
+         como o protocolo ja pedia. Nada mais foi alterado.
+PARTE 1 - 8 noites reais de Melbourne (18h-06h, periodo de TESTE do modelo;
+         sensores 36 e 41 movimentados, 162 e 58 calmos; dia util e sabado;
+         69.120 decisoes por modo):
+                           viol  %pleno  %fixo  H3 prim.  H3 sec.  var.tot  inv.
+         antecipado          0   69,0 %  87,0 %  31,2 %   53,4 min  4,60     9
+         reativo             0   68,2 %  86,0 %  17,0 %   53,4 min  3,88     4
+         degraus antecip.    0   68,9 %  86,8 %   9,1 %    6,1 min  4,50     4
+         degraus reativo     0   68,1 %  85,8 %   1,9 %    6,1 min  3,75     1
+         Contencao (metrica 5): a previsao so segura a luz na ultima hora
+         (05h-06h), antecipando a manha: 6 horas-noite contidas no total, das
+         quais 1 com movimento real no tercil medio ou alto (16,7 %), contra
+         2,4 % de "segurar sempre". Acima do acaso, mas amostra minima.
+LEITURA 1: (a) com movimento REAL o adaptativo economiza sobre o horario fixo
+         (86-87 % dele, 69 % do pleno), ao contrario da suite sintetica
+         (102 %): as noites reais esvaziam cedo e o horario fixo so atenua das
+         0h as 5h; (b) H3 NAO confirmada tambem com dado real - a previsao
+         segura a luz no fim da noite e piora a metrica primaria, sem mudar a
+         secundaria; (c) a logica nebulosa nao se mostrou mais suave com dado
+         real (mais inversoes que a tabela) e seus niveis intermediarios contam
+         como transicao na H3.
+PARTE 2 - camera errando (pares controle x falha, zero publicado dos minutos
+         30 a 150):
+         inicio da noite: luz perdida media 0,153 com previsao x 0,280 sem
+           previsao (a previsao repoe ~45 % da luz perdida); custo: 10,8 Wh a
+           mais em 2 h (REF-40W) se a rua estiver realmente vazia.
+         madrugada: sem diferenca (o historico diz "calmo"; 0,076 nos dois).
+LEITURA 2: a previsao tem valor MEDIDO como segunda evidencia quando a
+         contagem falha num horario em que o historico indica movimento, ao
+         custo de energia quando a rua esta de fato vazia.
+VEREDITO: previsao - retirar custa seguranca mensuravel (Parte 2) e o modelo
+         supera as referencias (5.1); nao se paga como antecipacao (H3).
+         Logica nebulosa - retirar NAO custou nada mensuravel nestes testes;
+         seu valor e de explicacao e de resposta gradual, nao de numero.
+
+===============================================================================
 FIM
 ===============================================================================

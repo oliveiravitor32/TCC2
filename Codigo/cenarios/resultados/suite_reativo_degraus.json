@@ -1,0 +1,500 @@
+{
+  "gerado_em": "2026-09-29T04:43:11.779179+00:00",
+  "modo_previsao": "reativo",
+  "passo_s": 5.0,
+  "base_regras": "v4-volume-degraus",
+  "cenarios": 9,
+  "decisoes": 13440,
+  "violacoes_totais": {
+    "piso": 0,
+    "taxa": 0
+  },
+  "relatorios": [
+    {
+      "cenario": "adversarial_serra",
+      "descricao": "ADVERSARIAL: movimentacao alternando entre vazio e cheio a cada minuto, para induzir violacao de taxa. A plataforma publica a cada minuto, fora da especificacao de 5 min.",
+      "adversarial": true,
+      "execucao_id": 320,
+      "modo_previsao": "reativo",
+      "modelo": "xgboost-v1",
+      "decisoes": 720,
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "restricoes_aplicadas": {
+        "nenhuma": 372,
+        "piso": 0,
+        "taxa": 348
+      },
+      "envelope": {
+        "ciclos_avaliados": 720,
+        "dentro": 720,
+        "aderencia": 1.0,
+        "ciclos_sem_envelope": 0,
+        "discordancias": []
+      },
+      "h3": {
+        "janela": "volume observado abaixo do tercil inferior, sem ocorrencia",
+        "ciclos_em_janela_baixa": 360,
+        "ciclos_em_transicao": 348,
+        "fracao_em_transicao": 0.9667,
+        "minutos_ate_o_piso": 0.0
+      },
+      "mudancas": {
+        "subidas_bruscas": 1,
+        "maior_subida": 0.5,
+        "variacao_total": 6.068,
+        "inversoes_de_sentido": 58
+      },
+      "energia": {
+        "REF-40W": {
+          "adaptativo_wh": 38.736,
+          "pleno_constante_wh": 40.0,
+          "horario_fixo_wh": 20.833,
+          "razao_adaptativo_pleno": 0.9684,
+          "razao_adaptativo_fixo": 1.8593
+        },
+        "REF-440W": {
+          "adaptativo_wh": 426.091,
+          "pleno_constante_wh": 440.0,
+          "horario_fixo_wh": 229.167,
+          "razao_adaptativo_pleno": 0.9684,
+          "razao_adaptativo_fixo": 1.8593
+        }
+      }
+    },
+    {
+      "cenario": "adversarial_silencio_da_plataforma",
+      "descricao": "ADVERSARIAL: a interface para de publicar; sem dado, nao se dimeriza.",
+      "adversarial": true,
+      "execucao_id": 321,
+      "modo_previsao": "reativo",
+      "modelo": "xgboost-v1",
+      "decisoes": 720,
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "restricoes_aplicadas": {
+        "nenhuma": 720,
+        "piso": 0,
+        "taxa": 0
+      },
+      "envelope": {
+        "ciclos_avaliados": 720,
+        "dentro": 720,
+        "aderencia": 1.0,
+        "ciclos_sem_envelope": 0,
+        "discordancias": []
+      },
+      "h3": {
+        "janela": "volume observado abaixo do tercil inferior, sem ocorrencia",
+        "ciclos_em_janela_baixa": 240,
+        "ciclos_em_transicao": 0,
+        "fracao_em_transicao": 0.0,
+        "minutos_ate_o_piso": 0.0
+      },
+      "mudancas": {
+        "subidas_bruscas": 1,
+        "maior_subida": 0.5,
+        "variacao_total": 0.5,
+        "inversoes_de_sentido": 0
+      },
+      "energia": {
+        "REF-40W": {
+          "adaptativo_wh": 33.333,
+          "pleno_constante_wh": 40.0,
+          "horario_fixo_wh": 40.0,
+          "razao_adaptativo_pleno": 0.8333,
+          "razao_adaptativo_fixo": 0.8333
+        },
+        "REF-440W": {
+          "adaptativo_wh": 366.667,
+          "pleno_constante_wh": 440.0,
+          "horario_fixo_wh": 440.0,
+          "razao_adaptativo_pleno": 0.8333,
+          "razao_adaptativo_fixo": 0.8333
+        }
+      }
+    },
+    {
+      "cenario": "adversarial_zero",
+      "descricao": "ADVERSARIAL: movimentacao zero declarada, para induzir nivel abaixo do piso.",
+      "adversarial": true,
+      "execucao_id": 322,
+      "modo_previsao": "reativo",
+      "modelo": "xgboost-v1",
+      "decisoes": 480,
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "restricoes_aplicadas": {
+        "nenhuma": 480,
+        "piso": 0,
+        "taxa": 0
+      },
+      "envelope": {
+        "ciclos_avaliados": 480,
+        "dentro": 480,
+        "aderencia": 1.0,
+        "ciclos_sem_envelope": 0,
+        "discordancias": []
+      },
+      "h3": {
+        "janela": "volume observado abaixo do tercil inferior, sem ocorrencia",
+        "ciclos_em_janela_baixa": 480,
+        "ciclos_em_transicao": 0,
+        "fracao_em_transicao": 0.0,
+        "minutos_ate_o_piso": 0.0
+      },
+      "mudancas": {
+        "subidas_bruscas": 0,
+        "maior_subida": 0.0,
+        "variacao_total": 0.0,
+        "inversoes_de_sentido": 0
+      },
+      "energia": {
+        "REF-40W": {
+          "adaptativo_wh": 13.333,
+          "pleno_constante_wh": 26.667,
+          "horario_fixo_wh": 14.167,
+          "razao_adaptativo_pleno": 0.5,
+          "razao_adaptativo_fixo": 0.9412
+        },
+        "REF-440W": {
+          "adaptativo_wh": 146.667,
+          "pleno_constante_wh": 293.333,
+          "horario_fixo_wh": 155.833,
+          "razao_adaptativo_pleno": 0.5,
+          "razao_adaptativo_fixo": 0.9412
+        }
+      }
+    },
+    {
+      "cenario": "fluxo_intenso_de_madrugada",
+      "descricao": "Horario avancado com fluxo intenso: o horario nao pode mandar sozinho.",
+      "adversarial": false,
+      "execucao_id": 323,
+      "modo_previsao": "reativo",
+      "modelo": "xgboost-v1",
+      "decisoes": 720,
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "restricoes_aplicadas": {
+        "nenhuma": 720,
+        "piso": 0,
+        "taxa": 0
+      },
+      "envelope": {
+        "ciclos_avaliados": 720,
+        "dentro": 720,
+        "aderencia": 1.0,
+        "ciclos_sem_envelope": 0,
+        "discordancias": []
+      },
+      "h3": {
+        "janela": "volume observado abaixo do tercil inferior, sem ocorrencia",
+        "ciclos_em_janela_baixa": 0,
+        "ciclos_em_transicao": 0,
+        "fracao_em_transicao": null,
+        "minutos_ate_o_piso": -1
+      },
+      "mudancas": {
+        "subidas_bruscas": 0,
+        "maior_subida": 0.0,
+        "variacao_total": 0.0,
+        "inversoes_de_sentido": 0
+      },
+      "energia": {
+        "REF-40W": {
+          "adaptativo_wh": 40.0,
+          "pleno_constante_wh": 40.0,
+          "horario_fixo_wh": 40.0,
+          "razao_adaptativo_pleno": 1.0,
+          "razao_adaptativo_fixo": 1.0
+        },
+        "REF-440W": {
+          "adaptativo_wh": 440.0,
+          "pleno_constante_wh": 440.0,
+          "horario_fixo_wh": 440.0,
+          "razao_adaptativo_pleno": 1.0,
+          "razao_adaptativo_fixo": 1.0
+        }
+      }
+    },
+    {
+      "cenario": "madrugada_ociosa",
+      "descricao": "Via praticamente vazia por duas horas: o sistema deve ficar no piso da classe.",
+      "adversarial": false,
+      "execucao_id": 324,
+      "modo_previsao": "reativo",
+      "modelo": "xgboost-v1",
+      "decisoes": 1440,
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "restricoes_aplicadas": {
+        "nenhuma": 1440,
+        "piso": 0,
+        "taxa": 0
+      },
+      "envelope": {
+        "ciclos_avaliados": 1440,
+        "dentro": 1440,
+        "aderencia": 1.0,
+        "ciclos_sem_envelope": 0,
+        "discordancias": []
+      },
+      "h3": {
+        "janela": "volume observado abaixo do tercil inferior, sem ocorrencia",
+        "ciclos_em_janela_baixa": 1440,
+        "ciclos_em_transicao": 0,
+        "fracao_em_transicao": 0.0,
+        "minutos_ate_o_piso": 0.0
+      },
+      "mudancas": {
+        "subidas_bruscas": 0,
+        "maior_subida": 0.0,
+        "variacao_total": 0.0,
+        "inversoes_de_sentido": 0
+      },
+      "energia": {
+        "REF-40W": {
+          "adaptativo_wh": 40.0,
+          "pleno_constante_wh": 80.0,
+          "horario_fixo_wh": 60.833,
+          "razao_adaptativo_pleno": 0.5,
+          "razao_adaptativo_fixo": 0.6575
+        },
+        "REF-440W": {
+          "adaptativo_wh": 440.0,
+          "pleno_constante_wh": 880.0,
+          "horario_fixo_wh": 669.167,
+          "razao_adaptativo_pleno": 0.5,
+          "razao_adaptativo_fixo": 0.6575
+        }
+      }
+    },
+    {
+      "cenario": "noite_tipica",
+      "descricao": "Movimentacao caindo ao longo da noite ate o vale da madrugada e voltando ao amanhecer.",
+      "adversarial": false,
+      "execucao_id": 325,
+      "modo_previsao": "reativo",
+      "modelo": "xgboost-v1",
+      "decisoes": 5760,
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "restricoes_aplicadas": {
+        "nenhuma": 5699,
+        "piso": 0,
+        "taxa": 61
+      },
+      "envelope": {
+        "ciclos_avaliados": 5760,
+        "dentro": 5760,
+        "aderencia": 1.0,
+        "ciclos_sem_envelope": 0,
+        "discordancias": []
+      },
+      "h3": {
+        "janela": "volume observado abaixo do tercil inferior, sem ocorrencia",
+        "ciclos_em_janela_baixa": 2520,
+        "ciclos_em_transicao": 1105,
+        "fracao_em_transicao": 0.4385,
+        "minutos_ate_o_piso": 272.08
+      },
+      "mudancas": {
+        "subidas_bruscas": 2,
+        "maior_subida": 0.25,
+        "variacao_total": 1.0,
+        "inversoes_de_sentido": 1
+      },
+      "energia": {
+        "REF-40W": {
+          "adaptativo_wh": 227.908,
+          "pleno_constante_wh": 320.0,
+          "horario_fixo_wh": 220.833,
+          "razao_adaptativo_pleno": 0.7122,
+          "razao_adaptativo_fixo": 1.032
+        },
+        "REF-440W": {
+          "adaptativo_wh": 2506.991,
+          "pleno_constante_wh": 3520.0,
+          "horario_fixo_wh": 2429.167,
+          "razao_adaptativo_pleno": 0.7122,
+          "razao_adaptativo_fixo": 1.032
+        }
+      }
+    },
+    {
+      "cenario": "ocorrencia_na_madrugada",
+      "descricao": "Movimentacao baixa com ocorrencia reportada: elevacao imediata e retorno apos o encerramento.",
+      "adversarial": false,
+      "execucao_id": 326,
+      "modo_previsao": "reativo",
+      "modelo": "xgboost-v1",
+      "decisoes": 1080,
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "restricoes_aplicadas": {
+        "nenhuma": 1018,
+        "piso": 0,
+        "taxa": 62
+      },
+      "envelope": {
+        "ciclos_avaliados": 1080,
+        "dentro": 1080,
+        "aderencia": 1.0,
+        "ciclos_sem_envelope": 0,
+        "discordancias": []
+      },
+      "h3": {
+        "janela": "volume observado abaixo do tercil inferior, sem ocorrencia",
+        "ciclos_em_janela_baixa": 720,
+        "ciclos_em_transicao": 59,
+        "fracao_em_transicao": 0.0819,
+        "minutos_ate_o_piso": 0.0
+      },
+      "mudancas": {
+        "subidas_bruscas": 1,
+        "maior_subida": 0.5,
+        "variacao_total": 1.0,
+        "inversoes_de_sentido": 1
+      },
+      "energia": {
+        "REF-40W": {
+          "adaptativo_wh": 40.868,
+          "pleno_constante_wh": 60.0,
+          "horario_fixo_wh": 40.833,
+          "razao_adaptativo_pleno": 0.6811,
+          "razao_adaptativo_fixo": 1.0008
+        },
+        "REF-440W": {
+          "adaptativo_wh": 449.543,
+          "pleno_constante_wh": 660.0,
+          "horario_fixo_wh": 449.167,
+          "razao_adaptativo_pleno": 0.6811,
+          "razao_adaptativo_fixo": 1.0008
+        }
+      }
+    },
+    {
+      "cenario": "ruido_na_fronteira",
+      "descricao": "Madrugada com o volume oscilando em torno do tercil inferior: a tabela em degraus alterna entre classes; a logica nebulosa deve ficar estavel.",
+      "adversarial": false,
+      "execucao_id": 327,
+      "modo_previsao": "reativo",
+      "modelo": "xgboost-v1",
+      "decisoes": 1440,
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "restricoes_aplicadas": {
+        "nenhuma": 1285,
+        "piso": 0,
+        "taxa": 155
+      },
+      "envelope": {
+        "ciclos_avaliados": 1440,
+        "dentro": 1440,
+        "aderencia": 1.0,
+        "ciclos_sem_envelope": 0,
+        "discordancias": []
+      },
+      "h3": {
+        "janela": "volume observado abaixo do tercil inferior, sem ocorrencia",
+        "ciclos_em_janela_baixa": 540,
+        "ciclos_em_transicao": 140,
+        "fracao_em_transicao": 0.2593,
+        "minutos_ate_o_piso": 37.33
+      },
+      "mudancas": {
+        "subidas_bruscas": 5,
+        "maior_subida": 0.25,
+        "variacao_total": 2.5,
+        "inversoes_de_sentido": 9
+      },
+      "energia": {
+        "REF-40W": {
+          "adaptativo_wh": 53.584,
+          "pleno_constante_wh": 80.0,
+          "horario_fixo_wh": 60.833,
+          "razao_adaptativo_pleno": 0.6698,
+          "razao_adaptativo_fixo": 0.8808
+        },
+        "REF-440W": {
+          "adaptativo_wh": 589.421,
+          "pleno_constante_wh": 880.0,
+          "horario_fixo_wh": 669.167,
+          "razao_adaptativo_pleno": 0.6698,
+          "razao_adaptativo_fixo": 0.8808
+        }
+      }
+    },
+    {
+      "cenario": "saida_de_evento",
+      "descricao": "Via calma que recebe fluxo subito (saida de evento) e volta a esvaziar.",
+      "adversarial": false,
+      "execucao_id": 328,
+      "modo_previsao": "reativo",
+      "modelo": "xgboost-v1",
+      "decisoes": 1080,
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "restricoes_aplicadas": {
+        "nenhuma": 1018,
+        "piso": 0,
+        "taxa": 62
+      },
+      "envelope": {
+        "ciclos_avaliados": 1080,
+        "dentro": 1080,
+        "aderencia": 1.0,
+        "ciclos_sem_envelope": 0,
+        "discordancias": []
+      },
+      "h3": {
+        "janela": "volume observado abaixo do tercil inferior, sem ocorrencia",
+        "ciclos_em_janela_baixa": 720,
+        "ciclos_em_transicao": 419,
+        "fracao_em_transicao": 0.5819,
+        "minutos_ate_o_piso": 64.92
+      },
+      "mudancas": {
+        "subidas_bruscas": 1,
+        "maior_subida": 0.375,
+        "variacao_total": 0.875,
+        "inversoes_de_sentido": 1
+      },
+      "energia": {
+        "REF-40W": {
+          "adaptativo_wh": 43.368,
+          "pleno_constante_wh": 60.0,
+          "horario_fixo_wh": 30.833,
+          "razao_adaptativo_pleno": 0.7228,
+          "razao_adaptativo_fixo": 1.4065
+        },
+        "REF-440W": {
+          "adaptativo_wh": 477.043,
+          "pleno_constante_wh": 660.0,
+          "horario_fixo_wh": 339.167,
+          "razao_adaptativo_pleno": 0.7228,
+          "razao_adaptativo_fixo": 1.4065
+        }
+      }
+    }
+  ]
+}
