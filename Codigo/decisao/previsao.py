@@ -55,6 +55,23 @@ class Persistencia:
         return h.observada
 
 
+class MediaSazonal:
+    """Referencia sazonal dentro do sistema (DIVERGENCIAS 59): o nivel da
+    PROXIMA hora e o daquela mesma hora nas semanas anteriores (atrasos
+    167, 335, ... ate o historico disponivel). E a media sazonal de 3.6
+    calculada so com o historico do proprio ponto, sem treino."""
+
+    rotulo = "media-sazonal"
+    SEMANAS = 4
+
+    def horas_necessarias(self) -> int:
+        return 168 * self.SEMANAS
+
+    def prever(self, h: Historico) -> float:
+        v = [h.serie[k] for k in range(167, 168 * self.SEMANAS, 168) if k in h.serie]
+        return sum(v) / len(v) if v else h.observada
+
+
 # ---------------------------------------------------------------------------
 # Calendario brasileiro (o modelo tem o atributo "feriado")
 # ---------------------------------------------------------------------------
@@ -137,6 +154,8 @@ def carregar_previsor(rotulo: str | None = None) -> Previsor:
     existir."""
     if rotulo == "persistencia":
         return Persistencia()
+    if rotulo in ("media-sazonal", "media_sazonal"):
+        return MediaSazonal()
     try:
         return PrevisorXGBoost()
     except FileNotFoundError:

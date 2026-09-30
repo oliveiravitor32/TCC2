@@ -75,3 +75,12 @@ def test_previsao_acompanha_o_patamar_do_historico(xgb):
 
 def test_carregar_previsor_escolhe_persistencia_quando_pedido():
     assert carregar_previsor("persistencia").rotulo == "persistencia"
+
+
+def test_media_sazonal_usa_a_mesma_hora_das_semanas_anteriores():
+    from datetime import datetime
+    from decisao.previsao import Historico, MediaSazonal
+    m = MediaSazonal()
+    h = Historico(momento=datetime(2026, 9, 23, 1), observada=0.9, serie={167: 0.2, 335: 0.4, 1: 0.9})
+    assert abs(m.prever(h) - 0.3) < 1e-9
+    assert m.prever(Historico(momento=datetime(2026, 9, 23, 1), observada=0.7, serie={})) == 0.7

@@ -1,0 +1,162 @@
+{
+  "nome": "ruido_fronteira_baixa_591",
+  "descricao": "Volume oscilando em torno do tercil baixa (0.1038).",
+  "origem": "normal(0.1038; 0.03), semente 591 (DIVERGENCIAS 59).",
+  "inicio_local": "2026-09-23T01:00:00",
+  "duracao_min": 180,
+  "eventos": [
+    {
+      "em_min": 0,
+      "nivel": 0.0698
+    },
+    {
+      "em_min": 5,
+      "nivel": 0.0931
+    },
+    {
+      "em_min": 10,
+      "nivel": 0.0891
+    },
+    {
+      "em_min": 15,
+      "nivel": 0.1093
+    },
+    {
+      "em_min": 20,
+      "nivel": 0.1125
+    },
+    {
+      "em_min": 25,
+      "nivel": 0.1215
+    },
+    {
+      "em_min": 30,
+      "nivel": 0.1312
+    },
+    {
+      "em_min": 35,
+      "nivel": 0.0751
+    },
+    {
+      "em_min": 40,
+      "nivel": 0.1309
+    },
+    {
+      "em_min": 45,
+      "nivel": 0.1004
+    },
+    {
+      "em_min": 50,
+      "nivel": 0.1215
+    },
+    {
+      "em_min": 55,
+      "nivel": 0.104
+    },
+    {
+      "em_min": 60,
+      "nivel": 0.1819
+    },
+    {
+      "em_min": 65,
+      "nivel": 0.1321
+    },
+    {
+      "em_min": 70,
+      "nivel": 0.128
+    },
+    {
+      "em_min": 75,
+      "nivel": 0.0801
+    },
+    {
+      "em_min": 80,
+      "nivel": 0.0933
+    },
+    {
+      "em_min": 85,
+      "nivel": 0.039
+    },
+    {
+      "em_min": 90,
+      "nivel": 0.126
+    },
+    {
+      "em_min": 95,
+      "nivel": 0.1113
+    },
+    {
+      "em_min": 100,
+      "nivel": 0.1289
+    },
+    {
+      "em_min": 105,
+      "nivel": 0.1612
+    },
+    {
+      "em_min": 110,
+      "nivel": 0.1156
+    },
+    {
+      "em_min": 115,
+      "nivel": 0.1088
+    },
+    {
+      "em_min": 120,
+      "nivel": 0.0952
+    },
+    {
+      "em_min": 125,
+      "nivel": 0.1317
+    },
+    {
+      "em_min": 130,
+      "nivel": 0.0883
+    },
+    {
+      "em_min": 135,
+      "nivel": 0.1195
+    },
+    {
+      "em_min": 140,
+      "nivel": 0.0864
+    },
+    {
+      "em_min": 145,
+      "nivel": 0.136
+    },
+    {
+      "em_min": 150,
+      "nivel": 0.0852
+    },
+    {
+      "em_min": 155,
+      "nivel": 0.1029
+    },
+    {
+      "em_min": 160,
+      "nivel": 0.0993
+    },
+    {
+      "em_min": 165,
+      "nivel": 0.1736
+    },
+    {
+      "em_min": 170,
+      "nivel": 0.0969
+    },
+    {
+      "em_min": 175,
+      "nivel": 0.1016
+    }
+  ],
+  "envelope": [
+    {
+      "de_min": 0,
+      "ate_min": 180,
+      "min": 0.5,
+      "max": 1.0,
+      "nota": "comparacao Mamdani x tabela; aderencia nao avaliada"
+    }
+  ]
+}

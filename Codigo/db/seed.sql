@@ -86,7 +86,8 @@ ON CONFLICT (rotulo) DO NOTHING;
 -- sao preenchidas por  python -m modelo.treinar --registrar.
 INSERT INTO versao_modelo_previsao (rotulo, algoritmo)
 VALUES ('persistencia', 'persistencia'),
-       ('xgboost-v1',   'xgboost')
+       ('xgboost-v1',   'xgboost'),
+       ('media-sazonal', 'media_sazonal')
 ON CONFLICT (rotulo) DO NOTHING;
 
 COMMIT;

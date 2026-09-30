@@ -394,7 +394,7 @@ def main() -> None:
     p.add_argument("--reativo", action="store_true", help="sem previsao (H3)")
     p.add_argument("--degraus", action="store_true",
                    help="mesma base como tabela em degraus, sem logica nebulosa (item 51)")
-    p.add_argument("--previsao", choices=["persistencia", "xgboost"], default=None)
+    p.add_argument("--previsao", choices=["persistencia", "xgboost", "media-sazonal"], default=None)
     p.add_argument("--saida", default=None, help="arquivo do relatorio")
     p.add_argument("--pasta", default=None,
                    help="pasta de cenarios (padrao: suite/); ex.: avaliacao_ia/melbourne")
@@ -432,7 +432,8 @@ def main() -> None:
     RESULTADOS.mkdir(exist_ok=True)
     prefixo = args.pasta.replace("/", "_") if args.pasta else "suite"
     nome = args.saida or (f"{prefixo}_{'reativo' if args.reativo else 'antecipado'}"
-                          f"{'_degraus' if args.degraus else ''}.json")
+                          f"{'_degraus' if args.degraus else ''}"
+                          f"{'_' + args.previsao.replace('-', '_') if args.previsao else ''}.json")
     (RESULTADOS / nome).write_text(
         json.dumps(total, indent=2, ensure_ascii=False, default=str), encoding="utf-8"
     )
