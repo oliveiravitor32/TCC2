@@ -8,7 +8,7 @@ pleno.
 
 from __future__ import annotations
 
-from datetime import datetime, time, timedelta
+from datetime import datetime, time, timedelta, timezone
 
 import pytest
 
@@ -129,3 +129,17 @@ def test_horario_fixo_gasta_menos_que_pleno_e_mais_que_so_o_piso():
     e = energia_decisoes(passos, P40, fim=fim)
     minutos = (fim - inicio).total_seconds() / 60
     assert energia_pleno_constante(P40, minutos) * 0.5 < e < energia_pleno_constante(P40, minutos)
+
+
+def test_horario_fixo_usa_o_horario_local_do_ponto():
+    # DIVERGENCIAS 58: os instantes chegam em UTC; a programacao 0h-5h e de
+    # Sao Paulo. 18h local = 21h UTC: a descida so pode comecar a 0h local.
+    from zoneinfo import ZoneInfo
+    sp = ZoneInfo("America/Sao_Paulo")
+    inicio = datetime(2026, 9, 22, 18, 0, tzinfo=sp).astimezone(timezone.utc)
+    passos = trajetoria_horario_fixo(
+        inicio, inicio + timedelta(hours=12), piso=0.5,
+        hora_inicio_atenuacao=time(0, 0), hora_fim_atenuacao=time(5, 0), fuso=sp,
+    )
+    primeira = next(q for q, _, n in passos if n < 1.0)
+    assert primeira.astimezone(sp) == datetime(2026, 9, 23, 0, 0, tzinfo=sp)

@@ -266,7 +266,9 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
                 fronteira_baixa=fronteira_baixa(base))
     if serie:
         r["serie"] = [{"minuto": x["minuto"], "emitido": x["nivel_emitido"],
-                       "observada": x["observada"], "degrau": x["degrau"]} for x in registro]
+                       "observada": x["observada"], "degrau": x["degrau"],
+                       "ocorrencia": x["ocorrencia"], "sem_dado": x["sem_dado"]} for x in registro]
+        r["inicio"] = inicio.isoformat()
     return r
 
 
@@ -336,6 +338,7 @@ def avaliar(cenario, registro, execucao_id, criterio, modelo, reativo, inicio, f
                 hora_inicio_atenuacao=HORA_INICIO_ATENUACAO,
                 hora_fim_atenuacao=HORA_FIM_ATENUACAO,
                 passo_s=config.PERIODO_S,
+                fuso=config.FUSO,
             ),
             potencia, fim=fim,
         )

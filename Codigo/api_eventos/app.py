@@ -512,6 +512,7 @@ def consultar_energia(
             inicio, fim, piso,
             hora_inicio_atenuacao=HORA_INICIO_ATENUACAO,
             hora_fim_atenuacao=HORA_FIM_ATENUACAO,
+            fuso=config.FUSO,
         ),
         potencia, fim=fim,
     )

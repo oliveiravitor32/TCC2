@@ -22,7 +22,7 @@ Este modulo e puro: nao le banco, nao faz rede.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, time, timedelta
+from datetime import datetime, time, timedelta, tzinfo
 
 __all__ = [
     "Passo", "energia_passo", "energia_decisoes", "energia_bancada",
@@ -145,6 +145,7 @@ def trajetoria_horario_fixo(
     hora_fim_atenuacao: time,
     passo_s: float = 5.0,
     taxa: float = TAXA_PADRAO,
+    fuso: tzinfo | None = None,
 ) -> list[tuple[datetime, float, float]]:
     """Linha de base 2: programacao agendada, sem dado urbano.
 
@@ -152,13 +153,18 @@ def trajetoria_horario_fixo(
     nivel) - para que os dois regimes sejam integrados pela MESMA conta. A
     atenuacao tambem obedece a taxa normativa: a programacao agendada nao
     esta dispensada do limite de 0,1/min.
+
+    `fuso`: horario LOCAL do ponto de luz, em que a programacao e definida
+    (0h-5h de Sao Paulo, e nao de UTC). Sem ele, vale o relogio dos proprios
+    instantes (DIVERGENCIAS 58: os instantes chegavam em UTC e a janela caia
+    das 21h as 2h locais).
     """
     passos: list[tuple[datetime, float, float]] = []
     atual = 1.0
     quando = inicio
     delta = timedelta(seconds=passo_s)
     while quando < fim:
-        h = quando.time()
+        h = (quando.astimezone(fuso) if fuso is not None and quando.tzinfo else quando).time()
         if hora_inicio_atenuacao <= hora_fim_atenuacao:
             atenuando = hora_inicio_atenuacao <= h < hora_fim_atenuacao
         else:  # janela que cruza a meia-noite

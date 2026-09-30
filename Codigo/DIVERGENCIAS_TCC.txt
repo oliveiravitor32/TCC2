@@ -1739,5 +1739,39 @@ VEREDITO: previsao - retirar custa seguranca mensuravel (Parte 2) e o modelo
          seu valor e de explicacao e de resposta gradual, nao de numero.
 
 ===============================================================================
+58. HORARIO FIXO EM UTC (CORRIGIDO) E O CUSTO DE RETIRAR AS REGRAS
+    Trecho: 3.11 (linha de base 2), 5.5, 6.1, 6.2; caminho B da discussao
+            sobre as IAs (item 57)
+    Acao: [CORRIGIDO] + [DECIDIR COM O AUTOR]
+    >>> PENDENTE: levar ao texto junto com o item 57
+-------------------------------------------------------------------------------
+ERRO (corrigido em 30/09/2026): trajetoria_horario_fixo lia a hora dos
+         instantes em UTC; a programacao "0h-5h" caia das 21h as 2h de Sao
+         Paulo. Agora recebe fuso=config.FUSO (executor e GET /energia); teste
+         novo em tests/test_energia.py. EFEITO NOS NUMEROS: quase nenhum na
+         energia - nas noites de 12 h a janela continua com 5 h, so muda de
+         lugar: suite v4 102,3 -> 102,1 % do fixo; Melbourne 87,0 -> 87,0 %.
+         Suite, camera e Melbourne refeitos (resultados com --serie).
+PERGUNTA: o que se perde ao retirar o SISTEMA DE REGRAS (voltar ao horario
+         fixo)? Script cenarios/avaliacao_ia/deficit.py. Nivel pedido por
+         ciclo: classe da via com ocorrencia ou volume alto; uma abaixo com
+         volume medio (criterio dos tercis, declarado). Minutos abaixo do
+         pedido (margem 0,02):
+                         com exigencia  fixo abaixo  (>= 2 lux)  adaptativo abaixo  (>= 2 lux)
+         suite v4            495 min      282 min      278 min        70 min            0
+         Melbourne (8 n.)   3240 min      535 min      529 min       659 min            0
+         Deficit medio: fixo 3,8 lux (suite) e 3,3 lux (Melbourne); adaptativo
+         0,8 lux nos dois. Com OCORRENCIA aberta: horario fixo 30 min abaixo
+         (a ocorrencia da madrugada inteira), adaptativo 0.
+LEITURA: o horario fixo deixa a via uma classe inteira abaixo do que a
+         situacao pede durante centenas de minutos, inclusive sob ocorrencia;
+         o adaptativo nunca fica 2 lux abaixo - seus minutos "abaixo" sao do
+         volume perto do tercil (479 dos 659 em Melbourne a menos de 0,05
+         dele), onde a resposta gradual fica entre duas classes. Somado ao
+         item 57: retirar as regras custa luz onde ela e pedida (e, com dado
+         real, ~13 % de energia); retirar a previsao custa luz quando a
+         contagem falha. A pertinencia nebulosa empata com a tabela.
+
+===============================================================================
 FIM
 ===============================================================================
