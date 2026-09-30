@@ -1772,6 +1772,35 @@ LEITURA: o horario fixo deixa a via uma classe inteira abaixo do que a
          real, ~13 % de energia); retirar a previsao custa luz quando a
          contagem falha. A pertinencia nebulosa empata com a tabela.
 
+-------------------------------------------------------------------------------
+59. AS IAS CONTRA SUBSTITUTOS SIMPLES (30/09/2026)
+-------------------------------------------------------------------------------
+PERGUNTA: criterio do orientador - algo simples faria o mesmo que a IA?
+         Protocolo fixado antes (cenarios/avaliacao_ia/PROTOCOLO_SUBSTITUTOS.md,
+         commit 6bef5a1). Zero violacoes em todas as rodadas.
+TESTE 1: XGBoost x media sazonal (mesma hora da semana anterior, sem treino;
+         decisao/previsao.py MediaSazonal), mesmos cenarios do item 57.
+                         XGBoost    media sazonal
+         energia x fixo   87,0 %      87,2 %
+         H3 primaria      31,2 %      28,9 %
+         acerto contencao 16,7 %      54,4 %   (segurar sempre: 2,4 %)
+         deficit           659 min     659 min (identico)
+         camera: luz perdida 0,153 x 0,075 (inicio) e 0,076 x 0 (madrugada);
+         a camera nao decide (historico sintetico repete a semana).
+         LEITURA PELO CRITERIO: XGBoost SUBSTITUIVEL - a media sazonal empata
+         no deficit e acerta mais quando segura a luz. O ganho do XGBoost em
+         MAE (3.6) nao se converte em luz porque as regras so usam tercis.
+TESTE 2: Mamdani x tabela, 6 cenarios de ruido nos tercis (normal, dp 0,03).
+                         Mamdani    tabela
+         variacao total   12,7       20,9   (-39 %)
+         subidas >= 0,1    20         44
+         inversoes        152         86
+         energia x pleno  77,1 %     78,3 %
+         LEITURA PELO CRITERIO: exigia menos inversoes E menor variacao ->
+         Mamdani SUBSTITUIVEL pelo criterio fixado. Declarado: o Mamdani faz
+         a metade dos saltos e 39 % menos variacao, mas oscila mais vezes em
+         passos pequenos.
+
 ===============================================================================
 FIM
 ===============================================================================
