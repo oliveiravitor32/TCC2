@@ -10,6 +10,7 @@ A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Tra
 - `..._SP_revisado.docx` = a mesma v2 com as alterações marcadas (registro do que mudou).
 - `..._SP_v3_revisado.docx` = v2 + rodadas de 27 e 28/09/2026 marcadas (meteorologia, itens 49, 53, 54 e 55 do DIVERGENCIAS). `..._SP_v3.docx` = a mesma com tudo aceito e a Figura 2 nova.
 - `..._SP_v4_revisado.docx` = v3 aceito + rodada de 29/09/2026 marcada (item 56: volume de 5 min, degraus de classe, pacote, Quadro 18 da especificação da interface; 1.4; previsão como segunda evidência). `..._SP_v4.docx` = a mesma com tudo aceito; **passa a ser a vigente quando o autor aprovar a revisão no Word**.
+- `..._SP_v5_revisado.docx` = v4 aceito + rodada de 30/09/2026 marcada (itens 57 a 60: avaliação das IAs por retirada e por substituto simples, déficit do horário fixo, experimento de Zurique em 15 min; 3.6, 3.7, 3.9, 5.1, nova 5.6 com Quadros 19 e 20, 6.3, 7.1). `..._SP_v5.docx` = a mesma com tudo aceito; **passa a ser a vigente quando o autor aprovar a revisão no Word**.
 - Novas mudanças no texto: com controle de alterações, sobre a versão com tudo aceito, salvando como arquivo novo (nunca sobrescrever a versão vigente).
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
@@ -41,7 +42,8 @@ Seções mais importantes da versão nova:
 | Banco: entidades (Quadro 15), ER e modelo físico | 4.7.1 · 4.7.2 · 4.7.3 | 8.5 |
 | Modelo físico (Quadro 16) | 4.7.3 | — |
 | Casos de teste CT01–CT20 (Quadro 17) · resultado (4.10: CT15–CT20 PENDENTE) | 4.8 / 4.10 | — |
-| Matriz de uso de IA (renumerada) | Quadro 19 | Quadro 16 |
+| **Avaliação dos componentes de IA (Quadros 19 e 20)** | **5.6** | nova |
+| Matriz de uso de IA (renumerada) | Quadro 21 | Quadro 16 |
 
 Se o código precisar divergir do TCC, **avise explicitamente** qual trecho do texto (seção/quadro da versão nova) precisa ser atualizado.
 
@@ -177,7 +179,8 @@ docker-compose.yml
 10. Deploy na VM Oracle com Docker ✅ (`docker-compose.prod.yml`, `deploy/ROTEIRO.md`; VM ARM Ubuntu 24.04, DuckDNS `tcc-iluminacao-publica.duckdns.org` + Caddy, MQTT TLS com CA própria na 8883, ACL por ponto, chave `X-Chave-Api` no POST; painel na Vercel; ESP32 ligado à VM; item 53). Migrações num banco existente: 003 → `seed_cadastro.sql` → 004 → 005 (backup antes; **nunca** `down -v` na VM)
 11. Identificação espacial e base por presença ✅ (substituída pela v4 no passo 12) (itens 54 e 55: `cadastro/`, base `v3-presenca`, modal "simular leitura" e aba "decisões explicadas" no painel). Suíte v3: **zero violações**; 72,1 % do pleno e **101,8 % do horário fixo** (gasta mais que a programação horária: não prometer economia sobre ela); **H3 não confirmada** (antecipado 38,8 % × reativo 19,3 %); degraus = Mamdani; aderência 100 % com envelopes largos
 12. Volume de 5 min, degraus de classe e pacote ✅ (item 56: base `v4-volume`, migração 006, Quadro 18 da especificação da interface). Suíte v4: **zero violações em 53.760 decisões**; 72,5 % do pleno e **102,3 % do horário fixo** (não prometer economia sobre ele); **H3 não confirmada** (antecipado 53,9 % × reativo 52,8 %); Mamdani ≈ degraus em energia, difere só na forma da resposta na fronteira
-13. **Falta:** sessão final de bancada (CT15–CT20: calibração, failsafe do piso, latência ~30 repetições, recusa sem credencial, segundo nó), Capítulos 5 e 6, Figura 2 (autor)
+13. Avaliação das IAs ✅ (itens 57 a 60; protocolos fixados antes em `cenarios/avaliacao_ia/` e `modelo/PROTOCOLO_ZURIQUE.md`). **Retirar as regras** (voltar ao horário fixo) custa luz: fixo ≥ 2 lux abaixo do pedido em 278 min (suíte) e 529 min (8 noites reais de Melbourne), adaptativo nunca; noites reais = 87,0 % do fixo. **Retirar a previsão** custa luz com a contagem falhando no início da noite (0,153 × 0,280). **Substitutos simples:** com a série horária, a média sazonal iguala o XGBoost no sistema, e a tabela em degraus iguala o Mamdani (menos variação e saltos, mais inversões) — declarar assim, sem maquiar. **Zurique (15 min, experimento separado):** XGBoost supera a melhor referência simples (faixa +4,0 pp, F1 +0,044; 11 de 12 pontos) e é substituível com os mesmos dados por hora. O horário fixo é avaliado no fuso local (item 58)
+14. **Falta:** sessão final de bancada (CT15–CT20: calibração, failsafe do piso, latência ~30 repetições, recusa sem credencial, segundo nó), Capítulos 5 e 6, Figura 2 (autor)
 
 ## Decisões em aberto (perguntar ao autor antes de assumir)
 

@@ -1845,6 +1845,9 @@ CONFERENCIAS POSTERIORES ao protocolo (modelo/conferencia_zurique.py; nao
          menos de erros de faixa. Em 1 h o modelo segue substituivel.
 TEXTO:   3.6 / 5.x (resultado), 6.3 (limitacao da serie horaria) e 7.1
          (trabalho futuro: treinar e operar com serie sub-horaria).
+         FEITO na rodada v5 do texto (30/09/2026), junto com os itens 57 a 59:
+         3.6, 3.7, 3.9, 5.1, nova 5.6 (Quadros 19 e 20; matriz de IA = Quadro
+         21), 6.3 e 7.1. Arquivos ..._SP_v5_revisado.docx e ..._SP_v5.docx.
 
 ===============================================================================
 FIM
