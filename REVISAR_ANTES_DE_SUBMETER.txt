@@ -133,6 +133,13 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         cada faixa. Conferir a frase e ajustar para nao sugerir que cada rua
         tem tercis proprios (o CLAUDE.md tambem diz "tercis por trecho").
 
+[ ] C13. Os tercis (0,104 e 0,405) sao calculados sobre TODAS as horas do dia
+        da serie de Melbourne (treino e teste juntos, modelo/treinar.py), e
+        nao so sobre as horas noturnas, que e quando o sistema decide. A noite
+        as vias passam mais de um terco do tempo na faixa baixa. O texto (3.7)
+        nao diz isso. Conferir: declarar em 3.7 ou 6.3 que o corte usa o dia
+        inteiro, e saber responder "por que nao tercis so da noite?".
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
