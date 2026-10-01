@@ -121,6 +121,15 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 [ ] D5. 5.1: MAE 0,047 / 0,057 / 0,081 e RMSE 0,076 / 0,091 / 0,122 contra
         Codigo/modelo/resultados/metricas.json.
 
+[ ] D6. Limiar de percepcao de variacao de luz (pesquisa de 01/10/2026, feita
+        pela IA so por resumos de busca, SEM ler os artigos): Akashi e Neches
+        (2004) - metade das pessoas detecta reducao de ~15 %; Shikakura,
+        Morikawa e Nakamura (2003) - detectam ~6 % (aumento) e ~8 % (reducao),
+        e mudanca que dura mais de ~5 s nao e notada por 80 %; Hu e Davis
+        (2016, Optics Express) - 7,4 %. Todos em ESCRITORIO, nao em rua a
+        5-10 lux. Se for usar no texto: abrir cada artigo, conferir os numeros
+        e declarar que sao de ambiente interno.
+
 -------------------------------------------------------------------------------
 E. DECLARACAO E ENTREGA
 -------------------------------------------------------------------------------
