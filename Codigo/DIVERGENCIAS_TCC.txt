@@ -1876,9 +1876,33 @@ LIMITES: 8 noites, 4 pontos; limiares de percepcao de estudos em escritorio,
          lidos so por resumo (conferir - REVISAR_ANTES_DE_SUBMETER D6); a
          primeira tentativa de execucao falhou por o Docker estar desligado
          (nenhum resultado gerado) e foi repetida sem alteracao.
+ERRATA (01/10/2026, conferencia das fontes dos limiares):
+         - Shikakura, Morikawa e Nakamura (2003), J. Light & Vis. Env. 27(2),
+           p. 75-82, resumo lido no J-STAGE: variacao entre 0,92 e 1,06 do
+           nivel NAO e percebida por observador atento (6 % para aumento, 8 %
+           para reducao); ocupado em tarefa, a faixa vai de 0,8 a 1,3. O
+           limiar rigoroso de 6 % esta bem apoiado.
+         - Akashi e Neches (2004), JIES 33(1), p. 3-13: o artigo NAO foi
+           aberto (acesso recusado); por fontes secundarias, metade dos
+           observadores NAO detecta reducoes de 15 % a 20 %, e mais da metade
+           detecta acima de 20 %. O PROTOCOLO_SUAVIDADE.md descreveu o limiar
+           de 15 % como "metade detecta": descricao imprecisa (15 % e o
+           limite inferior da faixa) e o estudo trata de REDUCOES, enquanto
+           as mudancas contadas sao elevacoes. O protocolo fica como foi
+           fixado; a descricao foi corrigida no texto (v8).
+         - Conferencia posterior com outros limiares (mesmas series):
+                        >= 8 %   >= 20 %   >= 30 %
+           Mamdani        22        3         2
+           tabela          5        3         3
+           tab. histerese  5        3         3
+           Maiores elevacoes: tabela 50 %, 50 %, 33 %; Mamdani 42 %, 31 %, 22 %.
+           A leitura nao muda (nao ha 20 % menos mudancas nos dois limiares
+           fixados); a 20 % as tres empatam.
 TEXTO:   FEITO na rodada v7 (01/10/2026): 3.7, 3.9, 5.6 (linha nova no Quadro 19),
          6.3 e Apendice B. A mesma rodada corrigiu 1.4, 1.5.1, 2.6 e a redacao
          dos tercis em 3.7, e acrescentou a limitacao de cobertura das cameras.
+         Rodada v8: descricao correta dos limiares em 3.9, conferencia a 20 %
+         em 5.6 e referencias completas.
 
 ===============================================================================
 FIM

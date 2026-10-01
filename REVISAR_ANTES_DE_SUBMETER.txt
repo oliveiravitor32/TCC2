@@ -236,6 +236,21 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         automatico: os percentuais dos limiares precisam ser conferidos no
         artigo. Candidato a entrar em 2.8 (trabalhos correlatos) e 6.2.
 
+[ ] D9. Conferencia de D6 feita pela IA em 01/10/2026 (rodada v8):
+        - SHIKAKURA et al. (2003): resumo lido no J-STAGE; referencia completa
+          (v. 27, n. 2, p. 75-82, DOI 10.2150/jlve.27.75). Diz: variacao de
+          0,92 a 1,06 nao e percebida por observador atento. OK para o 6 %.
+        - AKASHI; NECHES (2004): o artigo NAO foi aberto (site recusou). Os
+          dados (15 % a 20 % nao detectados por metade; acima de 20 % a
+          maioria detecta; 1.095 lux iniciais) vem de fontes SECUNDARIAS. O
+          prenome de Neches segue abreviado. O AUTOR PRECISA ABRIR O ARTIGO
+          (DOI provavel 10.1080/00994480.2004.10748422) ou obte-lo pela
+          biblioteca, conferir, e completar o prenome; se nao conseguir,
+          citar por "apud" a fonte secundaria ou retirar.
+        - O estudo de Akashi trata de REDUCAO de luz em escritorio a ~1.000
+          lux; o trabalho conta ELEVACOES em via a 5-10 lux. A extrapolacao
+          esta declarada em 3.9; saber defende-la ou assumir como limite.
+
 -------------------------------------------------------------------------------
 E. DECLARACAO E ENTREGA
 -------------------------------------------------------------------------------
