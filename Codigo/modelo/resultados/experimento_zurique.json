@@ -1,0 +1,223 @@
+{
+  "pontos": [
+    2,
+    20,
+    30,
+    32,
+    33,
+    39,
+    52,
+    53,
+    65,
+    1357,
+    1358,
+    1681,
+    2641,
+    2642
+  ],
+  "janela": [
+    "2016-01-01",
+    "2020-01-01"
+  ],
+  "corte_treino_teste": "2019-01-01 00:00:00",
+  "15min": {
+    "linhas_treino": 1185640,
+    "linhas_teste": 407292,
+    "pontos_no_teste": 12,
+    "tercis": [
+      0.0678,
+      0.2941
+    ],
+    "arvores": 2000,
+    "noite": {
+      "casos": 203484,
+      "casos_nivel_baixo": 125878,
+      "fracao_que_sobe": 0.0546,
+      "xgboost": {
+        "mae": 0.0227,
+        "rmse": 0.0432,
+        "acerto_da_faixa": 0.9135,
+        "vai_subir": {
+          "precisao": 0.6175,
+          "revocacao": 0.6321,
+          "f1": 0.6247
+        }
+      },
+      "persistencia": {
+        "mae": 0.0466,
+        "rmse": 0.0821,
+        "acerto_da_faixa": 0.8282,
+        "vai_subir": {
+          "precisao": 0.2241,
+          "revocacao": 0.2878,
+          "f1": 0.252
+        }
+      },
+      "media_sazonal": {
+        "mae": 0.0388,
+        "rmse": 0.0779,
+        "acerto_da_faixa": 0.8436,
+        "vai_subir": {
+          "precisao": 0.3349,
+          "revocacao": 0.7159,
+          "f1": 0.4563
+        }
+      },
+      "semana_anterior": {
+        "mae": 0.0354,
+        "rmse": 0.0791,
+        "acerto_da_faixa": 0.8734,
+        "vai_subir": {
+          "precisao": 0.503,
+          "revocacao": 0.687,
+          "f1": 0.5808
+        }
+      }
+    },
+    "todas_as_horas": {
+      "casos": 407292,
+      "casos_nivel_baixo": 151860,
+      "fracao_que_sobe": 0.1273,
+      "xgboost": {
+        "mae": 0.0419,
+        "rmse": 0.0675,
+        "acerto_da_faixa": 0.8786,
+        "vai_subir": {
+          "precisao": 0.6626,
+          "revocacao": 0.7638,
+          "f1": 0.7096
+        }
+      },
+      "persistencia": {
+        "mae": 0.076,
+        "rmse": 0.1218,
+        "acerto_da_faixa": 0.7877,
+        "vai_subir": {
+          "precisao": 0.4242,
+          "revocacao": 0.3132,
+          "f1": 0.3603
+        }
+      },
+      "media_sazonal": {
+        "mae": 0.0687,
+        "rmse": 0.1139,
+        "acerto_da_faixa": 0.8047,
+        "vai_subir": {
+          "precisao": 0.4691,
+          "revocacao": 0.853,
+          "f1": 0.6053
+        }
+      },
+      "semana_anterior": {
+        "mae": 0.0706,
+        "rmse": 0.1275,
+        "acerto_da_faixa": 0.8094,
+        "vai_subir": {
+          "precisao": 0.5934,
+          "revocacao": 0.7564,
+          "f1": 0.6651
+        }
+      }
+    }
+  },
+  "1h": {
+    "linhas_treino": 296410,
+    "linhas_teste": 101823,
+    "pontos_no_teste": 12,
+    "tercis": [
+      0.0769,
+      0.3139
+    ],
+    "arvores": 1010,
+    "noite": {
+      "casos": 50871,
+      "casos_nivel_baixo": 32071,
+      "fracao_que_sobe": 0.0695,
+      "xgboost": {
+        "mae": 0.0275,
+        "rmse": 0.0534,
+        "acerto_da_faixa": 0.8958,
+        "vai_subir": {
+          "precisao": 0.721,
+          "revocacao": 0.7352,
+          "f1": 0.728
+        }
+      },
+      "persistencia": {
+        "mae": 0.0484,
+        "rmse": 0.0856,
+        "acerto_da_faixa": 0.8202,
+        "vai_subir": {
+          "precisao": 0.0,
+          "revocacao": 0.0,
+          "f1": 0.0
+        }
+      },
+      "media_sazonal": {
+        "mae": 0.0378,
+        "rmse": 0.076,
+        "acerto_da_faixa": 0.8527,
+        "vai_subir": {
+          "precisao": 0.4788,
+          "revocacao": 0.8501,
+          "f1": 0.6125
+        }
+      },
+      "semana_anterior": {
+        "mae": 0.0348,
+        "rmse": 0.0779,
+        "acerto_da_faixa": 0.8782,
+        "vai_subir": {
+          "precisao": 0.6567,
+          "revocacao": 0.7985,
+          "f1": 0.7207
+        }
+      }
+    },
+    "todas_as_horas": {
+      "casos": 101823,
+      "casos_nivel_baixo": 37982,
+      "fracao_que_sobe": 0.1309,
+      "xgboost": {
+        "mae": 0.0533,
+        "rmse": 0.0875,
+        "acerto_da_faixa": 0.8534,
+        "vai_subir": {
+          "precisao": 0.6632,
+          "revocacao": 0.7783,
+          "f1": 0.7162
+        }
+      },
+      "persistencia": {
+        "mae": 0.0825,
+        "rmse": 0.1343,
+        "acerto_da_faixa": 0.7888,
+        "vai_subir": {
+          "precisao": 0.0,
+          "revocacao": 0.0,
+          "f1": 0.0
+        }
+      },
+      "media_sazonal": {
+        "mae": 0.0729,
+        "rmse": 0.1209,
+        "acerto_da_faixa": 0.8014,
+        "vai_subir": {
+          "precisao": 0.5024,
+          "revocacao": 0.8744,
+          "f1": 0.6381
+        }
+      },
+      "semana_anterior": {
+        "mae": 0.0751,
+        "rmse": 0.136,
+        "acerto_da_faixa": 0.8085,
+        "vai_subir": {
+          "precisao": 0.6368,
+          "revocacao": 0.7891,
+          "f1": 0.7048
+        }
+      }
+    }
+  }
+}
