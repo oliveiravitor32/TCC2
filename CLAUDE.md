@@ -203,3 +203,5 @@ docker-compose.yml
 - Rode os testes depois de mexer em `verificacao.py`; a camada de verificação nunca pode ter violação.
 - Não coloque valores normativos fixos no código; leia do banco.
 - Commits pequenos, com mensagem em português.
+- **Declaração de uso de IA (Apêndice A, item 2):** o corpo teórico, a análise crítica, a inferência empírica e as conclusões precisam ser dos autores. Sempre que a IA propuser, calcular ou redigir algo desse tipo — um critério ou limiar que não vem de norma, o desenho de um experimento, uma interpretação de resultado, uma conclusão, uma justificativa de decisão de projeto ou uma fonte nova —, **acrescente um item em `REVISAR_ANTES_DE_SUBMETER.txt`** (raiz do TCC2), dizendo o que é, onde está no texto e o que o autor deve conferir. Não marque itens como revisados: só o autor marca.
+- No Quadro 21 (matriz de uso de IA), todas as linhas citam **Claude Opus 5 e Claude Opus 5.5** juntos, por decisão do autor (sem separar por data).

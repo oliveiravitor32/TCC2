@@ -1,0 +1,139 @@
+===============================================================================
+REVISAR ANTES DE SUBMETER - o que os autores precisam dominar
+===============================================================================
+Por que este arquivo existe
+  O item 2 da declaracao de uso de IA (Apendice A do TCC) diz:
+    "O corpo teorico, a analise critica, a inferencia empirica e as conclusoes
+     apresentadas representam o esforco intelectual dos autores humanos, a quem
+     cabe a decisao sobre cada afirmacao sustentada no texto."
+  Os pontos abaixo foram propostos, calculados ou redigidos com assistencia de
+  IA. Para assinar o item 2 com tranquilidade, cada autor precisa ENTENDER,
+  CONCORDAR e SABER EXPLICAR cada um deles. O que nao concordar, muda ou tira.
+
+Como usar
+  [ ] = ainda nao revisado      [x] = revisado e assumido pelos autores
+  Cada ponto diz: o que e, onde esta no texto, e o que conferir.
+  Sempre que surgir assunto novo desse tipo, ele entra aqui (regra no CLAUDE.md).
+
+-------------------------------------------------------------------------------
+A. CRITERIOS E LIMIARES QUE NAO VEM DE NORMA NEM DE LITERATURA
+-------------------------------------------------------------------------------
+[ ] A1. Tercis -> classes. Movimento baixo/medio/alto (tercis do proprio trecho)
+        ligado a classe minima / uma abaixo / classe da via. A norma nao da
+        numeros; o criterio e "dos autores".
+        Onde: 3.7, 6.3.  Conferir: voces defendem esse criterio? Saberiam
+        responder "por que tercis e nao outro corte?".
+[ ] A2. Limiares do experimento de Zurique: ganho minimo de 2 pontos
+        percentuais no acerto da faixa E 0,02 no F1. Foram sugeridos pela IA,
+        fixados antes do teste. Com limiar de 5 pp o modelo teria reprovado.
+        Onde: 3.6, Quadro 20.  Conferir: saber explicar "por que 2 pp" (margem
+        minima escolhida, vale por ter sido fixada antes).
+[ ] A3. Criterio Mamdani x tabela: exigia menos inversoes E menor variacao
+        total. O Mamdani nao passou (variou menos, mas inverteu mais).
+        Onde: 3.7, 5.6, 6.3.
+[ ] A4. Criterio XGBoost x media sazonal no sistema: acerto da contencao maior
+        ou deficit menor, sem gastar mais de 2 pp de energia. Nao passou.
+        Onde: 3.6, 5.6 (Quadro 19), 6.3.
+[ ] A5. "Nivel que a situacao pede" (metrica de deficit): classe da via com
+        ocorrencia ou volume alto; uma classe abaixo com volume medio; margem
+        de 0,02. Definicao criada para medir o horario fixo.
+        Onde: 3.9, Quadro 19.  Conferir: a definicao faz sentido para voces?
+[ ] A6. Volume a cada 5 min valido por 15 min; ocorrencia vale ate "encerrada"
+        ou 15 min. A justificativa dos 5 min (tempo minimo da rampa P3->P5) foi
+        formulada com a IA.  Onde: 3.5.2, Quadro 18.
+[ ] A7. Estimativa de ~170 mensagens por segundo para 50 mil cameras: e
+        calculo (50.000 / 300 s), nao teste.  Onde: 3.5.2, 6.3.
+
+-------------------------------------------------------------------------------
+B. DESENHO DOS EXPERIMENTOS (inferencia empirica)
+-------------------------------------------------------------------------------
+[ ] B1. Avaliacao das IAs (item 57): 8 noites reais de Melbourne, 4 sensores
+        sorteados (semente 57), pares de camera falhando (contagem zero por
+        2 h). Metricas e regras de leitura fixadas antes.
+        Onde: 3.9, Quadro 19.  Arquivo: Codigo/cenarios/avaliacao_ia/PROTOCOLO.md
+        Conferir: ler o protocolo; saber explicar por que 8 noites e por que
+        esses sensores.
+[ ] B2. Linha de base "horario fixo" = atenuacao das 0h as 5h locais. Houve um
+        erro (era avaliada em UTC) corrigido no item 58.
+        Conferir: o horario 0h-5h representa bem a "programacao agendada"?
+[ ] B3. Experimento de Zurique (item 60): janela 2016-2019, pontos com >= 730
+        dias e cobertura >= 95 %, treino ate 2018, teste 2019, alvo = media dos
+        proximos 60 min. Escolhas feitas com a IA.
+        Onde: 3.6, 5.1, Quadro 20.  Arquivo: Codigo/modelo/PROTOCOLO_ZURIQUE.md
+        Conferir: saber explicar por que 2016-2019 (mais pontos, antes da
+        pandemia) e que o experimento mede a PREVISAO, nao a luz.
+[ ] B4. Conferencias posteriores de Zurique (por ponto, referencias mais
+        espertas, intervalo de 95 %): feitas DEPOIS do protocolo e declaradas
+        assim.  Onde: 5.6.
+[ ] B5. Rodar pelo menos um comando do Quadro 22 (Apendice B) e conferir que o
+        numero bate com o do texto. Sugestao:
+          python -m modelo.experimento_zurique   (precisa do arquivo de dados)
+          python -m cenarios.avaliacao_ia.deficit
+
+-------------------------------------------------------------------------------
+C. INTERPRETACOES E CONCLUSOES (analise critica)
+-------------------------------------------------------------------------------
+[ ] C1. "Retirar as regras custa luz": o horario fixo fica uma classe abaixo do
+        pedido por centenas de minutos; o adaptativo nunca fica 2 lux abaixo.
+        Onde: 5.6.  Depende de A5.
+[ ] C2. "Com a serie horaria, o XGBoost e substituivel pela media sazonal no
+        sistema." Afirmacao forte e desfavoravel; esta no texto por honestidade.
+        Onde: 5.6, 6.3.  Conferir: voces concordam em afirmar isso?
+[ ] C3. "Com serie de 15 min, o XGBoost supera as referencias simples; o ganho
+        e moderado (erra a faixa em ~9 % contra ~13 %)."
+        Onde: 5.1, 5.6.  Nao dizer "ML indispensavel".
+[ ] C4. "A pertinencia nebulosa e forma de expressao e execucao das regras, com
+        efeito na suavidade, e nao componente cuja retirada degrade seguranca
+        ou consumo."  Onde: 3.7, 6.3.  Conferir com o orientador: ele aceita
+        essa formulacao para o requisito de "IA que faca sentido"?
+[ ] C5. Explicacao de por que o ML nao ganha com serie horaria: regras leem a
+        previsao em 3 faixas; subida da luz e imediata; movimento noturno e
+        regular; modelo treinado para erro medio e nao para a faixa. Os tres
+        primeiros sao medidos; o ultimo e HIPOTESE, nao investigada.
+        Onde: 6.3.
+[ ] C6. "A previsao e segunda evidencia contra erro de contagem." Medido so no
+        inicio da noite (0,153 x 0,280); na madrugada nao protege (119,5 min
+        na classe minima indevidamente, com ou sem previsao).
+        Onde: 3.7, Quadro 19.
+[ ] C7. H3 NAO confirmada em nenhuma rodada (antecipado gasta mais janela em
+        transicao que o reativo). A redacao de 6.1 ainda esta PENDENTE e a
+        decisao de como declarar e dos autores.
+[ ] C8. Energia: adaptativo = 102,1 % do horario fixo na suite e 87,0 % nas
+        noites reais. Nao prometer economia sobre o horario fixo.
+        Onde: 3.11, 5.5 (PENDENTE), Quadro 19.
+[ ] C9. "Uma pessoa sozinha nao forca o pleno, porque a classe minima (P5) ja e
+        classe de pedestres." Decisao do autor, argumento redigido com a IA.
+        Onde: 3.7.
+
+-------------------------------------------------------------------------------
+D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
+-------------------------------------------------------------------------------
+[ ] D1. Referencia STADT ZURICH (2026): abrir o link, conferir titulo, licenca
+        CC0 e que os valores sao de 15 min. Ajustar o negrito no Word.
+[ ] D2. Array of Things (CATLETT et al., 2017): conferir na fonte que o arranjo
+        e "resumir na origem e publicar so a medida derivada".  Onde: 3.5.2.
+[ ] D3. NBR 5101, 6.10.2: conferir no texto da norma o limite de descida e que
+        se admite descer no maximo duas classes.  Onde: 3.5.2, 3.7.
+[ ] D4. Numeros dos Quadros 19 e 20: conferir contra os arquivos
+        Codigo/cenarios/resultados/avaliacao_ia_*.json e
+        Codigo/modelo/resultados/experimento_zurique.json e
+        conferencia_zurique.json.
+[ ] D5. 5.1: MAE 0,047 / 0,057 / 0,081 e RMSE 0,076 / 0,091 / 0,122 contra
+        Codigo/modelo/resultados/metricas.json.
+
+-------------------------------------------------------------------------------
+E. DECLARACAO E ENTREGA
+-------------------------------------------------------------------------------
+[ ] E1. Quadro 21: ler as duas linhas novas (codigo do prototipo; protocolos e
+        experimentos), ajustar se preciso e preencher a coluna "nivel de
+        intervencao humana (%)" de todas as linhas.
+[ ] E2. Apendice A: preencher o periodo de uso, CPFs, local e data.
+[ ] E3. Os tres autores leram os Quadros 19 e 20 e sabem explica-los.
+[ ] E4. git push feito e repositorio tornado publico (o Apendice B afirma que e
+        publico); antes, conferir que nao ha segredo no historico.
+[ ] E5. Mostrar os Quadros 19 e 20 ao orientador ANTES de escrever 6.1, 6.2,
+        6.4 e o Capitulo 7.
+
+===============================================================================
+FIM
+===============================================================================
