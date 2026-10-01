@@ -113,6 +113,18 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         Onde: ainda nao esta no docx (entrar em 3.7, 5.6, 6.3).
         Conferir: decidir com o orientador como declarar o papel do fuzzy.
 
+[ ] C11. CONFLITO entre 2.6 e os resultados. A secao 2.6 afirma tres
+        propriedades da inferencia nebulosa; duas nao se confirmaram:
+        - "continuidade da saida e requisito, ja que a norma limita a taxa":
+          quem garante a taxa e a camada de verificacao; a tabela nunca violou;
+        - "composicao de evidencias parciais; a tabela exigiria eleger uma":
+          a tabela empatou em seguranca e energia e teve menos mudancas
+          perceptiveis (itens 59 e 61);
+        - "rastreabilidade": vale, mas a tabela tambem e rastreavel.
+        A justificativa por interpretabilidade (Rudin; Pickering et al.)
+        continua de pe. Corrigir 2.6 na proxima rodada de texto, junto com o
+        item 61, para o Capitulo 2 nao prometer o que o Capitulo 5 nao entrega.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
@@ -137,6 +149,25 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         (2016, Optics Express) - 7,4 %. Todos em ESCRITORIO, nao em rua a
         5-10 lux. Se for usar no texto: abrir cada artigo, conferir os numeros
         e declarar que sao de ambiente interno.
+
+[ ] D7. "Fuzzy e muito usado em iluminacao": a IA afirmou isso sem fonte. A
+        busca de 01/10/2026 (so resumos) achou prototipos com Arduino, sensor
+        de presenca e de luz ambiente, saida de 0 a 100 %, comparados com
+        "sem fuzzy" ou liga/desliga (ex.: "Internet of things and fuzzy logic
+        for smart street lighting prototypes", IJ-AI, 2021, ~49,5 % de
+        economia; "Fuzzy-based smart system for controlling road lights",
+        2022; "A Traffic-aware Street Lighting System Based on Fuzzy Logic
+        Controller", IEEE, 2022). NAO achou comparacao de fuzzy contra tabela
+        com as mesmas regras. So citar depois de abrir cada artigo.
+[ ] D8. Pasolini et al. (2024), Sensors 24(18):5942, "Comprehensive Assessment
+        of Context-Adaptive Street Lighting": implantacao real em larga escala
+        (Vietna e Italia, milhares de luminarias) com regra DETERMINISTICA por
+        classe da EN 13201: desce de classe apos duas amostras seguidas abaixo
+        do limiar, sobe na hora, com interpolacao linear entre classes; sem
+        fuzzy nem ML; economia de 24,6 % a 51 %. Muito proximo deste trabalho
+        (e da "tabela com histerese" do item 61). Lido so por resumo
+        automatico: os percentuais dos limiares precisam ser conferidos no
+        artigo. Candidato a entrar em 2.8 (trabalhos correlatos) e 6.2.
 
 -------------------------------------------------------------------------------
 E. DECLARACAO E ENTREGA
