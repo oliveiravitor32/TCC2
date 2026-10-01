@@ -153,6 +153,32 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         pleno, o que e seguro, mas reduz o alcance da proposta. Decidir se
         entra como limitacao.
 
+[ ] C15. Problema de pesquisa (1.4), propostas da IA em 01/10/2026, ainda NAO
+        aplicadas ao docx:
+        (a) trocar o paragrafo "Existem sistemas capazes de coletar..." por:
+            "A cidade ja dispoe de cameras que observam o uso das vias e de
+            luminarias cuja intensidade pode ser regulada, mas nao ilumina
+            conforme o uso real da rua. O problema investigado neste trabalho
+            e como aproveitar essa infraestrutura ja instalada para obter mais
+            seguranca que a atenuacao por horario fixo e menos consumo que o
+            fluxo pleno."
+        (b) pergunta de pesquisa: "condicoes do ambiente" e vago (sugere
+            clima; o sistema decide pelo uso da via) e a norma nao aparece.
+            Redacao proposta: "Como utilizar dados urbanos ja produzidos no
+            municipio e Inteligencia Artificial para determinar dinamicamente
+            o nivel de iluminacao publica conforme o uso observado da via, sem
+            transgredir os limites da ABNT NBR 5101?"
+            CONFIRMAR COM O ORIENTADOR antes de trocar (frase do pre-projeto).
+        (c) frase-sintese para o Resumo e o Capitulo 7 (escolhida pelo autor):
+            "O trabalho mostra que a cidade pode iluminar conforme o uso real
+            da rua, com mais seguranca que o horario fixo e menos consumo que
+            a luz plena, aproveitando cameras e luminarias que ja estao
+            instaladas." Levar junto as ressalvas (cenarios testados, luminaria
+            de referencia, sem integracao real).
+[ ] C16. Objetivo geral (1.5.1): o texto diz "decisao por inferencia
+        artificial". Provavel erro de digitacao de "inteligencia artificial"
+        (o termo tecnico do trabalho e "inferencia nebulosa"). Conferir.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
