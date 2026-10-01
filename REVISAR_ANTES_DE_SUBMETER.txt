@@ -140,6 +140,19 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         nao diz isso. Conferir: declarar em 3.7 ou 6.3 que o corte usa o dia
         inteiro, e saber responder "por que nao tercis so da noite?".
 
+[ ] C14. Objecao "um sistema melhor invalida a proposta" (conversa de
+        01/10/2026). Respostas preparadas com a IA: (1) sensor por poste exige
+        infraestrutura nova, a proposta usa a ja contratada (2.8, Nogueira
+        2024); (2) horario fixo deixa a via abaixo do pedido (Quadro 19);
+        (3) telegestao adaptativa comercial usa sensor proprio de trafego
+        (Pasolini et al., 2024, a conferir - D8). Nao afirmar que a solucao e
+        "a melhor": afirmar que e viavel com o que existe e segura pela norma.
+        PONTO A CONFERIR NO TEXTO: a cobertura das cameras nao e a dos postes
+        (nem toda via iluminada tem camera). Nao foi achada limitacao
+        explicita sobre isso em 6.3; sem volume vigente o sistema fica no
+        pleno, o que e seguro, mas reduz o alcance da proposta. Decidir se
+        entra como limitacao.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
