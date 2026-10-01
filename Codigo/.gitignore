@@ -20,3 +20,4 @@ deploy/broker/passwd
 deploy/broker/certs/
 # Certificado da CA baixado da VM (cada VM gera o seu)
 ca_vm.crt
+modelo/dados/*.parquet
