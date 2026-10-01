@@ -1,0 +1,382 @@
+{
+  "15min": {
+    "noite": {
+      "casos": 203484,
+      "casos_nivel_baixo": 126333,
+      "fracao_que_sobe": 0.0545,
+      "xgboost": {
+        "mae": 0.0227,
+        "rmse": 0.0432,
+        "acerto_da_faixa": 0.9137,
+        "vai_subir": {
+          "precisao": 0.6154,
+          "revocacao": 0.6324,
+          "f1": 0.6237
+        }
+      },
+      "persistencia": {
+        "mae": 0.0466,
+        "rmse": 0.0821,
+        "acerto_da_faixa": 0.8284,
+        "vai_subir": {
+          "precisao": 0.2239,
+          "revocacao": 0.29,
+          "f1": 0.2527
+        }
+      },
+      "media_sazonal": {
+        "mae": 0.0388,
+        "rmse": 0.0779,
+        "acerto_da_faixa": 0.8437,
+        "vai_subir": {
+          "precisao": 0.3325,
+          "revocacao": 0.7171,
+          "f1": 0.4543
+        }
+      },
+      "semana_anterior": {
+        "mae": 0.0354,
+        "rmse": 0.0791,
+        "acerto_da_faixa": 0.8736,
+        "vai_subir": {
+          "precisao": 0.5017,
+          "revocacao": 0.6836,
+          "f1": 0.5787
+        }
+      },
+      "semana_corrigida": {
+        "mae": 0.0332,
+        "rmse": 0.0639,
+        "acerto_da_faixa": 0.872,
+        "vai_subir": {
+          "precisao": 0.5367,
+          "revocacao": 0.6203,
+          "f1": 0.5755
+        }
+      },
+      "mistura": {
+        "mae": 0.0317,
+        "rmse": 0.0581,
+        "acerto_da_faixa": 0.878,
+        "vai_subir": {
+          "precisao": 0.4184,
+          "revocacao": 0.4699,
+          "f1": 0.4427
+        }
+      }
+    },
+    "pontos": 12,
+    "pontos_em_que_xgboost_ganha_na_faixa": 11,
+    "pontos_em_que_xgboost_ganha_no_f1": 8,
+    "por_ponto": {
+      "2": {
+        "casos": 17452,
+        "fracao_que_sobe": 0.1184,
+        "faixa_xgboost": 0.8943,
+        "faixa_melhor_simples": 0.8948,
+        "f1_xgboost": 0.6023,
+        "f1_melhor_simples": 0.7992
+      },
+      "20": {
+        "casos": 17204,
+        "fracao_que_sobe": 0.0924,
+        "faixa_xgboost": 0.8786,
+        "faixa_melhor_simples": 0.8313,
+        "f1_xgboost": 0.6457,
+        "f1_melhor_simples": 0.5913
+      },
+      "32": {
+        "casos": 17452,
+        "fracao_que_sobe": 0.0883,
+        "faixa_xgboost": 0.9361,
+        "faixa_melhor_simples": 0.9242,
+        "f1_xgboost": 0.7814,
+        "f1_melhor_simples": 0.8114
+      },
+      "39": {
+        "casos": 17108,
+        "fracao_que_sobe": 0.1082,
+        "faixa_xgboost": 0.9031,
+        "faixa_melhor_simples": 0.8588,
+        "f1_xgboost": 0.653,
+        "f1_melhor_simples": 0.5584
+      },
+      "52": {
+        "casos": 16916,
+        "fracao_que_sobe": 0.0261,
+        "faixa_xgboost": 0.9142,
+        "faixa_melhor_simples": 0.9035,
+        "f1_xgboost": 0.4769,
+        "f1_melhor_simples": 0.5179
+      },
+      "53": {
+        "casos": 17452,
+        "fracao_que_sobe": 0.0198,
+        "faixa_xgboost": 0.9289,
+        "faixa_melhor_simples": 0.9205,
+        "f1_xgboost": 0.4178,
+        "f1_melhor_simples": 0.4629
+      },
+      "65": {
+        "casos": 17452,
+        "fracao_que_sobe": 0.1036,
+        "faixa_xgboost": 0.8979,
+        "faixa_melhor_simples": 0.8875,
+        "f1_xgboost": 0.7398,
+        "f1_melhor_simples": 0.7373
+      },
+      "1357": {
+        "casos": 16860,
+        "fracao_que_sobe": 0.0705,
+        "faixa_xgboost": 0.898,
+        "faixa_melhor_simples": 0.862,
+        "f1_xgboost": 0.5676,
+        "f1_melhor_simples": 0.4934
+      },
+      "1358": {
+        "casos": 17452,
+        "fracao_que_sobe": 0.0789,
+        "faixa_xgboost": 0.9218,
+        "faixa_melhor_simples": 0.9033,
+        "f1_xgboost": 0.7987,
+        "f1_melhor_simples": 0.7463
+      },
+      "1681": {
+        "casos": 15904,
+        "fracao_que_sobe": 0.0233,
+        "faixa_xgboost": 0.9227,
+        "faixa_melhor_simples": 0.9048,
+        "f1_xgboost": 0.4634,
+        "f1_melhor_simples": 0.4559
+      },
+      "2641": {
+        "casos": 16384,
+        "fracao_que_sobe": 0.0117,
+        "faixa_xgboost": 0.9581,
+        "faixa_melhor_simples": 0.9399,
+        "f1_xgboost": 0.3275,
+        "f1_melhor_simples": 0.3014
+      },
+      "2642": {
+        "casos": 15848,
+        "fracao_que_sobe": 0.0322,
+        "faixa_xgboost": 0.9127,
+        "faixa_melhor_simples": 0.8841,
+        "f1_xgboost": 0.3925,
+        "f1_melhor_simples": 0.329
+      }
+    },
+    "ic95_diferenca_faixa_pp": {
+      "persistencia": [
+        8.22,
+        8.81
+      ],
+      "media_sazonal": [
+        6.5,
+        7.51
+      ],
+      "semana_anterior": [
+        3.48,
+        4.56
+      ],
+      "semana_corrigida": [
+        3.83,
+        4.52
+      ],
+      "mistura": [
+        3.27,
+        3.84
+      ]
+    }
+  },
+  "1h": {
+    "noite": {
+      "casos": 50871,
+      "casos_nivel_baixo": 32071,
+      "fracao_que_sobe": 0.0695,
+      "xgboost": {
+        "mae": 0.0274,
+        "rmse": 0.0534,
+        "acerto_da_faixa": 0.8963,
+        "vai_subir": {
+          "precisao": 0.7222,
+          "revocacao": 0.7433,
+          "f1": 0.7326
+        }
+      },
+      "persistencia": {
+        "mae": 0.0484,
+        "rmse": 0.0856,
+        "acerto_da_faixa": 0.8205,
+        "vai_subir": {
+          "precisao": 0.0,
+          "revocacao": 0.0,
+          "f1": 0.0
+        }
+      },
+      "media_sazonal": {
+        "mae": 0.0378,
+        "rmse": 0.076,
+        "acerto_da_faixa": 0.8529,
+        "vai_subir": {
+          "precisao": 0.4788,
+          "revocacao": 0.8501,
+          "f1": 0.6125
+        }
+      },
+      "semana_anterior": {
+        "mae": 0.0348,
+        "rmse": 0.0779,
+        "acerto_da_faixa": 0.8784,
+        "vai_subir": {
+          "precisao": 0.6567,
+          "revocacao": 0.7985,
+          "f1": 0.7207
+        }
+      },
+      "semana_corrigida": {
+        "mae": 0.0335,
+        "rmse": 0.0653,
+        "acerto_da_faixa": 0.8785,
+        "vai_subir": {
+          "precisao": 0.7632,
+          "revocacao": 0.7899,
+          "f1": 0.7764
+        }
+      },
+      "mistura": {
+        "mae": 0.0324,
+        "rmse": 0.0593,
+        "acerto_da_faixa": 0.8787,
+        "vai_subir": {
+          "precisao": 0.7272,
+          "revocacao": 0.5072,
+          "f1": 0.5976
+        }
+      }
+    },
+    "pontos": 12,
+    "pontos_em_que_xgboost_ganha_na_faixa": 5,
+    "pontos_em_que_xgboost_ganha_no_f1": 8,
+    "por_ponto": {
+      "2": {
+        "casos": 4363,
+        "fracao_que_sobe": 0.1509,
+        "faixa_xgboost": 0.8334,
+        "faixa_melhor_simples": 0.8859,
+        "f1_xgboost": 0.425,
+        "f1_melhor_simples": 0.9231
+      },
+      "20": {
+        "casos": 4301,
+        "fracao_que_sobe": 0.1228,
+        "faixa_xgboost": 0.8691,
+        "faixa_melhor_simples": 0.8168,
+        "f1_xgboost": 0.8333,
+        "f1_melhor_simples": 0.7867
+      },
+      "32": {
+        "casos": 4363,
+        "fracao_que_sobe": 0.1172,
+        "faixa_xgboost": 0.9452,
+        "faixa_melhor_simples": 0.9356,
+        "f1_xgboost": 0.9452,
+        "f1_melhor_simples": 0.9237
+      },
+      "39": {
+        "casos": 4277,
+        "fracao_que_sobe": 0.165,
+        "faixa_xgboost": 0.8868,
+        "faixa_melhor_simples": 0.8373,
+        "f1_xgboost": 0.8109,
+        "f1_melhor_simples": 0.7649
+      },
+      "52": {
+        "casos": 4229,
+        "fracao_que_sobe": 0.042,
+        "faixa_xgboost": 0.89,
+        "faixa_melhor_simples": 0.9059,
+        "f1_xgboost": 0.6089,
+        "f1_melhor_simples": 0.6667
+      },
+      "53": {
+        "casos": 4363,
+        "fracao_que_sobe": 0.0256,
+        "faixa_xgboost": 0.9115,
+        "faixa_melhor_simples": 0.9278,
+        "f1_xgboost": 0.4859,
+        "f1_melhor_simples": 0.6138
+      },
+      "65": {
+        "casos": 4363,
+        "fracao_que_sobe": 0.1253,
+        "faixa_xgboost": 0.8918,
+        "faixa_melhor_simples": 0.8925,
+        "f1_xgboost": 0.8436,
+        "f1_melhor_simples": 0.8412
+      },
+      "1357": {
+        "casos": 4215,
+        "fracao_que_sobe": 0.0812,
+        "faixa_xgboost": 0.8816,
+        "faixa_melhor_simples": 0.8698,
+        "f1_xgboost": 0.7394,
+        "f1_melhor_simples": 0.7233
+      },
+      "1358": {
+        "casos": 4363,
+        "fracao_que_sobe": 0.1072,
+        "faixa_xgboost": 0.8962,
+        "faixa_melhor_simples": 0.9051,
+        "f1_xgboost": 0.917,
+        "f1_melhor_simples": 0.9059
+      },
+      "1681": {
+        "casos": 3976,
+        "fracao_que_sobe": 0.0349,
+        "faixa_xgboost": 0.8979,
+        "faixa_melhor_simples": 0.915,
+        "f1_xgboost": 0.5575,
+        "f1_melhor_simples": 0.675
+      },
+      "2641": {
+        "casos": 4096,
+        "fracao_que_sobe": 0.0032,
+        "faixa_xgboost": 0.9531,
+        "faixa_melhor_simples": 0.9558,
+        "f1_xgboost": 0.0984,
+        "f1_melhor_simples": 0.0597
+      },
+      "2642": {
+        "casos": 3962,
+        "fracao_que_sobe": 0.0283,
+        "faixa_xgboost": 0.9016,
+        "faixa_melhor_simples": 0.8983,
+        "f1_xgboost": 0.3375,
+        "f1_melhor_simples": 0.3146
+      }
+    },
+    "ic95_diferenca_faixa_pp": {
+      "persistencia": [
+        7.1,
+        8.04
+      ],
+      "media_sazonal": [
+        3.85,
+        4.84
+      ],
+      "semana_anterior": [
+        1.28,
+        2.32
+      ],
+      "semana_corrigida": [
+        1.37,
+        2.19
+      ],
+      "mistura": [
+        1.39,
+        2.1
+      ]
+    }
+  }
+}

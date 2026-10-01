@@ -1825,6 +1825,24 @@ LIMITES: mede a previsao (faixa e "vai subir"), nao a luz no ciclo completo;
          14 pontos de uma cidade, 2016-2019; sem atributo de feriado; o
          modelo de 15 min usou as 2000 arvores (sem parada antecipada);
          "vai subir" e raro a noite (5,5 % dos casos de nivel baixo).
+CONFERENCIAS POSTERIORES ao protocolo (modelo/conferencia_zurique.py; nao
+         fazem parte do criterio fixado):
+         - Horario: DATUM e hora LOCAL de Zurique (minimo as 3 h no inverno e
+           no verao; a hora 02:00 nao existe em 25/03/2018, inicio do horario
+           de verao). A janela 18h-06h esta correta, sem conversao.
+         - Por ponto (15 min, noite): XGBoost ganha na faixa em 11 de 12
+           pontos e no F1 em 8 de 12 (contra a melhor das 5 referencias em
+           cada ponto). Em 1 h: 5 de 12 e 8 de 12.
+         - Referencias mais espertas, sem treino (semana anterior corrigida
+           pela ultima hora; mistura semana/ultima hora): em 15 min a melhor
+           faixa simples sobe para 87,8 % (XGBoost 91,4 %, +3,6 pp) e o melhor
+           F1 simples segue 0,579 (XGBoost 0,624). Em 1 h, a semana corrigida
+           passa o XGBoost no F1 (0,776 x 0,733).
+         - IC 95 % da diferenca de faixa, reamostrando dias: 15 min de +3,3 a
+           +3,8 pp contra a mistura; 1 h de +1,4 a +2,1 pp.
+         LEITURA: o ganho em 15 min se sustenta (maioria dos pontos, contra
+         referencias melhores, intervalo longe de zero); e moderado: um terco
+         menos de erros de faixa. Em 1 h o modelo segue substituivel.
 TEXTO:   3.6 / 5.x (resultado), 6.3 (limitacao da serie horaria) e 7.1
          (trabalho futuro: treinar e operar com serie sub-horaria).
 
