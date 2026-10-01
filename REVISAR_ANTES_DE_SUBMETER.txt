@@ -179,6 +179,19 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         artificial". Provavel erro de digitacao de "inteligencia artificial"
         (o termo tecnico do trabalho e "inferencia nebulosa"). Conferir.
 
+[ ] C17. Rodada v7 do texto (01/10/2026) - o que foi aplicado e precisa ser lido:
+        C10 (item 61 em 3.7, 3.9, 5.6, 6.3), C11 (2.6 reescrita: as tres
+        propriedades "motivam" e nenhuma e exclusiva do fuzzy), C12 e C13
+        (tercis unicos, todas as horas, 54 % da noite na faixa baixa), C14
+        (limitacao: cameras nao cobrem todas as vias), C15 (a) e (b) (1.4 e
+        pergunta de pesquisa - CONFIRMAR COM O ORIENTADOR), C16 (objetivo
+        geral: "inteligencia artificial", confirmado pelo autor).
+        As referencias de AKASHI; NECHES (2004) e SHIKAKURA et al. (2003)
+        ENTRARAM no texto (3.9 e lista) sem leitura dos artigos: a de
+        Shikakura esta INCOMPLETA (falta volume, numero e paginas) e os
+        prenomes de Akashi e Neches estao abreviados. Conferir e completar
+        antes de submeter (ver D6), ou retirar as citacoes.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
