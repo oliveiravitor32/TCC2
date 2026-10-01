@@ -260,6 +260,17 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         Shikakura (DOI 10.2150/jlve.27.75) e saber dizer que e estudo de
         escritorio.
 
+[ ] D11. Limiares de percepcao no texto (v8, reorganizado em 01/10/2026). O
+        autor sugeriu trocar o limiar fixado pelo achado na fonte; a IA NAO
+        fez isso (o protocolo com 15 % e 6 % esta no commit 1f376d9, anterior
+        ao resultado). O texto de 3.9 diz: o protocolo fixou 15 % e 6 %; so o
+        de 6 % tem fonte; o de 30 % (mesma fonte, observador ocupado) e
+        conferencia posterior. Contagens (fuzzy, tabela, tabela com histerese):
+        6 %: 24, 5, 5 | 15 %: 7, 4, 4 | 20 %: 3, 3, 3 | 30 %: 2, 3, 3.
+        A 30 % o fuzzy tem UMA mudanca a menos (um evento em oito noites) e
+        saltos maximos menores (42 % x 50 %): e o unico ponto favoravel, e
+        pequeno. Nao apresentar como vitoria. Conferir a redacao de 3.9 e 5.6.
+
 -------------------------------------------------------------------------------
 E. DECLARACAO E ENTREGA
 -------------------------------------------------------------------------------
