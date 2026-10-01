@@ -1,0 +1,14 @@
+{
+  "conjunto": "ted_taz_verkehrszaehlungen_werte_fussgaenger_velo (Viertelstundenwerte, alle Jahre)",
+  "fonte": "https://data.stadt-zuerich.ch/dataset/ted_taz_verkehrszaehlungen_werte_fussgaenger_velo/download/verkehrszaehlungen_werte_fussgaenger_velo_alle_jahre.parquet",
+  "licenca": "CC0",
+  "baixado_em": "2026-10-01T02:12:00+00:00",
+  "baixado_em_local": "2026-09-30 23:12 (America/Sao_Paulo)",
+  "arquivo": "zurique_pedestres_15min.parquet",
+  "registros": 15508605,
+  "periodo": ["2009-12-02T00:00", "2026-06-06T23:45"],
+  "bytes": 60270703,
+  "sha256": "34a41dceb3a145fae5ae2b52d63bc91f540c761161e231dbf1d95bd60f04c42d",
+  "colunas": ["FK_STANDORT", "DATUM", "VELO_IN", "VELO_OUT", "FUSS_IN", "FUSS_OUT", "OST", "NORD"],
+  "observacao": "DATUM em hora local de Zurique. O portal atualiza o arquivo; o resumo SHA-256 identifica a copia usada no experimento (DIVERGENCIAS 60)."
+}

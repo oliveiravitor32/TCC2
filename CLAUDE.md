@@ -11,6 +11,7 @@ A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Tra
 - `..._SP_v3_revisado.docx` = v2 + rodadas de 27 e 28/09/2026 marcadas (meteorologia, itens 49, 53, 54 e 55 do DIVERGENCIAS). `..._SP_v3.docx` = a mesma com tudo aceito e a Figura 2 nova.
 - `..._SP_v4_revisado.docx` = v3 aceito + rodada de 29/09/2026 marcada (item 56: volume de 5 min, degraus de classe, pacote, Quadro 18 da especificação da interface; 1.4; previsão como segunda evidência). `..._SP_v4.docx` = a mesma com tudo aceito; **passa a ser a vigente quando o autor aprovar a revisão no Word**.
 - `..._SP_v5_revisado.docx` = v4 aceito + rodada de 30/09/2026 marcada (itens 57 a 60: avaliação das IAs por retirada e por substituto simples, déficit do horário fixo, experimento de Zurique em 15 min; 3.6, 3.7, 3.9, 5.1, nova 5.6 com Quadros 19 e 20, 6.3, 7.1). `..._SP_v5.docx` = a mesma com tudo aceito; **passa a ser a vigente quando o autor aprovar a revisão no Word**.
+- `..._SP_v6_revisado.docx` = v5 aceito + rodada de 01/10/2026 marcada (Apêndice B de reprodutibilidade com o Quadro 22, frase em 3.9 e duas linhas **propostas** no Quadro 21 da declaração de uso de IA, que os autores precisam revisar). `..._SP_v6.docx` = a mesma com tudo aceito.
 - Novas mudanças no texto: com controle de alterações, sobre a versão com tudo aceito, salvando como arquivo novo (nunca sobrescrever a versão vigente).
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
@@ -44,6 +45,7 @@ Seções mais importantes da versão nova:
 | Casos de teste CT01–CT20 (Quadro 17) · resultado (4.10: CT15–CT20 PENDENTE) | 4.8 / 4.10 | — |
 | **Avaliação dos componentes de IA (Quadros 19 e 20)** | **5.6** | nova |
 | Matriz de uso de IA (renumerada) | Quadro 21 | Quadro 16 |
+| **Reprodutibilidade (Quadro 22: programa, dados, comando e commit de cada resultado)** | **Apêndice B** | novo |
 
 Se o código precisar divergir do TCC, **avise explicitamente** qual trecho do texto (seção/quadro da versão nova) precisa ser atualizado.
 
