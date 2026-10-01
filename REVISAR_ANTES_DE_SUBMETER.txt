@@ -125,6 +125,14 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         continua de pe. Corrigir 2.6 na proxima rodada de texto, junto com o
         item 61, para o Capitulo 2 nao prometer o que o Capitulo 5 nao entrega.
 
+[ ] C12. Redacao de 3.7 sobre os tercis. O texto diz "calculados por ponto de
+        medicao, os tercis acompanham o patamar local". Na pratica: por ponto
+        e a NORMALIZACAO (volume / referencia do trecho); os tercis 0,104 e
+        0,405 sao UNICOS, calculados sobre todos os sensores de Melbourne ja
+        normalizados. Uma rua nao fica necessariamente um terco do tempo em
+        cada faixa. Conferir a frase e ajustar para nao sugerir que cada rua
+        tem tercis proprios (o CLAUDE.md tambem diz "tercis por trecho").
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
