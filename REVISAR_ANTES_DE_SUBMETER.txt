@@ -199,7 +199,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         tem latitude/longitude e que a plataforma publica por trecho, mas nao
         diz quem associa cada camera aos trechos que ela observa (campo de
         visao, camera de esquina que ve mais de um trecho). Proposta da IA,
-        ainda NAO aplicada: (a) frase em 3.5.2 atribuindo essa associacao a
+        APLICADA na v9 (ler e conferir): (a) frase em 3.5.2 atribuindo essa associacao a
         plataforma; (b) limitacao em 6.3 de que ela nao foi construida nem
         verificada. Nao afirmar que a telegestao de Sao Paulo usa TALQ: o
         texto so diz que o protocolo existe.
