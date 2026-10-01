@@ -192,6 +192,18 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         prenomes de Akashi e Neches estao abreviados. Conferir e completar
         antes de submeter (ver D6), ou retirar as citacoes.
 
+[ ] C18. Identificacao espacial (3.5.2): a ligacao TRECHO -> POSTE esta bem
+        explicada e apoiada (GeoSampa, Caderno de Encargos itens 13/13.1/13.3,
+        raio de 25 m, recorte do Jardim Helena, TALQ como referencia). A
+        ligacao CAMERA -> TRECHO esta so implicita: o texto diz que as cameras
+        tem latitude/longitude e que a plataforma publica por trecho, mas nao
+        diz quem associa cada camera aos trechos que ela observa (campo de
+        visao, camera de esquina que ve mais de um trecho). Proposta da IA,
+        ainda NAO aplicada: (a) frase em 3.5.2 atribuindo essa associacao a
+        plataforma; (b) limitacao em 6.3 de que ela nao foi construida nem
+        verificada. Nao afirmar que a telegestao de Sao Paulo usa TALQ: o
+        texto so diz que o protocolo existe.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
