@@ -1849,6 +1849,35 @@ TEXTO:   3.6 / 5.x (resultado), 6.3 (limitacao da serie horaria) e 7.1
          3.6, 3.7, 3.9, 5.1, nova 5.6 (Quadros 19 e 20; matriz de IA = Quadro
          21), 6.3 e 7.1. Arquivos ..._SP_v5_revisado.docx e ..._SP_v5.docx.
 
+-------------------------------------------------------------------------------
+61. MAMDANI x TABELA EM MUDANCAS PERCEPTIVEIS, NOITES REAIS DE 15 MIN (01/10/2026)
+-------------------------------------------------------------------------------
+PERGUNTA: com contagem real sub-horaria e metrica de mudanca PERCEPTIVEL, a
+         inferencia nebulosa supera alternativas simples? Protocolo fixado
+         antes (cenarios/avaliacao_ia/PROTOCOLO_SUAVIDADE.md, commit 1f376d9).
+CODIGO:  ciclo.decidir ganhou o parametro opcional filtro_observada, usado so
+         pela avaliacao (executar.py --histerese); a operacao nao muda.
+CENARIOS: 8 noites de Zurique (2019, 15 min), 4 pontos, semente 61.
+RESULTADO (agregado; zero violacoes nos tres):
+                              Mamdani   tabela   tabela c/ histerese
+         mudancas >= 15 %        7         4          4
+         mudancas >= 6 %        24         5          5
+         inversoes              63         7          7
+         energia x pleno      61,8 %    61,7 %     62,4 %
+         min 2 lux abaixo        0         0          0
+         atraso ate a minima  63,8 min  45,5 min   44,0 min
+LEITURA PELO CRITERIO (>= 20 % menos mudancas perceptiveis que a melhor
+         tabela, nos dois limiares): NAO atendido - o Mamdani teve MAIS
+         mudancas perceptiveis. SUBSTITUIVEL. Com dado real, o volume nao
+         ficou oscilando no tercil como no ruido sintetico do item 59; a
+         tabela quase nao troca de classe, e a saida continua do Mamdani
+         acompanha cada variacao do volume.
+LIMITES: 8 noites, 4 pontos; limiares de percepcao de estudos em escritorio,
+         lidos so por resumo (conferir - REVISAR_ANTES_DE_SUBMETER D6); a
+         primeira tentativa de execucao falhou por o Docker estar desligado
+         (nenhum resultado gerado) e foi repetida sem alteracao.
+TEXTO:   3.7, 5.6 e 6.3 (acrescentar este resultado); ainda NAO levado ao docx.
+
 ===============================================================================
 FIM
 ===============================================================================

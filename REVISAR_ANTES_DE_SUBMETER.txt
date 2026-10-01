@@ -105,6 +105,14 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         classe de pedestres." Decisao do autor, argumento redigido com a IA.
         Onde: 3.7.
 
+[ ] C10. Teste de mudancas perceptiveis (item 61): em 8 noites reais de
+        Zurique, o fuzzy teve MAIS mudancas perceptiveis que a tabela (7 x 4
+        a 15 %; 24 x 5 a 6 %), com a mesma energia. O argumento da "suavidade"
+        nao se sustentou com dado real. Criterios (20 %, limiares de 15 % e
+        6 %, histerese de 0,05) sugeridos pela IA e fixados antes.
+        Onde: ainda nao esta no docx (entrar em 3.7, 5.6, 6.3).
+        Conferir: decidir com o orientador como declarar o papel do fuzzy.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
