@@ -13,6 +13,7 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from decimal import Decimal
+from typing import Callable
 
 import psycopg
 from psycopg.types.json import Jsonb
@@ -394,6 +395,7 @@ def decidir(
     execucao_id: int | None = None,
     reativo: bool = False,
     desde: datetime | None = None,
+    filtro_observada: Callable[[float], float] | None = None,
 ) -> DecisaoTomada:
     origens = origens_da_execucao(execucao_id)
     estado = estado_via(conn, agora, desde, origens, ponto_id=ponto.id)
@@ -411,6 +413,9 @@ def decidir(
     else:
         refs = referencias(conn, agora, ponto.id, origens)
         obs = observada(estado, refs)
+        if filtro_observada is not None and obs is not None:
+            # So na avaliacao (DIVERGENCIAS 61): alternativa simples com histerese.
+            obs = filtro_observada(obs)
         if not reativo and obs is not None:
             horas = getattr(previsor, "horas_necessarias", lambda: 24)()
             previsao = previsor.prever(

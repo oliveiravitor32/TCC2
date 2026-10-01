@@ -188,8 +188,28 @@ def _semear_historico(conn, inicio: datetime, execucao_id: int, trecho_id: int,
                             trecho_id, media, origem=f"cenario-historico:{execucao_id}")
 
 
+class HistereseDescida:
+    """Alternativa simples da avaliacao (DIVERGENCIAS 61): a tabela sobe de
+    faixa no tercil, na hora, e so desce quando o volume cai `h` abaixo dele.
+    Devolve o volume que a tabela deve ler (preso na fronteira enquanto a
+    descida nao e confirmada)."""
+
+    def __init__(self, f1: float, f2: float, h: float) -> None:
+        self.f, self.h, self.faixa = (f1, f2), h, None
+
+    def __call__(self, x: float) -> float:
+        nova = 0 if x < self.f[0] else 1 if x < self.f[1] else 2
+        if self.faixa is not None and nova < self.faixa:
+            fronteira = self.f[self.faixa - 1]
+            if x >= fronteira - self.h:
+                return fronteira
+        self.faixa = nova
+        return x
+
+
 def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
-             indice: int = 0, degraus: bool = False, serie: bool = False) -> dict:
+             indice: int = 0, degraus: bool = False, serie: bool = False,
+             histerese: float | None = None) -> dict:
     """Roda um cenario no relogio virtual.
 
     `indice` desloca o cenario em SEMANAS inteiras. Os cenarios declaram
@@ -203,6 +223,10 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
     if degraus:
         base = em_degraus(base)
     previsor = carregar_previsor(previsao)
+    filtro = None
+    if histerese is not None:
+        f2 = (base.mov["alta"][0] + base.mov["alta"][1]) / 2
+        filtro = HistereseDescida(fronteira_baixa(base), f2, histerese)
     ponto = ciclo.pontos(conn)[0]
     trecho = trecho_principal(conn, ponto.id)
     inicio = (cenario.inicio_local + timedelta(weeks=indice)).astimezone(timezone.utc)
@@ -245,6 +269,7 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
                 conn, base=base, previsor=previsor, ponto=ponto, agora=agora,
                 versao_regras_id=versao_regras_id, versao_modelo_id=versao_modelo_id,
                 execucao_id=execucao_id, reativo=reativo, desde=inicio,
+                filtro_observada=filtro,
             )
             registro.append({
                 "minuto": round(minuto, 3),
@@ -395,6 +420,8 @@ def main() -> None:
     p.add_argument("--degraus", action="store_true",
                    help="mesma base como tabela em degraus, sem logica nebulosa (item 51)")
     p.add_argument("--previsao", choices=["persistencia", "xgboost", "media-sazonal"], default=None)
+    p.add_argument("--histerese", type=float, default=None,
+                   help="com --degraus: so desce de faixa com o volume H abaixo do tercil (item 61)")
     p.add_argument("--saida", default=None, help="arquivo do relatorio")
     p.add_argument("--pasta", default=None,
                    help="pasta de cenarios (padrao: suite/); ex.: avaliacao_ia/melbourne")
@@ -408,7 +435,8 @@ def main() -> None:
     with psycopg.connect(config.DATABASE_URL, connect_timeout=5) as conn:
         for i, c in enumerate(cenarios):
             r = executar(conn, c, reativo=args.reativo, previsao=args.previsao, indice=i,
-                         degraus=args.degraus, serie=args.serie)
+                         degraus=args.degraus, serie=args.serie,
+                         histerese=args.histerese)
             relatorios.append(r)
             v = r["violacoes"]
             print(f"{c.nome:34s} decisoes={r['decisoes']:4d} "
@@ -433,6 +461,7 @@ def main() -> None:
     prefixo = args.pasta.replace("/", "_") if args.pasta else "suite"
     nome = args.saida or (f"{prefixo}_{'reativo' if args.reativo else 'antecipado'}"
                           f"{'_degraus' if args.degraus else ''}"
+                          f"{'_histerese' if args.histerese is not None else ''}"
                           f"{'_' + args.previsao.replace('-', '_') if args.previsao else ''}.json")
     (RESULTADOS / nome).write_text(
         json.dumps(total, indent=2, ensure_ascii=False, default=str), encoding="utf-8"

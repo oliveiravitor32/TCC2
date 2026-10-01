@@ -1,0 +1,69 @@
+{
+  "semente": 61,
+  "noites": [
+    {
+      "cenario": "zurique_movimentado_2_dia_util",
+      "ponto": 2,
+      "grupo": "movimentado",
+      "tipo": "dia_util",
+      "inicio": "2019-04-25 18:00:00",
+      "media_noite": 0.2197
+    },
+    {
+      "cenario": "zurique_movimentado_2_fim_de_semana",
+      "ponto": 2,
+      "grupo": "movimentado",
+      "tipo": "fim_de_semana",
+      "inicio": "2019-02-02 18:00:00",
+      "media_noite": 0.107
+    },
+    {
+      "cenario": "zurique_movimentado_32_dia_util",
+      "ponto": 32,
+      "grupo": "movimentado",
+      "tipo": "dia_util",
+      "inicio": "2019-11-19 18:00:00",
+      "media_noite": 0.1875
+    },
+    {
+      "cenario": "zurique_movimentado_32_fim_de_semana",
+      "ponto": 32,
+      "grupo": "movimentado",
+      "tipo": "fim_de_semana",
+      "inicio": "2019-05-11 18:00:00",
+      "media_noite": 0.0898
+    },
+    {
+      "cenario": "zurique_calmo_52_dia_util",
+      "ponto": 52,
+      "grupo": "calmo",
+      "tipo": "dia_util",
+      "inicio": "2019-02-12 18:00:00",
+      "media_noite": 0.0378
+    },
+    {
+      "cenario": "zurique_calmo_52_fim_de_semana",
+      "ponto": 52,
+      "grupo": "calmo",
+      "tipo": "fim_de_semana",
+      "inicio": "2019-05-25 18:00:00",
+      "media_noite": 0.051
+    },
+    {
+      "cenario": "zurique_calmo_53_dia_util",
+      "ponto": 53,
+      "grupo": "calmo",
+      "tipo": "dia_util",
+      "inicio": "2019-04-22 18:00:00",
+      "media_noite": 0.0846
+    },
+    {
+      "cenario": "zurique_calmo_53_fim_de_semana",
+      "ponto": 53,
+      "grupo": "calmo",
+      "tipo": "fim_de_semana",
+      "inicio": "2019-05-25 18:00:00",
+      "media_noite": 0.0355
+    }
+  ]
+}
