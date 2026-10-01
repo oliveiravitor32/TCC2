@@ -251,6 +251,15 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
           lux; o trabalho conta ELEVACOES em via a 5-10 lux. A extrapolacao
           esta declarada em 3.9; saber defende-la ou assumir como limite.
 
+[ ] D10. Por decisao do autor (01/10/2026), a citacao de AKASHI; NECHES (2004)
+        foi RETIRADA do texto e das referencias (v8), por o artigo nao ter
+        sido lido. Ficou so SHIKAKURA et al. (2003), conferida pelo resumo no
+        J-STAGE. Em 3.9, o limiar de 6 % e o da fonte; o de 15 % passou a ser
+        "valor adotado pelos autores" (era o do protocolo). D6 e D9 ficam
+        superados quanto a Akashi. Conferir: ler ao menos o resumo de
+        Shikakura (DOI 10.2150/jlve.27.75) e saber dizer que e estudo de
+        escritorio.
+
 -------------------------------------------------------------------------------
 E. DECLARACAO E ENTREGA
 -------------------------------------------------------------------------------

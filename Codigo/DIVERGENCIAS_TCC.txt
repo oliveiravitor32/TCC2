@@ -1901,8 +1901,10 @@ ERRATA (01/10/2026, conferencia das fontes dos limiares):
 TEXTO:   FEITO na rodada v7 (01/10/2026): 3.7, 3.9, 5.6 (linha nova no Quadro 19),
          6.3 e Apendice B. A mesma rodada corrigiu 1.4, 1.5.1, 2.6 e a redacao
          dos tercis em 3.7, e acrescentou a limitacao de cobertura das cameras.
-         Rodada v8: descricao correta dos limiares em 3.9, conferencia a 20 %
-         em 5.6 e referencias completas.
+         Rodada v8: por decisao do autor, a citacao de Akashi e Neches foi
+         RETIRADA (artigo nao lido); em 3.9 o limiar de 6 % fica com a fonte
+         conferida (Shikakura et al.) e o de 15 % como valor dos autores;
+         conferencia a 20 % e 30 % em 5.6; referencia de Shikakura completa.
 
 ===============================================================================
 FIM
