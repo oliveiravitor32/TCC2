@@ -220,6 +220,20 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         - Item 42 (pista e calcada) em 6.3 e 7.1.
         Conferir os numeros contra cenarios/resultados/suite_*.json.
 
+[ ] C20. Subsecao 4.6.3 "Percurso de uma decisao" (v11, 02/10/2026), redigida
+        pela IA: dez passos, diagrama de sequencia e um exemplo.
+        - Conferir se os dez passos descrevem o sistema como voces o entendem
+          (e a descricao que a banca vai cobrar na demonstracao).
+        - O exemplo vem do banco LOCAL com o NO SIMULADO (lux sintetico), e o
+          texto declara. Depois da sessao de bancada, vale trocar por um
+          exemplo com lux medido de verdade.
+        - Numeracao: o diagrama de sequencia virou a Figura 2 e o diagrama
+          entidade-relacionamento, a Figura 3. A lista de figuras foi
+          atualizada, sem o numero de pagina da figura nova.
+        - As letras da Figura 2 ficam pequenas na pagina impressa; avaliar se
+          a legibilidade esta aceitavel.
+        - As tres mensagens de exemplo estao como paragrafos, e nao em quadro.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

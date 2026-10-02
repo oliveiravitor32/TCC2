@@ -1928,6 +1928,25 @@ TEXTO:   FEITO na v10: abertura do Capitulo 5, 5.2, 5.4 (Tabela 1), 5.5
          Seguem PENDENTES: 4.1, 4.2, 4.5, 4.9, 4.10 (CT15-CT20), 5.3, energia
          de bancada em 5.5, 6.1, 6.2, 6.4, 7, Resumo e Abstract.
 
+-------------------------------------------------------------------------------
+63. PERCURSO DE UMA DECISAO NO TEXTO (02/10/2026)
+-------------------------------------------------------------------------------
+TCC:     o funcionamento do software estava completo, mas espalhado (3.2,
+         3.5.2, 3.6, 3.7, 4.6) e sem exemplo concreto nem diagrama de
+         sequencia. A descricao do servico de decisao em 3.2 nao citava a
+         previsao.
+TEXTO:   FEITO na v11: nova subsecao 4.6.3 "Percurso de uma decisao", com
+         dez passos, diagrama de sequencia (nova Figura 2; o diagrama
+         entidade-relacionamento passou a Figura 3) e um exemplo real do banco
+         local: evento 120973 (volume 0,3 no trecho 20159, 29/09/2026 01:21:03),
+         decisao 7d2d3cc6 (observada 0,06; R5 0,938; R4 e R6 0,062; degrau
+         1,914; pretendido 0,522; emitido 0,994; restricao de taxa), comando e
+         telemetria (duty 0,4970; lux 10,40). O no era o SIMULADO: a
+         iluminancia do exemplo e sintetica, e o texto diz isso.
+         As tres mensagens entraram como paragrafos, e nao como quadro, para
+         nao renumerar os Quadros 15 a 22.
+         Imagem: Figura2_Sequencia_v11.png (raiz do TCC2), gerada por script.
+
 ===============================================================================
 FIM
 ===============================================================================

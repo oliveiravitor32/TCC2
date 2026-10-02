@@ -4,7 +4,7 @@ Responda sempre em **português do Brasil**. O autor é iniciante em eletrônica
 
 ## Fonte da verdade
 
-> **Estado em 02/10/2026:** a versão mais recente do texto é a **v10** (`..._SP_v10.docx`), que acumula todas as rodadas; as versões v4 a v10 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
+> **Estado em 02/10/2026:** a versão mais recente do texto é a **v11** (`..._SP_v11.docx`), que acumula todas as rodadas; as versões v4 a v11 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
 
 A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v2.docx` (26/09/2026, com as duas rodadas de revisão aceitas pelo autor). **Siga o TCC.**
 
@@ -17,7 +17,8 @@ A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Tra
 - `..._SP_v7_revisado.docx` = v6 aceito + segunda rodada de 01/10/2026 marcada (1.4: problema e pergunta de pesquisa; 1.5.1; 2.6: propriedades da inferência nebulosa sem exclusividade; 3.7: tercis únicos sobre o nível normalizado; item 61 em 3.7, 3.9, 5.6 e 6.3; limitação de cobertura das câmeras; Apêndice B; referência de Shikakura et al.; a de Akashi e Neches saiu na v8). `..._SP_v7.docx` = a mesma com tudo aceito.
 - `..._SP_v8_revisado.docx` = v7 aceito + correção de 01/10/2026 marcada (limiares de percepção em 3.9: 6 % pela fonte conferida, Shikakura et al., e 15 % como valor dos autores; citação de Akashi e Neches **retirada** por decisão do autor; conferência a 20 % e 30 % em 5.6). `..._SP_v8.docx` = a mesma com tudo aceito.
 - `..._SP_v9_revisado.docx` = v8 aceito + frase em 3.5.2 e limitação em 6.3 sobre a associação câmera → trecho, que cabe à plataforma e não foi construída nem verificada (01/10/2026). `..._SP_v9.docx` = a mesma com tudo aceito.
-- `..._SP_v10_revisado.docx` = v9 aceito + resultados com dado disponível (02/10/2026): abertura do Capítulo 5, 5.2, 5.4 (Tabela 1), 5.5 (Tabela 2, luminária de referência), abertura de 6.3 e item 42 em 6.3 e 7.1. `..._SP_v10.docx` = a mesma com tudo aceito (**a mais recente**).
+- `..._SP_v10_revisado.docx` = v9 aceito + resultados com dado disponível (02/10/2026): abertura do Capítulo 5, 5.2, 5.4 (Tabela 1), 5.5 (Tabela 2, luminária de referência), abertura de 6.3 e item 42 em 6.3 e 7.1. `..._SP_v10.docx` = a mesma com tudo aceito.
+- `..._SP_v11_revisado.docx` = v10 aceito + nova subseção 4.6.3 "Percurso de uma decisão" (dez passos, diagrama de sequência e exemplo real com o nó simulado) e ajuste em 3.2 (02/10/2026). **A Figura 2 passou a ser o diagrama de sequência; o diagrama entidade-relacionamento é a Figura 3.** `..._SP_v11.docx` = a mesma com tudo aceito (**a mais recente**).
 - Novas mudanças no texto: com controle de alterações, sobre a versão com tudo aceito, salvando como arquivo novo (nunca sobrescrever a versão vigente).
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
@@ -46,6 +47,7 @@ Seções mais importantes da versão nova:
 | Decisões de arquitetura (Quadro 12) · Componentes (Quadro 13) | 4.6 | Quadros 9 e 10 |
 | Implantação em nuvem | 4.6.1 | 7.2.1 |
 | Contratos das interfaces (Quadro 14) | 4.6.2 | Quadro 13 |
+| **Percurso de uma decisão (Figura 2: diagrama de sequência; exemplo real)** | **4.6.3** | nova |
 | Banco: entidades (Quadro 15), ER e modelo físico | 4.7.1 · 4.7.2 · 4.7.3 | 8.5 |
 | Modelo físico (Quadro 16) | 4.7.3 | — |
 | Casos de teste CT01–CT20 (Quadro 17) · resultado (4.10: CT15–CT20 PENDENTE) | 4.8 / 4.10 | — |
@@ -141,7 +143,7 @@ volume observado (média de 5 min ÷ referência do trecho) · movimentação pr
 
 ## Banco (Quadro 15 + 4.7.2)
 
-`classe_iluminacao`, `ponto_de_luz` (com placa e UTM), `trecho_via`, `trecho_ponto`, `evento_urbano` (tipo volume|ocorrencia, pessoas_media, periodo_s, ocorrência, trecho obrigatório), `versao_base_regras`, `decisao`, `telemetria` **e a tabela associativa `decisao` ↔ `evento_urbano` (N:N)** — registra em quais eventos cada decisão se apoiou. Reclassificação de via = registro novo, nunca UPDATE do existente. A seção 4.7.3 (Quadro 16) foi escrita a partir do `schema.sql`: mudança no schema exige atualizar o Quadro 16 (e a Figura 2, gerada por script a partir do schema).
+`classe_iluminacao`, `ponto_de_luz` (com placa e UTM), `trecho_via`, `trecho_ponto`, `evento_urbano` (tipo volume|ocorrencia, pessoas_media, periodo_s, ocorrência, trecho obrigatório), `versao_base_regras`, `decisao`, `telemetria` **e a tabela associativa `decisao` ↔ `evento_urbano` (N:N)** — registra em quais eventos cada decisão se apoiou. Reclassificação de via = registro novo, nunca UPDATE do existente. A seção 4.7.3 (Quadro 16) foi escrita a partir do `schema.sql`: mudança no schema exige atualizar o Quadro 16 (e a Figura 3, o diagrama entidade-relacionamento, gerada por script a partir do schema; até a v10 ela era a Figura 2).
 
 Entidades acrescentadas pelo código (item 16 do `DIVERGENCIAS_TCC.txt`): `versao_modelo_previsao` (RNF04), `execucao_cenario` (RF10, 3.11, H3: regime + modo antecipado/reativo), `sessao_medicao` (residual, descarte 5 %), `calibracao` (duty × lux por série; origem da tabela do firmware), `alerta_diagnostico` (RF11), `luminaria_referencia` (Quadro 9). A view `auditoria_decisao` dá a razão entregue/esperado e a latência evento → telemetria.
 
