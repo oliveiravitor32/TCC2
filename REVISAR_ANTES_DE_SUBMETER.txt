@@ -243,6 +243,17 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         O texto NAO afirma que a concessionaria estima a iluminancia pelo
         consumo: falta fonte (ver D12). Conferir se concordam com a redacao.
 
+[ ] C22. 6.3 (v13, 02/10/2026): o item que juntava tres assuntos foi separado,
+        a pedido do autor. (a) "Cada ponto de luz e decidido isoladamente..."
+        (controle coordenado); (b) protecao de dados na integracao real, com
+        uma frase nova da IA: "O que o trabalho assegura e que a camada de
+        decisao nao consome imagem nem identificador (3.10)". A "tensao de
+        rede" saiu daqui (ja esta no item do no em baixa tensao). Conferir.
+[ ] C23. 6.3: o item "O prototipo e um no unico..." pode confundir, porque o
+        sistema tem dois pontos de luz cadastrados (bancada e simulado) e o
+        CT20 preve um segundo no. Ajustar a frase depois da sessao de bancada,
+        conforme o que for demonstrado.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

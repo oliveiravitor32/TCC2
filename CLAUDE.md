@@ -4,7 +4,7 @@ Responda sempre em **português do Brasil**. O autor é iniciante em eletrônica
 
 ## Fonte da verdade
 
-> **Estado em 02/10/2026:** a versão mais recente do texto é a **v12** (`..._SP_v12.docx`), que acumula todas as rodadas; as versões v4 a v12 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
+> **Estado em 02/10/2026:** a versão mais recente do texto é a **v13** (`..._SP_v13.docx`), que acumula todas as rodadas; as versões v4 a v13 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
 
 A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v2.docx` (26/09/2026, com as duas rodadas de revisão aceitas pelo autor). **Siga o TCC.**
 
@@ -19,7 +19,8 @@ A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Tra
 - `..._SP_v9_revisado.docx` = v8 aceito + frase em 3.5.2 e limitação em 6.3 sobre a associação câmera → trecho, que cabe à plataforma e não foi construída nem verificada (01/10/2026). `..._SP_v9.docx` = a mesma com tudo aceito.
 - `..._SP_v10_revisado.docx` = v9 aceito + resultados com dado disponível (02/10/2026): abertura do Capítulo 5, 5.2, 5.4 (Tabela 1), 5.5 (Tabela 2, luminária de referência), abertura de 6.3 e item 42 em 6.3 e 7.1. `..._SP_v10.docx` = a mesma com tudo aceito.
 - `..._SP_v11_revisado.docx` = v10 aceito + nova subseção 4.6.3 "Percurso de uma decisão" (dez passos, diagrama de sequência e exemplo real com o nó simulado) e ajuste em 3.2 (02/10/2026). **A Figura 2 passou a ser o diagrama de sequência; o diagrama entidade-relacionamento é a Figura 3.** `..._SP_v11.docx` = a mesma com tudo aceito.
-- `..._SP_v12_revisado.docx` = v11 aceito + transposição do diagnóstico para o campo (02/10/2026): em 3.4.5, 4.6.2 e 6.3, a telemetria elétrica do controlador no lugar da iluminância, com o limite declarado (confirma o consumo, não a luz na via). **Não afirmar que a concessionária estima lux pelo consumo: falta fonte** (busca pendente, item D12 do arquivo de revisão). `..._SP_v12.docx` = a mesma com tudo aceito (**a mais recente**).
+- `..._SP_v12_revisado.docx` = v11 aceito + transposição do diagnóstico para o campo (02/10/2026): em 3.4.5, 4.6.2 e 6.3, a telemetria elétrica do controlador no lugar da iluminância, com o limite declarado (confirma o consumo, não a luz na via). **Não afirmar que a concessionária estima lux pelo consumo: falta fonte** (busca pendente, item D12 do arquivo de revisão). `..._SP_v12.docx` = a mesma com tudo aceito.
+- `..._SP_v13_revisado.docx` = v12 aceito + separação, em 6.3, da limitação que juntava controle coordenado, tensão de rede e proteção de dados (02/10/2026): viraram dois itens, e a tensão de rede saiu, por já constar do item do nó em baixa tensão. `..._SP_v13.docx` = a mesma com tudo aceito (**a mais recente**).
 - Novas mudanças no texto: com controle de alterações, sobre a versão com tudo aceito, salvando como arquivo novo (nunca sobrescrever a versão vigente).
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
