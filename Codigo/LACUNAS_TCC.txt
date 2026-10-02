@@ -10,8 +10,8 @@ SITUACAO EM 02/10/2026, conferida contra o texto da v10 (..._SP_v10.docx)
   merecem leitura do autor antes da entrega.
    1. Nivel -> ciclo de trabalho ....... RESOLVIDA (3.3 e 3.4: tabela de
       calibracao medida, interpolacao linear entre pontos medidos)
-   2. QoS, retencao e testamento ....... PARCIAL (4.6.2 declara QoS 1 e sem
-      retencao; o testamento do MQTT nao e tratado)
+   2. QoS, retencao e testamento ....... RESOLVIDA (4.6.2: QoS 1 e sem
+      retencao; Quadro 14: topico de estado, retido, com ultima vontade)
    3. Estado ao energizar .............. RESOLVIDA (3.4: o no nunca parte
       apagado; assume o pleno)
    4. Comando atrasado/fora de ordem ... PARCIAL (4.6.2 trata a reentrega pelo
