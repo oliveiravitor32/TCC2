@@ -234,6 +234,15 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
           a legibilidade esta aceitavel.
         - As tres mensagens de exemplo estao como paragrafos, e nao em quadro.
 
+[ ] C21. Transposicao do diagnostico para o campo (v12, 02/10/2026), redigida
+        pela IA a partir de ideia do autor: em 3.4.5, 4.6.2 e 6.3 o texto diz
+        que, no parque, a conferencia da execucao usaria a telemetria ELETRICA
+        do controlador (potencia medida x potencia esperada para o nivel), e
+        que ela confirma o consumo, nao a luz que chega a via (sujeira,
+        obstrucao e depreciacao passam despercebidas). Isso NAO foi ensaiado.
+        O texto NAO afirma que a concessionaria estima a iluminancia pelo
+        consumo: falta fonte (ver D12). Conferir se concordam com a redacao.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
@@ -312,6 +321,27 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         A 30 % o fuzzy tem UMA mudanca a menos (um evento em oito noites) e
         saltos maximos menores (42 % x 50 %): e o unico ponto favoravel, e
         pequeno. Nao apresentar como vitoria. Conferir a redacao de 3.9 e 5.6.
+
+[ ] D12. BUSCA NECESSARIA ANTES DE FECHAR O DOCUMENTO (pedida pelo autor em
+        02/10/2026): achar fonte para a afirmacao de que a telegestao usa a
+        medicao eletrica (corrente, potencia) para monitorar a luminaria e, se
+        for o caso, para ESTIMAR a luz emitida a partir do consumo.
+        Onde procurar:
+        - Caderno de Encargos da concessao (Anexo III; clausulas de telegestao
+          ja citadas no texto: 6.2.1.B, 7.1, 13, 17): o que o controlador deve
+          medir e reportar;
+        - regulamento do INMETRO citado no Quadro 3 (2022a, 2022b): o que e
+          "medicao regulada metrologicamente" no controlador;
+        - especificacao TALQ 2.7.1 (ja nas referencias): funcoes de
+          monitoramento da lampada (potencia, corrente, falha);
+        - guia da ABCIP de especificacao tecnica (2024b, ja nas referencias);
+        - manual ou folha de dados de um controlador de telegestao (tomada
+          ANSI C136.41 / NEMA de 7 pinos);
+        - a propria concessionaria ou a SP Regula, se houver contato.
+        Enquanto nao houver fonte: o texto fala so em "conferir a execucao do
+        comando pela potencia" e NAO em "estimar lux pelo consumo". Se a fonte
+        aparecer, da para reforcar 3.4.5 e o Quadro 3; se nao aparecer, deixar
+        como esta.
 
 -------------------------------------------------------------------------------
 E. DECLARACAO E ENTREGA

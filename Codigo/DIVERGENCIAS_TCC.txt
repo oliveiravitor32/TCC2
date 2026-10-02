@@ -1947,6 +1947,21 @@ TEXTO:   FEITO na v11: nova subsecao 4.6.3 "Percurso de uma decisao", com
          nao renumerar os Quadros 15 a 22.
          Imagem: Figura2_Sequencia_v11.png (raiz do TCC2), gerada por script.
 
+-------------------------------------------------------------------------------
+64. DIAGNOSTICO NO CAMPO: GRANDEZA ELETRICA NO LUGAR DA ILUMINANCIA (02/10/2026)
+-------------------------------------------------------------------------------
+TCC:     o Quadro 3 ja dizia, numa celula, que no parque a verificacao da
+         execucao usaria a "telemetria eletrica reportada pelo controlador",
+         sem explicar a troca nem o seu limite.
+CODIGO:  nenhuma mudanca. O diagnostico (decisao/diagnostico.py) compara
+         iluminancia medida com esperada; a transposicao para potencia nao
+         foi implementada nem ensaiada.
+TEXTO:   FEITO na v12: paragrafo em 3.4.5 (os tres diagnosticos com a
+         potencia; o que nao se transpoe), frase em 4.6.2 e limitacao em 6.3.
+         O texto NAO afirma que a concessionaria estima a iluminancia pelo
+         consumo: nao ha fonte. Busca registrada em REVISAR_ANTES_DE_SUBMETER
+         (D12).
+
 ===============================================================================
 FIM
 ===============================================================================
