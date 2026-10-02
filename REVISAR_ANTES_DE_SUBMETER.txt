@@ -204,6 +204,22 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         verificada. Nao afirmar que a telegestao de Sao Paulo usa TALQ: o
         texto so diz que o protocolo existe.
 
+[ ] C19. Rodada v10 (02/10/2026) - resultados redigidos pela IA, a ler:
+        - 5.2: 53.760 decisoes na suite e 667.200 no total, zero violacoes;
+          594 correcoes por taxa e 0 por piso no modo em operacao.
+        - 5.4, Tabela 1: aderencia por cenario dos tres regimes. A aderencia
+          do fluxo pleno (58,0 %) e do horario fixo (72,2 %) foi calculada
+          agora (cenarios/aderencia_regimes.py); os envelopes sao dos autores.
+        - 5.5, Tabela 2: energia a 40 W e 440 W. A frase "27,5 % menos que o
+          pleno e 2,1 % mais que o horario fixo" e leitura da tabela.
+        - Abertura de 6.3: paragrafo que liga cada limitacao ao resultado que
+          ela afeta. E ANALISE; conferir se concordam.
+        - "Tabela 1" e "Tabela 2": a IA usou "Tabela" (dado numerico) para nao
+          renumerar os Quadros 19 a 22. Os Quadros 19 e 20 tambem sao
+          numericos; decidir se padroniza e se cria lista de tabelas.
+        - Item 42 (pista e calcada) em 6.3 e 7.1.
+        Conferir os numeros contra cenarios/resultados/suite_*.json.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

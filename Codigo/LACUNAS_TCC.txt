@@ -1,8 +1,38 @@
 ===============================================================================
 LACUNAS DO TEXTO DO TCC - PONTOS QUE VALEM SER DOCUMENTADOS E NAO ESTAO
 Documento de referencia: Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP.docx
-Ultima atualizacao: 21/09/2026
+Ultima atualizacao: 02/10/2026 (situacao por item); itens escritos em 21/09/2026
+Numeracao de secoes dos itens: a do documento antigo; ver a situacao abaixo.
 ===============================================================================
+
+SITUACAO EM 02/10/2026, conferida contra o texto da v10 (..._SP_v10.docx)
+  A conferencia foi por busca no texto; os itens marcados ABERTA ou PARCIAL
+  merecem leitura do autor antes da entrega.
+   1. Nivel -> ciclo de trabalho ....... RESOLVIDA (3.3 e 3.4: tabela de
+      calibracao medida, interpolacao linear entre pontos medidos)
+   2. QoS, retencao e testamento ....... PARCIAL (4.6.2 declara QoS 1 e sem
+      retencao; o testamento do MQTT nao e tratado)
+   3. Estado ao energizar .............. RESOLVIDA (3.4: o no nunca parte
+      apagado; assume o pleno)
+   4. Comando atrasado/fora de ordem ... PARCIAL (4.6.2 trata a reentrega pelo
+      decisao_id; nao diz o que o no faz com comando fora de ordem)
+   5. Janela de operacao ............... ABERTA (o texto nao declara a janela
+      nem quem liga e desliga; os regimes sao comparados sobre a duracao de
+      cada cenario - vale uma frase em 3.11)
+   6. Entrada ausente .................. PARCIAL (sem volume -> pleno, em 3.7;
+      previsao sem historico -> persistencia, em 3.6; banco indisponivel nao
+      e tratado)
+   7. Criterio de estabilizacao ........ PARCIAL (3.9 mede ate a chegada da
+      telemetria, como limite superior; a definicao de "estabilizada" fica
+      para a sessao de bancada, 5.3)
+   8. Referencia de tempo do no ........ RESOLVIDA (3.9: a latencia e medida
+      no servico, da publicacao a chegada da telemetria)
+   9. Saida da condicao meteorologica .. SEM OBJETO (meteorologia retirada,
+      DIVERGENCIAS 49)
+  10. Guarda das credenciais ........... ABERTA (nao ha paragrafo no texto; e
+      requisito antes de tornar o repositorio publico - Apendice B)
+  11. Identificador no topico .......... RESOLVIDA em parte (4.6.1: regra de
+      acesso por ponto; falta dizer que {ponto} e o codigo de ponto_de_luz)
 
 DIFERENCA PARA O OUTRO ARQUIVO
 DIVERGENCIAS_TCC.txt registra decisoes ja tomadas no codigo que diferem do

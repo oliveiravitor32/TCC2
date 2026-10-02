@@ -1014,7 +1014,7 @@ TEXTO:   acrescentar ao Quadro 7 ou a 3.7 uma frase como: "No cenario
     Trecho: 3.8 (classe adotada), 6.3 (limitacao "uma unica classe de via")
             e 7.1 (recomendacoes)
     Acao: [ACRESCENTAR]
-    >>> v2: PENDENTE (6.3 e 7.1)
+    >>> APLICADO na v10 (02/10/2026): 6.3 e 7.1
 -------------------------------------------------------------------------------
 TCC:     adota a calcada de via urbana local, classe P3, e declara em 6.3
          que "considera-se uma unica classe de via".
@@ -1046,7 +1046,7 @@ TEXTO:   explicitar na limitacao de 6.3 que, em campo, um ponto de luz
     Acao: [ACRESCENTAR]
     >>> v2: APLICADO (3.7); pergunta respondida pelos itens 51 e 52
     >>> ATUALIZADO PELO ITEM 49: o texto aprovado cita 'condicao meteorologica'; na v2 fica: 'mesmo numa unica classe, o sistema compoe movimentacao observada, prevista e faixa horaria, e trata a ocorrencia reportada como condicao que suspende a atenuacao'.
-    >>> PERGUNTA PENDENTE AO AUTOR - ver o fim deste item <<<
+    >>> PERGUNTA RESPONDIDA pelos itens 51, 52, 57, 59 e 61 (tabela em degraus testada) <<<
 -------------------------------------------------------------------------------
 TCC:     2.6 justifica a inferencia nebulosa pela composicao de evidencias
          parciais, pela continuidade da saida e pela rastreabilidade. O
@@ -1272,7 +1272,7 @@ FAILSAFE (RNF07): o teste feito nao demonstrou o comportamento - o servico
             3.7 (Quadro 7 e terceira restricao), 3.9 (Etapa 4), 3.10, 4.4
             (Quadro 11), Quadro 14, Quadro 15, 5.2, 6.3
     Acao: [ATUALIZAR TEXTO] - decisao do autor em 26/09/2026
-    >>> v2: APLICADO nos Capitulos 1 a 4; falta a limitacao em 6.3 (texto sugerido no item)
+    >>> APLICADO: Capitulos 1 a 4 e limitacao em 6.3 (presente desde a v3)
     >>> 27/09/2026: JUSTIFICATIVA REFORMULADA (v3_revisado.docx: 2.5, 6.3 e
         referencia do TR). O TR do Smart Sampa (2022, Anexo XI, itens 16 e 17)
         preve RECEBER dados de estacoes climaticas e do INMET; "a plataforma nao
@@ -1692,7 +1692,7 @@ PENDENTE: reaplicar na VM (backup, migracao 006, up --build) e redeploy na
     Trecho: 3.5.1/3.9 (cenarios acrescentados), 3.6, 3.7, 3.11, 5.1, 5.4,
             5.5, 6.1 (H3), 6.2, 6.3
     Acao: [DECIDIR COM O AUTOR] - execucao de 29/09/2026
-    >>> PENDENTE: levar ao texto (Capitulos 5 e 6) depois da conversa com o
+    >>> APLICADO na v5 (3.9, 5.6, 6.3); 6.1 e 6.2 seguem pendentes. Era: depois da conversa com o
         autor sobre o papel de cada IA
 -------------------------------------------------------------------------------
 PERGUNTA (autor/orientador): se a previsao (XGBoost) ou a logica nebulosa
@@ -1743,7 +1743,7 @@ VEREDITO: previsao - retirar custa seguranca mensuravel (Parte 2) e o modelo
     Trecho: 3.11 (linha de base 2), 5.5, 6.1, 6.2; caminho B da discussao
             sobre as IAs (item 57)
     Acao: [CORRIGIDO] + [DECIDIR COM O AUTOR]
-    >>> PENDENTE: levar ao texto junto com o item 57
+    >>> APLICADO na v5 (Quadro 19) e na v10 (5.5)
 -------------------------------------------------------------------------------
 ERRO (corrigido em 30/09/2026): trajetoria_horario_fixo lia a hora dos
          instantes em UTC; a programacao "0h-5h" caia das 21h as 2h de Sao
@@ -1908,6 +1908,25 @@ TEXTO:   FEITO na rodada v7 (01/10/2026): 3.7, 3.9, 5.6 (linha nova no Quadro 19
          RETIRADA (artigo nao lido); em 3.9 o limiar de 6 % fica com a fonte
          conferida (Shikakura et al.) e o de 15 % como valor dos autores;
          conferencia a 20 % e 30 % em 5.6; referencia de Shikakura completa.
+
+-------------------------------------------------------------------------------
+62. ADERENCIA DOS TRES REGIMES E RESULTADOS NO CAPITULO 5 (02/10/2026)
+-------------------------------------------------------------------------------
+TCC:     3.11 pede, para cada regime, a energia E a aderencia ao envelope.
+CODIGO:  o executor so calculava a aderencia do regime adaptativo. Novo
+         cenarios/aderencia_regimes.py: aderencia do fluxo pleno constante e
+         do horario fixo (0h-5h locais) sobre os mesmos envelopes da suite.
+RESULTADO (suite, 13.440 ciclos): adaptativo 100 %; fluxo pleno 58,0 %;
+         horario fixo 72,2 %. Energia a 40 W: pleno 746,7 Wh; fixo 530,0 Wh;
+         adaptativo 541,4 Wh (com previsao), 532,3 Wh (sem), 538,6 Wh (tabela).
+         Total de decisoes verificadas em todas as execucoes: 667.200, zero
+         violacoes; no modo em operacao, 594 correcoes por taxa e 0 por piso.
+TEXTO:   FEITO na v10: abertura do Capitulo 5, 5.2, 5.4 (Tabela 1), 5.5
+         (Tabela 2), abertura de 6.3, item 42 em 6.3 e 7.1, Apendice B. As
+         duas tabelas novas foram nomeadas "Tabela" (dado numerico, ABNT) para
+         nao renumerar os Quadros 19 a 22; nao ha lista de tabelas (opcional).
+         Seguem PENDENTES: 4.1, 4.2, 4.5, 4.9, 4.10 (CT15-CT20), 5.3, energia
+         de bancada em 5.5, 6.1, 6.2, 6.4, 7, Resumo e Abstract.
 
 ===============================================================================
 FIM
