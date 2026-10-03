@@ -354,6 +354,15 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         aparecer, da para reforcar 3.4.5 e o Quadro 3; se nao aparecer, deixar
         como esta.
 
+[ ] D13. BUSCA NECESSARIA (pergunta do orientador em 03/10/2026, "o que a
+        legislacao determina sobre a quantidade minima"): achar a CLAUSULA que
+        torna a ABNT NBR 5101 obrigatoria no municipio de Sao Paulo - em
+        principio, o contrato de concessao e o Caderno de Encargos (SAO PAULO,
+        2015), ja nas referencias. A NBR e norma tecnica; so vira obrigacao
+        quando contrato ou regulamento a exige. Conferir tambem se ha lei ou
+        decreto municipal sobre niveis de iluminacao publica. A IA nao
+        conferiu nenhuma dessas clausulas.
+
 -------------------------------------------------------------------------------
 E. DECLARACAO E ENTREGA
 -------------------------------------------------------------------------------
