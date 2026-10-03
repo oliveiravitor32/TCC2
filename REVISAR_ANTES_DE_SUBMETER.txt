@@ -272,6 +272,13 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         como aferir a iluminancia de ponto dimerizado. Busca por palavra, nao
         leitura integral; os aditivos tambem nao tratam disso. Conferir.
 
+[ ] C26. 6.3 (v16, 03/10/2026): limitacao nova da IA sobre a cadencia de
+        comando de 5 s. Calculo da IA: 600 mil pontos / 5 s = 120 mil
+        comandos/s. "Incompativel com os enlaces de longo alcance e baixo
+        consumo" e avaliacao da IA, sem fonte de capacidade de enlace citada.
+        A alternativa (comando so na mudanca + sinal de vida espacado) e
+        proposta da IA, nao testada. Conferir.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
