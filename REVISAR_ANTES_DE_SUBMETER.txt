@@ -254,6 +254,24 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         CT20 preve um segundo no. Ajustar a frase depois da sessao de bancada,
         conforme o que for demonstrado.
 
+[ ] C24. 2.5 (v14, 03/10/2026): paragrafo novo da IA sobre a origem
+        contratual da NBR 5101 ("A norma tecnica nao constitui, por si,
+        obrigacao legal..."). Conferir na fonte: clausula 11.2 do contrato
+        assinado (p. 28); itens 6.2 e 6.5 do Caderno; Anexo V, indicador NI,
+        p. 20-21. "Nenhuma das leis associadas ao servico no edital" se apoia
+        no Subanexo I (so leis tributarias e administrativas). A referencia
+        SAO PAULO, 2015 passou a nomear os Anexos III e V juntos; conferir se
+        a forma atende a ABNT ou se e melhor separar em 2015a e 2015b.
+[ ] C25. 6.3 (v14): limitacao nova da IA sobre o indicador NI. A conclusao
+        "um ponto atenuado ate a classe minima ... seria contado como nao
+        atendido" e INTERPRETACAO da IA: o Anexo V zera o fator do ponto
+        abaixo de 80 % do minimo, e P5 = 50 % de P3. A IA procurou
+        "dimeriz" e "adaptativ" no texto do Caderno (edital republicado):
+        sete mencoes (driver 0-10 V, telecomando de dimerizacao, controlador
+        por sensor/relogio, contabilizar a economia na fatura), nenhuma sobre
+        como aferir a iluminancia de ponto dimerizado. Busca por palavra, nao
+        leitura integral; os aditivos tambem nao tratam disso. Conferir.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
