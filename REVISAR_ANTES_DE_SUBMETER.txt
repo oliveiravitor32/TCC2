@@ -349,6 +349,13 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         - manual ou folha de dados de um controlador de telegestao (tomada
           ANSI C136.41 / NEMA de 7 pinos);
         - a propria concessionaria ou a SP Regula, se houver contato.
+        ACHADO PARCIAL (IA, 03/10/2026): o Caderno de Encargos, item 15.7
+        Sistema de Telecontrole (p. 136), exige monitorar "alarme de falha da
+        lampada", "lampada piscando", "acesa durante o dia", "falta de tensao"
+        e "medicao imediata de tensao, corrente e potencia instantanea e
+        media", com o objetivo de "diagnosticos precisos". Isso SUSTENTA que a
+        telegestao mede grandezas eletricas e diagnostica falha. NAO diz que a
+        concessionaria estima a luz pelo consumo: essa parte segue sem fonte.
         Enquanto nao houver fonte: o texto fala so em "conferir a execucao do
         comando pela potencia" e NAO em "estimar lux pelo consumo". Se a fonte
         aparecer, da para reforcar 3.4.5 e o Quadro 3; se nao aparecer, deixar
@@ -362,6 +369,34 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         quando contrato ou regulamento a exige. Conferir tambem se ha lei ou
         decreto municipal sobre niveis de iluminacao publica. A IA nao
         conferiu nenhuma dessas clausulas.
+        RESULTADO DA BUSCA (IA, 03/10/2026; documentos do edital republicado
+        da Concorrencia 01/SES/2015, no portal da SP Regula):
+        - Anexo III do contrato (Caderno de Encargos), item 6.2 Luminotecnica
+          (p. 18-19): simulacoes devem atender "a norma ABNT NBR 5101:2012 (ou
+          outra que vier a substitui-la)", incluindo a classe da via; a
+          concessionaria classifica as vias pela norma.
+        - Mesmo anexo, item 6.4.1 (p. 38): classe da via conforme NBR 5101.
+        - Mesmo anexo, item 6.5 Classificacao (p. 39): "deverao ser utilizados
+          os parametros tecnicos da norma tecnica ABNT NBR 5101:2012";
+          6.5.1.4: minimo V4 para vias de veiculos; 6.5.2 (p. 71): vias de
+          pedestres classificadas em P1 a P4 (classes da edicao de 2012).
+        - Anexo V do contrato (Sistema de Mensuracao de Disponibilidade e
+          Desempenho), indicador NI "Nivel Minimo de Iluminancia Media" (p. 20
+          e 21): vistoria de campo em amostra de ao menos 100 pontos; ponto que
+          atinge o minimo vale 1, entre 80 % e 100 % vale de 0,8 a 1, abaixo
+          de 80 % e penalizado; afeta a remuneracao. Indicador A3 mede a
+          uniformidade. Ambos "conforme a NBR 5101:2012, ou outra que vier a
+          substitui-la".
+        - Subanexo I "Legislacao associada ao ILUME": so leis tributarias e
+          administrativas (COSIP, ISS etc.); nenhuma lei fixa nivel de lux.
+        LEITURA: a obrigacao de cumprir a NBR 5101 vem do CONTRATO de
+        concessao, nao de lei; o contrato cita a edicao de 2012 com a clausula
+        "ou outra que vier a substitui-la", o que alcanca a de 2024 usada no
+        TCC. ATENCAO: as classes P mudaram de 2012 (P1-P4) para 2024; e o
+        indicador NI mede iluminancia em campo e afeta o pagamento, o que
+        pode conflitar com a dimerizacao se o contrato nao reconhecer as
+        classes adaptativas. A IA leu o edital REPUBLICADO de 2015; o contrato
+        assinado em 2018 e os aditivos nao foram conferidos.
 
 -------------------------------------------------------------------------------
 E. DECLARACAO E ENTREGA
