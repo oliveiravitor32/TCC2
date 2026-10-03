@@ -106,9 +106,11 @@ class Servico:
                 else:
                     log.debug("telemetria descartada ou duplicada: %s", carga)
             elif msg.topic.endswith("/estado"):
-                online = msg.payload.decode(errors="replace").strip() == "online"
-                atualizar_estado_ponto(self.db_retorno, ponto, online)
-                log.info("no %s %s", ponto, "online" if online else "SEM COMUNICACAO")
+                estado = msg.payload.decode(errors="replace").strip()
+                manutencao = estado == "manutencao"
+                atualizar_estado_ponto(self.db_retorno, ponto, estado == "online", manutencao)
+                log.info("no %s %s", ponto, "EM MANUTENCAO (serial)" if manutencao
+                         else "online" if estado == "online" else "SEM COMUNICACAO")
         except (json.JSONDecodeError, psycopg.Error) as erro:
             log.warning("mensagem de %s ignorada: %s", msg.topic, erro)
 

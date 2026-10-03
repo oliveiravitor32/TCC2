@@ -8,6 +8,26 @@
 //   4. publica em iluminacao/{ponto}/telemetria {decisao_id, duty, lux,
 //      medido_em} - o decisao_id liga a leitura a decisao (4.6.2);
 //   5. FAILSAFE (RNF07): sem comando por 15 s, vai sozinho ao nivel pleno.
+//   6. MANUTENCAO pela serial (bancada/conferir.py e bancada/calibrar.py):
+//      conferencia e recalibracao sem trocar de sketch. Enquanto dura, o no
+//      ignora os comandos do servico e o failsafe (quem controla a luz e a
+//      conferencia) e publica o estado "manutencao". Sai com "X" ou sozinho
+//      depois de 20 s sem conversa na serial, voltando ao pleno.
+//
+// Protocolo serial (115200, uma linha por comando; respostas iniciadas por
+// "OK", "L", "FIM", "ID" ou "ERRO"; linhas de log comecam por outra coisa):
+//   ?                 -> "ID no v1 <ponto> sessao <n>"
+//   D <n>             -> aplica duty n (0..4095)          -> "OK D <n>"
+//   N <nivel>         -> aplica o nivel pela tabela        -> "OK N <nivel> <duty>"
+//   M <k>             -> k leituras (1..50)                -> "L <lux>" x k, "FIM"
+//   T <n> <sessao>    -> comeca tabela nova de n pontos    -> "OK T <n>"
+//   P <nivel> <duty>  (n vezes)                            -> "OK P <i>"
+//   T FIM             -> confere e grava na memoria (NVS)  -> "OK T <n> <sessao>"
+//   X                 -> sai da manutencao                 -> "OK X"
+//
+// A tabela gravada pela serial vale sobre a de calibracao.h, que fica como
+// registro e como padrao de fabrica; "T 0 0" seguido de "T FIM" apaga a
+// gravada e volta a de calibracao.h.
 //
 // Configuracao em segredos.h (copie de segredos.exemplo.h).
 //
@@ -22,6 +42,7 @@
 #include <Wire.h>
 #include <BH1750.h>
 #include <time.h>
+#include <Preferences.h>
 #include "mqtt_client.h"
 
 #include "calibracao.h"
@@ -45,6 +66,11 @@ const char *TOPICO_COMANDO    = "iluminacao/" PONTO "/comando";
 const char *TOPICO_TELEMETRIA = "iluminacao/" PONTO "/telemetria";
 const char *TOPICO_ESTADO     = "iluminacao/" PONTO "/estado";
 
+// Sem conversa na serial por este tempo, a manutencao termina sozinha: o no
+// nunca fica preso fora do controle do servico (cabo puxado, script parado).
+const unsigned long TIMEOUT_MANUTENCAO_MS = 20000;
+const int MAX_PONTOS_TABELA = 48;
+
 // ---- Estado ----------------------------------------------------------------
 struct Comando {
   char decisao_id[40];
@@ -63,21 +89,62 @@ char decisaoPendente[40] = "";    // telemetria ainda devida
 int leiturasADescartar = 0;
 float ultimaLux = -1;
 
+// Tabela em uso: a gravada na NVS, se houver; senao, a de calibracao.h.
+PontoCalibracao tabela[MAX_PONTOS_TABELA];
+int nTabela = 0;
+int sessaoTabela = 0;
+PontoCalibracao tabelaNova[MAX_PONTOS_TABELA];  // em recepcao pela serial
+int nNova = -1, recebidosNova = 0, sessaoNova = 0;
+Preferences prefs;
+
+bool emManutencao = false;
+unsigned long ultimaSerial = 0;
+String linhaSerial;
+
 // ---- Nivel -> duty -----------------------------------------------------------
 // Interpolacao linear entre pontos MEDIDOS da tabela. Os niveis 1,0 e do
 // piso caem exatamente nos duties medidos (3.4.2); so os intermediarios sao
 // interpolados, entre vizinhos medidos a poucos % de distancia (item 29).
 int dutyDoNivel(float nivel) {
-  if (nivel <= CALIBRACAO[0].nivel) return CALIBRACAO[0].duty;
-  for (int i = 1; i < N_CALIBRACAO; i++) {
-    if (nivel <= CALIBRACAO[i].nivel) {
-      const PontoCalibracao &a = CALIBRACAO[i - 1], &b = CALIBRACAO[i];
+  if (nivel <= tabela[0].nivel) return tabela[0].duty;
+  for (int i = 1; i < nTabela; i++) {
+    if (nivel <= tabela[i].nivel) {
+      const PontoCalibracao &a = tabela[i - 1], &b = tabela[i];
       float f = (nivel - a.nivel) / (b.nivel - a.nivel);
       return (int)lroundf(a.duty + f * (b.duty - a.duty));
     }
   }
   // Acima de 1,0 nao existe: o maximo e o duty MEDIDO do pleno, nunca 4095.
-  return CALIBRACAO[N_CALIBRACAO - 1].duty;
+  return tabela[nTabela - 1].duty;
+}
+
+// Mesma regra para a tabela de fabrica e para a recebida: comeca em (0, 0),
+// termina em 1,0 e cresce estritamente nas duas colunas.
+bool tabelaValida(const PontoCalibracao *t, int n) {
+  if (n < 2 || n > MAX_PONTOS_TABELA) return false;
+  if (t[0].nivel != 0.0f || t[0].duty != 0 || fabsf(t[n - 1].nivel - 1.0f) > 1e-4f) return false;
+  for (int i = 1; i < n; i++) {
+    if (t[i].nivel <= t[i - 1].nivel || t[i].duty <= t[i - 1].duty || t[i].duty > DUTY_MAX)
+      return false;
+  }
+  return true;
+}
+
+void carregarTabela() {
+  prefs.begin("calibracao", true);
+  int n = prefs.getInt("n", 0);
+  if (n > 0 && n <= MAX_PONTOS_TABELA &&
+      prefs.getBytes("pontos", tabela, sizeof(PontoCalibracao) * n) == sizeof(PontoCalibracao) * n &&
+      tabelaValida(tabela, n)) {
+    nTabela = n;
+    sessaoTabela = prefs.getInt("sessao", 0);
+    prefs.end();
+    return;
+  }
+  prefs.end();
+  memcpy(tabela, CALIBRACAO, sizeof(PontoCalibracao) * N_CALIBRACAO);
+  nTabela = N_CALIBRACAO;
+  sessaoTabela = CALIBRACAO_SESSAO;
 }
 
 void aplicarNivel(float nivel) {
@@ -223,11 +290,142 @@ void diagnosticarWifi() {
   WiFi.begin(WIFI_SSID, WIFI_SENHA);  // o scan interrompe a tentativa; recomeca
 }
 
+// ---- Manutencao pela serial ------------------------------------------------
+void publicarEstado(const char *estado) {
+  if (cliente) esp_mqtt_client_publish(cliente, TOPICO_ESTADO, estado, 0, 1, 1);
+}
+
+void entrarManutencao() {
+  if (emManutencao) return;
+  emManutencao = true;
+  decisaoPendente[0] = '\0';
+  publicarEstado("manutencao");
+  Serial.println("# manutencao: comandos do servico ignorados");
+}
+
+void sairManutencao() {
+  if (!emManutencao) return;
+  emManutencao = false;
+  nNova = -1;
+  // Volta ao pleno e espera o servico: e o mesmo estado do failsafe, de modo
+  // que a rampa recomeca do pleno (CT07).
+  aplicarNivel(1.0f);
+  emFailsafe = true;
+  Comando descartado;
+  while (xQueueReceive(filaComandos, &descartado, 0) == pdTRUE) {}
+  publicarEstado("online");
+  Serial.println("# manutencao encerrada: nivel 1,0, aguardando o servico");
+}
+
+float lerLuxBloqueando() {
+  unsigned long limite = millis() + 2000;
+  while (!sensor.measurementReady(false)) {
+    if (millis() > limite) return -1;
+    delay(10);
+  }
+  return sensor.readLightLevel();
+}
+
+void tratarSerial(String cmd) {
+  cmd.trim();
+  if (cmd.length() == 0) return;
+  if (cmd == "?") {
+    Serial.printf("ID no v1 %s sessao %d\n", PONTO, sessaoTabela);
+    return;
+  }
+  entrarManutencao();
+  if (cmd == "X") {
+    Serial.println("OK X");
+    sairManutencao();
+  } else if (cmd.startsWith("D ")) {
+    long n = cmd.substring(2).toInt();
+    if (n < 0 || n > DUTY_MAX) { Serial.println("ERRO duty fora de 0..4095"); return; }
+    dutyAtual = n;
+    ledcWrite(PINO_PWM, n);
+    Serial.printf("OK D %ld\n", n);
+  } else if (cmd.startsWith("N ")) {
+    float nivel = cmd.substring(2).toFloat();
+    if (nivel < 0 || nivel > 1) { Serial.println("ERRO nivel fora de 0..1"); return; }
+    aplicarNivel(nivel);
+    Serial.printf("OK N %.4f %d\n", nivel, dutyAtual);
+  } else if (cmd.startsWith("M ")) {
+    long k = cmd.substring(2).toInt();
+    if (k < 1 || k > 50) { Serial.println("ERRO k fora de 1..50"); return; }
+    for (long i = 0; i < k; i++) {
+      float lux = lerLuxBloqueando();
+      if (lux < 0) { Serial.println("ERRO leitura do sensor falhou"); return; }
+      Serial.printf("L %.2f\n", lux);
+    }
+    Serial.println("FIM");
+  } else if (cmd == "T FIM") {
+    if (nNova < 0 || recebidosNova != nNova) { Serial.println("ERRO tabela incompleta"); return; }
+    if (nNova > 0 && !tabelaValida(tabelaNova, nNova)) {
+      nNova = -1;
+      Serial.println("ERRO tabela invalida");
+      return;
+    }
+    prefs.begin("calibracao", false);
+    if (nNova == 0) {
+      prefs.clear();
+      prefs.end();
+      carregarTabela();
+    } else {
+      prefs.putBytes("pontos", tabelaNova, sizeof(PontoCalibracao) * nNova);
+      prefs.putInt("sessao", sessaoNova);
+      prefs.putInt("n", nNova);
+      prefs.end();
+      memcpy(tabela, tabelaNova, sizeof(PontoCalibracao) * nNova);
+      nTabela = nNova;
+      sessaoTabela = sessaoNova;
+    }
+    nNova = -1;
+    Serial.printf("OK T %d %d\n", nTabela, sessaoTabela);
+  } else if (cmd.startsWith("T ")) {
+    int n = 0, sessao = 0;
+    if (sscanf(cmd.c_str() + 2, "%d %d", &n, &sessao) != 2 || n < 0 || n > MAX_PONTOS_TABELA) {
+      Serial.println("ERRO cabecalho de tabela");
+      return;
+    }
+    nNova = n; recebidosNova = 0; sessaoNova = sessao;
+    Serial.printf("OK T %d\n", n);
+  } else if (cmd.startsWith("P ")) {
+    float nivel; int duty;
+    if (nNova < 0 || recebidosNova >= nNova ||
+        sscanf(cmd.c_str() + 2, "%f %d", &nivel, &duty) != 2) {
+      Serial.println("ERRO ponto de tabela");
+      return;
+    }
+    tabelaNova[recebidosNova++] = {nivel, duty};
+    Serial.printf("OK P %d\n", recebidosNova);
+  } else {
+    Serial.println("ERRO comando desconhecido");
+  }
+}
+
+void lerSerial() {
+  while (Serial.available()) {
+    char ch = Serial.read();
+    if (ch == '\n') {
+      ultimaSerial = millis();
+      tratarSerial(linhaSerial);
+      linhaSerial = "";
+    } else if (ch != '\r' && linhaSerial.length() < 120) {
+      linhaSerial += ch;
+    }
+  }
+  if (emManutencao && millis() - ultimaSerial > TIMEOUT_MANUTENCAO_MS) {
+    Serial.println("# 20 s sem serial");
+    sairManutencao();
+  }
+}
+
 // ---- Setup / loop ------------------------------------------------------------
 void setup() {
   Serial.begin(115200);
   delay(200);
-  Serial.printf("\nno %s | calibracao da sessao %d\n", PONTO, CALIBRACAO_SESSAO);
+  carregarTabela();
+  Serial.printf("\nno %s | calibracao da sessao %d (%s)\n", PONTO, sessaoTabela,
+                sessaoTabela == CALIBRACAO_SESSAO ? "calibracao.h" : "gravada pela serial");
 
   // Luz primeiro: ao energizar, o no fica no PLENO ate receber comando
   // (LACUNA 3). Nunca comeca apagado.
@@ -271,6 +469,17 @@ void setup() {
 }
 
 void loop() {
+  // 0. Serial: conferencia e recalibracao (bancada/conferir.py).
+  lerSerial();
+  if (emManutencao) {
+    // Quem controla a luz e a conferencia: comandos do servico descartados,
+    // sem failsafe e sem telemetria de decisao.
+    Comando descartado;
+    while (xQueueReceive(filaComandos, &descartado, 0) == pdTRUE) {}
+    delay(5);
+    return;
+  }
+
   // 1. Comandos recebidos.
   Comando c;
   while (xQueueReceive(filaComandos, &c, 0) == pdTRUE) {

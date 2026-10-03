@@ -1,6 +1,10 @@
 """Conduz a calibracao do no de bancada pela serial (TCC 3.4.2 a 3.4.4).
 
-Precisa do sketch bancada/calibracao/calibracao.ino gravado no ESP32.
+Funciona com o firmware do no (firmware/no/no.ino), que entende os comandos
+de calibracao pela serial em modo manutencao, ou com o sketch antigo
+bancada/calibracao/calibracao.ino. Com o firmware do no, a tabela nova e
+enviada pela serial e gravada na memoria do ESP32: nao precisa recompilar.
+Para so conferir a calibracao antes de usar: python -m bancada.conferir
 
     # 1) Ajuste do comprimento da fita: repita cortando/emendando ate "OK"
     python -m bancada.calibrar teto
@@ -54,7 +58,10 @@ LEITURAS_DESCARTADAS = 2
 # Acesso ao no
 # ---------------------------------------------------------------------------
 class Bancada:
-    """Fala com o sketch de calibracao pela serial."""
+    """Fala com o no pela serial (firmware do no ou sketch de calibracao)."""
+
+    # O firmware do no responde depois do Wi-Fi e do NTP (ate ~25 s).
+    ESPERA_ID_S = 45
 
     def __init__(self, porta: str) -> None:
         import serial  # pyserial
@@ -67,12 +74,25 @@ class Bancada:
                 "  - o Monitor Serial da Arduino IDE esta aberto? feche-o\n"
                 "  - a porta esta certa? use --porta COMx"
             ) from None
-        print(f"conectando em {porta}...")
+        print(f"conectando em {porta} (o ESP32 reinicia; ate {self.ESPERA_ID_S} s)...")
+        self.firmware_no = False
+        self.sessao_no: int | None = None
         # Abrir a porta reinicia o ESP32: espera a identificacao.
-        fim = time.monotonic() + 10
+        fim = time.monotonic() + self.ESPERA_ID_S
+        self.s.timeout = 1
         while time.monotonic() < fim:
             l = self._linha(timeout_ok=True)
+            if l.startswith("ID no"):
+                # "ID no v1 <ponto> sessao <n>"
+                partes = l.split()
+                self.firmware_no = True
+                self.sessao_no = int(partes[-1]) if partes[-1].lstrip("-").isdigit() else None
+                print(f"no respondeu: {l}")
+                self.s.timeout = 5
+                self.s.reset_input_buffer()
+                return
             if "ID calibracao" in l:
+                self.s.timeout = 5
                 # A propria linha traz o autoteste do sensor.
                 print(f"no respondeu: {l}")
                 if "0.00 lx" in l:
@@ -81,8 +101,8 @@ class Bancada:
                 return
             self.s.write(b"?\n")
         raise SystemExit(
-            f"o ESP32 em {porta} nao respondeu 'ID calibracao v1'.\n"
-            "  Grave bancada/calibracao/calibracao.ino na placa.\n"
+            f"o ESP32 em {porta} nao se identificou.\n"
+            "  Grave firmware/no/no.ino na placa (ou o sketch de calibracao).\n"
             "  (o sketch de diagnostico NAO serve para calibrar)"
         )
 
@@ -94,10 +114,15 @@ class Bancada:
             raise RuntimeError("no nao respondeu (timeout)")
         return l
 
+    def _esperar(self, prefixo: str) -> str:
+        """Le ate a resposta esperada, pulando as linhas de log do no."""
+        while not (l := self._linha()).startswith(prefixo):
+            pass
+        return l
+
     def duty(self, n: int) -> None:
         self.s.write(f"D {n}\n".encode())
-        while not self._linha().startswith("OK D"):
-            pass
+        self._esperar("OK D")
         time.sleep(ACOMODACAO_S)
         self.medir(LEITURAS_DESCARTADAS)  # descarta as conversoes anteriores a troca
 
@@ -108,6 +133,38 @@ class Bancada:
             if l.startswith("L "):
                 leituras.append(float(l[2:]))
         return leituras
+
+    # ---- So no firmware do no -------------------------------------------
+    def _exigir_no(self) -> None:
+        if not self.firmware_no:
+            raise RuntimeError("comando so existe no firmware do no (firmware/no/no.ino)")
+
+    def nivel(self, n: float) -> int:
+        """Aplica o nivel pela tabela gravada no no; devolve o duty usado."""
+        self._exigir_no()
+        self.s.write(f"N {n:.4f}\n".encode())
+        duty = int(self._esperar("OK N").split()[-1])
+        time.sleep(ACOMODACAO_S)
+        self.medir(LEITURAS_DESCARTADAS)
+        return duty
+
+    def enviar_tabela(self, tabela: list[tuple[float, int]], sessao: int) -> None:
+        """Grava a tabela nivel -> duty na memoria do no (NVS)."""
+        self._exigir_no()
+        self.s.write(f"T {len(tabela)} {sessao}\n".encode())
+        self._esperar("OK T")
+        for n, d in tabela:
+            self.s.write(f"P {n:.4f} {d}\n".encode())
+            self._esperar("OK P")
+        self.s.write(b"T FIM\n")
+        self._esperar("OK T")
+        self.sessao_no = sessao
+
+    def sair(self) -> None:
+        """Encerra a manutencao: o no volta ao pleno e ao servico."""
+        if self.firmware_no:
+            self.s.write(b"X\n")
+            self._esperar("OK X")
 
 
 class BancadaSimulada:
@@ -120,6 +177,11 @@ class BancadaSimulada:
         # Reproduz o sensor real: apos trocar o duty, as primeiras leituras
         # ainda sao do nivel anterior.
         self._velhas: list[float] = []
+        # Simula o firmware do no: tabela gravada e modo manutencao.
+        self.firmware_no = True
+        self.tabela: list[tuple[float, int]] = []
+        self.sessao_no: int | None = None
+        self.em_manutencao = False
 
     def _nivel(self, d: int) -> float:
         return self.teto * (d / DUTY_MAX) ** self.gama + self.residual
@@ -134,11 +196,28 @@ class BancadaSimulada:
         self.medir(LEITURAS_DESCARTADAS)
 
     def medir(self, k: int) -> list[float]:
+        self.em_manutencao = True
         valores = []
         for _ in range(k):
             base = self._velhas.pop(0) if self._velhas else self._nivel(self.d)
             valores.append(round(max(0.0, base + self.rng.gauss(0, 0.05)), 2))
         return valores
+
+    def nivel(self, n: float) -> int:
+        t = self.tabela
+        d = t[-1][1]
+        for (n0, d0), (n1, d1) in zip(t, t[1:]):
+            if n <= n1:
+                d = round(d0 + (n - n0) / (n1 - n0) * (d1 - d0))
+                break
+        self.duty(d)
+        return d
+
+    def enviar_tabela(self, tabela: list[tuple[float, int]], sessao: int) -> None:
+        self.tabela, self.sessao_no = list(tabela), sessao
+
+    def sair(self) -> None:
+        self.em_manutencao = False
 
 
 # ---------------------------------------------------------------------------
@@ -491,6 +570,12 @@ const int CALIBRACAO_SESSAO = {r.sessao_id or 0};
     print(f"curva monotona: {'sim' if r.monotona else 'NAO - verifique a montagem'}")
 
 
+def enviar_ao_no(b, r: Relatorio) -> None:
+    """Grava a tabela nova na memoria do no: vale ja, sem recompilar."""
+    b.enviar_tabela(tabela_firmware(r), r.sessao_id or 0)
+    print(f"tabela da sessao {r.sessao_id} gravada no no (vale a partir de agora)")
+
+
 def main(argv: list[str] | None = None) -> None:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("modo", choices=["teto", "completa", "monitor"])
@@ -521,10 +606,14 @@ def main(argv: list[str] | None = None) -> None:
         r = cmd_completa(b, conn, args)
         if r.duty_pleno is not None:
             gravar_saidas(r, args.simulada)
+            if getattr(b, "firmware_no", False):
+                enviar_ao_no(b, r)
     finally:
         if args.simulada:
             conn.rollback()
         conn.close()
+        if hasattr(b, "sair"):
+            b.sair()
 
 
 if __name__ == "__main__":

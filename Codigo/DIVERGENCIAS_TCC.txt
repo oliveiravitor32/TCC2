@@ -1962,6 +1962,42 @@ TEXTO:   FEITO na v12: paragrafo em 3.4.5 (os tres diagnosticos com a
          consumo: nao ha fonte. Busca registrada em REVISAR_ANTES_DE_SUBMETER
          (D12).
 
+-------------------------------------------------------------------------------
+65. CONFERENCIA DA CALIBRACAO E RECALIBRACAO SEM TROCAR DE SKETCH (03/10/2026)
+-------------------------------------------------------------------------------
+TCC:     3.4.3 exige medir a residual em toda sessao; 3.4.4 descreve a
+         calibracao e diz que a tabela vai "gravada no firmware" (decisao do
+         autor: calibracao no banco, com copia no firmware). Nao ha
+         procedimento para conferir, no inicio de uma sessao, se a calibracao
+         anterior ainda vale.
+CODIGO:  - firmware/no/no.ino ganhou modo MANUTENCAO pela serial, com os
+           comandos do sketch de calibracao (D, M) e mais N (nivel pela
+           tabela), T/P (tabela nova, gravada na NVS do ESP32) e X (sair).
+           Em manutencao ignora os comandos do servico e o failsafe, publica
+           o estado "manutencao" e sai sozinho apos 20 s sem serial, voltando
+           ao pleno (mesmo estado do failsafe; a rampa recomeca do pleno,
+           CT07). A tabela da NVS vale sobre a de calibracao.h.
+         - bancada/conferir.py (novo, ~1 min): residual, pleno/intermediario/
+           piso pela tabela do no, comparacao com o esperado usando a MESMA
+           tolerancia do diagnostico (tolerancia_do_ponto: K_SIGMA x
+           dispersao ou 1,5 degrau do sensor sobre o piso; com a sessao 72,
+           3,4 %). Aprovada: abre a sessao_medicao com a residual de agora
+           (a telemetria passa a usa-la) e encerra as anteriores. Reprovada:
+           oferece recalibrar ali mesmo e confere de novo. Sem banco, usa o
+           JSON da ultima calibracao e grava so em arquivo.
+         - bancada/calibrar.py aceita o firmware do no e, ao final, envia a
+           tabela ao no (vale sem recompilar). calibracao.h e o JSON
+           continuam sendo gerados como registro.
+         - servico/ciclo: estado "manutencao" do no vai para
+           ponto_de_luz.estado_operacional; o ciclo ja pulava esses pontos.
+         Teste: tests/test_conferir.py; execucao simulada de ponta a ponta
+         (reprova a tabela da sessao 72 na curva sintetica, recalibra, aprova).
+         Firmware compilado (arduino-cli); FALTA gravar e testar no ESP32.
+TEXTO:   PENDENTE: em 3.4.4, "copia gravada no firmware" passa a ser copia na
+         memoria do no, enviada pela serial; e uma frase sobre a conferencia
+         no inicio de cada sessao (3.4.3 ou 3.4.4). Fazer junto com a rodada
+         da bancada (CT15-CT20).
+
 ===============================================================================
 FIM
 ===============================================================================

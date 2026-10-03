@@ -532,13 +532,22 @@ def registrar_telemetria(conn: psycopg.Connection, ponto_codigo: str, carga: dic
     return linha is not None
 
 
-def atualizar_estado_ponto(conn: psycopg.Connection, ponto_codigo: str, online: bool) -> None:
-    """Last will do no (LACUNA 2): sem conexao -> 'sem_comunicacao'."""
+def atualizar_estado_ponto(conn: psycopg.Connection, ponto_codigo: str, online: bool,
+                           manutencao: bool = False) -> None:
+    """Estado retido do no.
+
+    Last will (LACUNA 2): sem conexao -> 'sem_comunicacao'. Conferencia ou
+    recalibracao pela serial (bancada/conferir.py) -> 'manutencao', para o
+    painel nao confundir a pausa com defeito. 'falha' e posta a mao e nao e
+    sobrescrita aqui.
+    """
+    novo = "manutencao" if manutencao else ("operante" if online else "sem_comunicacao")
     conn.execute(
         """
         UPDATE ponto_de_luz
-           SET estado_operacional = CASE WHEN %(online)s THEN 'operante' ELSE 'sem_comunicacao' END
-         WHERE codigo = %(ponto)s AND estado_operacional IN ('operante', 'sem_comunicacao')
+           SET estado_operacional = %(novo)s
+         WHERE codigo = %(ponto)s
+           AND estado_operacional IN ('operante', 'sem_comunicacao', 'manutencao')
         """,
-        {"online": online, "ponto": ponto_codigo},
+        {"novo": novo, "ponto": ponto_codigo},
     )
