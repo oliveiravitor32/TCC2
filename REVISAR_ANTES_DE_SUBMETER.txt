@@ -395,8 +395,34 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         TCC. ATENCAO: as classes P mudaram de 2012 (P1-P4) para 2024; e o
         indicador NI mede iluminancia em campo e afeta o pagamento, o que
         pode conflitar com a dimerizacao se o contrato nao reconhecer as
-        classes adaptativas. A IA leu o edital REPUBLICADO de 2015; o contrato
-        assinado em 2018 e os aditivos nao foram conferidos.
+        classes adaptativas. A IA leu o edital REPUBLICADO de 2015.
+        CONFERENCIA DO CONTRATO ASSINADO E DOS ADITIVOS (IA, 03/10/2026; pagina
+        "Contrato PPP" da SP Regula):
+        - Contrato 003/SMSO/2018 ASSINADO (PDF escaneado, 114 p.), decorrente
+          da Concorrencia 01/SES/2015. Clausula 11.2, p. 28, conferida na
+          imagem: a) a concessionaria se submete "as normas da ABNT e/ou do
+          INMETRO ou outro orgao regulamentador competente" e "aos parametros
+          de qualidade"; f) "observar todas as obrigacoes contidas no ANEXO
+          III - CADERNO DE ENCARGOS". Clausula 11.1: vinculada ao contrato,
+          ao EDITAL e aos ANEXOS. Os anexos nao estao no PDF assinado; valem
+          os do edital.
+        - Termo de Retomada DEFINITIVA (30/01/2020), Clausula Sexta: "fica
+          retomada a vigencia integral, nos mesmos termos ... de todo o
+          disposto no ANEXO III - CADERNO DE ENCARGOS". Confirma o Caderno em
+          vigor.
+        - Aditivos lidos (1o, 3o, 4o, 18/2021, 22/2021, apostilamento 05/2022,
+          retomada provisoria 2019, aditivo de semaforos): tratam de prazo,
+          cronograma de modernizacao, indicadores Ia/Ib, representante do
+          poder concedente, dotacao, razao social e semaforos. NENHUM altera a
+          exigencia da NBR 5101 nem o indicador NI.
+        - PONTO EM ABERTO: o 4o termo aditivo (2022) reduz a contraprestacao
+          "pela Readequacao do Sistema de Telegestao", sem detalhar. A revisao
+          esta no "Relatorio de Analise Contratual" (ANEXO VI-a e VI-b), que
+          nao foi achado publicado. Pode ter mudado o alcance da telegestao
+          (o TCC afirma telegestao em cada luminaria). Vale procurar.
+        - O indicador NI teve a aplicacao suspensa apos jan/2022 e reprogramada
+          pelo 4o termo aditivo (cronograma de modernizacao de out/2022 a
+          ago/2024), mas continua previsto.
 
 -------------------------------------------------------------------------------
 E. DECLARACAO E ENTREGA
