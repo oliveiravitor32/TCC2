@@ -19,6 +19,7 @@ import os
 import statistics
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 import psycopg
 
@@ -27,6 +28,7 @@ from decisao.diagnostico import tolerancia_do_ponto
 from decisao.sessao_bancada import registrar_calibracao, registrar_conferencia
 
 API_VM_PADRAO = "https://tcc-iluminacao-publica.duckdns.org"
+ARQUIVO_CHAVE = Path(__file__).resolve().parent / "chave_vm.txt"
 
 
 def _pasta():
@@ -145,15 +147,23 @@ class DestinoApi:
 
     def __init__(self) -> None:
         self.url = os.environ.get("API_URL_VM", API_VM_PADRAO).rstrip("/")
-        # A chave vem do ambiente, e nao da linha de comando, para nao ficar
-        # no historico do terminal. E a CHAVE_API do .env da VM.
-        self.chave = os.environ.get("CHAVE_API_VM", "")
+        # A CHAVE_API do .env da VM: da variavel CHAVE_API_VM ou do arquivo
+        # bancada/chave_vm.txt (fora do git, como o segredos.h do firmware).
+        # Nunca na linha de comando, para nao ficar no historico do terminal.
+        self.chave = os.environ.get("CHAVE_API_VM", "") or self._chave_do_arquivo()
         if not self.chave:
             raise SystemExit(
-                "defina CHAVE_API_VM com a CHAVE_API do .env da VM (a secreta, nao a do painel);\n"
-                "  veja deploy/ROTEIRO.md, secao 10"
+                f"crie {ARQUIVO_CHAVE} com a CHAVE_API do .env da VM (so a chave, uma linha;\n"
+                "  a do painel nao serve) ou defina CHAVE_API_VM. Veja deploy/ROTEIRO.md, secao 10"
             )
         self.nome = f"VM ({self.url})"
+
+    @staticmethod
+    def _chave_do_arquivo() -> str:
+        try:
+            return ARQUIVO_CHAVE.read_text(encoding="utf-8-sig").strip()
+        except FileNotFoundError:
+            return ""
 
     def _pedir(self, metodo: str, caminho: str, corpo: dict | None = None):
         dados = json.dumps(corpo).encode() if corpo is not None else None

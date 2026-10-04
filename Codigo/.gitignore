@@ -12,6 +12,8 @@ cenarios/resultados/*.json
 .logs/
 # Segredos do no (Wi-Fi e credencial do broker): nunca versionar
 firmware/no/segredos.h
+# Chave da API da VM para a conferencia de bancada (bancada/destino.py)
+bancada/chave_vm.txt
 # Backups do banco (podem ter dados de bancada): fora do git
 backups/
 # Implantacao: segredos gerados por deploy/preparar.sh

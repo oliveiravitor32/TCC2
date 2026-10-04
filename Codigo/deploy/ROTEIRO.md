@@ -161,12 +161,10 @@ docker compose -f docker-compose.prod.yml up -d --build
 
 A cada sessão, no notebook (PowerShell, pasta `Codigo`):
 
-1. Defina a chave. É a `CHAVE_API` do `.env` da VM; não a coloque em arquivo
-   do repositório:
-
-   ```powershell
-   $env:CHAVE_API_VM = "COLE_A_CHAVE_AQUI"
-   ```
+1. Uma vez: crie o arquivo `Codigo/bancada/chave_vm.txt` com a `CHAVE_API`
+   do `.env` da VM (só a chave, numa linha). Ele está no `.gitignore`, como o
+   `segredos.h` do firmware, e nunca vai para o GitHub. (Alternativa: a
+   variável `$env:CHAVE_API_VM`, que vale só naquela janela.)
 
 2. Rode a conferência gravando na VM:
 
