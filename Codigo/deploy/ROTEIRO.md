@@ -148,42 +148,34 @@ A luz deve começar a descer em rampa, e o painel deve mostrar isso.
 
 A conferência (`python -m bancada.conferir`) roda no notebook, pela serial,
 mas a sessão de medição precisa ficar no banco da **VM**, o mesmo que recebe
-a telemetria. O banco não é aberto para a internet: o caminho é um túnel SSH.
+a telemetria. Ela é enviada pela própria API (`POST /bancada/sessoes` e, se
+recalibrar, `POST /bancada/calibracoes`), que aceita **só a `CHAVE_API`**: a
+chave pública do painel é recusada nesses endpoints.
 
-Uma vez, na VM, depois de atualizar o código (`git pull`):
+Uma vez, na VM, para subir a API e o serviço com o código novo:
 
 ```bash
-docker compose -f docker-compose.prod.yml up -d db
+git pull
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-(o `db` passa a escutar só em `127.0.0.1` da própria VM; nada muda no
-firewall nem na Oracle.)
+A cada sessão, no notebook (PowerShell, pasta `Codigo`):
 
-A cada sessão, no notebook:
-
-1. Abra o túnel num terminal e deixe aberto (mesmo usuário e chave do SSH de
-   sempre):
-
-   ```bash
-   ssh -N -L 5433:127.0.0.1:5432 ubuntu@tcc-iluminacao-publica.duckdns.org
-   ```
-
-2. Em outro terminal (PowerShell), na pasta `Codigo`, defina a URL. A senha é
-   a `SENHA_BANCO` do `.env` da VM; não a coloque em arquivo do repositório:
+1. Defina a chave. É a `CHAVE_API` do `.env` da VM; não a coloque em arquivo
+   do repositório:
 
    ```powershell
-   $env:DATABASE_URL_VM = "postgresql://iluminacao:SENHA_AQUI@localhost:5433/iluminacao"
+   $env:CHAVE_API_VM = "COLE_A_CHAVE_AQUI"
    ```
 
-3. Rode a conferência (e, se reprovar, a recalibração) na VM:
+2. Rode a conferência gravando na VM:
 
    ```powershell
    .venv\Scripts\python -m bancada.conferir --vm
    ```
 
-Para o estado "em manutenção" aparecer no painel durante a conferência, a VM
-precisa estar com o código novo do serviço (`git pull` e
-`docker compose -f docker-compose.prod.yml up -d --build`).
+A tolerância vem do arquivo da última calibração
+(`bancada/resultados/sessao_*.json`), que fica no notebook.
 
 ## Comandos úteis (na VM, pasta `TCC2/Codigo`)
 

@@ -458,3 +458,60 @@ def test_explicacao_mostra_regras_e_correcao(cliente, conn):
 
 def test_explicacao_de_evento_inexistente(cliente):
     assert cliente.get("/eventos/999999999/explicacao").status_code == 404
+
+
+# --------------------------------------------------------------------------
+# POST /bancada (DIVERGENCIAS 65): so a chave secreta grava medicao
+# --------------------------------------------------------------------------
+SESSAO = {"ponto": "BANCADA-01", "lux_residual": 0.2, "aprovada": True,
+          "observacao": "conferencia de teste"}
+
+
+def test_bancada_recusa_a_chave_publica_do_painel(cliente, com_chave, monkeypatch):
+    import api_eventos.app as modulo
+    monkeypatch.setattr(modulo, "CHAVE_DEMO", "chave-do-painel")
+    r = cliente.post("/bancada/sessoes", json=SESSAO, headers={"X-Chave-Api": "chave-do-painel"})
+    assert r.status_code == 401
+    assert cliente.post("/bancada/sessoes", json=SESSAO).status_code == 401
+
+
+def test_conferencia_aprovada_abre_sessao_e_encerra_as_anteriores(cliente, com_chave, conn):
+    h = {"X-Chave-Api": "segredo-de-teste"}
+    a = cliente.post("/bancada/sessoes", json=SESSAO, headers=h).json()["sessao_id"]
+    b = cliente.post("/bancada/sessoes", json=SESSAO, headers=h).json()["sessao_id"]
+    abertas = conn.execute(
+        "SELECT id FROM sessao_medicao WHERE encerrada_em IS NULL").fetchall()
+    assert [x["id"] for x in abertas] == [b] and a != b
+    reprovada = cliente.post("/bancada/sessoes", json={**SESSAO, "aprovada": False}, headers=h)
+    assert reprovada.status_code == 201
+    assert conn.execute("SELECT count(*) AS n FROM sessao_medicao WHERE encerrada_em IS NULL"
+                        ).fetchone()["n"] == 1
+
+
+def test_lux_da_classe_vem_do_banco_e_nao_do_cliente(cliente, com_chave, conn):
+    h = {"X-Chave-Api": "segredo-de-teste"}
+    assert cliente.post("/bancada/sessoes", json={**SESSAO, "lux_classe": 1}, headers=h
+                        ).status_code == 422
+    sid = cliente.post("/bancada/sessoes", json=SESSAO, headers=h).json()["sessao_id"]
+    assert float(conn.execute("SELECT lux_classe FROM sessao_medicao WHERE id = %s", (sid,)
+                              ).fetchone()["lux_classe"]) == 10.0
+
+
+def test_calibracao_grava_sessao_encerrada_e_linhas(cliente, com_chave, conn):
+    h = {"X-Chave-Api": "segredo-de-teste"}
+    corpo = {"ponto": "BANCADA-01", "lux_residual": 0.1, "observacao": "teste",
+             "linhas": [{"serie": 1, "duty": 0.5, "lux_medido": 9.0},
+                        {"serie": 2, "duty": 0.5, "lux_medido": 9.1}]}
+    r = cliente.post("/bancada/calibracoes", json=corpo, headers=h)
+    assert r.status_code == 201
+    sid = r.json()["sessao_id"]
+    assert conn.execute("SELECT count(*) AS n FROM calibracao WHERE sessao_id = %s", (sid,)
+                        ).fetchone()["n"] == 2
+    assert conn.execute("SELECT encerrada_em FROM sessao_medicao WHERE id = %s", (sid,)
+                        ).fetchone()["encerrada_em"] is not None
+
+
+def test_bancada_ponto_desconhecido_e_404(cliente, com_chave):
+    r = cliente.post("/bancada/sessoes", json={**SESSAO, "ponto": "NAO-EXISTE"},
+                     headers={"X-Chave-Api": "segredo-de-teste"})
+    assert r.status_code == 404

@@ -1994,10 +1994,17 @@ CODIGO:  - firmware/no/no.ino ganhou modo MANUTENCAO pela serial, com os
          (reprova a tabela da sessao 72 na curva sintetica, recalibra, aprova).
          Firmware compilado (arduino-cli); FALTA gravar e testar no ESP32.
          Com o no ligado a VM (sessao CT15-CT20, decisao do autor), a
-         conferencia grava no banco da VM com --vm, por tunel SSH
-         (DATABASE_URL_VM; ROTEIRO, secao 10). docker-compose.prod.yml publica
-         o Postgres so em 127.0.0.1 da VM (continua fechado para a internet).
-TEXTO:   PENDENTE: em 3.4.4, "copia gravada no firmware" passa a ser copia na
+         conferencia e a recalibracao gravam no banco da VM com --vm, pela
+         API: POST /bancada/sessoes e POST /bancada/calibracoes, que aceitam
+         SO a CHAVE_API (a CHAVE_DEMO, publica no painel, e recusada), na
+         variavel CHAVE_API_VM do notebook (ROTEIRO, secao 10). O SQL fica em
+         decisao/sessao_bancada.py, o mesmo para o banco local e para a API;
+         a iluminancia da classe e lida do banco, nunca recebida do cliente.
+         (A primeira versao usava tunel SSH ao Postgres; trocada pelo
+         endpoint a pedido do autor, mais simples na demonstracao.)
+TEXTO:   PENDENTE: Quadro 14 (4.6.2) ganha os dois POST de /bancada, com a
+         nota de que exigem a chave secreta e servem a manutencao do no.
+         Em 3.4.4, "copia gravada no firmware" passa a ser copia na
          memoria do no, enviada pela serial; e uma frase sobre a conferencia
          no inicio de cada sessao (3.4.3 ou 3.4.4). Fazer junto com a rodada
          da bancada (CT15-CT20).

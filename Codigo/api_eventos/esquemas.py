@@ -231,3 +231,43 @@ class Explicacao(BaseModel):
     evento: Evento
     trecho_nome: str | None
     decisoes: list[dict]
+
+
+# ---------------------------------------------------------------------------
+# Bancada (DIVERGENCIAS 65): conferencia e calibracao gravadas no banco da VM.
+# Fora do Quadro 14: e manutencao do no de bancada, nao integracao urbana.
+# ---------------------------------------------------------------------------
+class SessaoBancadaEntrada(BaseModel):
+    """POST /bancada/sessoes: resultado de bancada/conferir.py."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ponto: str = Field(min_length=1, max_length=40)
+    lux_residual: float = Field(ge=0, le=1000)
+    aprovada: bool
+    observacao: str = Field(max_length=500)
+
+
+class LinhaCalibracao(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    serie: int = Field(ge=1, le=50)
+    duty: float = Field(ge=0, le=1)
+    lux_medido: float = Field(ge=0, le=100000)
+
+
+class CalibracaoEntrada(BaseModel):
+    """POST /bancada/calibracoes: varredura de bancada/calibrar.py."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    ponto: str = Field(min_length=1, max_length=40)
+    lux_residual: float = Field(ge=0, le=1000)
+    observacao: str = Field(max_length=500)
+    potencia_plena_w: float | None = Field(default=None, gt=0, le=1000)
+    linhas: list[LinhaCalibracao] = Field(min_length=1, max_length=2000)
+
+
+class SessaoBancada(BaseModel):
+    sessao_id: int
+    descartada: bool

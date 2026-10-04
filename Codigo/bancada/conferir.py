@@ -6,11 +6,12 @@ do no gravado (firmware/no/no.ino), ligue o USB e rode
     python -m bancada.conferir                 # porta COM3, ponto BANCADA-01
     python -m bancada.conferir --porta COM5
     python -m bancada.conferir --recalibrar    # se reprovar, recalibra sem perguntar
-    python -m bancada.conferir --vm            # grava no banco da VM (ROTEIRO, secao 10)
+    python -m bancada.conferir --vm            # grava pela API da VM (ROTEIRO, secao 10)
 
 Com o no ligado a VM, use --vm: a sessao aberta (com a residual de agora)
 tem de estar no MESMO banco que recebe a telemetria, senao a VM continua
-descontando a residual antiga.
+descontando a residual antiga. Exige CHAVE_API_VM (a CHAVE_API do .env da
+VM; a chave publica do painel e recusada nesses endpoints).
 
 O que faz, pela serial, com o no em modo manutencao:
   1. mede a residual com a fita apagada (3.4.3: descarta se > 5 % da classe);
@@ -41,22 +42,18 @@ from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
-import psycopg
-
+from bancada import destino as destinos
 from bancada.calibrar import (
     RAIZ,
     RESIDUAL_MAX,
     Bancada,
     BancadaSimulada,
-    classe_do_ponto,
     cmd_completa,
     enviar_ao_no,
     gravar_saidas,
     medir_residual,
-    usar_banco_da_vm,
 )
-from decisao import config
-from decisao.diagnostico import tolerancia_do_ponto
+from bancada.destino import tolerancia_do_relatorio, ultimo_relatorio  # noqa: F401 (testes)
 
 LEITURAS = 5  # leituras por nivel; a media entra na comparacao
 
@@ -86,41 +83,6 @@ class Conferencia:
     aprovada: bool = False
     motivo: str = ""
     sessao_id: int | None = None
-
-
-# ---------------------------------------------------------------------------
-# Tolerancia: a mesma do diagnostico
-# ---------------------------------------------------------------------------
-def tolerancia_do_relatorio(rel: dict) -> float:
-    """Mesma regra de diagnostico.tolerancia_do_ponto, a partir do JSON da
-    ultima calibracao (para quando o banco nao esta disponivel)."""
-    lux_piso = float(rel["lux_piso"])
-    por_duty: dict[int, list[float]] = {}
-    for pontos in rel.get("series", {}).values():
-        for d, lux in pontos:
-            por_duty.setdefault(int(d), []).append(float(lux))
-    por_duty.setdefault(int(rel["duty_pleno"]), []).extend(rel.get("repeticoes_pleno_lux", []))
-    por_duty.setdefault(int(rel["duty_piso"]), []).extend(rel.get("repeticoes_piso_lux", []))
-    dispersoes = [
-        statistics.stdev(v) / statistics.fmean(v)
-        for v in por_duty.values()
-        if len(v) > 1 and statistics.fmean(v) >= lux_piso * 0.98
-    ]
-    pela_dispersao = config.K_SIGMA * max(dispersoes, default=0.0)
-    pela_resolucao = config.DEGRAUS_TOLERANCIA * config.RESOLUCAO_SENSOR_LUX / lux_piso
-    return max(pela_dispersao, pela_resolucao)
-
-
-def ultimo_relatorio(ponto: str) -> dict | None:
-    pasta = RAIZ / "bancada" / "resultados"
-    relatorios = []
-    for arq in pasta.glob("sessao_*.json"):
-        if "SIMULADA" in arq.name:
-            continue
-        rel = json.loads(arq.read_text(encoding="utf-8"))
-        if rel.get("ponto") == ponto and not rel.get("simulada"):
-            relatorios.append(rel)
-    return max(relatorios, key=lambda r: r["gerado_em"], default=None)
 
 
 # ---------------------------------------------------------------------------
@@ -164,40 +126,12 @@ def conferir(b, c: Conferencia) -> Conferencia:
 
 
 # ---------------------------------------------------------------------------
-# Banco
+# Registro
 # ---------------------------------------------------------------------------
-def abrir_banco(simulada: bool) -> psycopg.Connection | None:
-    try:
-        return psycopg.connect(config.DATABASE_URL, autocommit=not simulada, connect_timeout=5)
-    except psycopg.OperationalError:
-        print("AVISO: banco indisponivel (Docker parado?). A conferencia roda igual;\n"
-              "       o resultado fica so no arquivo, e recalibrar exige o banco.")
-        return None
-
-
-def registrar(conn: psycopg.Connection, pid: int, c: Conferencia) -> None:
-    """Sessao de medicao com a residual de agora (3.4.3).
-
-    Aprovada: fica ABERTA e as anteriores do ponto sao encerradas, de modo que
-    a telemetria seguinte e descontada desta residual (ciclo.gravar_telemetria).
-    Reprovada: e encerrada na hora, so como registro.
-    """
+def observacao(c: Conferencia) -> str:
     resumo = "; ".join(f"{x.nivel:.3f}:{x.razao - 1:+.1%}" for x in c.niveis)
-    obs = (f"conferencia (bancada/conferir.py): {'APROVADA' if c.aprovada else 'REPROVADA'}; "
-           f"tolerancia {c.tolerancia:.1%}; tabela do no = sessao {c.sessao_tabela_no}; {resumo}")
-    with conn.transaction():
-        if c.aprovada:
-            conn.execute(
-                "UPDATE sessao_medicao SET encerrada_em = now()"
-                " WHERE ponto_de_luz_id = %s AND encerrada_em IS NULL",
-                (pid,),
-            )
-        c.sessao_id = conn.execute(
-            "INSERT INTO sessao_medicao (ponto_de_luz_id, lux_residual, lux_classe, observacao,"
-            " encerrada_em) VALUES (%s, %s, %s, %s, CASE WHEN %s THEN NULL ELSE now() END)"
-            " RETURNING id",
-            (pid, round(c.residual, 2), c.lux_classe, obs, c.aprovada),
-        ).fetchone()[0]
+    return (f"conferencia (bancada/conferir.py): {'APROVADA' if c.aprovada else 'REPROVADA'}; "
+            f"tolerancia {c.tolerancia:.1%}; tabela do no = sessao {c.sessao_tabela_no}; {resumo}")
 
 
 def gravar_json(c: Conferencia, simulada: bool) -> Path:
@@ -215,28 +149,21 @@ def gravar_json(c: Conferencia, simulada: bool) -> Path:
 
 
 # ---------------------------------------------------------------------------
-def preparar(b, conn, ponto: str) -> tuple[int | None, Conferencia]:
-    if conn is not None:
-        pid, classe, lux_classe, lux_piso = classe_do_ponto(conn, ponto)
-        tol, origem = tolerancia_do_ponto(conn, pid), "banco: ultima calibracao"
-    else:
-        rel = ultimo_relatorio(ponto)
-        if rel is None:
-            raise SystemExit("sem banco e sem bancada/resultados/sessao_*.json: nao ha contra o que conferir")
-        pid, classe = None, rel["classe"]
-        lux_classe, lux_piso = float(rel["lux_classe"]), float(rel["lux_piso"])
-        tol, origem = tolerancia_do_relatorio(rel), f"arquivo da sessao {rel['sessao_id']}"
-    return pid, Conferencia(ponto, classe, lux_classe, lux_piso, b.sessao_no, tol, origem)
+def preparar(b, destino, ponto: str) -> Conferencia:
+    classe, lux_classe, lux_piso = destino.classe(ponto)
+    tol, origem = destino.tolerancia(ponto)
+    return Conferencia(ponto, classe, lux_classe, lux_piso, b.sessao_no, tol, origem)
 
 
-def rodada(b, conn, args) -> Conferencia:
-    pid, c = preparar(b, conn, args.ponto)
+def rodada(b, destino, args) -> Conferencia:
+    c = preparar(b, destino, args.ponto)
     conferir(b, c)
-    if conn is not None and pid is not None:
-        registrar(conn, pid, c)
+    # Aprovada: a sessao fica aberta (residual de agora) e as anteriores sao
+    # encerradas; reprovada: encerrada na hora, so como registro.
+    c.sessao_id = destino.conferencia(args.ponto, c.residual, c.aprovada, observacao(c))
     arq = gravar_json(c, args.simulada)
     print(f"\n{'APROVADA - pode usar' if c.aprovada else 'REPROVADA: ' + c.motivo}")
-    print(f"registro: {arq}" + (f" | sessao {c.sessao_id} no banco" if c.sessao_id else ""))
+    print(f"registro: {arq}" + (f" | sessao {c.sessao_id} em {destino.nome}" if c.sessao_id else ""))
     return c
 
 
@@ -255,10 +182,8 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--comprimento-cm", type=float, default=None, help="so na recalibracao")
     p.add_argument("--simulada", action="store_true", help="sem hardware (curva sintetica)")
     p.add_argument("--vm", action="store_true",
-                   help="grava no banco da VM, o mesmo da telemetria (DATABASE_URL_VM, tunel SSH)")
+                   help="grava pela API da VM, no banco da telemetria (CHAVE_API_VM)")
     args = p.parse_args(argv)
-    if args.vm:
-        usar_banco_da_vm()
 
     if args.simulada:
         b = BancadaSimulada()
@@ -271,26 +196,24 @@ def main(argv: list[str] | None = None) -> None:
         b = Bancada(args.porta)
     if not getattr(b, "firmware_no", False):
         raise SystemExit("a conferencia usa o firmware do no (firmware/no/no.ino); grave-o na placa")
-    conn = abrir_banco(args.simulada)
+    destino = destinos.abrir(args.vm, args.simulada, obrigatorio=False)
+    print(f"resultados vao para: {destino.nome}")
     try:
-        c = rodada(b, conn, args)
+        c = rodada(b, destino, args)
         recalibravel = not c.aprovada and c.residual_ok and c.niveis and c.niveis[0].lux_liquido > 0
-        if recalibravel and conn is not None and (
+        if recalibravel and destino.grava and (
                 args.recalibrar or perguntar("\nRecalibrar agora (alguns minutos)? [s/N] ")):
-            r = cmd_completa(b, conn, Namespace(ponto=args.ponto, series=3, pontos=33,
-                                                forcar=False, comprimento_cm=args.comprimento_cm))
+            r = cmd_completa(b, destino, Namespace(ponto=args.ponto, series=3, pontos=33,
+                                                   forcar=False, comprimento_cm=args.comprimento_cm))
             if r.duty_pleno is not None:
                 gravar_saidas(r, args.simulada)
                 enviar_ao_no(b, r)
                 print("\nconferindo de novo com a tabela nova...")
-                c = rodada(b, conn, args)
-        elif recalibravel and conn is None:
-            print("para recalibrar, suba o banco (docker compose up -d) e rode de novo")
+                c = rodada(b, destino, args)
+        elif recalibravel:
+            print("para recalibrar, suba o banco (docker compose up -d) ou use --vm e rode de novo")
     finally:
-        if conn is not None:
-            if args.simulada:
-                conn.rollback()  # numero sintetico nunca fica no banco
-            conn.close()
+        destino.fechar()
         b.sair()
         print("no fora da manutencao: volta ao pleno e ao controle do servico")
     sys.exit(0 if c.aprovada else 1)

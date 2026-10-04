@@ -10,6 +10,8 @@ Publicacao: com CHAVE_API definida, o POST /eventos exige o cabecalho
 X-Chave-Api (DIVERGENCIAS 22); as consultas continuam abertas ao painel.
 CHAVE_DEMO, se definida, e uma segunda chave aceita no POST: a do painel de
 demonstracao, publica por decisao do autor e desligavel sem afetar a outra.
+Os POST de /bancada (conferencia e calibracao do no) aceitam SO a CHAVE_API:
+com a chave publica, qualquer pessoa gravaria uma calibracao falsa.
 """
 
 from __future__ import annotations
@@ -33,6 +35,7 @@ from psycopg_pool import ConnectionPool
 from pydantic import ValidationError
 
 from decisao import config
+from decisao.sessao_bancada import PontoNaoCadastrado, registrar_calibracao, registrar_conferencia
 from decisao.inferencia import carregar as carregar_regras
 from decisao.energia import (
     energia_decisoes,
@@ -42,6 +45,9 @@ from decisao.energia import (
 )
 
 from .esquemas import (
+    CalibracaoEntrada,
+    SessaoBancada,
+    SessaoBancadaEntrada,
     Alerta,
     Decisao,
     Energia,
@@ -118,6 +124,20 @@ def exigir_chave(x_chave_api: str | None = Header(default=None)) -> None:
         return
     validas = [c for c in (CHAVE_API, CHAVE_DEMO) if c]
     if x_chave_api is None or not any(secrets.compare_digest(x_chave_api, c) for c in validas):
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "chave de acesso ausente ou invalida")
+
+
+def exigir_chave_secreta(x_chave_api: str | None = Header(default=None)) -> None:
+    """Para gravar dados de medicao: so a CHAVE_API, nunca a CHAVE_DEMO.
+
+    A chave do painel e publica (esta na aplicacao estatica); aceita-la aqui
+    deixaria qualquer visitante gravar uma calibracao falsa e corromper o
+    diagnostico. Sem CHAVE_API (ambiente local), fica aberto como o POST
+    /eventos.
+    """
+    if not CHAVE_API:
+        return
+    if x_chave_api is None or not secrets.compare_digest(x_chave_api, CHAVE_API):
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "chave de acesso ausente ou invalida")
 
 
@@ -559,3 +579,33 @@ def consultar_telemetria(
         """,
         {"ponto": ponto, "inicio": inicio, "fim": fim, "limite": limite},
     ).fetchall()
+
+
+# ---------------------------------------------------------------------------
+# Bancada (DIVERGENCIAS 65)
+# ---------------------------------------------------------------------------
+@app.post("/bancada/sessoes", response_model=SessaoBancada, status_code=status.HTTP_201_CREATED,
+          dependencies=[Depends(exigir_chave_secreta)])
+def gravar_sessao_bancada(corpo: SessaoBancadaEntrada, conn: psycopg.Connection = Conn) -> dict:
+    """Conferencia do no (bancada/conferir.py --vm). Aprovada: a sessao fica
+    aberta e a telemetria seguinte e descontada da residual medida agora."""
+    try:
+        sid, descartada = registrar_conferencia(
+            conn, corpo.ponto, corpo.lux_residual, corpo.aprovada, corpo.observacao)
+    except PontoNaoCadastrado:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "ponto nao cadastrado") from None
+    return {"sessao_id": sid, "descartada": descartada}
+
+
+@app.post("/bancada/calibracoes", response_model=SessaoBancada,
+          status_code=status.HTTP_201_CREATED, dependencies=[Depends(exigir_chave_secreta)])
+def gravar_calibracao_bancada(corpo: CalibracaoEntrada, conn: psycopg.Connection = Conn) -> dict:
+    """Varredura de calibracao (bancada/calibrar.py --vm): sessao + linhas."""
+    try:
+        sid = registrar_calibracao(
+            conn, corpo.ponto, corpo.lux_residual,
+            [(l.serie, l.duty, l.lux_medido) for l in corpo.linhas],
+            corpo.observacao, corpo.potencia_plena_w)
+    except PontoNaoCadastrado:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "ponto nao cadastrado") from None
+    return {"sessao_id": sid, "descartada": False}

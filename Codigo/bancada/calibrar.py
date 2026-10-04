@@ -35,7 +35,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
 
-import psycopg
+
 
 from decisao import config
 
@@ -252,37 +252,6 @@ def medir_residual(b) -> float:
     return statistics.fmean(b.medir(10))
 
 
-def usar_banco_da_vm() -> None:
-    """Aponta o script para o banco da VM, pelo tunel SSH (ROTEIRO, secao 10).
-
-    A URL vem da variavel DATABASE_URL_VM, e nao da linha de comando, para a
-    senha nao ficar no historico do terminal.
-    """
-    import os
-
-    url = os.environ.get("DATABASE_URL_VM")
-    if not url:
-        raise SystemExit(
-            "defina DATABASE_URL_VM (veja deploy/ROTEIRO.md, secao 10) e abra o tunel SSH"
-        )
-    config.DATABASE_URL = url
-    print("banco: VM (pelo tunel SSH)")
-
-
-def conectar_banco(simulada: bool) -> psycopg.Connection:
-    """Falha rapido e explica: sem timeout, um banco parado trava o script."""
-    print("conectando no banco...")
-    try:
-        return psycopg.connect(
-            config.DATABASE_URL, autocommit=not simulada, connect_timeout=5
-        )
-    except psycopg.OperationalError as erro:
-        raise SystemExit(
-            f"nao consegui falar com o Postgres: {erro}\n"
-            "  Abra o Docker Desktop e rode:  docker compose up -d"
-        ) from None
-
-
 def buscar_duty(b, alvo_liquido: float, residual: float, lo: int = 0, hi: int = DUTY_MAX) -> int:
     """Bissecao NO HARDWARE: o duty e o que o sensor mede, nao uma conta."""
     while hi - lo > 1:
@@ -435,22 +404,19 @@ def cmd_monitor(b, duty: int, limite_s: float | None = None) -> None:
         print(f"  dados: {arquivo}")
 
 
-def cmd_completa(b, conn, args) -> Relatorio:
-    pid, classe, lux_classe, lux_piso = classe_do_ponto(conn, args.ponto)
+def cmd_completa(b, destino, args) -> Relatorio:
+    """Mede tudo e so entao grava (banco local ou VM, bancada/destino.py)."""
+    classe, lux_classe, lux_piso = destino.classe(args.ponto)
     residual = medir_residual(b)
     teto = media(b, DUTY_MAX, k=5) - residual
     r = Relatorio(args.ponto, classe, lux_classe, lux_piso, round(residual, 3), round(teto, 3),
                   args.comprimento_cm)
     print(f"residual {residual:.2f} lx | teto liquido {teto:.2f} lx ({teto / lux_classe:.2f}x)")
 
-    with conn.transaction():
-        r.sessao_id, descartada = conn.execute(
-            "INSERT INTO sessao_medicao (ponto_de_luz_id, lux_residual, lux_classe, observacao)"
-            " VALUES (%s, %s, %s, %s) RETURNING id, descartada",
-            (pid, round(residual, 2), lux_classe, "calibracao (bancada/calibrar.py)"),
-        ).fetchone()
-    if descartada:
-        print(f"SESSAO {r.sessao_id} DESCARTADA: residual > {RESIDUAL_MAX:.0%} da classe (3.4.3).")
+    if residual > RESIDUAL_MAX * lux_classe:
+        sid = destino.conferencia(args.ponto, residual, False,
+                                  "calibracao (bancada/calibrar.py): DESCARTADA, residual alta")
+        print(f"SESSAO {sid or ''} DESCARTADA: residual > {RESIDUAL_MAX:.0%} da classe (3.4.3).")
         print("Melhore o anteparo e repita. Nada mais foi medido.")
         return r
     if not (TETO_MIN <= teto / lux_classe <= TETO_MAX):
@@ -475,27 +441,17 @@ def cmd_completa(b, conn, args) -> Relatorio:
     curva = curva_media(r)
     r.monotona = all(b2 >= b1 - 0.1 for (_, b1), (_, b2) in zip(curva, curva[1:]))
 
-    with conn.transaction():
-        for serie, pontos in r.series.items():
-            for d, lux in pontos:
-                conn.execute(
-                    "INSERT INTO calibracao (sessao_id, serie, duty, lux_medido)"
-                    " VALUES (%s, %s, %s, %s)",
-                    (r.sessao_id, serie, d / DUTY_MAX, max(lux, 0) + residual),
-                )
-        for d, reps in ((r.duty_pleno, r.repeticoes_pleno), (r.duty_piso, r.repeticoes_piso)):
-            for serie, lux in enumerate(reps, start=1):
-                conn.execute(
-                    "INSERT INTO calibracao (sessao_id, serie, duty, lux_medido)"
-                    " VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING",
-                    (r.sessao_id, serie, d / DUTY_MAX, max(lux, 0) + residual),
-                )
-        if args.comprimento_cm:
-            conn.execute(
-                "UPDATE ponto_de_luz SET potencia_plena_w = %s WHERE id = %s",
-                (round(POTENCIA_W_POR_M * args.comprimento_cm / 100, 2), pid),
-            )
-        conn.execute("UPDATE sessao_medicao SET encerrada_em = now() WHERE id = %s", (r.sessao_id,))
+    # Linhas (serie, duty 0-1, lux bruto): a residual volta a ser somada,
+    # porque a tabela guarda o medido e a sessao guarda a residual.
+    linhas = [(serie, d / DUTY_MAX, max(lux, 0) + residual)
+              for serie, pontos in r.series.items() for d, lux in pontos]
+    linhas += [(serie, d / DUTY_MAX, max(lux, 0) + residual)
+               for d, reps in ((r.duty_pleno, r.repeticoes_pleno), (r.duty_piso, r.repeticoes_piso))
+               for serie, lux in enumerate(reps, start=1)]
+    potencia = round(POTENCIA_W_POR_M * args.comprimento_cm / 100, 2) if args.comprimento_cm else None
+    r.sessao_id = destino.calibracao(args.ponto, residual, linhas,
+                                     "calibracao (bancada/calibrar.py)", potencia)
+    print(f"calibracao gravada: sessao {r.sessao_id} ({destino.nome})")
     return r
 
 
@@ -606,10 +562,9 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--pontos", type=int, default=33, help="niveis de duty na varredura")
     p.add_argument("--forcar", action="store_true", help="segue mesmo com teto fora do criterio")
     p.add_argument("--simulada", action="store_true", help="sem hardware (curva sintetica)")
-    p.add_argument("--vm", action="store_true", help="grava no banco da VM (DATABASE_URL_VM)")
+    p.add_argument("--vm", action="store_true",
+                   help="grava pela API da VM (CHAVE_API_VM; deploy/ROTEIRO.md, secao 10)")
     args = p.parse_args(argv)
-    if args.vm:
-        usar_banco_da_vm()
 
     b = BancadaSimulada() if args.simulada else Bancada(args.porta)
     if args.modo == "monitor":  # nao precisa de banco
@@ -617,21 +572,21 @@ def main(argv: list[str] | None = None) -> None:
                     args.minutos * 60 if args.minutos else None)
         return
     # Simulada: tudo numa transacao desfeita ao final - numero sintetico
-    # nunca fica no banco.
-    conn = conectar_banco(args.simulada)
+    # nunca fica no banco (e nunca vai a VM).
+    from bancada import destino as destinos
+
+    destino = destinos.abrir(args.vm, args.simulada, obrigatorio=True)
     try:
         if args.modo == "teto":
-            cmd_teto(b, classe_do_ponto(conn, args.ponto)[2])
+            cmd_teto(b, destino.classe(args.ponto)[1])
             return
-        r = cmd_completa(b, conn, args)
+        r = cmd_completa(b, destino, args)
         if r.duty_pleno is not None:
             gravar_saidas(r, args.simulada)
             if getattr(b, "firmware_no", False):
                 enviar_ao_no(b, r)
     finally:
-        if args.simulada:
-            conn.rollback()
-        conn.close()
+        destino.fechar()
         if hasattr(b, "sair"):
             b.sair()
 
