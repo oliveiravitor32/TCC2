@@ -6,6 +6,11 @@ do no gravado (firmware/no/no.ino), ligue o USB e rode
     python -m bancada.conferir                 # porta COM3, ponto BANCADA-01
     python -m bancada.conferir --porta COM5
     python -m bancada.conferir --recalibrar    # se reprovar, recalibra sem perguntar
+    python -m bancada.conferir --vm            # grava no banco da VM (ROTEIRO, secao 10)
+
+Com o no ligado a VM, use --vm: a sessao aberta (com a residual de agora)
+tem de estar no MESMO banco que recebe a telemetria, senao a VM continua
+descontando a residual antiga.
 
 O que faz, pela serial, com o no em modo manutencao:
   1. mede a residual com a fita apagada (3.4.3: descarta se > 5 % da classe);
@@ -48,6 +53,7 @@ from bancada.calibrar import (
     enviar_ao_no,
     gravar_saidas,
     medir_residual,
+    usar_banco_da_vm,
 )
 from decisao import config
 from decisao.diagnostico import tolerancia_do_ponto
@@ -248,7 +254,11 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--recalibrar", action="store_true", help="se reprovar, recalibra sem perguntar")
     p.add_argument("--comprimento-cm", type=float, default=None, help="so na recalibracao")
     p.add_argument("--simulada", action="store_true", help="sem hardware (curva sintetica)")
+    p.add_argument("--vm", action="store_true",
+                   help="grava no banco da VM, o mesmo da telemetria (DATABASE_URL_VM, tunel SSH)")
     args = p.parse_args(argv)
+    if args.vm:
+        usar_banco_da_vm()
 
     if args.simulada:
         b = BancadaSimulada()

@@ -252,6 +252,23 @@ def medir_residual(b) -> float:
     return statistics.fmean(b.medir(10))
 
 
+def usar_banco_da_vm() -> None:
+    """Aponta o script para o banco da VM, pelo tunel SSH (ROTEIRO, secao 10).
+
+    A URL vem da variavel DATABASE_URL_VM, e nao da linha de comando, para a
+    senha nao ficar no historico do terminal.
+    """
+    import os
+
+    url = os.environ.get("DATABASE_URL_VM")
+    if not url:
+        raise SystemExit(
+            "defina DATABASE_URL_VM (veja deploy/ROTEIRO.md, secao 10) e abra o tunel SSH"
+        )
+    config.DATABASE_URL = url
+    print("banco: VM (pelo tunel SSH)")
+
+
 def conectar_banco(simulada: bool) -> psycopg.Connection:
     """Falha rapido e explica: sem timeout, um banco parado trava o script."""
     print("conectando no banco...")
@@ -589,7 +606,10 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--pontos", type=int, default=33, help="niveis de duty na varredura")
     p.add_argument("--forcar", action="store_true", help="segue mesmo com teto fora do criterio")
     p.add_argument("--simulada", action="store_true", help="sem hardware (curva sintetica)")
+    p.add_argument("--vm", action="store_true", help="grava no banco da VM (DATABASE_URL_VM)")
     args = p.parse_args(argv)
+    if args.vm:
+        usar_banco_da_vm()
 
     b = BancadaSimulada() if args.simulada else Bancada(args.porta)
     if args.modo == "monitor":  # nao precisa de banco

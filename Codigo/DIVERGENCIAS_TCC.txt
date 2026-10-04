@@ -1993,6 +1993,10 @@ CODIGO:  - firmware/no/no.ino ganhou modo MANUTENCAO pela serial, com os
          Teste: tests/test_conferir.py; execucao simulada de ponta a ponta
          (reprova a tabela da sessao 72 na curva sintetica, recalibra, aprova).
          Firmware compilado (arduino-cli); FALTA gravar e testar no ESP32.
+         Com o no ligado a VM (sessao CT15-CT20, decisao do autor), a
+         conferencia grava no banco da VM com --vm, por tunel SSH
+         (DATABASE_URL_VM; ROTEIRO, secao 10). docker-compose.prod.yml publica
+         o Postgres so em 127.0.0.1 da VM (continua fechado para a internet).
 TEXTO:   PENDENTE: em 3.4.4, "copia gravada no firmware" passa a ser copia na
          memoria do no, enviada pela serial; e uma frase sobre a conferencia
          no inicio de cada sessao (3.4.3 ou 3.4.4). Fazer junto com a rodada
