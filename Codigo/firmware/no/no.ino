@@ -88,6 +88,9 @@ bool emFailsafe = true;           // ate o primeiro comando, o no esta no pleno
 char decisaoPendente[40] = "";    // telemetria ainda devida
 int leiturasADescartar = 0;
 float ultimaLux = -1;
+// Sem sensor no inicio, nao se le: a biblioteca imprimiria "Device is not
+// configured" a cada volta do loop e afogaria o serial.
+bool sensorOk = false;
 
 // Tabela em uso: a gravada na NVS, se houver; senao, a de calibracao.h.
 PontoCalibracao tabela[MAX_PONTOS_TABELA];
@@ -318,6 +321,7 @@ void sairManutencao() {
 }
 
 float lerLuxBloqueando() {
+  if (!sensorOk) return -1;
   unsigned long limite = millis() + 2000;
   while (!sensor.measurementReady(false)) {
     if (millis() > limite) return -1;
@@ -433,10 +437,13 @@ void setup() {
   aplicarNivel(1.0f);
 
   Wire.begin(21, 22);
-  if (!sensor.begin(BH1750::CONTINUOUS_HIGH_RES_MODE_2)) {
-    Serial.println("ERRO: BH1750 nao encontrado (a luz segue funcionando)");
+  sensorOk = sensor.begin(BH1750::CONTINUOUS_HIGH_RES_MODE_2);
+  if (sensorOk) {
+    sensor.setMTreg(BH1750_MTREG_MAX);  // o mesmo modo da calibracao
+  } else {
+    Serial.println("ERRO: BH1750 nao encontrado - confira VCC=3V3, GND, SDA=21, SCL=22 e a solda.");
+    Serial.println("      A luz segue funcionando; sem leitura, nao ha telemetria nem conferencia.");
   }
-  sensor.setMTreg(BH1750_MTREG_MAX);  // o mesmo modo da calibracao
 
   filaComandos = xQueueCreate(8, sizeof(Comando));
 
@@ -505,7 +512,7 @@ void loop() {
   }
 
   // 3. Leitura do sensor e telemetria da decisao pendente.
-  if (sensor.measurementReady(false)) {
+  if (sensorOk && sensor.measurementReady(false)) {
     float lux = sensor.readLightLevel();
     if (lux >= 0) {
       ultimaLux = lux;
