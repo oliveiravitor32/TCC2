@@ -289,6 +289,15 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         Tambem: latencia ate a telemetria e LIMITE SUPERIOR do RNF03 (inclui
         a leitura do sensor), interpretacao da IA.
 
+[ ] C28. CT18 (04/10/2026, DIVERGENCIAS 66): o no aplicou o pleno 15,0 s apos o
+        ultimo comando (RNF07 cumprido), mas o SENSOR so confirmou o pleno
+        17,3 s apos o ultimo comando (~15,4 s apos a parada do servico). O
+        Quadro 17 diz "no pleno em ate 15 s, medido pelo sensor". DECIDIR:
+        (a) declarar o CT18 como nao atendido pelo texto estrito, explicando
+        os 2,3 s de leitura; ou (b) reescrever o criterio do CT18 para medir
+        a troca de nivel (e o sensor como confirmacao), declarando que a
+        mudanca de criterio foi feita depois do ensaio. A IA nao escolheu.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

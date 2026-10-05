@@ -1,0 +1,29 @@
+publicando volume 0 nos trechos [20159, 22661, 21198] a cada 5 min; piso = 0.5
+  23:30:47 nivel emitido 1.0
+  23:31:02 nivel emitido 0.984
+  23:31:18 nivel emitido 0.952
+  23:31:33 nivel emitido 0.928
+  23:31:48 nivel emitido 0.904
+  23:32:03 nivel emitido 0.88
+  23:32:19 nivel emitido 0.856
+  23:32:34 nivel emitido 0.832
+  23:32:49 nivel emitido 0.808
+  23:33:04 nivel emitido 0.784
+  23:33:19 nivel emitido 0.76
+  23:33:35 nivel emitido 0.736
+  23:33:50 nivel emitido 0.712
+  23:34:05 nivel emitido 0.688
+  23:34:20 nivel emitido 0.664
+  23:34:35 nivel emitido 0.64
+  23:34:50 nivel emitido 0.616
+  23:35:05 nivel emitido 0.592
+  23:35:21 nivel emitido 0.568
+  23:35:36 nivel emitido 0.544
+  23:35:51 nivel emitido 0.515
+  23:36:06 nivel emitido 0.5
+
+NO PISO. Agora, na VM:  docker compose -f docker-compose.prod.yml stop decisao
+e acompanhe o Monitor Serial: em ate 15 s deve aparecer FAILSAFE e o lux voltar a ~10.
+Depois:  docker compose -f docker-compose.prod.yml start decisao
+
+[exited with code 0]

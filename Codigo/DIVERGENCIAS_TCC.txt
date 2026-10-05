@@ -2057,8 +2057,23 @@ CT20:    APROVADO. No simulado (simulador/no_simulado.py, lux SINTETICO)
          em b4bd2c6, sem alteracoes; conteiner do servico iniciado antes do
          teste, sem rebuild (o servico ja decidia para o SIMULADO-02, por
          estar cadastrado). (bancada/resultados/ct20_segundo_no_*.json)
-TEXTO:   PENDENTE: 4.10 (CT15, CT16, CT17, CT19, CT20) e 5.3 (latencia e
-         falha induzida). Falta o CT18 (failsafe partindo do piso).
+CT18:    Volume zero publicado nos 3 trechos: o no desceu de 1,0 a 0,5
+         (5,1 lux) entre 02:30:47 e 02:36:06 UTC (5,3 min, rampa da norma).
+         Servico parado na VM (docker compose stop decisao, concluido
+         02:36:18,8 UTC da VM). Serial (relogio do notebook, ~1,05 s adiantado
+         em relacao a VM): ultimo comando 02:36:18,020; FAILSAFE 02:36:33,022
+         = 15,0 s sem comando, nivel 1,0 aplicado; primeira leitura ainda da
+         luz antiga (5,09 lx, conversao anterior a troca); primeira leitura no
+         pleno 02:36:35,289: 10,19 lx = 17,3 s apos o ultimo comando, ~15,4 s
+         apos a parada do servico. Servico religado: a rampa recomecou do
+         pleno (0,992, 0,984...), como no CT07.
+         LEITURA HONESTA: o RNF07 ("sem comando por 15 s, assume o pleno") foi
+         cumprido (15,0 s). O criterio do Quadro 17 diz "no pleno em ate 15 s,
+         medido pelo sensor": a CONFIRMACAO pelo sensor veio 17,3 s apos o
+         ultimo comando (o sensor leva ~2,3 s para ler a luz nova). Pelo texto
+         estrito do CT18, nao atende; decisao do autor (REVISAR C28).
+         (bancada/resultados/ct18_serial_*.log e ct18_piso_*.txt)
+TEXTO:   PENDENTE: 4.10 (CT15 a CT20) e 5.3 (latencia e falha induzida).
 
 ===============================================================================
 FIM
