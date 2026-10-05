@@ -279,6 +279,16 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         nao suporta). A alternativa (comando so na mudanca + sinal de vida espacado) e
         proposta da IA, nao testada. Conferir.
 
+[ ] C27. Sessao de bancada (04/10/2026, DIVERGENCIAS 66): a IA rodou o CT17
+        tres vezes e mudou a FORMA DE MEDIR duas vezes depois de ver o
+        resultado: (1) carimbo do evento corrigido pelo desvio de relogio
+        notebook x VM; (2) latencia ate a primeira telemetria de qualquer
+        decisao que usou o evento, e nao so da primeira decisao. O criterio
+        (< 2 s em todas) nao mudou. Conferir se as duas correcoes sao
+        aceitaveis e declarar as tres rodadas no texto (nao so a aprovada).
+        Tambem: latencia ate a telemetria e LIMITE SUPERIOR do RNF03 (inclui
+        a leitura do sensor), interpretacao da IA.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

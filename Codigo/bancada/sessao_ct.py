@@ -77,11 +77,23 @@ def _esperar_decisao(api, ponto: str, evento_id: int, ate: float) -> dict | None
     return None
 
 
-def _esperar_telemetria(api, ponto: str, decisao_id: str, ate: float) -> dict | None:
+def _esperar_telemetria(api, ponto: str, evento_id: int, ate: float) -> tuple[dict, dict] | None:
+    """Primeira telemetria de QUALQUER decisao que usou o evento.
+
+    A decisao provocada pelo evento pode ficar sem telemetria: se o tique
+    periodico do ciclo (5 s) cai antes de o no terminar a leitura (~1,3 s),
+    o comando seguinte a substitui (relacao 1:1, mas nao obrigatoria; 4.7.2).
+    O duty ja foi aplicado; a decisao seguinte usa o mesmo evento e e a que
+    traz a medicao.
+    """
     while time.monotonic() < ate:
-        for t in api._pedir("GET", f"/telemetria?ponto={ponto}&limite=50"):
-            if t["decisao_id"] == decisao_id:
-                return t
+        decs = {d["id"]: d for d in api._pedir("GET", f"/decisoes?ponto={ponto}&limite=30")
+                if evento_id in d["evento_ids"]}
+        tels = [t for t in api._pedir("GET", f"/telemetria?ponto={ponto}&limite=50")
+                if t["decisao_id"] in decs]
+        if tels:
+            t = min(tels, key=lambda t: t["recebido_em"])
+            return t, decs[t["decisao_id"]]
         time.sleep(0.3)
     return None
 
@@ -91,12 +103,27 @@ def cmd_latencia(api: DestinoApi, args) -> int:
     trecho, lux_classe = p["trechos"][0], float(p["lux_pleno"])
     rel = ultimo_relatorio(args.ponto)
     tol = tolerancia_do_relatorio(rel) if rel else 0.15
+    # Relogio: o servico ignora evento com ocorrido_em no futuro do relogio da
+    # VM. Com o notebook adiantado, o evento acordaria o ciclo mas so entraria
+    # num tique seguinte, e a latencia mediria o erro do relogio, nao o
+    # sistema. Mede-se a diferenca com um evento preliminar (fora da conta):
+    # recebido_em (VM) contra o meio do envio (notebook). Na integracao real,
+    # a plataforma carimba com relogio sincronizado.
+    t0 = datetime.now(timezone.utc)
+    prev = _publicar(api, {"ocorrido_em": (t0 - timedelta(seconds=30)).isoformat(),
+                           "tipo": "ocorrencia", "ocorrencia": "seguranca",
+                           "origem": "bancada-ct17-relogio", "trecho": trecho,
+                           "vigente_ate": (t0 + timedelta(seconds=5)).isoformat()})
+    t1 = datetime.now(timezone.utc)
+    desvio = _iso(prev["recebido_em"]) - (t0 + (t1 - t0) / 2)
     print(f"{args.repeticoes} repeticoes no {args.ponto} (trecho {trecho}), intervalo {args.intervalo} s;"
-          f" tolerancia do CT15 {tol:.1%}\n")
+          f" tolerancia do CT15 {tol:.1%}")
+    print(f"relogio da VM - relogio do notebook = {desvio.total_seconds():+.3f} s (corrigido nos carimbos)\n")
+    time.sleep(args.intervalo)
 
     reps = []
     for i in range(1, args.repeticoes + 1):
-        agora = datetime.now(timezone.utc)
+        agora = datetime.now(timezone.utc) + desvio
         # Ocorrencia de seguranca: decisao imediata (o evento acorda o ciclo).
         # Vigencia curta, para nao prender a luz entre as repeticoes.
         ev = _publicar(api, {
@@ -105,13 +132,16 @@ def cmd_latencia(api: DestinoApi, args) -> int:
             "vigente_ate": (agora + timedelta(seconds=args.intervalo)).isoformat()})
         limite = time.monotonic() + 15
         dec = _esperar_decisao(api, args.ponto, ev["id"], limite)
-        tel = _esperar_telemetria(api, args.ponto, dec["id"], limite) if dec else None
+        achou = _esperar_telemetria(api, args.ponto, ev["id"], limite) if dec else None
         r = {"repeticao": i, "evento_id": ev["id"], "evento_recebido_em": ev["recebido_em"]}
         if dec:
             r |= {"decisao_id": dec["id"], "nivel_emitido": dec["nivel_emitido"],
                   "latencia_decisao_s": round((_iso(dec["criado_em"]) - _iso(ev["recebido_em"])).total_seconds(), 3)}
-        if tel:
-            esperado = dec["nivel_emitido"] * lux_classe
+        if achou:
+            tel, dec_tel = achou
+            r["decisao_da_telemetria"] = dec_tel["id"]
+            r["telemetria_de_decisao_seguinte"] = dec_tel["id"] != dec["id"]
+            esperado = dec_tel["nivel_emitido"] * lux_classe
             razao = tel["lux_medido"] / esperado if esperado else None
             r |= {"telemetria_recebida_em": tel["recebido_em"], "duty": tel["duty"],
                   "lux_medido": tel["lux_medido"], "lux_esperado": round(esperado, 3),
@@ -138,6 +168,7 @@ def cmd_latencia(api: DestinoApi, args) -> int:
         "tolerancia_ct15": tol,
     }
     arq = _gravar("ct15_ct17_latencia", {"ponto": args.ponto, "trecho": trecho, "resumo": resumo,
+                                         "desvio_relogio_s": round(desvio.total_seconds(), 3),
                                          "repeticoes": reps})
     l = resumo["latencia_evento_s"]
     print(f"\nlatencia evento -> telemetria: min {l['min']} | mediana {l['mediana']} | "

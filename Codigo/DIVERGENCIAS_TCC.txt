@@ -2015,6 +2015,40 @@ TEXTO:   PENDENTE: Quadro 14 (4.6.2) ganha os dois POST de /bancada, com a
          no inicio de cada sessao (3.4.3 ou 3.4.4). Fazer junto com a rodada
          da bancada (CT15-CT20).
 
+-------------------------------------------------------------------------------
+66. SESSAO DE BANCADA: CT19, CT15 E CT17 (04/10/2026)
+-------------------------------------------------------------------------------
+CODIGO:  bancada/sessao_ct.py e bancada/ROTEIRO_SESSAO_CT15_CT20.md. No real
+         (BANCADA-01) ligado a VM, conferencia aprovada antes (sessao 112).
+CT19:    APROVADO. Sem credencial e com senha errada: recusado ("Not
+         authorized"); com a credencial do no: aceito, TLS 1.3.
+CT15/17: TRES rodadas de 30 repeticoes, todas guardadas em
+         bancada/resultados/ct15_ct17_latencia_*.json:
+         1a (223022): 2,3 a 7,1 s, REPROVADO. Causa: relogio do notebook
+            ~1 s adiantado; o servico ignora evento com ocorrido_em no futuro
+            do seu relogio (ocorrido_em <= agora) e so o usa num tique
+            seguinte do ciclo de 5 s. ACHADO: evento com carimbo adiantado e
+            adiado ate o relogio do servico alcanca-lo; a especificacao (3.5.2)
+            supoe a plataforma com relogio sincronizado.
+         2a (224135): carimbo corrigido pelo desvio medido (VM - notebook =
+            -1,05 s); 0,94 a 1,42 s, mas 6 repeticoes sem telemetria da
+            decisao provocada pelo evento: o tique periodico caiu antes de o
+            no terminar a leitura (~1,3 s) e a substituiu (1:1 nao
+            obrigatoria, 4.7.2). REPROVADO pela regra do script.
+         3a (225239): mede ate a primeira telemetria de QUALQUER decisao que
+            usou o evento (4 das 30 vieram da decisao seguinte). Latencia
+            evento -> telemetria: min 0,977, mediana 1,233, p95 1,507, max
+            1,929 s; 30/30 < 2 s: CT17 APROVADO. Lux 10,3 de 10,0 (+3,0 %) em
+            todas: CT15 APROVADO (tolerancia 3,4 %).
+         ATENCAO: as duas correcoes de MEDICAO foram feitas depois de ver o
+         resultado (o criterio, < 2 s em todas, nao mudou). Declarar as tres
+         rodadas no texto. A latencia vai ate a TELEMETRIA (inclui a leitura
+         do sensor): limite superior do tempo ate o duty aplicado. O CT15 so
+         exercitou o nivel 1,0 (ocorrencia leva ao pleno); os tres niveis
+         foram conferidos na conferencia. O maximo (1,929 s) esta perto do
+         limite.
+TEXTO:   PENDENTE: 4.10 (CT15, CT17, CT19) e 5.3 (distribuicao da latencia).
+
 ===============================================================================
 FIM
 ===============================================================================
