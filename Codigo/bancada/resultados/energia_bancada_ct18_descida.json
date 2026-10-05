@@ -1,0 +1,556 @@
+{
+ "inicio": "2026-10-05T02:30:40Z",
+ "fim": "2026-10-05T02:36:18Z",
+ "potencia_segmento_w": 0.864,
+ "duty_pleno": 0.5743589743589743,
+ "amostras": 68,
+ "E_duty_wh": 0.034379290294920005,
+ "E_lux_wh": 0.03483472465604923,
+ "E_pleno_wh": 0.04544606479753846,
+ "telemetria": [
+  {
+   "decisao_id": "2df21136-ef85-4502-8c14-212be597fb03",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:30:43Z",
+   "recebido_em": "2026-10-05T02:30:43.209491Z",
+   "duty": 0.5744,
+   "lux_medido": 10.3
+  },
+  {
+   "decisao_id": "a9511640-288f-44bd-b947-6cf53260d62f",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:30:48Z",
+   "recebido_em": "2026-10-05T02:30:48.102713Z",
+   "duty": 0.5744,
+   "lux_medido": 10.3
+  },
+  {
+   "decisao_id": "bc9a9aa3-3c7b-4015-8197-bb950728e33f",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:30:52Z",
+   "recebido_em": "2026-10-05T02:30:52.995098Z",
+   "duty": 0.5705,
+   "lux_medido": 10.19
+  },
+  {
+   "decisao_id": "ed0cff96-0ffc-45ba-9b84-f27c95b1800a",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:30:57Z",
+   "recebido_em": "2026-10-05T02:30:57.886610Z",
+   "duty": 0.5665,
+   "lux_medido": 10.07
+  },
+  {
+   "decisao_id": "59ebfab8-a335-41a4-8d67-0a3634fa889e",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:03Z",
+   "recebido_em": "2026-10-05T02:31:03.225126Z",
+   "duty": 0.5626,
+   "lux_medido": 10.07
+  },
+  {
+   "decisao_id": "3e1344ce-6059-4127-b506-d90a6ec77bb9",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:08Z",
+   "recebido_em": "2026-10-05T02:31:08.114837Z",
+   "duty": 0.5582,
+   "lux_medido": 9.96
+  },
+  {
+   "decisao_id": "8581a6bb-f482-47da-9bdd-112e1501c64b",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:12Z",
+   "recebido_em": "2026-10-05T02:31:13.005290Z",
+   "duty": 0.5538,
+   "lux_medido": 9.85
+  },
+  {
+   "decisao_id": "1e2bdc91-6d72-438b-be53-392e8bd5e263",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:18Z",
+   "recebido_em": "2026-10-05T02:31:18.365774Z",
+   "duty": 0.5495,
+   "lux_medido": 9.85
+  },
+  {
+   "decisao_id": "848fb848-a8ba-47f9-a01c-9e83e18e0e3f",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:23Z",
+   "recebido_em": "2026-10-05T02:31:23.244455Z",
+   "duty": 0.5451,
+   "lux_medido": 9.73
+  },
+  {
+   "decisao_id": "3d828133-e70b-4342-aadd-d4b7c76fb58e",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:28Z",
+   "recebido_em": "2026-10-05T02:31:28.142623Z",
+   "duty": 0.5409,
+   "lux_medido": 9.62
+  },
+  {
+   "decisao_id": "b7453f38-4834-4102-ac42-069249b7360a",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:33Z",
+   "recebido_em": "2026-10-05T02:31:33.034484Z",
+   "duty": 0.5365,
+   "lux_medido": 9.51
+  },
+  {
+   "decisao_id": "1e4e02e2-5bd8-4333-91ca-b8908b3a64c9",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:37Z",
+   "recebido_em": "2026-10-05T02:31:37.952492Z",
+   "duty": 0.5321,
+   "lux_medido": 9.51
+  },
+  {
+   "decisao_id": "aa9800eb-92bd-4e4f-b3a2-40d4e57790da",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:43Z",
+   "recebido_em": "2026-10-05T02:31:43.302567Z",
+   "duty": 0.5277,
+   "lux_medido": 9.39
+  },
+  {
+   "decisao_id": "7d185d6f-4813-4776-8cc0-904a925a9786",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:48Z",
+   "recebido_em": "2026-10-05T02:31:48.172516Z",
+   "duty": 0.5233,
+   "lux_medido": 9.28
+  },
+  {
+   "decisao_id": "5e454b4b-4b40-48dd-bd97-3dc719c8b3bd",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:53Z",
+   "recebido_em": "2026-10-05T02:31:53.066358Z",
+   "duty": 0.5189,
+   "lux_medido": 9.17
+  },
+  {
+   "decisao_id": "810c998c-a463-463c-9596-794c2e97e422",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:31:57Z",
+   "recebido_em": "2026-10-05T02:31:57.955161Z",
+   "duty": 0.5148,
+   "lux_medido": 9.17
+  },
+  {
+   "decisao_id": "824551db-3fbe-48eb-b783-bae293d757d4",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:03Z",
+   "recebido_em": "2026-10-05T02:32:03.294501Z",
+   "duty": 0.5104,
+   "lux_medido": 9.06
+  },
+  {
+   "decisao_id": "79a53062-7481-4b4f-8c8b-89702c931ae4",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:08Z",
+   "recebido_em": "2026-10-05T02:32:08.200460Z",
+   "duty": 0.506,
+   "lux_medido": 8.94
+  },
+  {
+   "decisao_id": "b26f7dcb-4dd7-4886-ac24-e6be995bbae4",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:13Z",
+   "recebido_em": "2026-10-05T02:32:13.096513Z",
+   "duty": 0.5016,
+   "lux_medido": 8.94
+  },
+  {
+   "decisao_id": "53fafd41-4bfa-497d-ba4f-589cd0151fda",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:17Z",
+   "recebido_em": "2026-10-05T02:32:17.984514Z",
+   "duty": 0.4969,
+   "lux_medido": 8.83
+  },
+  {
+   "decisao_id": "4eb9fea2-f2ae-473f-86c0-0672bdeaba31",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:22Z",
+   "recebido_em": "2026-10-05T02:32:22.874698Z",
+   "duty": 0.4921,
+   "lux_medido": 8.72
+  },
+  {
+   "decisao_id": "c3b7f798-bc68-4e4f-878d-bd1487a20994",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:28Z",
+   "recebido_em": "2026-10-05T02:32:28.210729Z",
+   "duty": 0.4872,
+   "lux_medido": 8.6
+  },
+  {
+   "decisao_id": "c47ca96b-39a0-45f6-a532-0d8bb2e166ca",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:33Z",
+   "recebido_em": "2026-10-05T02:32:33.106422Z",
+   "duty": 0.4823,
+   "lux_medido": 8.49
+  },
+  {
+   "decisao_id": "302331ee-96bd-4a13-9d24-3266643cc9e0",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:37Z",
+   "recebido_em": "2026-10-05T02:32:37.995230Z",
+   "duty": 0.4774,
+   "lux_medido": 8.49
+  },
+  {
+   "decisao_id": "bcd5a337-88b4-4b4f-bff6-6d07c3f6a224",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:43Z",
+   "recebido_em": "2026-10-05T02:32:43.332694Z",
+   "duty": 0.4725,
+   "lux_medido": 8.38
+  },
+  {
+   "decisao_id": "3973751e-8a8a-40c4-86e8-538a5732dea0",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:48Z",
+   "recebido_em": "2026-10-05T02:32:48.230646Z",
+   "duty": 0.4676,
+   "lux_medido": 8.26
+  },
+  {
+   "decisao_id": "afa19280-5891-42fe-9c17-d4f87c7baa8c",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:53Z",
+   "recebido_em": "2026-10-05T02:32:53.120268Z",
+   "duty": 0.4632,
+   "lux_medido": 8.15
+  },
+  {
+   "decisao_id": "7937157e-f196-400d-b1c3-de11ccafb5be",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:32:57Z",
+   "recebido_em": "2026-10-05T02:32:58.018581Z",
+   "duty": 0.4589,
+   "lux_medido": 8.15
+  },
+  {
+   "decisao_id": "ec1f0d13-eb3b-4968-b45a-3a4f8d071657",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:02Z",
+   "recebido_em": "2026-10-05T02:33:02.912266Z",
+   "duty": 0.4545,
+   "lux_medido": 8.04
+  },
+  {
+   "decisao_id": "c7e196a7-8622-4d0c-8a21-6bfeac0ace24",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:08Z",
+   "recebido_em": "2026-10-05T02:33:08.260422Z",
+   "duty": 0.4501,
+   "lux_medido": 7.92
+  },
+  {
+   "decisao_id": "f94169ce-40b6-4a7b-bd3b-0789fd25521b",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:13Z",
+   "recebido_em": "2026-10-05T02:33:13.148571Z",
+   "duty": 0.4457,
+   "lux_medido": 7.92
+  },
+  {
+   "decisao_id": "a4be2d8c-2662-4354-bc2b-8cca46609aef",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:18Z",
+   "recebido_em": "2026-10-05T02:33:18.037280Z",
+   "duty": 0.4413,
+   "lux_medido": 7.81
+  },
+  {
+   "decisao_id": "f4c2b985-9c0c-4097-8d82-327d903949c2",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:22Z",
+   "recebido_em": "2026-10-05T02:33:22.934677Z",
+   "duty": 0.4369,
+   "lux_medido": 7.7
+  },
+  {
+   "decisao_id": "b15515b9-b809-4964-a3ec-9b15c8b7bf1c",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:28Z",
+   "recebido_em": "2026-10-05T02:33:28.268510Z",
+   "duty": 0.4322,
+   "lux_medido": 7.58
+  },
+  {
+   "decisao_id": "1e80b107-17da-4108-8125-b866a799cb6e",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:33Z",
+   "recebido_em": "2026-10-05T02:33:33.164941Z",
+   "duty": 0.4274,
+   "lux_medido": 7.47
+  },
+  {
+   "decisao_id": "86eafada-be28-4dfa-b36a-8967cbfb7e3c",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:38Z",
+   "recebido_em": "2026-10-05T02:33:38.052551Z",
+   "duty": 0.4227,
+   "lux_medido": 7.47
+  },
+  {
+   "decisao_id": "13d5abac-8c34-4c32-a0e5-5335b31b5627",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:42Z",
+   "recebido_em": "2026-10-05T02:33:42.943962Z",
+   "duty": 0.4178,
+   "lux_medido": 7.36
+  },
+  {
+   "decisao_id": "9030ff80-0bbf-4d1c-8459-c7546b825fc2",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:48Z",
+   "recebido_em": "2026-10-05T02:33:48.286425Z",
+   "duty": 0.4132,
+   "lux_medido": 7.24
+  },
+  {
+   "decisao_id": "33cafae5-5fd2-4433-b994-2be29774edf6",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:53Z",
+   "recebido_em": "2026-10-05T02:33:53.178592Z",
+   "duty": 0.4083,
+   "lux_medido": 7.13
+  },
+  {
+   "decisao_id": "40d29705-ce42-4124-8af1-81188ed3f0d5",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:33:58Z",
+   "recebido_em": "2026-10-05T02:33:58.077001Z",
+   "duty": 0.4037,
+   "lux_medido": 7.13
+  },
+  {
+   "decisao_id": "09000114-e80a-4644-a204-f23ce17fac49",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:02Z",
+   "recebido_em": "2026-10-05T02:34:02.972908Z",
+   "duty": 0.3993,
+   "lux_medido": 7.02
+  },
+  {
+   "decisao_id": "c41dc3e9-d022-453e-b468-0190d18fdcbe",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:08Z",
+   "recebido_em": "2026-10-05T02:34:08.312627Z",
+   "duty": 0.3949,
+   "lux_medido": 6.9
+  },
+  {
+   "decisao_id": "49513b5a-7099-4a5d-aa8a-8d545a51d74b",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:13Z",
+   "recebido_em": "2026-10-05T02:34:13.209957Z",
+   "duty": 0.3905,
+   "lux_medido": 6.79
+  },
+  {
+   "decisao_id": "a62d198f-6ba2-4eb5-98d3-8f0e88e23215",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:18Z",
+   "recebido_em": "2026-10-05T02:34:18.110621Z",
+   "duty": 0.3861,
+   "lux_medido": 6.79
+  },
+  {
+   "decisao_id": "6b191294-0f32-4d51-8ec7-98bf7cd7a0ac",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:22Z",
+   "recebido_em": "2026-10-05T02:34:22.999177Z",
+   "duty": 0.3817,
+   "lux_medido": 6.68
+  },
+  {
+   "decisao_id": "9c6f856a-fd8c-4b06-8cae-c8fc8a56f160",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:27Z",
+   "recebido_em": "2026-10-05T02:34:27.890497Z",
+   "duty": 0.3773,
+   "lux_medido": 6.56
+  },
+  {
+   "decisao_id": "60ae62f6-7adc-4656-8514-28b7d8042548",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:33Z",
+   "recebido_em": "2026-10-05T02:34:33.238845Z",
+   "duty": 0.3729,
+   "lux_medido": 6.56
+  },
+  {
+   "decisao_id": "3a7b8648-0880-4946-bbea-0adefa8f21e2",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:38Z",
+   "recebido_em": "2026-10-05T02:34:38.128607Z",
+   "duty": 0.3683,
+   "lux_medido": 6.45
+  },
+  {
+   "decisao_id": "a08d43c6-ec77-406e-aa10-dd8b9fa9ec11",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:42Z",
+   "recebido_em": "2026-10-05T02:34:43.020449Z",
+   "duty": 0.3639,
+   "lux_medido": 6.34
+  },
+  {
+   "decisao_id": "49dc7964-c35f-43be-a595-3182ee18cbc0",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:47Z",
+   "recebido_em": "2026-10-05T02:34:47.918813Z",
+   "duty": 0.3592,
+   "lux_medido": 6.23
+  },
+  {
+   "decisao_id": "47664c67-8a8d-49cf-bd9f-476d50b88306",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:53Z",
+   "recebido_em": "2026-10-05T02:34:53.257952Z",
+   "duty": 0.3546,
+   "lux_medido": 6.23
+  },
+  {
+   "decisao_id": "e77e1f1a-7d04-4a02-b028-ea25ca190db3",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:34:58Z",
+   "recebido_em": "2026-10-05T02:34:58.154643Z",
+   "duty": 0.3502,
+   "lux_medido": 6.11
+  },
+  {
+   "decisao_id": "fdb8fefa-f184-40da-b0dd-096d056465dc",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:03Z",
+   "recebido_em": "2026-10-05T02:35:03.047295Z",
+   "duty": 0.3455,
+   "lux_medido": 6.0
+  },
+  {
+   "decisao_id": "1acc8bed-2b9c-43c3-b342-6aa5257206a7",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:07Z",
+   "recebido_em": "2026-10-05T02:35:07.940376Z",
+   "duty": 0.3411,
+   "lux_medido": 5.89
+  },
+  {
+   "decisao_id": "eb1e0eca-8b4e-4f50-88a3-31722380db77",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:13Z",
+   "recebido_em": "2026-10-05T02:35:13.280751Z",
+   "duty": 0.3368,
+   "lux_medido": 5.89
+  },
+  {
+   "decisao_id": "ab5c795b-d997-4fe3-92dc-d385675df22e",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:18Z",
+   "recebido_em": "2026-10-05T02:35:18.176821Z",
+   "duty": 0.3324,
+   "lux_medido": 5.77
+  },
+  {
+   "decisao_id": "78a92c5a-c9b2-4cf2-b90f-f2f75eb5b7ca",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:23Z",
+   "recebido_em": "2026-10-05T02:35:23.069248Z",
+   "duty": 0.328,
+   "lux_medido": 5.66
+  },
+  {
+   "decisao_id": "dd2d6f41-60e3-46e7-9a3e-aa4d816482cb",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:27Z",
+   "recebido_em": "2026-10-05T02:35:27.966587Z",
+   "duty": 0.3236,
+   "lux_medido": 5.66
+  },
+  {
+   "decisao_id": "61fea162-787e-4ced-8e76-8b90725dbd04",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:33Z",
+   "recebido_em": "2026-10-05T02:35:33.301636Z",
+   "duty": 0.3192,
+   "lux_medido": 5.55
+  },
+  {
+   "decisao_id": "ccd15cef-c72e-4da2-891e-28ce209205b7",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:38Z",
+   "recebido_em": "2026-10-05T02:35:38.196474Z",
+   "duty": 0.3148,
+   "lux_medido": 5.43
+  },
+  {
+   "decisao_id": "95aa9a7b-5852-4f72-8197-3cb5c72f737b",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:43Z",
+   "recebido_em": "2026-10-05T02:35:43.093690Z",
+   "duty": 0.3106,
+   "lux_medido": 5.43
+  },
+  {
+   "decisao_id": "c5e17cfc-20ac-47f4-b863-2eb932ec9a41",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:47Z",
+   "recebido_em": "2026-10-05T02:35:47.978912Z",
+   "duty": 0.3067,
+   "lux_medido": 5.32
+  },
+  {
+   "decisao_id": "26b459b0-7f4e-47d7-82bf-fac8087abbba",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:51Z",
+   "recebido_em": "2026-10-05T02:35:51.534894Z",
+   "duty": 0.3045,
+   "lux_medido": 5.32
+  },
+  {
+   "decisao_id": "668996e4-52db-4070-abe1-9d41ebd90a59",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:53Z",
+   "recebido_em": "2026-10-05T02:35:53.314398Z",
+   "duty": 0.3035,
+   "lux_medido": 5.32
+  },
+  {
+   "decisao_id": "5eebeb34-1eeb-4a64-8ff5-733467e2f017",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:35:58Z",
+   "recebido_em": "2026-10-05T02:35:58.210836Z",
+   "duty": 0.2996,
+   "lux_medido": 5.21
+  },
+  {
+   "decisao_id": "bdc70f06-1988-4670-8f42-08f49dcdedb3",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:36:03Z",
+   "recebido_em": "2026-10-05T02:36:03.103412Z",
+   "duty": 0.2972,
+   "lux_medido": 5.21
+  },
+  {
+   "decisao_id": "0b4d5f62-4716-44d1-ba09-d28602540eb5",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:36:07Z",
+   "recebido_em": "2026-10-05T02:36:07.998569Z",
+   "duty": 0.2972,
+   "lux_medido": 5.09
+  },
+  {
+   "decisao_id": "47bd81ad-095a-4cbf-88bf-c7bd09b1d8ab",
+   "ponto": "BANCADA-01",
+   "medido_em": "2026-10-05T02:36:12Z",
+   "recebido_em": "2026-10-05T02:36:12.896345Z",
+   "duty": 0.2972,
+   "lux_medido": 5.21
+  }
+ ]
+}

@@ -298,6 +298,16 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         a troca de nivel (e o sensor como confirmacao), declarando que a
         mudanca de criterio foi feita depois do ensaio. A IA nao escolheu.
 
+[ ] C29. v17 (05/10/2026): a IA redigiu 4.10, 5.3 e a energia de bancada em 5.5
+        a partir dos registros da sessao (DIVERGENCIAS 66). Interpretacoes da
+        IA a conferir: (1) latencia ate a telemetria como "limite superior" do
+        RNF03; (2) "a resposta imediata pressupoe relogios sincronizados" como
+        condicao da integracao; (3) energia de bancada: a estimativa "pela
+        luz" supoe potencia proporcional a luz (duty do pleno x lux/10) e
+        "proxima ... de 75 %" compara com a formula de 3.11; (4) CT18
+        declarado nao satisfeito (opcao a do C28, escolha do autor). Tambem
+        3.4.4 (conferencia) e a linha nova do Quadro 14 sao texto da IA.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

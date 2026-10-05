@@ -4,7 +4,7 @@ Responda sempre em **português do Brasil**. O autor é iniciante em eletrônica
 
 ## Fonte da verdade
 
-> **Estado em 02/10/2026:** a versão mais recente do texto é a **v16** (`..._SP_v16.docx`), que acumula todas as rodadas; as versões v4 a v16 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
+> **Estado em 02/10/2026:** a versão mais recente do texto é a **v17** (`..._SP_v17.docx`), que acumula todas as rodadas; as versões v4 a v17 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
 
 A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v2.docx` (26/09/2026, com as duas rodadas de revisão aceitas pelo autor). **Siga o TCC.**
 
@@ -23,7 +23,8 @@ A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Tra
 - `..._SP_v13_revisado.docx` = v12 aceito + separação, em 6.3, da limitação que juntava controle coordenado, tensão de rede e proteção de dados (02/10/2026): viraram dois itens, e a tensão de rede saiu, por já constar do item do nó em baixa tensão. `..._SP_v13.docx` = a mesma com tudo aceito.
 - `..._SP_v14_revisado.docx` = v13 aceito + origem contratual da NBR 5101 (03/10/2026, pergunta do orientador): parágrafo novo em 2.5 (a norma obriga pelo contrato, cláusula 11.2, e pelo Caderno, itens 6.2 e 6.5; indicador NI do Anexo V afere em campo e afeta a remuneração), limitação nova em 6.3 (o NI não diz contra qual classe se afere um ponto dimerizado) e a referência de 2015 passa a cobrir os Anexos III e V. `..._SP_v14.docx` = a mesma com tudo aceito.
 - `..._SP_v15_revisado.docx` = v14 aceito + correção em 3.5.2 (03/10/2026): a validade do volume (15 min) segue a mesma lógica do failsafe do nó, mas o failsafe é de **15 s** (comando a cada 5 s); vírgula dupla no RNF07. `..._SP_v15.docx` = a mesma com tudo aceito.
-- `..._SP_v16_revisado.docx` = v15 aceito + limitação em 6.3 (03/10/2026): comando a cada 5 s é cadência de bancada; no parque (~120 mil comandos/s) exigiria comando só na mudança + sinal de vida espaçado, não implementado. `..._SP_v16.docx` = a mesma com tudo aceito (**a mais recente**).
+- `..._SP_v16_revisado.docx` = v15 aceito + limitação em 6.3 (03/10/2026): comando a cada 5 s é cadência de bancada; no parque (~120 mil comandos/s) exigiria comando só na mudança + sinal de vida espaçado, não implementado. `..._SP_v16.docx` = a mesma com tudo aceito.
+- `..._SP_v17_revisado.docx` = v16 aceito + resultados da sessão de bancada (05/10/2026, itens 65 e 66): 4.10 com CT15–CT20 (**CT18 não satisfeito** pelo texto estrito, decisão do autor: failsafe em 15,0 s, sensor em 17,3 s), 5.3 (latência 0,98–1,93 s, três execuções declaradas, falha induzida, failsafe), energia de bancada em 5.5, conferência da calibração em 3.4.4 (tabela na memória do nó) e POST /bancada no Quadro 14. `..._SP_v17.docx` = a mesma com tudo aceito (**a mais recente**).
 - Novas mudanças no texto: com controle de alterações, sobre a versão com tudo aceito, salvando como arquivo novo (nunca sobrescrever a versão vigente).
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
