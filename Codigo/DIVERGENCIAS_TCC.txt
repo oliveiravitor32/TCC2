@@ -2051,8 +2051,14 @@ CT16:    APROVADO. Fonte de 12 V retirada com o ESP32 no USB: alerta 4
          falha_total aberto apos 3 ciclos (razao 0,0; 02:16:38 UTC) e
          encerrado ao religar (02:17:13 UTC), em ~35 s de falha.
          (bancada/resultados/ct16_alertas_20261004_231756.json)
-TEXTO:   PENDENTE: 4.10 (CT15, CT16, CT17, CT19) e 5.3 (latencia e falha
-         induzida).
+CT20:    APROVADO. No simulado (simulador/no_simulado.py, lux SINTETICO)
+         como SIMULADO-02, com credencial propria, ligado ao broker da VM:
+         recebeu decisoes e respondeu telemetria em segundos. Codigo da VM
+         em b4bd2c6, sem alteracoes; conteiner do servico iniciado antes do
+         teste, sem rebuild (o servico ja decidia para o SIMULADO-02, por
+         estar cadastrado). (bancada/resultados/ct20_segundo_no_*.json)
+TEXTO:   PENDENTE: 4.10 (CT15, CT16, CT17, CT19, CT20) e 5.3 (latencia e
+         falha induzida). Falta o CT18 (failsafe partindo do piso).
 
 ===============================================================================
 FIM

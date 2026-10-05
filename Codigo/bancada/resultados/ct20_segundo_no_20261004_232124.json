@@ -1,0 +1,10 @@
+{
+  "ponto": "SIMULADO-02",
+  "no": "simulador/no_simulado.py (lux sintetico)",
+  "codigo_vm": "b4bd2c6 (2026-10-04T18:16:00-03:00), sem alteracoes locais; conteiner decisao iniciado 2026-10-04T21:46:35Z, antes deste teste, sem rebuild",
+  "credencial": "propria do SIMULADO-02, criada antes por deploy/novo_no.sh",
+  "decisoes": 50,
+  "telemetrias": 5,
+  "primeira_decisao": "2026-10-05T02:17:16.901418Z",
+  "aprovado": true
+}

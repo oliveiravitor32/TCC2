@@ -14,6 +14,8 @@ cenarios/resultados/*.json
 firmware/no/segredos.h
 # Chave da API da VM para a conferencia de bancada (bancada/destino.py)
 bancada/chave_vm.txt
+# Senha do no simulado SIMULADO-02 no broker da VM (CT20)
+simulador/senha_simulado02.txt
 # Backups do banco (podem ter dados de bancada): fora do git
 backups/
 # Implantacao: segredos gerados por deploy/preparar.sh
