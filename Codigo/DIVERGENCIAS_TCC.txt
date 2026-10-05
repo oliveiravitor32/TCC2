@@ -1992,7 +1992,13 @@ CODIGO:  - firmware/no/no.ino ganhou modo MANUTENCAO pela serial, com os
            ponto_de_luz.estado_operacional; o ciclo ja pulava esses pontos.
          Teste: tests/test_conferir.py; execucao simulada de ponta a ponta
          (reprova a tabela da sessao 72 na curva sintetica, recalibra, aprova).
-         Firmware compilado (arduino-cli); FALTA gravar e testar no ESP32.
+         TESTADO NO ESP32 REAL (04/10/2026), com --vm: residual 0,00 lx;
+         pleno 10,21 lx (+2,1 %), intermediario 7,70 lx (+2,7 %), piso 5,11 lx
+         (+2,3 %) com a tabela da sessao 72; tolerancia 3,4 %; APROVADA,
+         sessao 112 no banco da VM (bancada/resultados/
+         conferencia_20261004_211601.json). Antes, o BH1750 nao respondia
+         (mau contato no VCC/GND, corrigido pelo autor); o firmware passou a
+         avisar uma vez em vez de repetir o erro a cada volta do loop.
          Com o no ligado a VM (sessao CT15-CT20, decisao do autor), a
          conferencia e a recalibracao gravam no banco da VM com --vm, pela
          API: POST /bancada/sessoes e POST /bancada/calibracoes, que aceitam
