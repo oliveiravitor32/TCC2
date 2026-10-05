@@ -2047,7 +2047,12 @@ CT15/17: TRES rodadas de 30 repeticoes, todas guardadas em
          exercitou o nivel 1,0 (ocorrencia leva ao pleno); os tres niveis
          foram conferidos na conferencia. O maximo (1,929 s) esta perto do
          limite.
-TEXTO:   PENDENTE: 4.10 (CT15, CT17, CT19) e 5.3 (distribuicao da latencia).
+CT16:    APROVADO. Fonte de 12 V retirada com o ESP32 no USB: alerta 4
+         falha_total aberto apos 3 ciclos (razao 0,0; 02:16:38 UTC) e
+         encerrado ao religar (02:17:13 UTC), em ~35 s de falha.
+         (bancada/resultados/ct16_alertas_20261004_231756.json)
+TEXTO:   PENDENTE: 4.10 (CT15, CT16, CT17, CT19) e 5.3 (latencia e falha
+         induzida).
 
 ===============================================================================
 FIM

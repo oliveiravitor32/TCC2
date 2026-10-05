@@ -1,0 +1,17 @@
+{
+  "ponto": "BANCADA-01",
+  "procedimento": "fonte de 12 V retirada da tomada com o ESP32 no USB e religada",
+  "alertas": [
+    {
+      "id": 4,
+      "ponto": "BANCADA-01",
+      "tipo": "falha_total",
+      "razao": 0.0,
+      "tolerancia": 0.034,
+      "ciclos": 3,
+      "aberto_em": "2026-10-05T02:16:38.309171Z",
+      "encerrado_em": "2026-10-05T02:17:13.015742Z"
+    }
+  ],
+  "aprovado": true
+}
