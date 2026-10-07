@@ -322,6 +322,15 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         leu em fontes secundarias: ler o resumo e a secao de resultados antes
         de citar.
 
+[ ] C31. Protocolo da troca para Zurique (DIVERGENCIAS 69,
+        modelo/PROTOCOLO_MODELO_ZURIQUE.md): todo o desenho e da IA. Escolhas
+        a conferir: sensor travado = zero por >= 8 h com horario entre 8h e
+        20h; horario de verao com MEDIA dos carimbos repetidos; realocacao
+        so reportada (faixa 0,5 a 2 x a mediana mensal); feriados do cantao
+        sem os meios feriados; noites de Zurique sorteadas pela mesma regra
+        e semente; referencia do trecho com 672 blocos de 15 min. A troca foi
+        decidida DEPOIS de ver o item 60 e a auditoria: declarar no texto.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

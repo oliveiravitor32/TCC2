@@ -2120,6 +2120,23 @@ LEITURA (regra do protocolo): XGBoost SUPERIOR ao linear (MAE 33,1 %
          referencia de 2.7 e nos tempos (previsao ~4 vezes mais rapida).
 TEXTO:   FEITO na v19: 2.7, 3.6, 5.1 e Quadro 22. A M5 ficou de fora (D14).
 
+-------------------------------------------------------------------------------
+69. TROCA DO MODELO PRINCIPAL PARA ZURIQUE 15 MIN (06/10/2026, decisao do autor)
+-------------------------------------------------------------------------------
+MOTIVO:  (1) o XGBoost so e insubstituivel com dado sub-horario (item 60);
+         (2) auditoria da preparacao (06/10/2026): na serie de Melbourne, o p99
+         de cada sensor e os tercis foram calculados sobre a serie INTEIRA,
+         inclusive o teste (vazamento; efeito no p99: mediana 0,8 %, maximo
+         6,6 %). Sem negativos, nulos, duplicados nem sensor travado (maior
+         sequencia de zero: 10 h); 8.527 horas acima do p99 e 139 acima de
+         2 x p99; realocacao de sensor nao verificada.
+PROTOCOLO: modelo/PROTOCOLO_MODELO_ZURIQUE.md, fixado ANTES de treinar,
+         codificar ou rodar (checklist de preparacao, feriados de Zurique,
+         p99 e tercis so no treino, comparacoes, servico em blocos de 15 min,
+         base v5-zurique com as mesmas regras, reexecucao da suite e da
+         avaliacao das IAs com noites de Zurique).
+ESTADO:  protocolo registrado; nada executado ainda.
+
 ===============================================================================
 FIM
 ===============================================================================
