@@ -311,8 +311,9 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
 [ ] C30. Comparacao XGBoost x linear x Random Forest (DIVERGENCIAS 68): desenho
         do experimento, hiperparametros da RF e o limiar de 2 % sao escolhas
         da IA, fixadas no protocolo antes de rodar. Resultado: XGBoost
-        superior ao linear e EQUIVALENTE a Random Forest. Conferir e decidir
-        como entra no texto.
+        superior ao linear e EQUIVALENTE a Random Forest. Na v19 a IA redigiu
+        2.7, 3.6 e 5.1; a frase "A permanencia do reforco de gradiente
+        apoia-se ... no menor custo de previsao" e justificativa da IA.
 [ ] D14. Fonte nova proposta pela IA: MAKRIDAKIS, S.; SPILIOTIS, E.;
         ASSIMAKOPOULOS, V. M5 accuracy competition: results, findings, and
         conclusions. International Journal of Forecasting, v. 38, n. 4,

@@ -2118,7 +2118,7 @@ LEITURA (regra do protocolo): XGBoost SUPERIOR ao linear (MAE 33,1 %
          menor); EQUIVALENTE a Random Forest em erro (0,5 %, abaixo de 2 %).
          Nao afirmar superioridade sobre a RF; a escolha se apoia na
          referencia de 2.7 e nos tempos (previsao ~4 vezes mais rapida).
-TEXTO:   PENDENTE (rodada seguinte): 2.7 (frase + M5) e 5.1 ou 5.6.
+TEXTO:   FEITO na v19: 2.7, 3.6, 5.1 e Quadro 22. A M5 ficou de fora (D14).
 
 ===============================================================================
 FIM
