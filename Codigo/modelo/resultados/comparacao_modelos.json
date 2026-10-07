@@ -1,0 +1,95 @@
+{
+  "gerado_em": "2026-10-07T02:03:04.598080+00:00",
+  "protocolo": "PROTOCOLO_COMPARACAO_MODELOS.md",
+  "serie_sha256": "2e8f9fc92ef2c78eeee13ae1ff5b092d19f0cf19b8135c1d54008315c16481c8",
+  "pontos": 49,
+  "linhas_treino": 645237,
+  "linhas_teste": 161332,
+  "corte": "2026-04-27 18:00:00",
+  "tercis": [
+    0.1038,
+    0.4053
+  ],
+  "metricas": {
+    "xgboost": {
+      "todas": {
+        "mae": 0.04677141622297196,
+        "rmse": 0.07552430235770488
+      },
+      "noite": {
+        "mae": 0.02855720664429203,
+        "rmse": 0.05417557710230401
+      },
+      "acerto_faixa_noite": 0.9128441506808468
+    },
+    "linear": {
+      "todas": {
+        "mae": 0.06986933241723266,
+        "rmse": 0.1053010936705838
+      },
+      "noite": {
+        "mae": 0.04028016483321888,
+        "rmse": 0.0680224029387316
+      },
+      "acerto_faixa_noite": 0.8823799821091343
+    },
+    "random_forest": {
+      "todas": {
+        "mae": 0.047008775438815806,
+        "rmse": 0.07612773395478306
+      },
+      "noite": {
+        "mae": 0.02854486422304023,
+        "rmse": 0.054999636766784904
+      },
+      "acerto_faixa_noite": 0.9128565748931518
+    },
+    "persistencia": {
+      "todas": {
+        "mae": 0.08108818832733539,
+        "rmse": 0.12211103170123558
+      },
+      "noite": {
+        "mae": 0.051944091002407,
+        "rmse": 0.08355546678731021
+      },
+      "acerto_faixa_noite": 0.8347704005566047
+    },
+    "media_sazonal": {
+      "todas": {
+        "mae": 0.05722152977896345,
+        "rmse": 0.0913440483702063
+      },
+      "noite": {
+        "mae": 0.03845427654451959,
+        "rmse": 0.06830241465325014
+      },
+      "acerto_faixa_noite": 0.8701545572010735
+    }
+  },
+  "xgboost_melhor_por_ponto": {
+    "linear": 49,
+    "random_forest": 31,
+    "persistencia": 49,
+    "media_sazonal": 32
+  },
+  "tempos": {
+    "xgboost": {
+      "treino_s": 23.17,
+      "previsao_s": 0.29,
+      "obs": "treino refeito so para cronometrar; previsoes do modelo salvo"
+    },
+    "linear": {
+      "treino_s": 1.4,
+      "previsao_s": 0.03
+    },
+    "random_forest": {
+      "treino_s": 26.59,
+      "previsao_s": 1.17
+    }
+  },
+  "leitura": {
+    "linear": "XGBoost superior (MAE +33.1% a favor do XGBoost; melhor em 49/49 pontos)",
+    "random_forest": "equivalentes em erro (MAE +0.5% a favor do XGBoost; melhor em 31/49 pontos)"
+  }
+}

@@ -308,6 +308,19 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         declarado nao satisfeito (opcao a do C28, escolha do autor). Tambem
         3.4.4 (conferencia) e a linha nova do Quadro 14 sao texto da IA.
 
+[ ] C30. Comparacao XGBoost x linear x Random Forest (DIVERGENCIAS 68): desenho
+        do experimento, hiperparametros da RF e o limiar de 2 % sao escolhas
+        da IA, fixadas no protocolo antes de rodar. Resultado: XGBoost
+        superior ao linear e EQUIVALENTE a Random Forest. Conferir e decidir
+        como entra no texto.
+[ ] D14. Fonte nova proposta pela IA: MAKRIDAKIS, S.; SPILIOTIS, E.;
+        ASSIMAKOPOULOS, V. M5 accuracy competition: results, findings, and
+        conclusions. International Journal of Forecasting, v. 38, n. 4,
+        p. 1346-1364, 2022 (dados conferidos no Crossref). O conteudo (metodos
+        de reforco de gradiente, LightGBM, nas primeiras colocacoes) a IA so
+        leu em fontes secundarias: ler o resumo e a secao de resultados antes
+        de citar.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

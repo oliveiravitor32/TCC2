@@ -2097,6 +2097,29 @@ PLANO:   bonus para a avaliacao de novembro, com ~4 semanas: repetir o
          (1a semana so historico do atraso de 168 h). Resultado indicativo.
 TEXTO:   nenhum ate haver resultado.
 
+-------------------------------------------------------------------------------
+68. XGBOOST CONTRA REGRESSAO LINEAR E RANDOM FOREST (06/10/2026)
+-------------------------------------------------------------------------------
+TCC:     2.7 justifica o reforco de gradiente contra redes neurais
+         (Grinsztajn et al., 2022), mas nao contra outros modelos de arvore.
+CODIGO:  modelo/PROTOCOLO_COMPARACAO_MODELOS.md (fixado antes, b8c0d91) e
+         modelo/comparar_modelos.py; resultado em
+         modelo/resultados/comparacao_modelos.json. Mesmos dados, particao e
+         atributos de 5.1; XGBoost = modelo salvo do sistema.
+RESULTADO (teste, 161.332 linhas, 49 pontos):
+         MAE todas / MAE noite / acerto da faixa a noite:
+         XGBoost 0,0468 / 0,0286 / 91,3 %; Random Forest 0,0470 / 0,0285 /
+         91,3 %; linear 0,0699 / 0,0403 / 88,2 %; media sazonal 0,0572 /
+         0,0385 / 87,0 %; persistencia 0,0811 / 0,0519 / 83,5 %.
+         XGBoost com MAE menor em 49/49 pontos contra o linear e 31/49 contra
+         a Random Forest. Tempos: treino XGBoost 23,2 s, RF 26,6 s, linear
+         1,4 s; previsao do teste XGBoost 0,29 s, RF 1,17 s.
+LEITURA (regra do protocolo): XGBoost SUPERIOR ao linear (MAE 33,1 %
+         menor); EQUIVALENTE a Random Forest em erro (0,5 %, abaixo de 2 %).
+         Nao afirmar superioridade sobre a RF; a escolha se apoia na
+         referencia de 2.7 e nos tempos (previsao ~4 vezes mais rapida).
+TEXTO:   PENDENTE (rodada seguinte): 2.7 (frase + M5) e 5.1 ou 5.6.
+
 ===============================================================================
 FIM
 ===============================================================================
