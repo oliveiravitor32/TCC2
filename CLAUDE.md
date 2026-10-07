@@ -201,6 +201,10 @@ docker-compose.yml
 15. Resultados no texto ✅ parcial (item 62, v10): 5.2 (667.200 decisões verificadas, zero violações), 5.4 e 5.5 com a aderência dos três regimes (`cenarios/aderencia_regimes.py`: adaptativo 100 %, pleno 58,0 %, horário fixo 72,2 %)
 16. **Falta:** sessão final de bancada (CT15–CT20: calibração, failsafe do piso, latência ~30 repetições, recusa sem credencial, segundo nó), 5.3 e energia de bancada em 5.5, 6.1, 6.2, 6.4, Capítulo 7, Resumo e Abstract (dependem da bancada e da resposta do orientador sobre o papel da inferência nebulosa), 4.1, 4.2, 4.5 e 4.9 (dependem de informação do autor); situação das lacunas em `Codigo/LACUNAS_TCC.txt`
 
+## Coleta por minuto de Melbourne (item 67)
+
+Na VM, `~/coleta_melbourne/` (fora do repositório e dos contêineres): cron a cada hora roda `coletar_melbourne_minuto.py` (cópia de `Codigo/modelo/`), que guarda `dados/AAAA-MM-DD.csv` e `coletas.log`. Começou em 06/10/2026. Uso previsto: experimento em 5 min para a avaliação de novembro, com protocolo fixado antes. Para conferir: `tail ~/coleta_melbourne/dados/coletas.log`.
+
 ## Decisões em aberto (perguntar ao autor antes de assumir)
 
 - Confirmado pelo autor: passo da rampa de 5 s, failsafe de 15 s, raio de 25 m, um trecho por publicação, decisão por **volume** (não por presença), volume a cada 5 min válido 15 min, ocorrência na hora (encerrada ou prazo), pacote aceito, níveis = classes da norma. Rejeitado pelo autor (complexo demais): campos de qualidade da leitura/condição adversa e detecção de contagem suspeita — fica como limitação em 6.3.

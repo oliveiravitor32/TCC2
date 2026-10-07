@@ -2078,6 +2078,25 @@ TEXTO:   FEITO na v17: 4.10, 5.3 e energia de bancada em 5.5 (descida do
          bancada/resultados/energia_bancada_ct18_descida.json). CT18 declarado
          NAO satisfeito (opcao a, decisao do autor, C28).
 
+-------------------------------------------------------------------------------
+67. COLETA DA CONTAGEM POR MINUTO DE MELBOURNE (06/10/2026)
+-------------------------------------------------------------------------------
+TCC:     3.6 usa a serie HORARIA de Melbourne; 5.6 e o Quadro 20 mostram que
+         o XGBoost so supera as referencias simples com dado sub-horario
+         (Zurique, 15 min). Sugestao do orientador: dado por minuto.
+CODIGO:  modelo/coletar_melbourne_minuto.py (so biblioteca padrao). O conjunto
+         "Past Hour (counts per minute)" guarda ~11 h (conferido: 13:55 a
+         01:04 UTC, 20.015 registros). Instalado na VM em
+         ~/coleta_melbourne/, fora do repositorio e dos conteineres, com cron
+         a cada hora (minuto 7); grava ~/coleta_melbourne/dados/AAAA-MM-DD.csv
+         sem repetir (location_id + sensing_datetime) e coletas.log. Primeira
+         coleta: 06/10/2026 22:46 (Brasilia). Pedido de um mes historico
+         tambem enviado (ou a enviar) pelo formulario do portal.
+PLANO:   bonus para a avaliacao de novembro, com ~4 semanas: repetir o
+         experimento de Zurique em 5 min, com PROTOCOLO FIXADO ANTES de rodar
+         (1a semana so historico do atraso de 168 h). Resultado indicativo.
+TEXTO:   nenhum ate haver resultado.
+
 ===============================================================================
 FIM
 ===============================================================================
