@@ -2135,7 +2135,53 @@ PROTOCOLO: modelo/PROTOCOLO_MODELO_ZURIQUE.md, fixado ANTES de treinar,
          p99 e tercis so no treino, comparacoes, servico em blocos de 15 min,
          base v5-zurique com as mesmas regras, reexecucao da suite e da
          avaliacao das IAs com noites de Zurique).
-ESTADO:  protocolo registrado; nada executado ainda.
+PARTE A (modelo/treinar_zurique.py; modelo/resultados/metricas_zurique.json):
+         checklist: 2.804.555 linhas sem contagem de pedestre descartadas (os
+         contadores so de bicicleta); 0 negativos; 114 linhas em carimbo
+         repetido, todas em 27/10/2019 (horario de verao, combinadas pela
+         media); 16.304 intervalos ausentes; 121 sequencias de sensor travado
+         (5.792 intervalos viraram ausentes); 16.028 acima do p99 e 289 acima
+         de 2 x p99; 37 meses suspeitos de realocacao (so reportados).
+         Tercis so no treino: 0,0693 e 0,2946. Teste (2019, 12 pontos):
+         MAE XGBoost 0,0416; RF 0,0429; linear 0,0633; media sazonal 0,0688;
+         semana anterior 0,0708; persistencia 0,0763. Noite: faixa 91,4 % x
+         91,2 % (RF) x 87,2 % (semana anterior); F1 "vai subir" 0,638 x 0,630
+         x 0,583. LEITURA: NAO substituivel pelas referencias simples (+4,2 pp,
+         +0,055); SUPERIOR ao linear (34,2 %, 12/12) e a RF (3,0 %, 11/12).
+PARTE B: servico em blocos de 15 min, base v5-zurique, migracao 007,
+         testes ajustados aos tercis novos (valores de entrada, nao o que se
+         verifica). Commit 0a0164b. NAO instalado na VM.
+PARTE C (resultados em cenarios/resultados/; os anteriores em
+         cenarios/resultados/antes_item69/). ZERO violacoes em todas as
+         execucoes (suite 4 x 13.440; noites 4 x 69.120 + media sazonal;
+         camera 3 x 11.520; ruido 2 x 12.960; suavidade 3 x 69.120).
+         Suite: adaptativo 75,7 % do pleno e 106,6 % do horario fixo (antes
+         72,5 % e 102,1 %); aderencia 95,5 % (antes 100 %; madrugada ociosa
+         83,3 % e ocorrencia na madrugada 66,7 %), pleno 58,0 %, fixo 72,2 %.
+         H3 (janela em transicao): suite 68,1 % antecipado x 48,1 % reativo;
+         noites 47,9 % x 38,6 %: NAO confirmada, como antes.
+         Noites de Zurique: adaptativo 62,8 % do pleno e 79,1 % do fixo.
+         Deficit: o adaptativo nunca fica >= 2 lux abaixo do pedido (suite e
+         noites); o fixo fica 343 min (suite) e 85,5 min (noites). Os minutos
+         do adaptativo abaixo com margem 0,02 estao todos a menos de 0,05 de
+         um tercil (190,9 e 388,7 min).
+         Substitutos, teste 1 (regra: contencao maior OU deficit menor, sem
+         +2 pp de energia): XGBoost contencao 50,8 % x 48,6 % da media
+         sazonal, energia 62,8 % x 64,0 % do pleno -> XGBoost NAO
+         SUBSTITUIVEL no sistema (antes, com a serie horaria, era). Mas o
+         deficit com margem 0,02 e maior no XGBoost (388,7 x 343,7 min).
+         Camera (que o protocolo declarou nao decidir): media sazonal perde
+         menos luz (0,10 x 0,32 no inicio da noite) gastando mais.
+         Teste 2 (ruido): Mamdani 142 inversoes x 86 da tabela -> fuzzy
+         SUBSTITUIVEL, como antes. Suavidade (8 noites): perceptiveis a 15 %:
+         Mamdani 9, tabela 13, tabela com histerese 9; a 6 %: 33, 13, 9 ->
+         fuzzy SUBSTITUIVEL, como antes.
+ACHADO:  as quedas de aderencia vem dos tercis novos com a rampa fixa de
+         +-0,05 da v4: a faixa baixa "pura" passou de ate 0,054 para ate
+         0,019, e o volume 0,02 dos cenarios de rua vazia caiu na rampa (luz
+         em 0,60 em vez de 0,50). O protocolo manteve as regras; mudar a rampa
+         agora seria decisao posterior ao resultado.
+ESTADO:  partes A, B e C executadas; texto e VM pendentes.
 
 ===============================================================================
 FIM

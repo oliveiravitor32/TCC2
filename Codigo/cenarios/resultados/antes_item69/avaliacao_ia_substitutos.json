@@ -1,0 +1,145 @@
+{
+  "teste1_melbourne": {
+    "xgboost": {
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "energia_x_pleno": 0.6899,
+      "energia_x_fixo": 0.8696,
+      "h3_primaria": 0.3125,
+      "h3_secundaria_min": 53.4,
+      "ciclos_contidos": 4320,
+      "acerto_da_contencao": 0.1667,
+      "deficit": {
+        "min_abaixo": 658.7,
+        "deficit_medio_fracao": 0.081
+      }
+    },
+    "media_sazonal": {
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "energia_x_pleno": 0.6918,
+      "energia_x_fixo": 0.8719,
+      "h3_primaria": 0.2888,
+      "h3_secundaria_min": 53.4,
+      "ciclos_contidos": 7915,
+      "acerto_da_contencao": 0.5445,
+      "deficit": {
+        "min_abaixo": 658.7,
+        "deficit_medio_fracao": 0.081
+      }
+    },
+    "referencia_segurar_sempre": 0.023809523809523808
+  },
+  "teste1_camera": {
+    "inicio_da_noite": {
+      "xgboost": {
+        "luz_perdida_media": 0.1528,
+        "energia_falha_wh": 61.289
+      },
+      "media_sazonal": {
+        "luz_perdida_media": 0.0751,
+        "energia_falha_wh": 67.438
+      }
+    },
+    "madrugada": {
+      "xgboost": {
+        "luz_perdida_media": 0.0758,
+        "energia_falha_wh": 40.018
+      },
+      "media_sazonal": {
+        "luz_perdida_media": 0.0,
+        "energia_falha_wh": 49.64
+      }
+    }
+  },
+  "teste2_ruido": {
+    "mamdani": {
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "energia_x_pleno": 0.771,
+      "variacao_total": 12.728,
+      "inversoes": 152,
+      "subidas_bruscas": 20,
+      "por_cenario": {
+        "ruido_fronteira_alta_591": {
+          "variacao_total": 1.962,
+          "inversoes": 26,
+          "subidas_bruscas": 4
+        },
+        "ruido_fronteira_alta_592": {
+          "variacao_total": 2.251,
+          "inversoes": 25,
+          "subidas_bruscas": 3
+        },
+        "ruido_fronteira_alta_593": {
+          "variacao_total": 1.679,
+          "inversoes": 24,
+          "subidas_bruscas": 2
+        },
+        "ruido_fronteira_baixa_591": {
+          "variacao_total": 2.226,
+          "inversoes": 26,
+          "subidas_bruscas": 5
+        },
+        "ruido_fronteira_baixa_592": {
+          "variacao_total": 2.611,
+          "inversoes": 25,
+          "subidas_bruscas": 3
+        },
+        "ruido_fronteira_baixa_593": {
+          "variacao_total": 1.999,
+          "inversoes": 26,
+          "subidas_bruscas": 3
+        }
+      }
+    },
+    "tabela": {
+      "violacoes": {
+        "piso": 0,
+        "taxa": 0
+      },
+      "energia_x_pleno": 0.7829,
+      "variacao_total": 20.875,
+      "inversoes": 86,
+      "subidas_bruscas": 44,
+      "por_cenario": {
+        "ruido_fronteira_alta_591": {
+          "variacao_total": 3.625,
+          "inversoes": 17,
+          "subidas_bruscas": 9
+        },
+        "ruido_fronteira_alta_592": {
+          "variacao_total": 2.75,
+          "inversoes": 12,
+          "subidas_bruscas": 6
+        },
+        "ruido_fronteira_alta_593": {
+          "variacao_total": 3.0,
+          "inversoes": 14,
+          "subidas_bruscas": 7
+        },
+        "ruido_fronteira_baixa_591": {
+          "variacao_total": 4.0,
+          "inversoes": 15,
+          "subidas_bruscas": 8
+        },
+        "ruido_fronteira_baixa_592": {
+          "variacao_total": 3.75,
+          "inversoes": 14,
+          "subidas_bruscas": 7
+        },
+        "ruido_fronteira_baixa_593": {
+          "variacao_total": 3.75,
+          "inversoes": 14,
+          "subidas_bruscas": 7
+        }
+      }
+    }
+  }
+}

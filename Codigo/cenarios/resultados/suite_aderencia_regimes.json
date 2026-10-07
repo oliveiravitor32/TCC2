@@ -1,6 +1,6 @@
 {
   "suite": {
-    "adaptativo": 1.0,
+    "adaptativo": 0.9553,
     "pleno_constante": 0.5804,
     "horario_fixo": 0.7216
   },
@@ -31,7 +31,7 @@
       "ciclos": 720
     },
     "madrugada_ociosa": {
-      "adaptativo": 1.0,
+      "adaptativo": 0.8326,
       "pleno_constante": 0.0833,
       "horario_fixo": 1.0,
       "ciclos": 1440
@@ -43,7 +43,7 @@
       "ciclos": 5760
     },
     "ocorrencia_na_madrugada": {
-      "adaptativo": 1.0,
+      "adaptativo": 0.6667,
       "pleno_constante": 0.6667,
       "horario_fixo": 0.6176,
       "ciclos": 1080

@@ -1,0 +1,269 @@
+{
+  "mamdani": {
+    "perceptiveis_15": 7,
+    "perceptiveis_6": 24,
+    "subidas_perceptiveis_15": 7,
+    "min_2lux_abaixo": 0.0,
+    "variacao_total": 6.876,
+    "inversoes": 63,
+    "violacoes": {
+      "piso": 0,
+      "taxa": 0
+    },
+    "energia_x_pleno": 0.6181,
+    "atraso_ate_minima_min": 63.8,
+    "episodios": 11,
+    "por_cenario": {
+      "zurique_calmo_52_dia_util": {
+        "perceptiveis_15": 1,
+        "perceptiveis_6": 2,
+        "subidas_perceptiveis_15": 1,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.547,
+        "inversoes": 5,
+        "energia_x_pleno": 0.5722
+      },
+      "zurique_calmo_52_fim_de_semana": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.252,
+        "inversoes": 2,
+        "energia_x_pleno": 0.5834
+      },
+      "zurique_calmo_53_dia_util": {
+        "perceptiveis_15": 1,
+        "perceptiveis_6": 3,
+        "subidas_perceptiveis_15": 1,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 1.017,
+        "inversoes": 5,
+        "energia_x_pleno": 0.6057
+      },
+      "zurique_calmo_53_fim_de_semana": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.262,
+        "inversoes": 2,
+        "energia_x_pleno": 0.5729
+      },
+      "zurique_movimentado_2_dia_util": {
+        "perceptiveis_15": 1,
+        "perceptiveis_6": 4,
+        "subidas_perceptiveis_15": 1,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 1.356,
+        "inversoes": 13,
+        "energia_x_pleno": 0.7178
+      },
+      "zurique_movimentado_2_fim_de_semana": {
+        "perceptiveis_15": 2,
+        "perceptiveis_6": 6,
+        "subidas_perceptiveis_15": 2,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 1.216,
+        "inversoes": 11,
+        "energia_x_pleno": 0.616
+      },
+      "zurique_movimentado_32_dia_util": {
+        "perceptiveis_15": 1,
+        "perceptiveis_6": 5,
+        "subidas_perceptiveis_15": 1,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 1.284,
+        "inversoes": 11,
+        "energia_x_pleno": 0.6652
+      },
+      "zurique_movimentado_32_fim_de_semana": {
+        "perceptiveis_15": 1,
+        "perceptiveis_6": 4,
+        "subidas_perceptiveis_15": 1,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.942,
+        "inversoes": 14,
+        "energia_x_pleno": 0.6113
+      }
+    }
+  },
+  "tabela": {
+    "perceptiveis_15": 4,
+    "perceptiveis_6": 5,
+    "subidas_perceptiveis_15": 4,
+    "min_2lux_abaixo": 0.0,
+    "variacao_total": 4.5,
+    "inversoes": 7,
+    "violacoes": {
+      "piso": 0,
+      "taxa": 0
+    },
+    "energia_x_pleno": 0.6173,
+    "atraso_ate_minima_min": 45.5,
+    "episodios": 11,
+    "por_cenario": {
+      "zurique_calmo_52_dia_util": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.5707
+      },
+      "zurique_calmo_52_fim_de_semana": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.5889
+      },
+      "zurique_calmo_53_dia_util": {
+        "perceptiveis_15": 1,
+        "perceptiveis_6": 1,
+        "subidas_perceptiveis_15": 1,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 1.0,
+        "inversoes": 2,
+        "energia_x_pleno": 0.6026
+      },
+      "zurique_calmo_53_fim_de_semana": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.5785
+      },
+      "zurique_movimentado_2_dia_util": {
+        "perceptiveis_15": 2,
+        "perceptiveis_6": 3,
+        "subidas_perceptiveis_15": 2,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 1.25,
+        "inversoes": 3,
+        "energia_x_pleno": 0.6993
+      },
+      "zurique_movimentado_2_fim_de_semana": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.6098
+      },
+      "zurique_movimentado_32_dia_util": {
+        "perceptiveis_15": 1,
+        "perceptiveis_6": 1,
+        "subidas_perceptiveis_15": 1,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 1.0,
+        "inversoes": 2,
+        "energia_x_pleno": 0.6628
+      },
+      "zurique_movimentado_32_fim_de_semana": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.6255
+      }
+    }
+  },
+  "tabela_histerese": {
+    "perceptiveis_15": 4,
+    "perceptiveis_6": 5,
+    "subidas_perceptiveis_15": 4,
+    "min_2lux_abaixo": 0.0,
+    "variacao_total": 4.5,
+    "inversoes": 7,
+    "violacoes": {
+      "piso": 0,
+      "taxa": 0
+    },
+    "energia_x_pleno": 0.6241,
+    "atraso_ate_minima_min": 44.0,
+    "episodios": 10,
+    "por_cenario": {
+      "zurique_calmo_52_dia_util": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.5707
+      },
+      "zurique_calmo_52_fim_de_semana": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.5889
+      },
+      "zurique_calmo_53_dia_util": {
+        "perceptiveis_15": 1,
+        "perceptiveis_6": 1,
+        "subidas_perceptiveis_15": 1,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 1.0,
+        "inversoes": 2,
+        "energia_x_pleno": 0.6026
+      },
+      "zurique_calmo_53_fim_de_semana": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.5811
+      },
+      "zurique_movimentado_2_dia_util": {
+        "perceptiveis_15": 2,
+        "perceptiveis_6": 3,
+        "subidas_perceptiveis_15": 2,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 1.25,
+        "inversoes": 3,
+        "energia_x_pleno": 0.6993
+      },
+      "zurique_movimentado_2_fim_de_semana": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.6359
+      },
+      "zurique_movimentado_32_dia_util": {
+        "perceptiveis_15": 1,
+        "perceptiveis_6": 1,
+        "subidas_perceptiveis_15": 1,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 1.0,
+        "inversoes": 2,
+        "energia_x_pleno": 0.6836
+      },
+      "zurique_movimentado_32_fim_de_semana": {
+        "perceptiveis_15": 0,
+        "perceptiveis_6": 0,
+        "subidas_perceptiveis_15": 0,
+        "min_2lux_abaixo": 0.0,
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.6307
+      }
+    }
+  }
+}

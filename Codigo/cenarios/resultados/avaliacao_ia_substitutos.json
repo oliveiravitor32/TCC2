@@ -5,15 +5,15 @@
         "piso": 0,
         "taxa": 0
       },
-      "energia_x_pleno": 0.6899,
-      "energia_x_fixo": 0.8696,
-      "h3_primaria": 0.3125,
-      "h3_secundaria_min": 53.4,
-      "ciclos_contidos": 4320,
-      "acerto_da_contencao": 0.1667,
+      "energia_x_pleno": 0.6276,
+      "energia_x_fixo": 0.791,
+      "h3_primaria": 0.4791,
+      "h3_secundaria_min": 69.9,
+      "ciclos_contidos": 14064,
+      "acerto_da_contencao": 0.5083,
       "deficit": {
-        "min_abaixo": 658.7,
-        "deficit_medio_fracao": 0.081
+        "min_abaixo": 388.7,
+        "deficit_medio_fracao": 0.09
       }
     },
     "media_sazonal": {
@@ -21,38 +21,38 @@
         "piso": 0,
         "taxa": 0
       },
-      "energia_x_pleno": 0.6918,
-      "energia_x_fixo": 0.8719,
-      "h3_primaria": 0.2888,
-      "h3_secundaria_min": 53.4,
-      "ciclos_contidos": 7915,
-      "acerto_da_contencao": 0.5445,
+      "energia_x_pleno": 0.6395,
+      "energia_x_fixo": 0.806,
+      "h3_primaria": 0.5334,
+      "h3_secundaria_min": 72.8,
+      "ciclos_contidos": 20529,
+      "acerto_da_contencao": 0.4862,
       "deficit": {
-        "min_abaixo": 658.7,
-        "deficit_medio_fracao": 0.081
+        "min_abaixo": 343.7,
+        "deficit_medio_fracao": 0.086
       }
     },
-    "referencia_segurar_sempre": 0.023809523809523808
+    "referencia_segurar_sempre": 0.0784313725490196
   },
   "teste1_camera": {
     "inicio_da_noite": {
       "xgboost": {
-        "luz_perdida_media": 0.1528,
-        "energia_falha_wh": 61.289
+        "luz_perdida_media": 0.3164,
+        "energia_falha_wh": 52.771
       },
       "media_sazonal": {
-        "luz_perdida_media": 0.0751,
-        "energia_falha_wh": 67.438
+        "luz_perdida_media": 0.1044,
+        "energia_falha_wh": 70.031
       }
     },
     "madrugada": {
       "xgboost": {
-        "luz_perdida_media": 0.0758,
-        "energia_falha_wh": 40.018
+        "luz_perdida_media": 0.1228,
+        "energia_falha_wh": 41.935
       },
       "media_sazonal": {
-        "luz_perdida_media": 0.0,
-        "energia_falha_wh": 49.64
+        "luz_perdida_media": -0.0069,
+        "energia_falha_wh": 55.45
       }
     }
   },
@@ -62,40 +62,40 @@
         "piso": 0,
         "taxa": 0
       },
-      "energia_x_pleno": 0.771,
-      "variacao_total": 12.728,
-      "inversoes": 152,
-      "subidas_bruscas": 20,
+      "energia_x_pleno": 0.7772,
+      "variacao_total": 10.388,
+      "inversoes": 142,
+      "subidas_bruscas": 15,
       "por_cenario": {
         "ruido_fronteira_alta_591": {
-          "variacao_total": 1.962,
+          "variacao_total": 1.722,
           "inversoes": 26,
-          "subidas_bruscas": 4
+          "subidas_bruscas": 3
         },
         "ruido_fronteira_alta_592": {
-          "variacao_total": 2.251,
+          "variacao_total": 1.964,
           "inversoes": 25,
           "subidas_bruscas": 3
         },
         "ruido_fronteira_alta_593": {
-          "variacao_total": 1.679,
-          "inversoes": 24,
+          "variacao_total": 1.561,
+          "inversoes": 26,
           "subidas_bruscas": 2
         },
         "ruido_fronteira_baixa_591": {
-          "variacao_total": 2.226,
-          "inversoes": 26,
-          "subidas_bruscas": 5
+          "variacao_total": 1.689,
+          "inversoes": 22,
+          "subidas_bruscas": 3
         },
         "ruido_fronteira_baixa_592": {
-          "variacao_total": 2.611,
-          "inversoes": 25,
-          "subidas_bruscas": 3
+          "variacao_total": 1.741,
+          "inversoes": 21,
+          "subidas_bruscas": 2
         },
         "ruido_fronteira_baixa_593": {
-          "variacao_total": 1.999,
-          "inversoes": 26,
-          "subidas_bruscas": 3
+          "variacao_total": 1.711,
+          "inversoes": 22,
+          "subidas_bruscas": 2
         }
       }
     },
@@ -104,23 +104,23 @@
         "piso": 0,
         "taxa": 0
       },
-      "energia_x_pleno": 0.7829,
-      "variacao_total": 20.875,
+      "energia_x_pleno": 0.7915,
+      "variacao_total": 19.625,
       "inversoes": 86,
       "subidas_bruscas": 44,
       "por_cenario": {
         "ruido_fronteira_alta_591": {
-          "variacao_total": 3.625,
-          "inversoes": 17,
-          "subidas_bruscas": 9
+          "variacao_total": 3.125,
+          "inversoes": 15,
+          "subidas_bruscas": 8
         },
         "ruido_fronteira_alta_592": {
-          "variacao_total": 2.75,
-          "inversoes": 12,
-          "subidas_bruscas": 6
+          "variacao_total": 2.5,
+          "inversoes": 14,
+          "subidas_bruscas": 7
         },
         "ruido_fronteira_alta_593": {
-          "variacao_total": 3.0,
+          "variacao_total": 2.5,
           "inversoes": 14,
           "subidas_bruscas": 7
         },

@@ -1,0 +1,132 @@
+{
+  "suite": {
+    "resumo": {
+      "min_com_exigencia": 495.0,
+      "fixo_min_abaixo_com_ocorrencia": 30.0,
+      "fixo_min_abaixo": 282.2,
+      "fixo_deficit_medio_fracao": 0.376,
+      "fixo_deficit_medio_lux": 3.76,
+      "adaptativo_min_abaixo": 70.0,
+      "adaptativo_deficit_medio_fracao": 0.079,
+      "adaptativo_deficit_medio_lux": 0.79
+    },
+    "por_cenario": {
+      "adversarial_serra": {
+        "min_com_exigencia": 30.0,
+        "fixo_min_abaixo": 30.0,
+        "adaptativo_min_abaixo": 0.0,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "adversarial_silencio_da_plataforma": {
+        "min_com_exigencia": 0.0,
+        "fixo_min_abaixo": 0.0,
+        "adaptativo_min_abaixo": 0.0,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "adversarial_zero": {
+        "min_com_exigencia": 0.0,
+        "fixo_min_abaixo": 0.0,
+        "adaptativo_min_abaixo": 0.0,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "fluxo_intenso_de_madrugada": {
+        "min_com_exigencia": 60.0,
+        "fixo_min_abaixo": 59.8,
+        "adaptativo_min_abaixo": 0.0,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "madrugada_ociosa": {
+        "min_com_exigencia": 0.0,
+        "fixo_min_abaixo": 0.0,
+        "adaptativo_min_abaixo": 0.0,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "noite_tipica": {
+        "min_com_exigencia": 270.0,
+        "fixo_min_abaixo": 90.0,
+        "adaptativo_min_abaixo": 0.0,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "ocorrencia_na_madrugada": {
+        "min_com_exigencia": 30.0,
+        "fixo_min_abaixo": 30.0,
+        "adaptativo_min_abaixo": 0.0,
+        "fixo_min_abaixo_com_ocorrencia": 30.0
+      },
+      "ruido_na_fronteira": {
+        "min_com_exigencia": 75.0,
+        "fixo_min_abaixo": 72.3,
+        "adaptativo_min_abaixo": 70.0,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "saida_de_evento": {
+        "min_com_exigencia": 30.0,
+        "fixo_min_abaixo": 0.0,
+        "adaptativo_min_abaixo": 0.0,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      }
+    }
+  },
+  "melbourne": {
+    "resumo": {
+      "min_com_exigencia": 3240.0,
+      "fixo_min_abaixo_com_ocorrencia": 0.0,
+      "fixo_min_abaixo": 534.5,
+      "fixo_deficit_medio_fracao": 0.331,
+      "fixo_deficit_medio_lux": 3.31,
+      "adaptativo_min_abaixo": 658.7,
+      "adaptativo_deficit_medio_fracao": 0.081,
+      "adaptativo_deficit_medio_lux": 0.81
+    },
+    "por_cenario": {
+      "melbourne_calmo_162_dia_util": {
+        "min_com_exigencia": 360.0,
+        "fixo_min_abaixo": 0.0,
+        "adaptativo_min_abaixo": 119.8,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "melbourne_calmo_162_fim_de_semana": {
+        "min_com_exigencia": 360.0,
+        "fixo_min_abaixo": 0.0,
+        "adaptativo_min_abaixo": 59.8,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "melbourne_calmo_58_dia_util": {
+        "min_com_exigencia": 300.0,
+        "fixo_min_abaixo": 0.0,
+        "adaptativo_min_abaixo": 119.8,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "melbourne_calmo_58_fim_de_semana": {
+        "min_com_exigencia": 420.0,
+        "fixo_min_abaixo": 57.3,
+        "adaptativo_min_abaixo": 119.8,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "melbourne_movimentado_36_dia_util": {
+        "min_com_exigencia": 240.0,
+        "fixo_min_abaixo": 0.0,
+        "adaptativo_min_abaixo": 0.0,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "melbourne_movimentado_36_fim_de_semana": {
+        "min_com_exigencia": 660.0,
+        "fixo_min_abaixo": 299.8,
+        "adaptativo_min_abaixo": 119.7,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "melbourne_movimentado_41_dia_util": {
+        "min_com_exigencia": 360.0,
+        "fixo_min_abaixo": 0.0,
+        "adaptativo_min_abaixo": 59.8,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      },
+      "melbourne_movimentado_41_fim_de_semana": {
+        "min_com_exigencia": 540.0,
+        "fixo_min_abaixo": 177.3,
+        "adaptativo_min_abaixo": 59.8,
+        "fixo_min_abaixo_com_ocorrencia": 0.0
+      }
+    }
+  }
+}
