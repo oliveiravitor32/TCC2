@@ -74,7 +74,7 @@ def test_perfil_horario_tem_vale_de_madrugada_e_pico_de_tarde():
 # --------------------------------------------------------------------------
 # Avaliacao
 # --------------------------------------------------------------------------
-FRONTEIRA = 0.1038
+FRONTEIRA = 0.0693  # tercil inferior da v5-zurique (item 69)
 
 
 def registro(niveis, observada=0.02, ocorrencia=False, sem_dado=False):

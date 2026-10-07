@@ -132,7 +132,7 @@ def test_sem_volume_decide_pleno(conn, ponto):
 
 
 def test_volume_baixo_de_madrugada_vai_a_classe_minima(conn, ponto):
-    ev = volume(conn, em=T0 - timedelta(seconds=10), media=0.1)
+    ev = volume(conn, em=T0 - timedelta(seconds=10), media=0.02)  # 0,004 do pleno: faixa baixa
     d = decidir(conn, ponto, T0)
     assert d.nivel_pretendido == Decimal("0.500")  # P5, exatamente
     assert d.nivel_emitido == Decimal("0.500") and d.restricao_aplicada == "nenhuma"
@@ -289,9 +289,10 @@ def test_historico_horario_normaliza_pela_referencia_do_trecho(conn, ponto):
 
 
 def test_referencia_e_aprendida_com_historico_suficiente(conn, ponto):
-    # 168 horas com media de 2 pessoas: a referencia aprendida e 2, e nao 5.
-    for k in range(1, 170):
-        volume(conn, em=T0 - timedelta(hours=k), media=2)
+    # 7 dias de blocos de 15 min (672) com media de 2 pessoas: a referencia
+    # aprendida e 2, e nao 5 (DIVERGENCIAS 69).
+    for k in range(1, 675):
+        volume(conn, em=T0 - timedelta(minutes=15 * k), media=2)
     refs = ciclo.referencias(conn, T0, ponto.id)
     assert refs[ANTONIO_VIANA] == pytest.approx(2.0)
     assert refs[ASCENSO_FERNANDES] == pytest.approx(5.0)  # sem historico: valor inicial

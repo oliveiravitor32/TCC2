@@ -6,8 +6,10 @@ implementacoes, ambas registradas em versao_modelo_previsao (RNF04):
   Persistencia     - referencia ingenua: o proximo valor e o corrente.
                      Foi a previsao provisoria ate o treino (Etapa 3) e
                      continua como referencia de comparacao em 5.1.
-  PrevisorXGBoost  - modelo treinado por modelo/treinar.py sobre a serie de
-                     Melbourne normalizada por ponto.
+  PrevisorXGBoost  - modelo treinado. O principal (DIVERGENCIAS 69) e o de
+                     modelo/treinar_zurique.py, em blocos de 15 min; o
+                     horario de modelo/treinar.py (Melbourne) continua
+                     carregavel pelo rotulo "xgboost-v1".
 
 Os dois recebem o mesmo `Historico`. Sem historico suficiente para os
 atrasos, o XGBoost NAO inventa: cai para a persistencia e diz que caiu, o
@@ -25,16 +27,21 @@ from typing import Mapping, Protocol
 
 log = logging.getLogger(__name__)
 
-MODELO = Path(__file__).resolve().parent.parent / "modelo" / "modelo_previsao.json"
-METRICAS = MODELO.parent / "resultados" / "metricas.json"
+_MODELO_DIR = Path(__file__).resolve().parent.parent / "modelo"
+MODELO = _MODELO_DIR / "modelo_previsao_zurique.json"
+METRICAS = _MODELO_DIR / "resultados" / "metricas_zurique.json"
+MODELO_HORARIO = _MODELO_DIR / "modelo_previsao.json"
+METRICAS_HORARIO = _MODELO_DIR / "resultados" / "metricas.json"
+SEMANA_MIN = 7 * 24 * 60
 
 
 @dataclass(frozen=True)
 class Historico:
     """Estado temporal do ponto no instante da decisao.
 
-    `serie` leva o atraso em horas (1 = hora anterior) ao nivel medio
-    observado naquela hora. `momento` esta no horario LOCAL do ponto.
+    `serie` leva o atraso em blocos (1 = bloco anterior; o tamanho do bloco
+    e o `bloco_min` do previsor) ao nivel medio observado naquele bloco.
+    `momento` esta no horario LOCAL do ponto.
     """
 
     momento: datetime
@@ -64,11 +71,22 @@ class MediaSazonal:
     rotulo = "media-sazonal"
     SEMANAS = 4
 
-    def horas_necessarias(self) -> int:
-        return 168 * self.SEMANAS
+    def __init__(self, bloco_min: int = 60) -> None:
+        # Blocos de 15 min (DIVERGENCIAS 69): a proxima hora sao 4 blocos, e
+        # o mesmo horario da semana k fica nos atrasos semana*k - 1 ... - 4.
+        self.bloco_min = bloco_min
+        self.por_semana = SEMANA_MIN // bloco_min
+        self.por_hora = max(1, 60 // bloco_min)
+
+    def blocos_necessarios(self) -> int:
+        return self.por_semana * self.SEMANAS
+
+    horas_necessarias = blocos_necessarios  # nome antigo
 
     def prever(self, h: Historico) -> float:
-        v = [h.serie[k] for k in range(167, 168 * self.SEMANAS, 168) if k in h.serie]
+        v = [h.serie[self.por_semana * k - j]
+             for k in range(1, self.SEMANAS + 1) for j in range(1, self.por_hora + 1)
+             if self.por_semana * k - j in h.serie]
         return sum(v) / len(v) if v else h.observada
 
 
@@ -108,25 +126,31 @@ class PrevisorXGBoost:
         import xgboost as xgb  # importado aqui: so quem usa o modelo paga
 
         if not caminho.exists():
-            raise FileNotFoundError(f"modelo ausente: {caminho} (rode modelo/treinar.py)")
+            raise FileNotFoundError(f"modelo ausente: {caminho} (rode modelo/treinar_zurique.py)")
         dados = json.loads(metricas.read_text(encoding="utf-8"))
         self.rotulo: str = dados["rotulo"]
         self.atributos: list[str] = dados["atributos"]
         self.atrasos = [int(a.removeprefix("atraso_").removesuffix("h"))
                         for a in self.atributos if a.startswith("atraso_")]
+        # O modelo de 15 min (DIVERGENCIAS 69) tem o atributo "quarto"; o
+        # horario de Melbourne, nao.
+        self.bloco_min = 15 if "quarto" in self.atributos else 60
+        self.por_hora = 60 // self.bloco_min
         self.modelo = xgb.XGBRegressor()
         self.modelo.load_model(caminho)
         self._avisou_falta = False
 
-    def horas_necessarias(self) -> int:
+    def blocos_necessarios(self) -> int:
         return max(self.atrasos)
+
+    horas_necessarias = blocos_necessarios  # nome antigo
 
     def prever(self, h: Historico) -> float:
         import numpy as np
         import pandas as pd
 
         faltando = [k for k in self.atrasos if k not in h.serie]
-        precisa_media = {k for k in range(1, 25) if k not in h.serie}
+        precisa_media = {k for k in range(1, 24 * self.por_hora + 1) if k not in h.serie}
         if faltando or precisa_media:
             # Sem historico completo o modelo extrapolaria sobre buraco.
             if not self._avisou_falta:
@@ -135,12 +159,24 @@ class PrevisorXGBoost:
                 self._avisou_falta = True
             return h.observada
 
-        linha = {f"atraso_{k}h": h.serie[k] for k in self.atrasos}
-        linha["media_3h"] = sum(h.serie[k] for k in (1, 2, 3)) / 3
-        linha["media_24h"] = sum(h.serie[k] for k in range(1, 25)) / 24
+        def media(n: int) -> float:
+            return sum(h.serie[k] for k in range(1, n + 1)) / n
+
+        if self.bloco_min == 60:
+            linha = {f"atraso_{k}h": h.serie[k] for k in self.atrasos}
+            linha["hora_sen"] = np.sin(2 * np.pi * h.momento.hour / 24)
+            linha["hora_cos"] = np.cos(2 * np.pi * h.momento.hour / 24)
+        else:  # 15 min: os atributos de modelo/treinar_zurique.py
+            linha = {f"atraso_{k}": h.serie[k] for k in self.atrasos}
+            linha["media_1h"] = media(self.por_hora)
+            quarto = h.momento.minute // 15
+            frac = (h.momento.hour * 4 + quarto) / 96
+            linha["quarto"] = quarto
+            linha["dia_sen"] = np.sin(2 * np.pi * frac)
+            linha["dia_cos"] = np.cos(2 * np.pi * frac)
+        linha["media_3h"] = media(3 * self.por_hora)
+        linha["media_24h"] = media(24 * self.por_hora)
         linha["hora"] = h.momento.hour
-        linha["hora_sen"] = np.sin(2 * np.pi * h.momento.hour / 24)
-        linha["hora_cos"] = np.cos(2 * np.pi * h.momento.hour / 24)
         linha["dia_semana"] = h.momento.weekday()
         linha["fim_de_semana"] = int(h.momento.weekday() >= 5)
         linha["feriado"] = int(feriado_nacional(h.momento.date()))
@@ -149,13 +185,21 @@ class PrevisorXGBoost:
         return float(np.clip(self.modelo.predict(x)[0], 0.0, 1.0))
 
 
+def config_bloco() -> int:
+    from decisao import config
+
+    return config.BLOCO_PREVISAO_MIN
+
+
 def carregar_previsor(rotulo: str | None = None) -> Previsor:
     """'persistencia' ou o modelo treinado; sem argumento, o treinado se
     existir."""
     if rotulo == "persistencia":
         return Persistencia()
     if rotulo in ("media-sazonal", "media_sazonal"):
-        return MediaSazonal()
+        return MediaSazonal(bloco_min=config_bloco())
+    if rotulo == "xgboost-v1":  # o modelo horario de Melbourne, antes da troca
+        return PrevisorXGBoost(MODELO_HORARIO, METRICAS_HORARIO)
     try:
         return PrevisorXGBoost()
     except FileNotFoundError:

@@ -23,7 +23,7 @@
       "grupo": "movimentado",
       "tipo": "dia_util",
       "inicio": "2019-11-19 18:00:00",
-      "media_noite": 0.1875
+      "media_noite": 0.1874
     },
     {
       "cenario": "zurique_movimentado_32_fim_de_semana",
@@ -31,7 +31,7 @@
       "grupo": "movimentado",
       "tipo": "fim_de_semana",
       "inicio": "2019-05-11 18:00:00",
-      "media_noite": 0.0898
+      "media_noite": 0.0897
     },
     {
       "cenario": "zurique_calmo_52_dia_util",

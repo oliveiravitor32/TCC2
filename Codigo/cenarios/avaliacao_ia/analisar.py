@@ -15,6 +15,7 @@ import psycopg
 
 from decisao import ciclo, config
 from decisao.inferencia import carregar
+from cenarios.avaliacao_ia.gerar import NOITES
 
 AQUI = Path(__file__).resolve().parent
 RES = AQUI.parent / "resultados"
@@ -52,8 +53,15 @@ def _episodios(serie, f1) -> list[tuple[int, int]]:
     return eps
 
 
+def _horas(cen: dict) -> list[float]:
+    """Nivel medio de cada hora da noite (12 volumes de 5 min por hora)."""
+    ev = [e["nivel"] for e in cen["eventos"]]
+    return [sum(ev[i:i + 12]) / len(ev[i:i + 12]) for i in range(0, len(ev), 12)]
+
+
 def melbourne(piso: float, f1: float) -> dict:
-    modos = {m: _rel("melbourne", m) for m in
+    """Noites reais (o nome ficou; desde o item 69, sao as de Zurique)."""
+    modos = {m: _rel(NOITES, m) for m in
              ("antecipado", "reativo", "antecipado_degraus", "reativo_degraus")}
     nomes = sorted(modos["antecipado"])
     saida = {"por_modo": {}, "por_noite": {}, "contencao": {}}
@@ -91,21 +99,22 @@ def melbourne(piso: float, f1: float) -> dict:
     # Metrica 5: quando a previsao segura a luz, o movimento veio? O volume
     # real da hora seguinte a ultima hora da noite (06h-07h) nao esta no
     # cenario: vem da mesma serie real, com a mesma normalizacao (gerar.py).
-    from cenarios.avaliacao_ia.gerar import NOITE_H, _serie
+    from cenarios.avaliacao_ia.gerar import NOITE_H, _serie_zurique
     import pandas as pd
-    serie_real, _ = _serie()
+    serie_real, _ = _serie_zurique()
     sorteio = json.loads((AQUI / "sorteio.json").read_text(encoding="utf-8"))
     depois = {}
-    for x in sorteio["melbourne"]:
+    for x in sorteio[NOITES]:
         ts = pd.Timestamp(x["inicio"]) + pd.Timedelta(hours=NOITE_H)
-        v = serie_real[(serie_real.location_id == x["sensor"]) & (serie_real.ts == ts)].nivel
-        depois[x["cenario"]] = float(v.iloc[0]) if len(v) else None
+        v = serie_real[(serie_real.ponto == x["sensor"]) & (serie_real.ts >= ts)
+                       & (serie_real.ts < ts + pd.Timedelta(hours=1))].nivel
+        depois[x["cenario"]] = float(v.mean()) if len(v) == 4 else None
     saida["hora_apos_a_noite"] = depois
     for par, (ant, rea) in {"mamdani": ("antecipado", "reativo"),
                             "degraus": ("antecipado_degraus", "reativo_degraus")}.items():
         seg = seg_ok = baixo = baixo_ok = 0
         for n in nomes:
-            horas = [ev["nivel"] for ev in _cenario("melbourne", n)["eventos"][::12]]
+            horas = _horas(_cenario(NOITES, n))
             if depois[n] is not None:
                 horas.append(depois[n])
             sa, sr = modos[ant][n]["serie"], modos[rea][n]["serie"]

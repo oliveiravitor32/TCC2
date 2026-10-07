@@ -1,4 +1,4 @@
-"""Inferencia Mamdani (TCC 3.7): comportamento da base vigente (v4-volume)
+"""Inferencia Mamdani (TCC 3.7): comportamento da base vigente (v5-zurique; as regras sao as da v4-volume)
 e integracao com a camada de verificacao. A inferencia pode produzir qualquer
 nivel entre os degraus da classe; o que nunca pode acontecer e o nivel
 EMITIDO violar a norma.
@@ -30,7 +30,8 @@ NIVEIS_FIXA = (Decimal("1"), Decimal("1"), Decimal("1"))
 
 MADRUGADA = datetime(2026, 9, 21, 1, 0)
 INICIO_NOITE = datetime(2026, 9, 21, 19, 0)
-BAIXA, MEDIA, ALTA = 0.02, 0.25, 0.70
+# Longe das rampas dos tercis da v5-zurique (0,0693 e 0,2946, meia-largura 0,05).
+BAIXA, MEDIA, ALTA = 0.005, 0.18, 0.70
 
 
 def resultado(obs, prev, *, oc=False, momento=MADRUGADA, base=BASE, niveis=NIVEIS_P3):
@@ -45,7 +46,7 @@ def nivel(obs, prev, **kw) -> Decimal:
 # Base de regras (RNF05)
 # --------------------------------------------------------------------------
 def test_base_vigente_tem_sete_regras_todas_com_origem():
-    assert BASE.rotulo == "v4-volume"
+    assert BASE.rotulo == "v5-zurique"
     assert len(BASE.regras) == 7
     assert all(r.origem for r in BASE.regras)
 
@@ -130,7 +131,7 @@ def test_inicio_da_noite_segura_a_descida():
 
 
 def test_fronteira_do_tercil_da_meio_termo():
-    r = resultado(0.1038, 0.1038)
+    r = resultado(0.0693, 0.0693)
     assert r.degrau == pytest.approx(1.5, abs=0.02)
     assert Decimal("0.6") < r.nivel_pretendido < Decimal("0.65")
 
@@ -234,7 +235,7 @@ DEGRAUS = em_degraus(BASE)
 
 
 def test_degraus_tem_rotulo_proprio_e_mesmo_hash():
-    assert DEGRAUS.rotulo == "v4-volume-degraus"
+    assert DEGRAUS.rotulo == "v5-zurique-degraus"
     assert DEGRAUS.hash_regras == BASE.hash_regras
 
 
@@ -253,7 +254,7 @@ def test_degraus_coincide_com_mamdani_longe_das_fronteiras():
 
 
 def test_degraus_salta_na_fronteira_e_mamdani_nao():
-    salto_degraus = nivel(0.1039, 0.1039, base=DEGRAUS) - nivel(0.1037, 0.1037, base=DEGRAUS)
-    salto_mamdani = nivel(0.1039, 0.1039) - nivel(0.1037, 0.1037)
+    salto_degraus = nivel(0.0694, 0.0694, base=DEGRAUS) - nivel(0.0692, 0.0692, base=DEGRAUS)
+    salto_mamdani = nivel(0.0694, 0.0694) - nivel(0.0692, 0.0692)
     assert salto_degraus >= Decimal("0.2")
     assert abs(salto_mamdani) < Decimal("0.01")

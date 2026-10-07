@@ -1,69 +1,69 @@
 {
   "semente": 57,
-  "melbourne": [
+  "zurique": [
     {
-      "cenario": "melbourne_movimentado_36_dia_util",
-      "sensor": 36,
+      "cenario": "zurique_movimentado_65_dia_util",
+      "sensor": 65,
       "grupo": "movimentado",
       "tipo": "dia_util",
-      "inicio": "2026-07-14 18:00:00",
-      "media_noite": 0.138
+      "inicio": "2019-12-10 18:00:00",
+      "media_noite": 0.1307
     },
     {
-      "cenario": "melbourne_movimentado_36_fim_de_semana",
-      "sensor": 36,
+      "cenario": "zurique_movimentado_65_fim_de_semana",
+      "sensor": 65,
       "grupo": "movimentado",
       "tipo": "fim_de_semana",
-      "inicio": "2026-07-25 18:00:00",
-      "media_noite": 0.3565
+      "inicio": "2019-01-12 18:00:00",
+      "media_noite": 0.0796
     },
     {
-      "cenario": "melbourne_movimentado_41_dia_util",
-      "sensor": 41,
+      "cenario": "zurique_movimentado_1358_dia_util",
+      "sensor": 1358,
       "grupo": "movimentado",
       "tipo": "dia_util",
-      "inicio": "2026-07-02 18:00:00",
-      "media_noite": 0.1769
+      "inicio": "2019-07-30 18:00:00",
+      "media_noite": 0.0703
     },
     {
-      "cenario": "melbourne_movimentado_41_fim_de_semana",
-      "sensor": 41,
+      "cenario": "zurique_movimentado_1358_fim_de_semana",
+      "sensor": 1358,
       "grupo": "movimentado",
       "tipo": "fim_de_semana",
-      "inicio": "2026-08-15 18:00:00",
-      "media_noite": 0.3702
+      "inicio": "2019-08-17 18:00:00",
+      "media_noite": 0.0977
     },
     {
-      "cenario": "melbourne_calmo_162_dia_util",
-      "sensor": 162,
+      "cenario": "zurique_calmo_52_dia_util",
+      "sensor": 52,
       "grupo": "calmo",
       "tipo": "dia_util",
-      "inicio": "2026-06-18 18:00:00",
-      "media_noite": 0.1181
+      "inicio": "2019-05-29 18:00:00",
+      "media_noite": 0.0603
     },
     {
-      "cenario": "melbourne_calmo_162_fim_de_semana",
-      "sensor": 162,
+      "cenario": "zurique_calmo_52_fim_de_semana",
+      "sensor": 52,
       "grupo": "calmo",
       "tipo": "fim_de_semana",
-      "inicio": "2026-06-06 18:00:00",
-      "media_noite": 0.1591
+      "inicio": "2019-10-26 18:00:00",
+      "media_noite": 0.0384
     },
     {
-      "cenario": "melbourne_calmo_58_dia_util",
-      "sensor": 58,
+      "cenario": "zurique_calmo_1357_dia_util",
+      "sensor": 1357,
       "grupo": "calmo",
       "tipo": "dia_util",
-      "inicio": "2026-05-11 18:00:00",
-      "media_noite": 0.109
+      "inicio": "2019-02-26 18:00:00",
+      "media_noite": 0.073
     },
     {
-      "cenario": "melbourne_calmo_58_fim_de_semana",
-      "sensor": 58,
+      "cenario": "zurique_calmo_1357_fim_de_semana",
+      "sensor": 1357,
       "grupo": "calmo",
       "tipo": "fim_de_semana",
-      "inicio": "2026-09-19 18:00:00",
-      "media_noite": 0.1962
+      "inicio": "2019-03-02 18:00:00",
+      "media_noite": 0.0573
     }
   ],
   "camera": [

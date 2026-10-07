@@ -18,7 +18,7 @@ DATABASE_URL = os.environ.get(
 # Base de regras vigente (3.7): volume de movimento com saida em degraus de
 # classe (DIVERGENCIAS 56). As anteriores ficam registradas em
 # versao_base_regras.
-REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v4-volume.toml")
+REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v5-zurique.toml")
 
 # Ciclo de decisao e failsafe do no (DIVERGENCIAS 1 e 2).
 PERIODO_S = float(os.environ.get("PERIODO_S", "5"))
@@ -37,12 +37,15 @@ VALIDADE_OCORRENCIA_S = float(os.environ.get("VALIDADE_OCORRENCIA_S", "900"))
 # Um POST pode trazer um trecho ou um pacote (envio por regiao).
 MAX_ITENS_PACOTE = int(os.environ.get("MAX_ITENS_PACOTE", "500"))
 
-# Referencia do trecho (media horaria de pessoas no percentil 99): aprendida
-# das leituras dos ultimos DIAS_REFERENCIA dias quando ha ao menos
-# HORAS_MINIMAS_REFERENCIA horas com leitura; antes disso, vale o valor
-# inicial de trecho_via.referencia_pessoas (DIVERGENCIAS 55).
+# Serie da previsao em BLOCOS de BLOCO_PREVISAO_MIN minutos (DIVERGENCIAS 69:
+# 15 min, a resolucao do modelo de Zurique). Referencia do trecho = percentil
+# 99 das medias de pessoas por bloco nos ultimos DIAS_REFERENCIA dias, quando
+# ha ao menos BLOCOS_MINIMOS_REFERENCIA blocos com leitura (672 x 15 min = 7
+# dias); antes disso, o valor inicial de trecho_via.referencia_pessoas
+# (DIVERGENCIAS 55).
+BLOCO_PREVISAO_MIN = int(os.environ.get("BLOCO_PREVISAO_MIN", "15"))
 DIAS_REFERENCIA = int(os.environ.get("DIAS_REFERENCIA", "28"))
-HORAS_MINIMAS_REFERENCIA = int(os.environ.get("HORAS_MINIMAS_REFERENCIA", "168"))
+BLOCOS_MINIMOS_REFERENCIA = int(os.environ.get("BLOCOS_MINIMOS_REFERENCIA", "672"))
 
 # Horario local do ponto de luz: a faixa horaria da inferencia depende dele.
 FUSO = ZoneInfo(os.environ.get("FUSO", "America/Sao_Paulo"))

@@ -16,8 +16,9 @@ from decisao.previsao import Historico, Persistencia, PrevisorXGBoost, carregar_
 MOMENTO = datetime(2026, 9, 22, 1, 0)  # terca, madrugada
 
 
-def historico(valor: float, horas: int = 168) -> Historico:
-    return Historico(momento=MOMENTO, observada=valor, serie={k: valor for k in range(1, horas + 1)})
+def historico(valor: float, blocos: int = 672) -> Historico:
+    # 672 blocos de 15 min = 7 dias: o maior atraso do modelo de Zurique.
+    return Historico(momento=MOMENTO, observada=valor, serie={k: valor for k in range(1, blocos + 1)})
 
 
 def test_persistencia_devolve_a_observada():
@@ -50,12 +51,23 @@ def xgb():
     try:
         return PrevisorXGBoost()
     except FileNotFoundError:
-        pytest.skip("modelo ausente (rode: python -m modelo.treinar)")
+        pytest.skip("modelo ausente (rode: python -m modelo.treinar_zurique)")
 
 
 def test_rotulo_do_modelo(xgb):
-    assert xgb.rotulo == "xgboost-v1"
-    assert xgb.horas_necessarias() >= 24
+    # Modelo principal desde o item 69: Zurique, blocos de 15 min.
+    assert xgb.rotulo == "xgboost-zurique-15min-v1"
+    assert xgb.bloco_min == 15
+    assert xgb.blocos_necessarios() == 672
+
+
+def test_modelo_horario_continua_carregavel():
+    try:
+        h = carregar_previsor("xgboost-v1")
+    except FileNotFoundError:
+        pytest.skip("modelo horario ausente")
+    assert h.rotulo == "xgboost-v1" and h.bloco_min == 60
+    assert 0.0 <= h.prever(historico(0.3, 168)) <= 1.0
 
 
 def test_sem_historico_cai_para_persistencia(xgb):
@@ -84,3 +96,11 @@ def test_media_sazonal_usa_a_mesma_hora_das_semanas_anteriores():
     h = Historico(momento=datetime(2026, 9, 23, 1), observada=0.9, serie={167: 0.2, 335: 0.4, 1: 0.9})
     assert abs(m.prever(h) - 0.3) < 1e-9
     assert m.prever(Historico(momento=datetime(2026, 9, 23, 1), observada=0.7, serie={})) == 0.7
+
+
+def test_media_sazonal_em_blocos_de_15_min():
+    # Proxima hora = 4 blocos; uma semana = 672 blocos: atrasos 671 a 668.
+    from decisao.previsao import Historico, MediaSazonal
+    m = MediaSazonal(bloco_min=15)
+    serie = {671: 0.1, 670: 0.2, 669: 0.3, 668: 0.4, 1: 0.9}
+    assert abs(m.prever(Historico(datetime(2026, 9, 23, 1), 0.9, serie)) - 0.25) < 1e-9

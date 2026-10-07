@@ -12,7 +12,7 @@ from pathlib import Path
 import pandas as pd
 
 from cenarios.executar import HORAS_HISTORICO
-from modelo.experimento_zurique import CORTE, PERCENTIL_CHEIO, carregar
+from modelo.treinar_zurique import CORTE, preparar
 
 AQUI = Path(__file__).resolve().parent
 SEMENTE = 61
@@ -25,10 +25,9 @@ def main() -> None:
     destino.mkdir(exist_ok=True)
     for velho in destino.glob("*.json"):
         velho.unlink()
-    d = carregar()
-    cheio = d[d.ts < CORTE].groupby("ponto").ped.quantile(PERCENTIL_CHEIO).rename("cheio")
-    d = d.merge(cheio, on="ponto")
-    d["nivel"] = (d.ped / d.cheio).clip(0, 1)
+    # Item 69: a mesma preparacao do modelo principal (horario de verao,
+    # sensor travado, p99 so no treino) e historico em blocos de 15 min.
+    d, _ = preparar()
     teste = d[d.ts >= CORTE]
     noturno = teste[(teste.ts.dt.hour >= 18) | (teste.ts.dt.hour < 6)]
     media = noturno.groupby("ponto").nivel.mean().sort_values()
@@ -56,7 +55,7 @@ def main() -> None:
                     break
             else:
                 raise SystemExit(f"sem noite completa para o ponto {ponto} ({tipo})")
-            hist = v[v.index < inicio].resample("h").mean()
+            hist = v[v.index < inicio]
             noite = v[v.index >= inicio]
             nome = f"zurique_{grupo}_{ponto}_{tipo}"
             cen = {

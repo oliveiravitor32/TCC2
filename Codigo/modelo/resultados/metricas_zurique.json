@@ -1,0 +1,164 @@
+{
+  "rotulo": "xgboost-zurique-15min-v1",
+  "protocolo": "PROTOCOLO_MODELO_ZURIQUE.md",
+  "gerado_em": "2026-10-07T03:01:44.323934+00:00",
+  "serie_sha256": "34a41dceb3a145fae5ae2b52d63bc91f540c761161e231dbf1d95bd60f04c42d",
+  "checklist": {
+    "registros_na_janela": 5243407,
+    "nulos_descartados": 2804555,
+    "negativos_descartados": 0,
+    "linhas_em_carimbo_repetido": 114,
+    "datas_com_carimbo_repetido": [
+      "2019-10-27"
+    ],
+    "pontos": [
+      2,
+      20,
+      30,
+      32,
+      33,
+      39,
+      52,
+      53,
+      65,
+      1357,
+      1358,
+      1681,
+      2641,
+      2642
+    ],
+    "intervalos_na_grade": 1642752,
+    "intervalos_ausentes": 16304,
+    "sequencias_de_sensor_travado": 121,
+    "intervalos_marcados_travados": 5792,
+    "intervalos_acima_p99": 16028,
+    "intervalos_acima_2x_p99": 289,
+    "meses_suspeitos_de_realocacao": [
+      "39:2017-01 (0.49x)",
+      "52:2017-12 (0.29x)",
+      "53:2016-01 (0.33x)",
+      "53:2016-02 (0.33x)",
+      "53:2016-11 (0.33x)",
+      "53:2016-12 (0.33x)",
+      "53:2017-01 (0.33x)",
+      "53:2017-02 (0.33x)",
+      "53:2017-11 (0.33x)",
+      "53:2017-12 (0.33x)",
+      "53:2018-01 (0.33x)",
+      "53:2018-02 (0.33x)",
+      "53:2018-11 (0.33x)",
+      "53:2018-12 (0.33x)",
+      "53:2019-01 (0.33x)",
+      "53:2019-11 (0.33x)",
+      "53:2019-12 (0.33x)",
+      "1357:2017-01 (0.45x)",
+      "1357:2018-06 (2.32x)",
+      "1357:2018-07 (2.36x)",
+      "1357:2019-06 (2.23x)",
+      "1357:2019-07 (2.09x)",
+      "1681:2018-02 (0.25x)",
+      "1681:2018-03 (0.25x)",
+      "2641:2018-02 (0.33x)",
+      "2641:2018-06 (2.33x)",
+      "2641:2018-07 (3.33x)",
+      "2641:2018-08 (3.33x)",
+      "2641:2019-06 (2.67x)",
+      "2641:2019-07 (3.67x)",
+      "2641:2019-08 (2.33x)",
+      "2642:2017-12 (0.33x)",
+      "2642:2018-06 (2.67x)",
+      "2642:2018-07 (2.67x)",
+      "2642:2018-08 (2.33x)",
+      "2642:2019-06 (2.33x)",
+      "2642:2019-12 (0.33x)"
+    ]
+  },
+  "linhas_treino": 1168268,
+  "linhas_teste": 404211,
+  "melhor_iteracao": 1999,
+  "tercis_nivel": [
+    0.0693,
+    0.2946
+  ],
+  "atributos": [
+    "atraso_1",
+    "atraso_2",
+    "atraso_3",
+    "atraso_4",
+    "atraso_8",
+    "atraso_96",
+    "atraso_672",
+    "media_1h",
+    "media_3h",
+    "media_24h",
+    "hora",
+    "quarto",
+    "dia_sen",
+    "dia_cos",
+    "dia_semana",
+    "fim_de_semana",
+    "feriado"
+  ],
+  "metricas": {
+    "xgboost": {
+      "mae": 0.04163576568829284,
+      "rmse": 0.06694978156717406,
+      "mae_noite": 0.02275221704634168,
+      "acerto_faixa_noite": 0.9141934843067143,
+      "f1_vai_subir_noite": 0.6379394361294815
+    },
+    "persistencia": {
+      "mae": 0.07630089459209655,
+      "rmse": 0.1219811205712822,
+      "mae_noite": 0.046882267084159795,
+      "acerto_faixa_noite": 0.8282578466428288,
+      "f1_vai_subir_noite": 0.26909315237507714
+    },
+    "semana_anterior": {
+      "mae": 0.07083685052492596,
+      "rmse": 0.12771460041231852,
+      "mae_noite": 0.0356793000432349,
+      "acerto_faixa_noite": 0.8724572904251092,
+      "f1_vai_subir_noite": 0.5829720616570327
+    },
+    "media_sazonal": {
+      "mae": 0.06884533643504395,
+      "rmse": 0.11404301426539792,
+      "mae_noite": 0.03901392848243838,
+      "acerto_faixa_noite": 0.8428436630909814,
+      "f1_vai_subir_noite": 0.46746621319251763
+    },
+    "linear": {
+      "mae": 0.06331254308128718,
+      "rmse": 0.09716482238028556,
+      "mae_noite": 0.031539096341884204,
+      "acerto_faixa_noite": 0.8741060786650775,
+      "f1_vai_subir_noite": 0.4473013666898309
+    },
+    "random_forest": {
+      "mae": 0.042934442283106895,
+      "rmse": 0.06939997561536561,
+      "mae_noite": 0.023106912142175147,
+      "acerto_faixa_noite": 0.912261620977354,
+      "f1_vai_subir_noite": 0.6302272883334478
+    }
+  },
+  "xgboost_melhor_por_ponto": {
+    "linear": 12,
+    "random_forest": 11,
+    "media_sazonal": 12,
+    "persistencia": 12,
+    "semana_anterior": 12
+  },
+  "pontos_no_teste": 12,
+  "tempos": {
+    "xgboost_treino_s": 117.8,
+    "rf_treino_s": 62.5
+  },
+  "leitura": {
+    "linear": "XGBoost superior (MAE +34.2%; melhor em 12/12 pontos)",
+    "random_forest": "XGBoost superior (MAE +3.0%; melhor em 11/12 pontos)",
+    "referencias_simples": "NAO substituivel (faixa +4.2 pp sobre semana_anterior; F1 +0.055 sobre a melhor)"
+  },
+  "modelo_sha256": "937fcd89f9ec1390ef93be66c2e7b0482113d462411e30c32ac85bf6482971cb"
+}

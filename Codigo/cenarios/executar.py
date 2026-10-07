@@ -176,8 +176,17 @@ def _semear_historico(conn, inicio: datetime, execucao_id: int, trecho_id: int,
     ref = float(conn.execute(
         "SELECT referencia_pessoas FROM trecho_via WHERE id = %s", (trecho_id,)
     ).fetchone()[0])
+    if historico is not None and len(historico) == 4 * HORAS_HISTORICO:
+        # Historico real em blocos de 15 min (noites de Zurique, item 69).
+        for k in range(4 * HORAS_HISTORICO, 0, -1):
+            bloco = (inicio - timedelta(minutes=15 * k)).replace(second=0, microsecond=0)
+            media = historico[4 * HORAS_HISTORICO - k] * ref
+            for n in range(15 * 60 // config.PERIODO_VOLUME_S):
+                _inserir_volume(conn, bloco + timedelta(seconds=config.PERIODO_VOLUME_S * n),
+                                trecho_id, media, origem=f"cenario-historico:{execucao_id}")
+        return
     if historico is not None and len(historico) != HORAS_HISTORICO:
-        raise ValueError(f"historico deve ter {HORAS_HISTORICO} horas")
+        raise ValueError(f"historico deve ter {HORAS_HISTORICO} horas ou {4 * HORAS_HISTORICO} blocos de 15 min")
     for k in range(HORAS_HISTORICO, 0, -1):
         hora = (inicio - timedelta(hours=k)).replace(minute=0, second=0, microsecond=0)
         nivel = (historico[HORAS_HISTORICO - k] if historico is not None

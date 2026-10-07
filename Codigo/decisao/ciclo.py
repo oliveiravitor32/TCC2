@@ -258,10 +258,11 @@ def referencias(
 ) -> dict[int, float]:
     """Referencia de cada trecho do ponto: o "cheio" tipico daquela via.
 
-    Percentil 99 da media horaria de pessoas nos ultimos DIAS_REFERENCIA dias
-    - o mesmo criterio da normalizacao do treino (3.6) -, quando ha ao menos
-    HORAS_MINIMAS_REFERENCIA horas com leitura; antes disso, o valor inicial
-    declarado em trecho_via.referencia_pessoas.
+    Percentil 99 da media de pessoas por bloco de BLOCO_PREVISAO_MIN minutos
+    nos ultimos DIAS_REFERENCIA dias - o mesmo criterio da normalizacao do
+    treino (3.6) -, quando ha ao menos BLOCOS_MINIMOS_REFERENCIA blocos com
+    leitura; antes disso, o valor inicial declarado em
+    trecho_via.referencia_pessoas.
     """
     linhas = conn.execute(
         """
@@ -273,13 +274,14 @@ def referencias(
                            AND e.ocorrido_em <= %(agora)s
                            AND e.ocorrido_em > %(agora)s - make_interval(days => %(dias)s)
                            AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
-                         GROUP BY date_trunc('hour', e.ocorrido_em)) h
+                         GROUP BY date_bin(make_interval(mins => %(bloco)s), e.ocorrido_em,
+                                           TIMESTAMPTZ '2000-01-01 00:00+00')) h
                 HAVING count(*) >= %(minimo)s) AS aprendida
           FROM trecho_via t
           JOIN trecho_ponto tp ON tp.trecho_id = t.id AND tp.ponto_de_luz_id = %(ponto)s
         """,
-        {"agora": agora, "dias": config.DIAS_REFERENCIA, "minimo": config.HORAS_MINIMAS_REFERENCIA,
-         "origens": origens, "ponto": ponto_id},
+        {"agora": agora, "dias": config.DIAS_REFERENCIA, "minimo": config.BLOCOS_MINIMOS_REFERENCIA,
+         "bloco": config.BLOCO_PREVISAO_MIN, "origens": origens, "ponto": ponto_id},
     ).fetchall()
     return {t: float(aprendida) if aprendida and aprendida > 0 else float(inicial)
             for t, inicial, aprendida in linhas}
@@ -289,30 +291,44 @@ def historico_horario(
     conn: psycopg.Connection, agora: datetime, horas: int, origens: list[str] | None = None,
     *, ponto_id: int, refs: dict[int, float] | None = None,
 ) -> dict[int, float]:
-    """Nivel de movimentacao por hora CHEIA DE RELOGIO anterior a `agora`,
-    para um ponto de luz - a serie que alimenta a previsao.
+    """Serie por hora cheia (o modelo horario de Melbourne, item 30)."""
+    return historico(conn, agora, horas, origens, ponto_id=ponto_id, refs=refs, bloco_min=60)
 
-    Chave = atraso em horas (1 = hora de relogio anterior); a hora em curso,
-    incompleta, nao entra. Em cada hora e trecho, media de pessoas das
-    leituras dividida pela referencia do trecho (limitada a 1); entre os
+
+def historico(
+    conn: psycopg.Connection, agora: datetime, blocos: int, origens: list[str] | None = None,
+    *, ponto_id: int, refs: dict[int, float] | None = None, bloco_min: int | None = None,
+) -> dict[int, float]:
+    """Nivel de movimentacao por BLOCO de relogio anterior a `agora`, para um
+    ponto de luz - a serie que alimenta a previsao (DIVERGENCIAS 69: blocos
+    de 15 min; 60 para o modelo horario).
+
+    Chave = atraso em blocos (1 = bloco de relogio anterior); o bloco em
+    curso, incompleto, nao entra. Em cada bloco e trecho, media de pessoas
+    das leituras dividida pela referencia do trecho (limitada a 1); entre os
     trechos do ponto, a maior. E a mesma escala do treino (3.6).
     """
+    bloco_min = bloco_min or config.BLOCO_PREVISAO_MIN
     refs = refs if refs is not None else referencias(conn, agora, ponto_id, origens)
     linhas = conn.execute(
         """
         SELECT e.trecho_id,
-               (extract(epoch FROM (date_trunc('hour', %(agora)s)
-                                    - date_trunc('hour', e.ocorrido_em))) / 3600)::int AS atraso,
+               (extract(epoch FROM (date_bin(make_interval(mins => %(bloco)s), %(agora)s,
+                                             TIMESTAMPTZ '2000-01-01 00:00+00')
+                                    - date_bin(make_interval(mins => %(bloco)s), e.ocorrido_em,
+                                               TIMESTAMPTZ '2000-01-01 00:00+00')))
+                / (60 * %(bloco)s))::int AS atraso,
                avg(e.pessoas_media) AS media
           FROM evento_urbano e
           JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
          WHERE tp.ponto_de_luz_id = %(ponto)s AND e.tipo = 'volume'
            AND e.ocorrido_em <= %(agora)s
-           AND e.ocorrido_em > %(agora)s - make_interval(hours => %(horas)s)
+           AND e.ocorrido_em > %(agora)s - make_interval(mins => %(janela)s)
            AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
          GROUP BY 1, 2
         """,
-        {"agora": agora, "horas": horas + 1, "origens": origens, "ponto": ponto_id},
+        {"agora": agora, "janela": (blocos + 1) * bloco_min, "bloco": bloco_min,
+         "origens": origens, "ponto": ponto_id},
     ).fetchall()
     serie: dict[int, float] = {}
     for trecho, atraso, media in linhas:
@@ -417,12 +433,14 @@ def decidir(
             # So na avaliacao (DIVERGENCIAS 61): alternativa simples com histerese.
             obs = filtro_observada(obs)
         if not reativo and obs is not None:
-            horas = getattr(previsor, "horas_necessarias", lambda: 24)()
+            bloco = getattr(previsor, "bloco_min", 60)
+            blocos = getattr(previsor, "blocos_necessarios", lambda: 24)()
             previsao = previsor.prever(
                 Historico(
                     momento=local,
                     observada=obs,
-                    serie=historico_horario(conn, agora, horas, origens, ponto_id=ponto.id, refs=refs),
+                    serie=historico(conn, agora, blocos, origens, ponto_id=ponto.id, refs=refs,
+                                    bloco_min=bloco),
                 )
             )
         resultado = inferir(

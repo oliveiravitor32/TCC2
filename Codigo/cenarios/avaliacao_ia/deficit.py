@@ -31,7 +31,7 @@ from decisao.inferencia import carregar
 
 RES = Path(__file__).resolve().parent.parent / "resultados"
 MARGEM = 0.02
-ARQUIVOS = {"suite": "suite_antecipado.json", "melbourne": "avaliacao_ia_melbourne_antecipado.json"}
+ARQUIVOS = {"suite": "suite_antecipado.json", "noites": "avaliacao_ia_zurique_antecipado.json"}  # item 69
 
 
 def main() -> None:

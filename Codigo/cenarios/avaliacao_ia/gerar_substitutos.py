@@ -14,7 +14,15 @@ DUR_MIN = 180
 PASSO_MIN = 5
 DESVIO = 0.03
 SEMENTES = (591, 592, 593)
-FRONTEIRAS = [("baixa", 0.1038, "2026-09-23T01:00:00"), ("alta", 0.4053, "2026-09-22T19:00:00")]
+def _fronteiras():
+    import tomllib
+    from decisao import config
+
+    a, b = tomllib.loads(config.REGRAS.read_text(encoding="utf-8"))["movimentacao"]["fronteiras"]
+    return [("baixa", a, "2026-09-23T01:00:00"), ("alta", b, "2026-09-22T19:00:00")]
+
+
+FRONTEIRAS = _fronteiras()
 
 
 def main() -> None:

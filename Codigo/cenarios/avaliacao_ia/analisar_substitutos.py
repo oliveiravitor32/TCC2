@@ -19,6 +19,8 @@ from decisao.energia import trajetoria_horario_fixo
 from decisao.inferencia import carregar
 
 PREVISORES = {"xgboost": "", "media_sazonal": "_media_sazonal"}
+from cenarios.avaliacao_ia.analisar import _horas
+from cenarios.avaliacao_ia.gerar import NOITES
 
 
 def _rels(arq: str) -> dict[str, dict]:
@@ -46,12 +48,12 @@ def _deficit(rels, f1, f2) -> dict:
 
 def melbourne(piso, f1, f2) -> dict:
     from cenarios.avaliacao_ia.analisar import melbourne as m57  # noqa: F401 (mesmas definicoes)
-    reat = _rels("avaliacao_ia_melbourne_reativo.json")
+    reat = _rels(f"avaliacao_ia_{NOITES}_reativo.json")
     metr = json.loads((RES / "avaliacao_ia_metricas.json").read_text(encoding="utf-8"))
     depois = metr["melbourne"]["hora_apos_a_noite"]
     saida = {}
     for prev, suf in PREVISORES.items():
-        rels = _rels(f"avaliacao_ia_melbourne_antecipado{suf}.json")
+        rels = _rels(f"avaliacao_ia_{NOITES}_antecipado{suf}.json")
         nomes = sorted(rels)
         e = [_energia(rels[n]) for n in nomes]
         jan = sum(rels[n]["h3"]["ciclos_em_janela_baixa"] for n in nomes)
@@ -63,7 +65,7 @@ def melbourne(piso, f1, f2) -> dict:
             for i, j in _episodios(s, f1):
                 chegou = next((k for k in range(i, j) if s[k]["emitido"] <= piso + MARGEM), j)
                 atrasos.append((chegou - i) * config.PERIODO_S / 60)
-            horas = [ev["nivel"] for ev in _cenario("melbourne", n)["eventos"][::12]]
+            horas = _horas(_cenario(NOITES, n))
             if depois.get(n) is not None:
                 horas.append(depois[n])
             for xa, xr in zip(s, reat[n]["serie"]):

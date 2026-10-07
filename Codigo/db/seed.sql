@@ -79,6 +79,14 @@ VALUES ('v4-volume', 7,
         'Mesma base v4 como tabela em degraus; so para comparacao com a Mamdani.')
 ON CONFLICT (rotulo) DO NOTHING;
 
+-- Base vigente desde o item 69: tercis de Zurique 15 min (so treino).
+INSERT INTO versao_base_regras (rotulo, qtd_regras, resumo)
+VALUES ('v5-zurique', 7,
+        'As 7 regras da v4 com os tercis de Zurique 15 min (so treino): fronteiras em 0.0693 e 0.2946 (DIVERGENCIAS 69). Arquivo: decisao/regras/v5-zurique.toml.'),
+       ('v5-zurique-degraus', 7,
+        'Mesma base v5 como tabela em degraus; so para comparacao com a Mamdani.')
+ON CONFLICT (rotulo) DO NOTHING;
+
 -- hash_regras e conferido pelo servico de decisao ao iniciar (passo 5).
 
 -- Camadas de previsao (3.6). A persistencia foi a previsao provisoria e
@@ -87,6 +95,7 @@ ON CONFLICT (rotulo) DO NOTHING;
 INSERT INTO versao_modelo_previsao (rotulo, algoritmo)
 VALUES ('persistencia', 'persistencia'),
        ('xgboost-v1',   'xgboost'),
+       ('xgboost-zurique-15min-v1', 'xgboost'),  -- principal desde o item 69
        ('media-sazonal', 'media_sazonal')
 ON CONFLICT (rotulo) DO NOTHING;
 

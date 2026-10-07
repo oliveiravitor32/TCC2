@@ -1,153 +1,153 @@
 {
   "nome": "ruido_fronteira_baixa_592",
-  "descricao": "Volume oscilando em torno do tercil baixa (0.1038).",
-  "origem": "normal(0.1038; 0.03), semente 592 (DIVERGENCIAS 59).",
+  "descricao": "Volume oscilando em torno do tercil baixa (0.0693).",
+  "origem": "normal(0.0693; 0.03), semente 592 (DIVERGENCIAS 59).",
   "inicio_local": "2026-09-23T01:00:00",
   "duracao_min": 180,
   "eventos": [
     {
       "em_min": 0,
-      "nivel": 0.1686
+      "nivel": 0.1341
     },
     {
       "em_min": 5,
-      "nivel": 0.1356
+      "nivel": 0.1011
     },
     {
       "em_min": 10,
-      "nivel": 0.1127
+      "nivel": 0.0782
     },
     {
       "em_min": 15,
-      "nivel": 0.1182
+      "nivel": 0.0837
     },
     {
       "em_min": 20,
-      "nivel": 0.0934
+      "nivel": 0.0589
     },
     {
       "em_min": 25,
-      "nivel": 0.0597
+      "nivel": 0.0252
     },
     {
       "em_min": 30,
-      "nivel": 0.1038
+      "nivel": 0.0693
     },
     {
       "em_min": 35,
-      "nivel": 0.0989
+      "nivel": 0.0644
     },
     {
       "em_min": 40,
-      "nivel": 0.0613
+      "nivel": 0.0268
     },
     {
       "em_min": 45,
-      "nivel": 0.1605
+      "nivel": 0.126
     },
     {
       "em_min": 50,
-      "nivel": 0.0932
+      "nivel": 0.0587
     },
     {
       "em_min": 55,
-      "nivel": 0.1506
+      "nivel": 0.1161
     },
     {
       "em_min": 60,
-      "nivel": 0.0913
+      "nivel": 0.0568
     },
     {
       "em_min": 65,
-      "nivel": 0.1359
+      "nivel": 0.1014
     },
     {
       "em_min": 70,
-      "nivel": 0.1401
+      "nivel": 0.1056
     },
     {
       "em_min": 75,
-      "nivel": 0.1398
+      "nivel": 0.1053
     },
     {
       "em_min": 80,
-      "nivel": 0.1044
+      "nivel": 0.0699
     },
     {
       "em_min": 85,
-      "nivel": 0.0961
+      "nivel": 0.0616
     },
     {
       "em_min": 90,
-      "nivel": 0.1322
+      "nivel": 0.0977
     },
     {
       "em_min": 95,
-      "nivel": 0.1354
+      "nivel": 0.1009
     },
     {
       "em_min": 100,
-      "nivel": 0.0735
+      "nivel": 0.039
     },
     {
       "em_min": 105,
-      "nivel": 0.0966
+      "nivel": 0.0621
     },
     {
       "em_min": 110,
-      "nivel": 0.1391
+      "nivel": 0.1046
     },
     {
       "em_min": 115,
-      "nivel": 0.0684
+      "nivel": 0.0339
     },
     {
       "em_min": 120,
-      "nivel": 0.0915
+      "nivel": 0.057
     },
     {
       "em_min": 125,
-      "nivel": 0.0776
+      "nivel": 0.0431
     },
     {
       "em_min": 130,
-      "nivel": 0.1227
+      "nivel": 0.0882
     },
     {
       "em_min": 135,
-      "nivel": 0.1433
+      "nivel": 0.1088
     },
     {
       "em_min": 140,
-      "nivel": 0.1111
+      "nivel": 0.0766
     },
     {
       "em_min": 145,
-      "nivel": 0.141
+      "nivel": 0.1065
     },
     {
       "em_min": 150,
-      "nivel": 0.1086
+      "nivel": 0.0741
     },
     {
       "em_min": 155,
-      "nivel": 0.1165
+      "nivel": 0.082
     },
     {
       "em_min": 160,
-      "nivel": 0.0629
+      "nivel": 0.0284
     },
     {
       "em_min": 165,
-      "nivel": 0.0944
+      "nivel": 0.0599
     },
     {
       "em_min": 170,
-      "nivel": 0.0534
+      "nivel": 0.0189
     },
     {
       "em_min": 175,
-      "nivel": 0.0985
+      "nivel": 0.064
     }
   ],
   "envelope": [
