@@ -25,3 +25,5 @@ deploy/broker/certs/
 # Certificado da CA baixado da VM (cada VM gera o seu)
 ca_vm.crt
 modelo/dados/*.parquet
+# Coleta por minuto de Melbourne (modelo/coletar_melbourne_minuto.py): dados brutos fora do git
+modelo/dados/melbourne_minuto/
