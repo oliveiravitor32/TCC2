@@ -45,7 +45,7 @@ __all__ = ["BaseRegras", "Entrada", "Resultado", "carregar", "em_degraus", "frac
 # (DIVERGENCIAS 56). A v2 e a v3 continuam no repositorio e em
 # versao_base_regras, para o texto das regras de decisoes antigas (RNF04); a
 # inferencia so executa bases com saida em degraus de classe.
-BASE_VIGENTE: Final[Path] = Path(__file__).parent / "regras" / "v5-zurique.toml"
+BASE_VIGENTE: Final[Path] = Path(__file__).parent / "regras" / "v6-zurique.toml"
 SAIDA_DEGRAU: Final[str] = "degrau_de_classe"
 
 PASSO: Final[Decimal] = Decimal("0.001")  # mesma resolucao de NUMERIC(4,3)

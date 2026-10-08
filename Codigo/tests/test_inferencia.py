@@ -46,7 +46,7 @@ def nivel(obs, prev, **kw) -> Decimal:
 # Base de regras (RNF05)
 # --------------------------------------------------------------------------
 def test_base_vigente_tem_sete_regras_todas_com_origem():
-    assert BASE.rotulo == "v5-zurique"
+    assert BASE.rotulo == "v6-zurique"
     assert len(BASE.regras) == 7
     assert all(r.origem for r in BASE.regras)
 
@@ -235,7 +235,7 @@ DEGRAUS = em_degraus(BASE)
 
 
 def test_degraus_tem_rotulo_proprio_e_mesmo_hash():
-    assert DEGRAUS.rotulo == "v5-zurique-degraus"
+    assert DEGRAUS.rotulo == "v6-zurique-degraus"
     assert DEGRAUS.hash_regras == BASE.hash_regras
 
 

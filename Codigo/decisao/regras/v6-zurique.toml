@@ -1,0 +1,132 @@
+# Base de regras Mamdani - versao v6-zurique (TCC 3.7, RNF05)
+#
+# Diferenca para a v5 (DIVERGENCIAS 70, PROTOCOLO_V6_RAMPA.md): SO a largura
+# da rampa entre as faixas de movimentacao. Regra restabelecida da v0:
+# meia_largura_rampa = 1/4 da faixa mais estreita (com os tercis de Zurique,
+# a baixa, de 0 a 0,0693) = 0,0173. Antes, 0,05 fixo, sem regra declarada.
+# Decidido DEPOIS de ver o efeito na v5 (declarado no protocolo).
+#
+# Texto da v5:
+# Base de regras Mamdani - versao v5-zurique (TCC 3.7, RNF05)
+#
+# Diferenca para a v4 (DIVERGENCIAS 69, PROTOCOLO_MODELO_ZURIQUE.md): SO as
+# fronteiras da movimentacao. Sao os tercis do nivel normalizado da serie de
+# Zurique em 15 min (14 pontos), calculados SO NO TREINO (2016 a 2018), com o
+# p99 tambem so do treino. As sete regras, os conjuntos e a saida sao os da v4.
+#
+# Texto da v4, mantido:
+#
+# Qualquer alteracao neste arquivo exige NOVA VERSAO (novo arquivo e nova
+# linha em versao_base_regras): o hash do conteudo e gravado no banco e a
+# decisao registra a versao que a produziu (RNF04).
+#
+# Diferenca para a v3 (DIVERGENCIAS 56): a decisao volta a ser pelo VOLUME de
+# movimento, como manda a NBR 5101 (a classe depende do nivel de atividade de
+# pedestres; 6.3 recomenda reduzir nos horarios de baixa movimentacao). Uma
+# pessoa sozinha nao forca o pleno: a classe minima admitida (P5 para a P3)
+# e uma classe de pedestres, com iluminancia vertical para reconhecimento
+# facial. A plataforma publica a MEDIA de pessoas na area do trecho a cada
+# 5 min; o servico normaliza pela referencia do trecho (3.6).
+#
+# SAIDA EM CLASSES (DIVERGENCIAS 56): os tres conjuntos de saida sao degraus
+# de classe, e nao fracoes fixas do pleno:
+#   degrau 0 = a classe da via            (P3 -> 1,0)
+#   degrau 1 = uma classe abaixo          (P4 -> 0,75)
+#   degrau 2 = a classe minima admitida   (P5 -> 0,5)
+# O servico le de classe_iluminacao quanto vale cada degrau para a classe do
+# ponto e converte o degrau defuzificado em fracao do pleno por interpolacao
+# linear entre os degraus. Tres degraus porque a norma admite descer no
+# maximo duas classes (6.10.2). Conjuntos simetricos em volta de cada degrau:
+# uma regra sozinha produz exatamente o valor da classe.
+#
+# Fronteiras da movimentacao (observada e prevista) nos TERCIS da serie de
+# Melbourne (extraida em 2026-09-23, 49 pontos), normalizada por ponto pelo
+# percentil 99 - as mesmas da v2 e da v3 (3.7).
+
+rotulo = "v6-zurique"
+resumo = "Rampa = 1/4 da faixa mais estreita (0,0173). Tercis de Zurique 15 min (so treino). Volume de movimento (media de 5 min por trecho) observado e previsto; 7 regras; saida em degraus de classe lidos de classe_iluminacao; atenuacao so sem ocorrencia."
+
+# ---------------------------------------------------------------------------
+# Movimentacao OBSERVADA (media de 5 min) e PREVISTA (proxima hora): baixa /
+# media / alta, trapezoidais, no nivel normalizado por trecho (3.6).
+# ---------------------------------------------------------------------------
+[movimentacao]
+fronteiras = [0.0693, 0.2946]
+meia_largura_rampa = 0.0173
+
+# ---------------------------------------------------------------------------
+# Faixa horaria (apoio, Quadro 7): horas decorridas desde as 18h, 0 a 12.
+# ---------------------------------------------------------------------------
+[faixa_horaria.conjuntos]
+inicio_noite  = [0.0, 0.0, 3.0, 5.0]    # 18h-21h pleno, sai ate 23h
+madrugada     = [4.0, 6.0, 9.0, 10.0]   # 00h-03h pleno
+pre_amanhecer = [9.0, 10.0, 12.0, 12.0] # 04h-06h pleno
+
+# ---------------------------------------------------------------------------
+# Saida: degrau de classe, universo -1 a 3 (as bordas existem so para que o
+# centroide de cada conjunto caia exatamente no degrau); o resultado e
+# limitado a 0..2.
+# ---------------------------------------------------------------------------
+[saida]
+tipo = "degrau_de_classe"
+universo = [-1.0, 3.0]
+
+[saida.conjuntos]
+classe_da_via     = [-1.0, 0.0, 0.0, 1.0]
+uma_classe_abaixo = [0.0, 1.0, 1.0, 2.0]
+classe_minima     = [1.0, 2.0, 2.0, 3.0]
+
+# ---------------------------------------------------------------------------
+# Regras. Antecedentes ligados por E (minimo).
+#
+# Toda regra que ATENUA exige ocorrencia = nao: evidencia de risco nunca e
+# diluida por uma regra de reducao ativa ao mesmo tempo (PICKERING et al.,
+# 2026).
+#
+# Variaveis:
+#   ocorrencia     = sim | nao
+#   observada      = baixa | media | alta   (media de 5 min, normalizada)
+#   prevista       = baixa | media | alta   (camada de previsao, 3.6)
+#   faixa_horaria  = inicio_noite | madrugada | pre_amanhecer
+# ---------------------------------------------------------------------------
+[[regra]]
+id = "R1"
+se = { ocorrencia = "sim" }
+entao = "classe_da_via"
+origem = "Dominio: ocorrencia reportada justifica elevacao independentemente da movimentacao (Quadro 7, 1.6)"
+
+[[regra]]
+id = "R2"
+se = { observada = "alta" }
+entao = "classe_da_via"
+origem = "Norma: NBR 5101 - a classe da via corresponde a atividade de pedestres para a qual foi selecionada; 6.10.3"
+
+[[regra]]
+id = "R3"
+se = { prevista = "alta" }
+entao = "classe_da_via"
+origem = "Literatura: antecipacao da demanda (2.7; BELLONI et al., 2024)"
+
+[[regra]]
+id = "R4"
+se = { ocorrencia = "nao", observada = "media" }
+entao = "uma_classe_abaixo"
+origem = "Norma: NBR 5101, 6.10.2 e 6.10.3 - atividade menor admite classe inferior"
+
+[[regra]]
+id = "R5"
+se = { ocorrencia = "nao", observada = "baixa", prevista = "baixa" }
+entao = "classe_minima"
+origem = "Norma: NBR 5101, 6.3 e 6.10.3 - reduzir nos horarios de baixa movimentacao"
+
+[[regra]]
+id = "R6"
+se = { ocorrencia = "nao", observada = "baixa", prevista = "media" }
+entao = "uma_classe_abaixo"
+origem = "Literatura: antecipacao da demanda (2.7; BELLONI et al., 2024)"
+
+[[regra]]
+id = "R7"
+se = { ocorrencia = "nao", observada = "baixa", faixa_horaria = "inicio_noite" }
+entao = "uma_classe_abaixo"
+origem = "Dominio: faixa horaria como evidencia de apoio (Quadro 7)"

@@ -18,7 +18,7 @@ DATABASE_URL = os.environ.get(
 # Base de regras vigente (3.7): volume de movimento com saida em degraus de
 # classe (DIVERGENCIAS 56). As anteriores ficam registradas em
 # versao_base_regras.
-REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v5-zurique.toml")
+REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v6-zurique.toml")
 
 # Ciclo de decisao e failsafe do no (DIVERGENCIAS 1 e 2).
 PERIODO_S = float(os.environ.get("PERIODO_S", "5"))

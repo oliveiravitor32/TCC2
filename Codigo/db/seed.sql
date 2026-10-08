@@ -87,6 +87,14 @@ VALUES ('v5-zurique', 7,
         'Mesma base v5 como tabela em degraus; so para comparacao com a Mamdani.')
 ON CONFLICT (rotulo) DO NOTHING;
 
+-- Base vigente desde o item 70: rampa proporcional aos tercis.
+INSERT INTO versao_base_regras (rotulo, qtd_regras, resumo)
+VALUES ('v6-zurique', 7,
+        'Regras e tercis da v5 (0.0693 e 0.2946) com a rampa = 1/4 da faixa mais estreita (0.0173), regra da v0 (DIVERGENCIAS 70). Arquivo: decisao/regras/v6-zurique.toml.'),
+       ('v6-zurique-degraus', 7,
+        'Mesma base v6 como tabela em degraus; so para comparacao com a Mamdani.')
+ON CONFLICT (rotulo) DO NOTHING;
+
 -- hash_regras e conferido pelo servico de decisao ao iniciar (passo 5).
 
 -- Camadas de previsao (3.6). A persistencia foi a previsao provisoria e
