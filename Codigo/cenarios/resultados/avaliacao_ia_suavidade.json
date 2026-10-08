@@ -1,90 +1,90 @@
 {
   "mamdani": {
-    "perceptiveis_15": 9,
-    "perceptiveis_6": 33,
-    "subidas_perceptiveis_15": 9,
+    "perceptiveis_15": 13,
+    "perceptiveis_6": 20,
+    "subidas_perceptiveis_15": 13,
     "min_2lux_abaixo": 0.0,
-    "variacao_total": 8.868,
-    "inversoes": 87,
+    "variacao_total": 7.838,
+    "inversoes": 32,
     "violacoes": {
       "piso": 0,
       "taxa": 0
     },
-    "energia_x_pleno": 0.6386,
-    "atraso_ate_minima_min": 64.1,
+    "energia_x_pleno": 0.6343,
+    "atraso_ate_minima_min": 47.6,
     "episodios": 11,
     "por_cenario": {
       "zurique_calmo_52_dia_util": {
-        "perceptiveis_15": 0,
-        "perceptiveis_6": 2,
-        "subidas_perceptiveis_15": 0,
+        "perceptiveis_15": 1,
+        "perceptiveis_6": 3,
+        "subidas_perceptiveis_15": 1,
         "min_2lux_abaixo": 0.0,
-        "variacao_total": 0.606,
-        "inversoes": 5,
-        "energia_x_pleno": 0.5803
+        "variacao_total": 0.605,
+        "inversoes": 3,
+        "energia_x_pleno": 0.5785
       },
       "zurique_calmo_52_fim_de_semana": {
         "perceptiveis_15": 0,
-        "perceptiveis_6": 3,
+        "perceptiveis_6": 0,
         "subidas_perceptiveis_15": 0,
         "min_2lux_abaixo": 0.0,
-        "variacao_total": 0.615,
-        "inversoes": 10,
-        "energia_x_pleno": 0.5873
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.5829
       },
       "zurique_calmo_53_dia_util": {
-        "perceptiveis_15": 1,
-        "perceptiveis_6": 5,
-        "subidas_perceptiveis_15": 1,
+        "perceptiveis_15": 2,
+        "perceptiveis_6": 3,
+        "subidas_perceptiveis_15": 2,
         "min_2lux_abaixo": 0.0,
-        "variacao_total": 1.28,
-        "inversoes": 9,
-        "energia_x_pleno": 0.6315
+        "variacao_total": 1.252,
+        "inversoes": 5,
+        "energia_x_pleno": 0.6272
       },
       "zurique_calmo_53_fim_de_semana": {
         "perceptiveis_15": 0,
-        "perceptiveis_6": 4,
+        "perceptiveis_6": 0,
         "subidas_perceptiveis_15": 0,
         "min_2lux_abaixo": 0.0,
-        "variacao_total": 0.758,
-        "inversoes": 9,
-        "energia_x_pleno": 0.5736
+        "variacao_total": 0.25,
+        "inversoes": 0,
+        "energia_x_pleno": 0.578
       },
       "zurique_movimentado_2_dia_util": {
         "perceptiveis_15": 4,
-        "perceptiveis_6": 7,
+        "perceptiveis_6": 5,
         "subidas_perceptiveis_15": 4,
         "min_2lux_abaixo": 0.0,
-        "variacao_total": 1.853,
-        "inversoes": 9,
-        "energia_x_pleno": 0.7258
+        "variacao_total": 1.788,
+        "inversoes": 7,
+        "energia_x_pleno": 0.721
       },
       "zurique_movimentado_2_fim_de_semana": {
-        "perceptiveis_15": 3,
-        "perceptiveis_6": 4,
-        "subidas_perceptiveis_15": 3,
+        "perceptiveis_15": 2,
+        "perceptiveis_6": 3,
+        "subidas_perceptiveis_15": 2,
         "min_2lux_abaixo": 0.0,
-        "variacao_total": 1.588,
-        "inversoes": 18,
-        "energia_x_pleno": 0.6647
+        "variacao_total": 1.342,
+        "inversoes": 5,
+        "energia_x_pleno": 0.6583
       },
       "zurique_movimentado_32_dia_util": {
-        "perceptiveis_15": 1,
+        "perceptiveis_15": 3,
         "perceptiveis_6": 5,
-        "subidas_perceptiveis_15": 1,
+        "subidas_perceptiveis_15": 3,
         "min_2lux_abaixo": 0.0,
-        "variacao_total": 1.473,
-        "inversoes": 14,
-        "energia_x_pleno": 0.699
+        "variacao_total": 1.865,
+        "inversoes": 10,
+        "energia_x_pleno": 0.6933
       },
       "zurique_movimentado_32_fim_de_semana": {
-        "perceptiveis_15": 0,
-        "perceptiveis_6": 3,
-        "subidas_perceptiveis_15": 0,
+        "perceptiveis_15": 1,
+        "perceptiveis_6": 1,
+        "subidas_perceptiveis_15": 1,
         "min_2lux_abaixo": 0.0,
-        "variacao_total": 0.695,
-        "inversoes": 13,
-        "energia_x_pleno": 0.6467
+        "variacao_total": 0.486,
+        "inversoes": 2,
+        "energia_x_pleno": 0.6351
       }
     }
   },

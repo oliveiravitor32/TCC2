@@ -2183,6 +2183,42 @@ ACHADO:  as quedas de aderencia vem dos tercis novos com a rampa fixa de
          agora seria decisao posterior ao resultado.
 ESTADO:  partes A, B e C executadas; texto e VM pendentes.
 
+-------------------------------------------------------------------------------
+70. BASE V6-ZURIQUE: RAMPA PROPORCIONAL AOS TERCIS (07-08/10/2026)
+-------------------------------------------------------------------------------
+MOTIVO:  efeito da rampa fixa de +-0,05 sobre os tercis de Zurique na v5
+         (item 69). Decisao dos autores DEPOIS de ver a v5, declarada.
+PROTOCOLO: decisao/regras/PROTOCOLO_V6_RAMPA.md (7cafcf4, antes da base):
+         rampa = 1/4 da faixa mais estreita (regra da v0) = 0,0173. So isso
+         muda. Base em decisao/regras/v6-zurique.toml; migracao 008; commit
+         6cc4c9c. Resultados da v5 em cenarios/resultados/v5_zurique/.
+RESULTADOS (v6, entre parenteses a v5). ZERO violacoes em todas as
+         execucoes (suite 4 x 13.440; noites 4 x 69.120 + media sazonal;
+         camera 3 x 11.520; ruido 2 x 12.960; suavidade 3 x 69.120).
+         Suite: 75,7 % do pleno e 106,6 % do horario fixo (iguais); aderencia
+         98,2 % (95,5 %): madrugada ociosa 95,8 % e ocorrencia na madrugada
+         83,3 %, com o nivel em 0,556 contra o maximo de 0,55 do envelope nos
+         primeiros minutos (0,006 acima). H3 suite: 46,9 % antecipado x 40,2 %
+         reativo (68,1 x 48,1) - NAO confirmada.
+         Noites de Zurique: 62,4 % do pleno e 78,6 % do fixo (62,8 e 79,1).
+         H3 noites: 27,8 % x 23,2 % (47,9 x 38,6) - NAO confirmada.
+         Deficit: adaptativo nunca >= 2 lux abaixo; fixo 343 min (suite) e
+         85,5 min (noites); adaptativo abaixo com margem 0,02: 96,8 e 209,7
+         min (190,9 e 388,7).
+         Substitutos, teste 1: XGBoost contencao 72,4 % x 62,4 % da media
+         sazonal (50,8 x 48,6), energia 62,4 % x 63,4 % -> NAO substituivel;
+         deficit com margem: 209,7 x 164,7 min (pior no XGBoost, declarar).
+         Camera: XGBoost perde 0,32 e 0,18 (inicio da noite e madrugada) x
+         0,34 e 0,19 do reativo.
+         Teste 2 (ruido): Mamdani 140 inversoes x 86 -> fuzzy SUBSTITUIVEL.
+         Suavidade: perceptiveis 15 % / 6 %: Mamdani 13/20, tabela 13/13,
+         tabela com histerese 9/9 -> fuzzy SUBSTITUIVEL.
+LEITURA: a v6 melhora a aderencia, a H3 em valor absoluto e a contencao da
+         previsao, sem mudar energia nem as conclusoes de substituibilidade:
+         previsao NAO substituivel; logica nebulosa substituivel; H3 nao
+         confirmada.
+TEXTO:   PENDENTE (rodada v20, Zurique como principal).
+
 ===============================================================================
 FIM
 ===============================================================================

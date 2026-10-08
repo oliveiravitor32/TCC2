@@ -6,9 +6,9 @@
       "fixo_min_abaixo": 349.5,
       "fixo_deficit_medio_fracao": 0.372,
       "fixo_deficit_medio_lux": 3.72,
-      "adaptativo_min_abaixo": 190.9,
-      "adaptativo_deficit_medio_fracao": 0.079,
-      "adaptativo_deficit_medio_lux": 0.79
+      "adaptativo_min_abaixo": 96.8,
+      "adaptativo_deficit_medio_fracao": 0.078,
+      "adaptativo_deficit_medio_lux": 0.78
     },
     "por_cenario": {
       "adversarial_serra": {
@@ -44,7 +44,7 @@
       "noite_tipica": {
         "min_com_exigencia": 330.0,
         "fixo_min_abaixo": 117.3,
-        "adaptativo_min_abaixo": 104.7,
+        "adaptativo_min_abaixo": 59.8,
         "fixo_min_abaixo_com_ocorrencia": 0.0
       },
       "ocorrencia_na_madrugada": {
@@ -56,7 +56,7 @@
       "ruido_na_fronteira": {
         "min_com_exigencia": 115.0,
         "fixo_min_abaixo": 112.3,
-        "adaptativo_min_abaixo": 59.0,
+        "adaptativo_min_abaixo": 9.7,
         "fixo_min_abaixo_com_ocorrencia": 0.0
       },
       "saida_de_evento": {
@@ -74,57 +74,57 @@
       "fixo_min_abaixo": 87.3,
       "fixo_deficit_medio_fracao": 0.247,
       "fixo_deficit_medio_lux": 2.47,
-      "adaptativo_min_abaixo": 388.7,
-      "adaptativo_deficit_medio_fracao": 0.09,
-      "adaptativo_deficit_medio_lux": 0.9
+      "adaptativo_min_abaixo": 209.7,
+      "adaptativo_deficit_medio_fracao": 0.083,
+      "adaptativo_deficit_medio_lux": 0.83
     },
     "por_cenario": {
       "zurique_calmo_1357_dia_util": {
         "min_com_exigencia": 225.0,
         "fixo_min_abaixo": 0.0,
-        "adaptativo_min_abaixo": 29.7,
+        "adaptativo_min_abaixo": 14.8,
         "fixo_min_abaixo_com_ocorrencia": 0.0
       },
       "zurique_calmo_1357_fim_de_semana": {
         "min_com_exigencia": 150.0,
         "fixo_min_abaixo": 15.0,
-        "adaptativo_min_abaixo": 44.8,
+        "adaptativo_min_abaixo": 30.0,
         "fixo_min_abaixo_com_ocorrencia": 0.0
       },
       "zurique_calmo_52_dia_util": {
         "min_com_exigencia": 180.0,
         "fixo_min_abaixo": 0.0,
-        "adaptativo_min_abaixo": 14.8,
+        "adaptativo_min_abaixo": 0.0,
         "fixo_min_abaixo_com_ocorrencia": 0.0
       },
       "zurique_calmo_52_fim_de_semana": {
         "min_com_exigencia": 75.0,
         "fixo_min_abaixo": 0.0,
-        "adaptativo_min_abaixo": 14.8,
+        "adaptativo_min_abaixo": 0.0,
         "fixo_min_abaixo_com_ocorrencia": 0.0
       },
       "zurique_movimentado_1358_dia_util": {
         "min_com_exigencia": 330.0,
         "fixo_min_abaixo": 0.0,
-        "adaptativo_min_abaixo": 75.0,
+        "adaptativo_min_abaixo": 59.8,
         "fixo_min_abaixo_com_ocorrencia": 0.0
       },
       "zurique_movimentado_1358_fim_de_semana": {
         "min_com_exigencia": 390.0,
         "fixo_min_abaixo": 57.3,
-        "adaptativo_min_abaixo": 104.8,
+        "adaptativo_min_abaixo": 75.0,
         "fixo_min_abaixo_com_ocorrencia": 0.0
       },
       "zurique_movimentado_65_dia_util": {
         "min_com_exigencia": 300.0,
         "fixo_min_abaixo": 0.0,
-        "adaptativo_min_abaixo": 59.8,
+        "adaptativo_min_abaixo": 30.0,
         "fixo_min_abaixo_com_ocorrencia": 0.0
       },
       "zurique_movimentado_65_fim_de_semana": {
         "min_com_exigencia": 285.0,
         "fixo_min_abaixo": 15.0,
-        "adaptativo_min_abaixo": 44.8,
+        "adaptativo_min_abaixo": 0.0,
         "fixo_min_abaixo_com_ocorrencia": 0.0
       }
     }

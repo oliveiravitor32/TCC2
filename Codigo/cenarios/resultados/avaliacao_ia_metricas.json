@@ -6,28 +6,28 @@
           "piso": 0,
           "taxa": 0
         },
-        "energia_x_pleno": 0.62761796875,
-        "energia_x_fixo": 0.7910465348328531,
-        "h3_primaria": 0.47906318082788674,
-        "h3_secundaria_min": 69.92222222222222,
+        "energia_x_pleno": 0.6238299479166667,
+        "energia_x_fixo": 0.7862721324044922,
+        "h3_primaria": 0.2782135076252723,
+        "h3_secundaria_min": 45.65555555555556,
         "episodios": 15,
-        "variacao_total": 11.038,
-        "inversoes": 113,
-        "subidas_bruscas": 13
+        "variacao_total": 10.346,
+        "inversoes": 60,
+        "subidas_bruscas": 21
       },
       "reativo": {
         "violacoes": {
           "piso": 0,
           "taxa": 0
         },
-        "energia_x_pleno": 0.61446953125,
-        "energia_x_fixo": 0.7744743102619783,
-        "h3_primaria": 0.38605664488017427,
-        "h3_secundaria_min": 58.06666666666667,
+        "energia_x_pleno": 0.6117822916666668,
+        "energia_x_fixo": 0.7710873269910958,
+        "h3_primaria": 0.2322875816993464,
+        "h3_secundaria_min": 44.72222222222222,
         "episodios": 15,
-        "variacao_total": 12.572,
-        "inversoes": 120,
-        "subidas_bruscas": 15
+        "variacao_total": 11.15,
+        "inversoes": 60,
+        "subidas_bruscas": 21
       },
       "antecipado_degraus": {
         "violacoes": {
@@ -61,16 +61,16 @@
     "por_noite": {
       "zurique_calmo_1357_dia_util": {
         "antecipado": {
-          "energia_x_pleno": 0.622,
-          "h3": 0.4288,
-          "variacao_total": 1.537,
-          "inversoes": 15
+          "energia_x_pleno": 0.6171,
+          "h3": 0.263,
+          "variacao_total": 1.335,
+          "inversoes": 9
         },
         "reativo": {
-          "energia_x_pleno": 0.6124,
-          "h3": 0.3379,
-          "variacao_total": 1.533,
-          "inversoes": 17
+          "energia_x_pleno": 0.6084,
+          "h3": 0.2024,
+          "variacao_total": 1.15,
+          "inversoes": 8
         },
         "antecipado_degraus": {
           "energia_x_pleno": 0.6154,
@@ -87,16 +87,16 @@
       },
       "zurique_calmo_1357_fim_de_semana": {
         "antecipado": {
-          "energia_x_pleno": 0.5969,
-          "h3": 0.6335,
-          "variacao_total": 1.301,
-          "inversoes": 19
+          "energia_x_pleno": 0.5838,
+          "h3": 0.3471,
+          "variacao_total": 1.224,
+          "inversoes": 11
         },
         "reativo": {
-          "energia_x_pleno": 0.5929,
-          "h3": 0.6073,
-          "variacao_total": 1.437,
-          "inversoes": 17
+          "energia_x_pleno": 0.5827,
+          "h3": 0.3471,
+          "variacao_total": 1.222,
+          "inversoes": 9
         },
         "antecipado_degraus": {
           "energia_x_pleno": 0.5877,
@@ -113,16 +113,16 @@
       },
       "zurique_calmo_52_dia_util": {
         "antecipado": {
-          "energia_x_pleno": 0.6105,
-          "h3": 0.3889,
-          "variacao_total": 1.065,
-          "inversoes": 8
+          "energia_x_pleno": 0.6098,
+          "h3": 0.2667,
+          "variacao_total": 1.143,
+          "inversoes": 4
         },
         "reativo": {
-          "energia_x_pleno": 0.5955,
-          "h3": 0.3056,
-          "variacao_total": 1.043,
-          "inversoes": 8
+          "energia_x_pleno": 0.5909,
+          "h3": 0.2111,
+          "variacao_total": 0.948,
+          "inversoes": 3
         },
         "antecipado_degraus": {
           "energia_x_pleno": 0.6129,
@@ -139,16 +139,16 @@
       },
       "zurique_calmo_52_fim_de_semana": {
         "antecipado": {
-          "energia_x_pleno": 0.5766,
-          "h3": 0.4093,
-          "variacao_total": 0.636,
-          "inversoes": 7
+          "energia_x_pleno": 0.5784,
+          "h3": 0.3395,
+          "variacao_total": 0.5,
+          "inversoes": 0
         },
         "reativo": {
-          "energia_x_pleno": 0.5742,
-          "h3": 0.386,
-          "variacao_total": 0.612,
-          "inversoes": 6
+          "energia_x_pleno": 0.5758,
+          "h3": 0.3395,
+          "variacao_total": 0.5,
+          "inversoes": 0
         },
         "antecipado_degraus": {
           "energia_x_pleno": 0.579,
@@ -165,16 +165,16 @@
       },
       "zurique_movimentado_1358_dia_util": {
         "antecipado": {
-          "energia_x_pleno": 0.6413,
-          "h3": 0.387,
-          "variacao_total": 0.919,
-          "inversoes": 9
+          "energia_x_pleno": 0.6431,
+          "h3": 0.2759,
+          "variacao_total": 1.137,
+          "inversoes": 7
         },
         "reativo": {
-          "energia_x_pleno": 0.6138,
-          "h3": 0.234,
-          "variacao_total": 1.076,
-          "inversoes": 15
+          "energia_x_pleno": 0.6186,
+          "h3": 0.1605,
+          "variacao_total": 0.976,
+          "inversoes": 7
         },
         "antecipado_degraus": {
           "energia_x_pleno": 0.6464,
@@ -191,16 +191,16 @@
       },
       "zurique_movimentado_1358_fim_de_semana": {
         "antecipado": {
-          "energia_x_pleno": 0.652,
-          "h3": 0.7308,
-          "variacao_total": 1.242,
-          "inversoes": 15
+          "energia_x_pleno": 0.6436,
+          "h3": 0.1482,
+          "variacao_total": 1.373,
+          "inversoes": 10
         },
         "reativo": {
-          "energia_x_pleno": 0.6387,
-          "h3": 0.4604,
-          "variacao_total": 1.318,
-          "inversoes": 17
+          "energia_x_pleno": 0.6371,
+          "h3": 0.1482,
+          "variacao_total": 1.32,
+          "inversoes": 9
         },
         "antecipado_degraus": {
           "energia_x_pleno": 0.6551,
@@ -217,16 +217,16 @@
       },
       "zurique_movimentado_65_dia_util": {
         "antecipado": {
-          "energia_x_pleno": 0.6789,
-          "h3": 0.3607,
-          "variacao_total": 2.032,
-          "inversoes": 15
+          "energia_x_pleno": 0.6764,
+          "h3": 0.2548,
+          "variacao_total": 2.03,
+          "inversoes": 9
         },
         "reativo": {
-          "energia_x_pleno": 0.6606,
-          "h3": 0.2905,
-          "variacao_total": 2.505,
-          "inversoes": 19
+          "energia_x_pleno": 0.6579,
+          "h3": 0.15,
+          "variacao_total": 2.344,
+          "inversoes": 12
         },
         "antecipado_degraus": {
           "energia_x_pleno": 0.6793,
@@ -243,16 +243,16 @@
       },
       "zurique_movimentado_65_fim_de_semana": {
         "antecipado": {
-          "energia_x_pleno": 0.6427,
-          "h3": 0.5552,
-          "variacao_total": 2.306,
-          "inversoes": 25
+          "energia_x_pleno": 0.6385,
+          "h3": 0.2521,
+          "variacao_total": 1.604,
+          "inversoes": 10
         },
         "reativo": {
-          "energia_x_pleno": 0.6277,
-          "h3": 0.4232,
-          "variacao_total": 3.048,
-          "inversoes": 21
+          "energia_x_pleno": 0.6229,
+          "h3": 0.1908,
+          "variacao_total": 2.69,
+          "inversoes": 12
         },
         "antecipado_degraus": {
           "energia_x_pleno": 0.642,
@@ -270,8 +270,8 @@
     },
     "contencao": {
       "mamdani": {
-        "ciclos_contidos": 14064,
-        "acerto_da_contencao": 0.5083191126279863,
+        "ciclos_contidos": 6488,
+        "acerto_da_contencao": 0.7239519112207151,
         "referencia_segurar_sempre": 0.0784313725490196
       },
       "degraus": {
@@ -294,33 +294,33 @@
   "camera": {
     "inicio_da_noite": {
       "antecipado": {
-        "luz_perdida_media": 0.3164,
+        "luz_perdida_media": 0.3182,
         "min_na_minima_indevidamente": 0.0,
-        "energia_falha_wh": 52.771,
-        "energia_controle_wh": 78.081
+        "energia_falha_wh": 52.761,
+        "energia_controle_wh": 78.217
       },
       "reativo": {
-        "luz_perdida_media": 0.3431,
+        "luz_perdida_media": 0.3429,
         "min_na_minima_indevidamente": 0.0,
         "energia_falha_wh": 50.478,
-        "energia_controle_wh": 77.929
+        "energia_controle_wh": 77.908
       },
-      "custo_da_protecao_wh": 2.293
+      "custo_da_protecao_wh": 2.283
     },
     "madrugada": {
       "antecipado": {
-        "luz_perdida_media": 0.1228,
-        "min_na_minima_indevidamente": 75.0,
-        "energia_falha_wh": 41.935,
-        "energia_controle_wh": 51.76
+        "luz_perdida_media": 0.1837,
+        "min_na_minima_indevidamente": 104.7,
+        "energia_falha_wh": 40.668,
+        "energia_controle_wh": 55.36
       },
       "reativo": {
-        "luz_perdida_media": 0.1461,
-        "min_na_minima_indevidamente": 118.8,
-        "energia_falha_wh": 40.071,
-        "energia_controle_wh": 51.76
+        "luz_perdida_media": 0.1905,
+        "min_na_minima_indevidamente": 118.2,
+        "energia_falha_wh": 40.123,
+        "energia_controle_wh": 55.36
       },
-      "custo_da_protecao_wh": 1.864
+      "custo_da_protecao_wh": 0.545
     }
   }
 }

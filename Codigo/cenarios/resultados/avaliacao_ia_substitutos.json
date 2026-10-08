@@ -5,15 +5,15 @@
         "piso": 0,
         "taxa": 0
       },
-      "energia_x_pleno": 0.6276,
-      "energia_x_fixo": 0.791,
-      "h3_primaria": 0.4791,
-      "h3_secundaria_min": 69.9,
-      "ciclos_contidos": 14064,
-      "acerto_da_contencao": 0.5083,
+      "energia_x_pleno": 0.6238,
+      "energia_x_fixo": 0.7863,
+      "h3_primaria": 0.2782,
+      "h3_secundaria_min": 45.7,
+      "ciclos_contidos": 6488,
+      "acerto_da_contencao": 0.724,
       "deficit": {
-        "min_abaixo": 388.7,
-        "deficit_medio_fracao": 0.09
+        "min_abaixo": 209.7,
+        "deficit_medio_fracao": 0.083
       }
     },
     "media_sazonal": {
@@ -21,15 +21,15 @@
         "piso": 0,
         "taxa": 0
       },
-      "energia_x_pleno": 0.6395,
-      "energia_x_fixo": 0.806,
-      "h3_primaria": 0.5334,
-      "h3_secundaria_min": 72.8,
-      "ciclos_contidos": 20529,
-      "acerto_da_contencao": 0.4862,
+      "energia_x_pleno": 0.6339,
+      "energia_x_fixo": 0.799,
+      "h3_primaria": 0.3176,
+      "h3_secundaria_min": 48.6,
+      "ciclos_contidos": 11515,
+      "acerto_da_contencao": 0.6243,
       "deficit": {
-        "min_abaixo": 343.7,
-        "deficit_medio_fracao": 0.086
+        "min_abaixo": 164.7,
+        "deficit_medio_fracao": 0.079
       }
     },
     "referencia_segurar_sempre": 0.0784313725490196
@@ -37,22 +37,22 @@
   "teste1_camera": {
     "inicio_da_noite": {
       "xgboost": {
-        "luz_perdida_media": 0.3164,
-        "energia_falha_wh": 52.771
+        "luz_perdida_media": 0.3182,
+        "energia_falha_wh": 52.761
       },
       "media_sazonal": {
-        "luz_perdida_media": 0.1044,
-        "energia_falha_wh": 70.031
+        "luz_perdida_media": 0.109,
+        "energia_falha_wh": 70.051
       }
     },
     "madrugada": {
       "xgboost": {
-        "luz_perdida_media": 0.1228,
-        "energia_falha_wh": 41.935
+        "luz_perdida_media": 0.1837,
+        "energia_falha_wh": 40.668
       },
       "media_sazonal": {
-        "luz_perdida_media": -0.0069,
-        "energia_falha_wh": 55.45
+        "luz_perdida_media": 0.0,
+        "energia_falha_wh": 60.0
       }
     }
   },
@@ -62,40 +62,40 @@
         "piso": 0,
         "taxa": 0
       },
-      "energia_x_pleno": 0.7772,
-      "variacao_total": 10.388,
-      "inversoes": 142,
-      "subidas_bruscas": 15,
+      "energia_x_pleno": 0.7929,
+      "variacao_total": 17.364,
+      "inversoes": 140,
+      "subidas_bruscas": 43,
       "por_cenario": {
         "ruido_fronteira_alta_591": {
-          "variacao_total": 1.722,
+          "variacao_total": 3.224,
           "inversoes": 26,
-          "subidas_bruscas": 3
+          "subidas_bruscas": 9
         },
         "ruido_fronteira_alta_592": {
-          "variacao_total": 1.964,
+          "variacao_total": 2.699,
           "inversoes": 25,
-          "subidas_bruscas": 3
+          "subidas_bruscas": 6
         },
         "ruido_fronteira_alta_593": {
-          "variacao_total": 1.561,
-          "inversoes": 26,
-          "subidas_bruscas": 2
+          "variacao_total": 2.508,
+          "inversoes": 24,
+          "subidas_bruscas": 6
         },
         "ruido_fronteira_baixa_591": {
-          "variacao_total": 1.689,
+          "variacao_total": 3.027,
           "inversoes": 22,
-          "subidas_bruscas": 3
+          "subidas_bruscas": 9
         },
         "ruido_fronteira_baixa_592": {
-          "variacao_total": 1.741,
+          "variacao_total": 2.952,
           "inversoes": 21,
-          "subidas_bruscas": 2
+          "subidas_bruscas": 6
         },
         "ruido_fronteira_baixa_593": {
-          "variacao_total": 1.711,
+          "variacao_total": 2.954,
           "inversoes": 22,
-          "subidas_bruscas": 2
+          "subidas_bruscas": 7
         }
       }
     },

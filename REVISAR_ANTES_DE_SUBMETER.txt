@@ -331,6 +331,11 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         e semente; referencia do trecho com 672 blocos de 15 min. A troca foi
         decidida DEPOIS de ver o item 60 e a auditoria: declarar no texto.
 
+[ ] C32. Base v6 (DIVERGENCIAS 70): a regra da rampa (1/4 da faixa mais
+        estreita) foi restabelecida pela IA a partir da v0, DEPOIS de ver o
+        efeito da v5. Conferir a decisao e declarar no texto que foi
+        posterior; os resultados da v5 ficam no repositorio.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
