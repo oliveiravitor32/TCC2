@@ -501,6 +501,31 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
           pelo 4o termo aditivo (cronograma de modernizacao de out/2022 a
           ago/2024), mas continua previsto.
 
+[ ] D15. Fontes novas propostas pela IA para justificar a normalizacao pelo
+        percentil 99 (07/10/2026; ainda NAO estao no texto):
+        (1) DIXON, W. J. Simplified estimation from censored normal samples.
+            The Annals of Mathematical Statistics, v. 31, n. 2, p. 385-391,
+            1960. DOI 10.1214/aoms/1177705900 (dados conferidos no Crossref).
+            Origem do termo "winsorizacao" (substituir os valores extremos pelo
+            valor de um percentil). A IA NAO leu o artigo; a ligacao vem de
+            fontes secundarias (verbete e paginas de estatistica).
+        (2) PELLETIER, C.; WEBB, G. I.; PETITJEAN, F. Temporal convolutional
+            neural network for the classification of satellite image time
+            series. Remote Sensing, v. 11, n. 5, 523, 2019. DOI
+            10.3390/rs11050523 (Crossref). LIDO pela IA (versao arXiv, p. 10):
+            trocam o minimo e o maximo pelos percentis 2 % e 98 % porque a
+            normalizacao min-max e "muito sensivel a valores extremos".
+        (3) Engenharia de trafego: o volume de projeto e a 30a maior hora do
+            ano (cerca do percentil 99,7 das 8.760 horas), e nao a maior hora.
+            LIDO pela IA no Oregon DOT, Analysis Procedures Manual v2, cap. 5,
+            secao 5.2 (2025), que diz que o projeto nao se faz pela maior hora
+            do ano. A fonte canonica e o AASHTO Green Book (A Policy on
+            Geometric Design of Highways and Streets), NAO lido; no Brasil, o
+            DNIT, Manual de Estudos de Trafego (IPR-723, 2006) trata do tema,
+            mas a IA nao conseguiu baixar o PDF.
+        NENHUMA das fontes fixa o valor 99: elas sustentam usar um percentil
+        alto em vez do maximo. O 99 continua criterio dos autores.
+
 -------------------------------------------------------------------------------
 E. DECLARACAO E ENTREGA
 -------------------------------------------------------------------------------
