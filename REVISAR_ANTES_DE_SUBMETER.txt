@@ -364,6 +364,24 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         (3.5.2 na 3a edicao, segundo fontes secundarias) que trata de min-max
         e z-score antes de citar; o ano aparece como 2011 ou 2012.
 
+[ ] C35. Rodada v20 (09/10/2026) - texto REDIGIDO PELA IA, a ler inteiro no
+        _v20_revisado.docx: 3.4 (comportamento do no), 3.5.2 (paragrafo novo da
+        arquitetura, citando o Caderno 7.1.1, 7.1.2 e 7.2.1), 3.6 (Zurique como
+        serie principal; paragrafo da regua p99; paragrafo da troca de serie,
+        DECLARANDO que foi decidida depois dos resultados de Melbourne), 3.7,
+        3.9, 4.4 (RNF03 = 180 s, RNF07 por validade), 4.6, 4.10, Capitulo 5
+        (todos os numeros trocados: conferir contra os JSON citados no Quadro
+        22), 6.3 e 7.1. Pontos de atencao:
+        - a frase "cerca de mil comandos por segundo" no parque e CALCULO da IA
+          (620 mil pontos / 600 s de renovacao), nao medicao;
+        - o exemplo de 4.6.3 e da arquitetura anterior; foi acrescentado um
+          paragrafo dizendo isso, sem refazer o exemplo;
+        - CT18 e a rampa precisam ser refeitos com o firmware novo (4.10);
+        - o paragrafo explicativo "norma x tercil e regua" aprovado antes NAO
+          foi incluido nesta rodada (o texto dele nao estava registrado);
+        - a referencia HAN; KAMBER; PEI NAO foi posta no texto (C34);
+        - 6.1, 6.2, 6.4, 7, Resumo e Abstract continuam PENDENTES (autores).
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

@@ -2217,7 +2217,7 @@ LEITURA: a v6 melhora a aderencia, a H3 em valor absoluto e a contencao da
          previsao, sem mudar energia nem as conclusoes de substituibilidade:
          previsao NAO substituivel; logica nebulosa substituivel; H3 nao
          confirmada.
-TEXTO:   PENDENTE (rodada v20, Zurique como principal).
+TEXTO:   v20 (09/10/2026).
 
 -------------------------------------------------------------------------------
 71. ARQUITETURA DE IMPLANTACAO: DECISAO POR EVENTO, RAMPA E VALIDADE NO
@@ -2312,7 +2312,7 @@ RESULTADOS (08/10/2026; entre parenteses a v6 com o ciclo de 5 s). ZERO
 LEITURA: a arquitetura nova reproduz os resultados da v6 (diferencas na
          terceira casa), com ~1 % dos comandos. Todas as conclusoes mantidas.
          Pendente: firmware na placa (rampa e CT18) e deploy na VM (009).
-TEXTO:   PENDENTE (rodada v20).
+TEXTO:   v20 (09/10/2026).
 
 -------------------------------------------------------------------------------
 72. DEFESA DO PERCENTIL 99 DA REGUA: TESTE DE SENSIBILIDADE (09/10/2026)
