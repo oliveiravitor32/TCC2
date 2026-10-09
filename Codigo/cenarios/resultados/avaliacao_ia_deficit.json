@@ -74,9 +74,9 @@
       "fixo_min_abaixo": 87.3,
       "fixo_deficit_medio_fracao": 0.247,
       "fixo_deficit_medio_lux": 2.47,
-      "adaptativo_min_abaixo": 209.7,
-      "adaptativo_deficit_medio_fracao": 0.083,
-      "adaptativo_deficit_medio_lux": 0.83
+      "adaptativo_min_abaixo": 194.7,
+      "adaptativo_deficit_medio_fracao": 0.081,
+      "adaptativo_deficit_medio_lux": 0.81
     },
     "por_cenario": {
       "zurique_calmo_1357_dia_util": {
@@ -112,7 +112,7 @@
       "zurique_movimentado_1358_fim_de_semana": {
         "min_com_exigencia": 390.0,
         "fixo_min_abaixo": 57.3,
-        "adaptativo_min_abaixo": 75.0,
+        "adaptativo_min_abaixo": 60.0,
         "fixo_min_abaixo_com_ocorrencia": 0.0
       },
       "zurique_movimentado_65_dia_util": {

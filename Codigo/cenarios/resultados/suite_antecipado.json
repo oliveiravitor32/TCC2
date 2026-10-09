@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-08T03:18:42.469411+00:00",
+  "gerado_em": "2026-10-09T02:35:51.136035+00:00",
   "modo_previsao": "antecipado",
   "passo_s": 5.0,
   "base_regras": "v6-zurique",
@@ -14,7 +14,7 @@
       "cenario": "adversarial_serra",
       "descricao": "ADVERSARIAL: movimentacao alternando entre vazio e cheio a cada minuto, para induzir violacao de taxa. A plataforma publica a cada minuto, fora da especificacao de 5 min.",
       "adversarial": true,
-      "execucao_id": 730,
+      "execucao_id": 856,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 720,
@@ -62,6 +62,10 @@
           "razao_adaptativo_pleno": 0.9684,
           "razao_adaptativo_fixo": 1.8593
         }
+      },
+      "central": {
+        "decisoes": 120,
+        "comandos": 60
       },
       "serie": [
         {
@@ -5831,7 +5835,7 @@
       "cenario": "adversarial_silencio_da_plataforma",
       "descricao": "ADVERSARIAL: a interface para de publicar; sem dado, nao se dimeriza.",
       "adversarial": true,
-      "execucao_id": 734,
+      "execucao_id": 861,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 720,
@@ -5879,6 +5883,10 @@
           "razao_adaptativo_pleno": 0.8333,
           "razao_adaptativo_fixo": 1.6
         }
+      },
+      "central": {
+        "decisoes": 4,
+        "comandos": 2
       },
       "serie": [
         {
@@ -11648,7 +11656,7 @@
       "cenario": "adversarial_zero",
       "descricao": "ADVERSARIAL: movimentacao zero declarada, para induzir nivel abaixo do piso.",
       "adversarial": true,
-      "execucao_id": 735,
+      "execucao_id": 865,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 480,
@@ -11696,6 +11704,10 @@
           "razao_adaptativo_pleno": 0.5,
           "razao_adaptativo_fixo": 0.9412
         }
+      },
+      "central": {
+        "decisoes": 8,
+        "comandos": 4
       },
       "serie": [
         {
@@ -15545,7 +15557,7 @@
       "cenario": "fluxo_intenso_de_madrugada",
       "descricao": "Horario avancado com fluxo intenso: o horario nao pode mandar sozinho.",
       "adversarial": false,
-      "execucao_id": 736,
+      "execucao_id": 869,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 720,
@@ -15593,6 +15605,10 @@
           "razao_adaptativo_pleno": 1.0,
           "razao_adaptativo_fixo": 1.92
         }
+      },
+      "central": {
+        "decisoes": 12,
+        "comandos": 6
       },
       "serie": [
         {
@@ -21362,7 +21378,7 @@
       "cenario": "madrugada_ociosa",
       "descricao": "Via praticamente vazia por duas horas: o sistema deve ficar no piso da classe.",
       "adversarial": false,
-      "execucao_id": 737,
+      "execucao_id": 873,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 1440,
@@ -21571,6 +21587,10 @@
           "razao_adaptativo_pleno": 0.5071,
           "razao_adaptativo_fixo": 0.9936
         }
+      },
+      "central": {
+        "decisoes": 24,
+        "comandos": 13
       },
       "serie": [
         {
@@ -33100,7 +33120,7 @@
       "cenario": "noite_tipica",
       "descricao": "Movimentacao caindo ao longo da noite ate o vale da madrugada e voltando ao amanhecer.",
       "adversarial": false,
-      "execucao_id": 739,
+      "execucao_id": 877,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 5760,
@@ -33109,9 +33129,9 @@
         "taxa": 0
       },
       "restricoes_aplicadas": {
-        "nenhuma": 5714,
+        "nenhuma": 5708,
         "piso": 0,
-        "taxa": 46
+        "taxa": 52
       },
       "envelope": {
         "ciclos_avaliados": 5760,
@@ -33123,9 +33143,9 @@
       "h3": {
         "janela": "volume observado abaixo do tercil inferior, sem ocorrencia",
         "ciclos_em_janela_baixa": 1800,
-        "ciclos_em_transicao": 1368,
-        "fracao_em_transicao": 0.76,
-        "minutos_ate_o_piso": 294.0
+        "ciclos_em_transicao": 1381,
+        "fracao_em_transicao": 0.7672,
+        "minutos_ate_o_piso": 295.08
       },
       "mudancas": {
         "subidas_bruscas": 2,
@@ -33135,19 +33155,23 @@
       },
       "energia": {
         "REF-40W": {
-          "adaptativo_wh": 249.317,
+          "adaptativo_wh": 249.469,
           "pleno_constante_wh": 320.0,
           "horario_fixo_wh": 280.833,
-          "razao_adaptativo_pleno": 0.7791,
-          "razao_adaptativo_fixo": 0.8878
+          "razao_adaptativo_pleno": 0.7796,
+          "razao_adaptativo_fixo": 0.8883
         },
         "REF-440W": {
-          "adaptativo_wh": 2742.486,
+          "adaptativo_wh": 2744.163,
           "pleno_constante_wh": 3520.0,
           "horario_fixo_wh": 3089.167,
-          "razao_adaptativo_pleno": 0.7791,
-          "razao_adaptativo_fixo": 0.8878
+          "razao_adaptativo_pleno": 0.7796,
+          "razao_adaptativo_fixo": 0.8883
         }
+      },
+      "central": {
+        "decisoes": 96,
+        "comandos": 56
       },
       "serie": [
         {
@@ -54850,7 +54874,7 @@
           "minuto": 226.0,
           "emitido": 0.646,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -54858,7 +54882,7 @@
           "minuto": 226.083,
           "emitido": 0.638,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -54866,7 +54890,7 @@
           "minuto": 226.167,
           "emitido": 0.63,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -54874,7 +54898,7 @@
           "minuto": 226.25,
           "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -54882,7 +54906,7 @@
           "minuto": 226.333,
           "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -54890,7 +54914,7 @@
           "minuto": 226.417,
           "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -54898,7 +54922,7 @@
           "minuto": 226.5,
           "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -54906,7 +54930,7 @@
           "minuto": 226.583,
           "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -54914,7 +54938,7 @@
           "minuto": 226.667,
           "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -54922,7 +54946,7 @@
           "minuto": 226.75,
           "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -54930,7 +54954,7 @@
           "minuto": 226.833,
           "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -54938,295 +54962,295 @@
           "minuto": 226.917,
           "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4905,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.0,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.083,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.167,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.25,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.333,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.417,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.5,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.583,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.667,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.75,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.833,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 227.917,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4927,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.0,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.083,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.167,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.25,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.333,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.417,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.5,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.583,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.667,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.75,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.833,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 228.917,
-          "emitido": 0.627,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.495,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.0,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.083,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.167,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.25,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.333,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.417,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.5,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.583,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.667,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.75,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.833,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 229.917,
-          "emitido": 0.626,
+          "emitido": 0.628,
           "observada": 0.04,
-          "degrau": 1.4974,
+          "degrau": 1.4884,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -55328,385 +55352,385 @@
         },
         {
           "minuto": 231.0,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 231.083,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 231.167,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 231.25,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 231.333,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 231.417,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 231.5,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 231.583,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 231.667,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 231.75,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 231.833,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 231.917,
-          "emitido": 0.625,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5024,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.0,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.083,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.167,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.25,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.333,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.417,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.5,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.583,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.667,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.75,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.833,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 232.917,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5049,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.0,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.083,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.167,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.25,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.333,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.417,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.5,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.583,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.667,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.75,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.833,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 233.917,
-          "emitido": 0.624,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5076,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.0,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.083,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.167,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.25,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.333,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.417,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.5,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.583,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.667,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.75,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.833,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 234.917,
-          "emitido": 0.623,
+          "emitido": 0.626,
           "observada": 0.04,
-          "degrau": 1.5104,
+          "degrau": 1.4998,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -55808,391 +55832,391 @@
         },
         {
           "minuto": 236.0,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 236.083,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 236.167,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 236.25,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 236.333,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 236.417,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 236.5,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 236.583,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 236.667,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 236.75,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 236.833,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 236.917,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5161,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.0,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.083,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.167,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.25,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.333,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.417,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.5,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.583,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.667,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.75,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.833,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 237.917,
-          "emitido": 0.621,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5191,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.0,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.083,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.167,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.25,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.333,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.417,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.5,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.583,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.667,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.75,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.833,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 238.917,
-          "emitido": 0.62,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5222,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.0,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.083,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.167,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.25,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.333,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.417,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.5,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.583,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.667,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.75,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.833,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 239.917,
-          "emitido": 0.619,
+          "emitido": 0.622,
           "observada": 0.04,
-          "degrau": 1.5254,
+          "degrau": 1.5132,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 240.0,
-          "emitido": 0.611,
+          "emitido": 0.614,
           "observada": 0.03,
           "degrau": 1.5833,
           "ocorrencia": false,
@@ -56200,7 +56224,7 @@
         },
         {
           "minuto": 240.083,
-          "emitido": 0.605,
+          "emitido": 0.606,
           "observada": 0.03,
           "degrau": 1.5833,
           "ocorrencia": false,
@@ -56288,385 +56312,385 @@
         },
         {
           "minuto": 241.0,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 241.083,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 241.167,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 241.25,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 241.333,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 241.417,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 241.5,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 241.583,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 241.667,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 241.75,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 241.833,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 241.917,
-          "emitido": 0.604,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5866,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.0,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.083,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.167,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.25,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.333,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.417,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.5,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.583,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.667,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.75,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.833,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 242.917,
-          "emitido": 0.603,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.59,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.0,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.083,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.167,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.25,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.333,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.417,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.5,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.583,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.667,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.75,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.833,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 243.917,
-          "emitido": 0.602,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.5934,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.0,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.083,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.167,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.25,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.333,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.417,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.5,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.583,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.667,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.75,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.833,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 244.917,
-          "emitido": 0.601,
+          "emitido": 0.605,
           "observada": 0.03,
-          "degrau": 1.597,
+          "degrau": 1.5833,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -56768,385 +56792,385 @@
         },
         {
           "minuto": 246.0,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 246.083,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 246.167,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 246.25,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 246.333,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 246.417,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 246.5,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 246.583,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 246.667,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 246.75,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 246.833,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 246.917,
-          "emitido": 0.599,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6043,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.0,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.083,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.167,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.25,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.333,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.417,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.5,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.583,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.667,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.75,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.833,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 247.917,
-          "emitido": 0.598,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.6081,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.0,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.083,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.167,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.25,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.333,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.417,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.5,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.583,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.667,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.75,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.833,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 248.917,
-          "emitido": 0.597,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.612,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.0,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.083,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.167,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.25,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.333,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.417,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.5,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.583,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.667,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.75,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.833,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 249.917,
-          "emitido": 0.596,
+          "emitido": 0.6,
           "observada": 0.03,
-          "degrau": 1.616,
+          "degrau": 1.6006,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -57248,385 +57272,385 @@
         },
         {
           "minuto": 251.0,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 251.083,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 251.167,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 251.25,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 251.333,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 251.417,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 251.5,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 251.583,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 251.667,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 251.75,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 251.833,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 251.917,
-          "emitido": 0.594,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6243,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.0,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.083,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.167,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.25,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.333,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.417,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.5,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.583,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.667,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.75,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.833,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 252.917,
-          "emitido": 0.593,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6286,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.0,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.083,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.167,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.25,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.333,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.417,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.5,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.583,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.667,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.75,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.833,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 253.917,
-          "emitido": 0.592,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.633,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.0,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.083,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.167,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.25,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.333,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.417,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.5,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.583,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.667,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.75,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.833,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 254.917,
-          "emitido": 0.591,
+          "emitido": 0.595,
           "observada": 0.03,
-          "degrau": 1.6375,
+          "degrau": 1.6201,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -57728,385 +57752,385 @@
         },
         {
           "minuto": 256.0,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 256.083,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 256.167,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 256.25,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 256.333,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 256.417,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 256.5,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 256.583,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 256.667,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 256.75,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 256.833,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 256.917,
-          "emitido": 0.589,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6467,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.0,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.083,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.167,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.25,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.333,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.417,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.5,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.583,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.667,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.75,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.833,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 257.917,
-          "emitido": 0.588,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6516,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.0,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.083,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.167,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.25,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.333,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.417,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.5,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.583,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.667,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.75,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.833,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 258.917,
-          "emitido": 0.586,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6565,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.0,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.083,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.167,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.25,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.333,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.417,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.5,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.583,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.667,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.75,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.833,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 259.917,
-          "emitido": 0.585,
+          "emitido": 0.59,
           "observada": 0.03,
-          "degrau": 1.6615,
+          "degrau": 1.642,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -58208,385 +58232,385 @@
         },
         {
           "minuto": 261.0,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 261.083,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 261.167,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 261.25,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 261.333,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 261.417,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 261.5,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 261.583,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 261.667,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 261.75,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 261.833,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 261.917,
-          "emitido": 0.583,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6719,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.0,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.083,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.167,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.25,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.333,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.417,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.5,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.583,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.667,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.75,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.833,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 262.917,
-          "emitido": 0.581,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6773,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.0,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.083,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.167,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.25,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.333,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.417,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.5,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.583,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.667,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.75,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.833,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 263.917,
-          "emitido": 0.58,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6828,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.0,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.083,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.167,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.25,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.333,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.417,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.5,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.583,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.667,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.75,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.833,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 264.917,
-          "emitido": 0.578,
+          "emitido": 0.584,
           "observada": 0.03,
-          "degrau": 1.6885,
+          "degrau": 1.6667,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -58688,385 +58712,385 @@
         },
         {
           "minuto": 266.0,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 266.083,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 266.167,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 266.25,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 266.333,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 266.417,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 266.5,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 266.583,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 266.667,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 266.75,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 266.833,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 266.917,
-          "emitido": 0.575,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7001,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.0,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.083,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.167,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.25,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.333,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.417,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.5,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.583,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.667,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.75,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.833,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 267.917,
-          "emitido": 0.574,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7061,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.0,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.083,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.167,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.25,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.333,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.417,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.5,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.583,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.667,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.75,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.833,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 268.917,
-          "emitido": 0.572,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7123,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.0,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.083,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.167,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.25,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.333,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.417,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.5,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.583,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.667,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.75,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.833,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 269.917,
-          "emitido": 0.571,
+          "emitido": 0.577,
           "observada": 0.03,
-          "degrau": 1.7186,
+          "degrau": 1.6942,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -59168,385 +59192,385 @@
         },
         {
           "minuto": 271.0,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 271.083,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 271.167,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 271.25,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 271.333,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 271.417,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 271.5,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 271.583,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 271.667,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 271.75,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 271.833,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 271.917,
-          "emitido": 0.568,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7316,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.0,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.083,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.167,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.25,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.333,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.417,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.5,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.583,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.667,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.75,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.833,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 272.917,
-          "emitido": 0.566,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7383,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.0,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.083,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.167,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.25,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.333,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.417,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.5,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.583,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.667,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.75,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.833,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 273.917,
-          "emitido": 0.564,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7452,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.0,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.083,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.167,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.25,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.333,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.417,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.5,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.583,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.667,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.75,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.833,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 274.917,
-          "emitido": 0.562,
+          "emitido": 0.569,
           "observada": 0.03,
-          "degrau": 1.7522,
+          "degrau": 1.725,
           "ocorrencia": false,
           "sem_dado": false
         },
@@ -59648,391 +59672,391 @@
         },
         {
           "minuto": 276.0,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 276.083,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 276.167,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 276.25,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 276.333,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 276.417,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 276.5,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 276.583,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 276.667,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 276.75,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 276.833,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 276.917,
-          "emitido": 0.559,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7667,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.0,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.083,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.167,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.25,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.333,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.417,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.5,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.583,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.667,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.75,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.833,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 277.917,
-          "emitido": 0.557,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7742,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.0,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.083,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.167,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.25,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.333,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.417,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.5,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.583,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.667,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.75,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.833,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 278.917,
-          "emitido": 0.555,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7818,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.0,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.083,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.167,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.25,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.333,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.417,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.5,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.583,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.667,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.75,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.833,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 279.917,
-          "emitido": 0.553,
+          "emitido": 0.561,
           "observada": 0.03,
-          "degrau": 1.7896,
+          "degrau": 1.7593,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 280.0,
-          "emitido": 0.551,
+          "emitido": 0.553,
           "observada": 0.03,
           "degrau": 1.7976,
           "ocorrencia": false,
@@ -60128,391 +60152,391 @@
         },
         {
           "minuto": 281.0,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 281.083,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 281.167,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 281.25,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 281.333,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 281.417,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 281.5,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 281.583,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 281.667,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 281.75,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 281.833,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 281.917,
-          "emitido": 0.549,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8058,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.0,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.083,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.167,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.25,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.333,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.417,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.5,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.583,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.667,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.75,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.833,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 282.917,
-          "emitido": 0.547,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8141,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.0,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.083,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.167,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.25,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.333,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.417,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.5,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.583,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.667,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.75,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.833,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 283.917,
-          "emitido": 0.545,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8227,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.0,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.083,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.167,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.25,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.333,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.417,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.5,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.583,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.667,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.75,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.833,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 284.917,
-          "emitido": 0.543,
+          "emitido": 0.551,
           "observada": 0.03,
-          "degrau": 1.8314,
+          "degrau": 1.7976,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 285.0,
-          "emitido": 0.54,
+          "emitido": 0.543,
           "observada": 0.03,
           "degrau": 1.8403,
           "ocorrencia": false,
@@ -60608,391 +60632,391 @@
         },
         {
           "minuto": 286.0,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 286.083,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 286.167,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 286.25,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 286.333,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 286.417,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 286.5,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 286.583,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 286.667,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 286.75,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 286.833,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 286.917,
-          "emitido": 0.538,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8494,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.0,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.083,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.167,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.25,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.333,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.417,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.5,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.583,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.667,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.75,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.833,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 287.917,
-          "emitido": 0.536,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8587,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.0,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.083,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.167,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.25,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.333,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.417,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.5,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.583,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.667,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.75,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.833,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 288.917,
-          "emitido": 0.533,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8682,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.0,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.083,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.167,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.25,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.333,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.417,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.5,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.583,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.667,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.75,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.833,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 289.917,
-          "emitido": 0.531,
+          "emitido": 0.54,
           "observada": 0.03,
-          "degrau": 1.8779,
+          "degrau": 1.8403,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 290.0,
-          "emitido": 0.529,
+          "emitido": 0.532,
           "observada": 0.03,
           "degrau": 1.8878,
           "ocorrencia": false,
@@ -61088,391 +61112,391 @@
         },
         {
           "minuto": 291.0,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 291.083,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 291.167,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 291.25,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 291.333,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 291.417,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 291.5,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 291.583,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 291.667,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 291.75,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 291.833,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 291.917,
-          "emitido": 0.526,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.898,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.0,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.083,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.167,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.25,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.333,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.417,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.5,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.583,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.667,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.75,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.833,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 292.917,
-          "emitido": 0.523,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9083,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.0,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.083,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.167,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.25,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.333,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.417,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.5,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.583,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.667,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.75,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.833,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 293.917,
-          "emitido": 0.521,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9189,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.0,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.083,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.167,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.25,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.333,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.417,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.5,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.583,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.667,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.75,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.833,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 294.917,
-          "emitido": 0.518,
+          "emitido": 0.529,
           "observada": 0.03,
-          "degrau": 1.9298,
+          "degrau": 1.8878,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 295.0,
-          "emitido": 0.515,
+          "emitido": 0.521,
           "observada": 0.03,
           "degrau": 1.9408,
           "ocorrencia": false,
@@ -61568,391 +61592,391 @@
         },
         {
           "minuto": 296.0,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 296.083,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 296.167,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 296.25,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 296.333,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 296.417,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 296.5,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 296.583,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 296.667,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 296.75,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 296.833,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 296.917,
-          "emitido": 0.512,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9522,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.0,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.083,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.167,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.25,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.333,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.417,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.5,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.583,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.667,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.75,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.833,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 297.917,
-          "emitido": 0.51,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9637,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.0,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.083,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.167,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.25,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.333,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.417,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.5,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.583,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.667,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.75,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.833,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 298.917,
-          "emitido": 0.507,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9755,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.0,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.083,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.167,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.25,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.333,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.417,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.5,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.583,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.667,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.75,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.833,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 299.917,
-          "emitido": 0.504,
+          "emitido": 0.515,
           "observada": 0.03,
-          "degrau": 1.9876,
+          "degrau": 1.9408,
           "ocorrencia": false,
           "sem_dado": false
         },
         {
           "minuto": 300.0,
-          "emitido": 0.5,
+          "emitido": 0.507,
           "observada": 0.04,
           "degrau": 2.0,
           "ocorrencia": false,
@@ -79237,7 +79261,7 @@
       "cenario": "ocorrencia_na_madrugada",
       "descricao": "Movimentacao baixa com ocorrencia reportada: elevacao imediata e retorno apos o encerramento.",
       "adversarial": false,
-      "execucao_id": 741,
+      "execucao_id": 882,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 1080,
@@ -79446,6 +79470,10 @@
           "razao_adaptativo_pleno": 0.6906,
           "razao_adaptativo_fixo": 1.3439
         }
+      },
+      "central": {
+        "decisoes": 18,
+        "comandos": 10
       },
       "serie": [
         {
@@ -88095,7 +88123,7 @@
       "cenario": "ruido_na_fronteira",
       "descricao": "Madrugada com o volume oscilando em torno do tercil inferior: a tabela em degraus alterna entre classes; a logica nebulosa deve ficar estavel.",
       "adversarial": false,
-      "execucao_id": 742,
+      "execucao_id": 886,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 1440,
@@ -88143,6 +88171,10 @@
           "razao_adaptativo_pleno": 0.7408,
           "razao_adaptativo_fixo": 1.4513
         }
+      },
+      "central": {
+        "decisoes": 24,
+        "comandos": 15
       },
       "serie": [
         {
@@ -99672,7 +99704,7 @@
       "cenario": "saida_de_evento",
       "descricao": "Via calma que recebe fluxo subito (saida de evento) e volta a esvaziar.",
       "adversarial": false,
-      "execucao_id": 744,
+      "execucao_id": 889,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 1080,
@@ -99720,6 +99752,10 @@
           "razao_adaptativo_pleno": 0.8195,
           "razao_adaptativo_fixo": 0.8195
         }
+      },
+      "central": {
+        "decisoes": 18,
+        "comandos": 9
       },
       "serie": [
         {

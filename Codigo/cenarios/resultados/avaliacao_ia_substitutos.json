@@ -6,14 +6,14 @@
         "taxa": 0
       },
       "energia_x_pleno": 0.6238,
-      "energia_x_fixo": 0.7863,
-      "h3_primaria": 0.2782,
-      "h3_secundaria_min": 45.7,
-      "ciclos_contidos": 6488,
-      "acerto_da_contencao": 0.724,
+      "energia_x_fixo": 0.7862,
+      "h3_primaria": 0.279,
+      "h3_secundaria_min": 45.9,
+      "ciclos_contidos": 6631,
+      "acerto_da_contencao": 0.7074,
       "deficit": {
-        "min_abaixo": 209.7,
-        "deficit_medio_fracao": 0.083
+        "min_abaixo": 194.7,
+        "deficit_medio_fracao": 0.081
       }
     },
     "media_sazonal": {
@@ -23,13 +23,13 @@
       },
       "energia_x_pleno": 0.6339,
       "energia_x_fixo": 0.799,
-      "h3_primaria": 0.3176,
-      "h3_secundaria_min": 48.6,
-      "ciclos_contidos": 11515,
-      "acerto_da_contencao": 0.6243,
+      "h3_primaria": 0.3184,
+      "h3_secundaria_min": 48.8,
+      "ciclos_contidos": 11514,
+      "acerto_da_contencao": 0.6244,
       "deficit": {
-        "min_abaixo": 164.7,
-        "deficit_medio_fracao": 0.079
+        "min_abaixo": 149.7,
+        "deficit_medio_fracao": 0.077
       }
     },
     "referencia_segurar_sempre": 0.0784313725490196

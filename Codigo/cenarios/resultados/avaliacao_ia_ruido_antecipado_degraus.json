@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-08T06:20:03.067843+00:00",
+  "gerado_em": "2026-10-09T02:37:34.061352+00:00",
   "modo_previsao": "antecipado",
   "passo_s": 5.0,
   "base_regras": "v6-zurique-degraus",
@@ -14,7 +14,7 @@
       "cenario": "ruido_fronteira_alta_591",
       "descricao": "Volume oscilando em torno do tercil alta (0.2946).",
       "adversarial": false,
-      "execucao_id": 845,
+      "execucao_id": 942,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 2160,
@@ -62,6 +62,10 @@
           "razao_adaptativo_pleno": 0.9271,
           "razao_adaptativo_fixo": 0.9271
         }
+      },
+      "central": {
+        "decisoes": 36,
+        "comandos": 25
       },
       "serie": [
         {
@@ -17351,7 +17355,7 @@
       "cenario": "ruido_fronteira_alta_592",
       "descricao": "Volume oscilando em torno do tercil alta (0.2946).",
       "adversarial": false,
-      "execucao_id": 846,
+      "execucao_id": 946,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 2160,
@@ -17399,6 +17403,10 @@
           "razao_adaptativo_pleno": 0.9234,
           "razao_adaptativo_fixo": 0.9234
         }
+      },
+      "central": {
+        "decisoes": 36,
+        "comandos": 23
       },
       "serie": [
         {
@@ -34688,7 +34696,7 @@
       "cenario": "ruido_fronteira_alta_593",
       "descricao": "Volume oscilando em torno do tercil alta (0.2946).",
       "adversarial": false,
-      "execucao_id": 848,
+      "execucao_id": 951,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 2160,
@@ -34736,6 +34744,10 @@
           "razao_adaptativo_pleno": 0.9382,
           "razao_adaptativo_fixo": 0.9382
         }
+      },
+      "central": {
+        "decisoes": 36,
+        "comandos": 24
       },
       "serie": [
         {
@@ -52025,7 +52037,7 @@
       "cenario": "ruido_fronteira_baixa_591",
       "descricao": "Volume oscilando em torno do tercil baixa (0.0693).",
       "adversarial": false,
-      "execucao_id": 849,
+      "execucao_id": 955,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 2160,
@@ -52073,6 +52085,10 @@
           "razao_adaptativo_pleno": 0.6533,
           "razao_adaptativo_fixo": 1.2888
         }
+      },
+      "central": {
+        "decisoes": 36,
+        "comandos": 25
       },
       "serie": [
         {
@@ -69362,7 +69378,7 @@
       "cenario": "ruido_fronteira_baixa_592",
       "descricao": "Volume oscilando em torno do tercil baixa (0.0693).",
       "adversarial": false,
-      "execucao_id": 851,
+      "execucao_id": 958,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 2160,
@@ -69410,6 +69426,10 @@
           "razao_adaptativo_pleno": 0.6533,
           "razao_adaptativo_fixo": 1.2888
         }
+      },
+      "central": {
+        "decisoes": 36,
+        "comandos": 22
       },
       "serie": [
         {
@@ -86699,7 +86719,7 @@
       "cenario": "ruido_fronteira_baixa_593",
       "descricao": "Volume oscilando em torno do tercil baixa (0.0693).",
       "adversarial": false,
-      "execucao_id": 853,
+      "execucao_id": 962,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 2160,
@@ -86747,6 +86767,10 @@
           "razao_adaptativo_pleno": 0.6533,
           "razao_adaptativo_fixo": 1.2888
         }
+      },
+      "central": {
+        "decisoes": 36,
+        "comandos": 24
       },
       "serie": [
         {

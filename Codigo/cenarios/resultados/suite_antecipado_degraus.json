@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-08T04:10:22.525258+00:00",
+  "gerado_em": "2026-10-09T02:35:48.591134+00:00",
   "modo_previsao": "antecipado",
   "passo_s": 5.0,
   "base_regras": "v6-zurique-degraus",
@@ -14,7 +14,7 @@
       "cenario": "adversarial_serra",
       "descricao": "ADVERSARIAL: movimentacao alternando entre vazio e cheio a cada minuto, para induzir violacao de taxa. A plataforma publica a cada minuto, fora da especificacao de 5 min.",
       "adversarial": true,
-      "execucao_id": 760,
+      "execucao_id": 855,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 720,
@@ -62,6 +62,10 @@
           "razao_adaptativo_pleno": 0.9684,
           "razao_adaptativo_fixo": 1.8593
         }
+      },
+      "central": {
+        "decisoes": 120,
+        "comandos": 60
       },
       "serie": [
         {
@@ -5831,7 +5835,7 @@
       "cenario": "adversarial_silencio_da_plataforma",
       "descricao": "ADVERSARIAL: a interface para de publicar; sem dado, nao se dimeriza.",
       "adversarial": true,
-      "execucao_id": 763,
+      "execucao_id": 860,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 720,
@@ -5879,6 +5883,10 @@
           "razao_adaptativo_pleno": 0.8333,
           "razao_adaptativo_fixo": 1.6
         }
+      },
+      "central": {
+        "decisoes": 4,
+        "comandos": 2
       },
       "serie": [
         {
@@ -11648,7 +11656,7 @@
       "cenario": "adversarial_zero",
       "descricao": "ADVERSARIAL: movimentacao zero declarada, para induzir nivel abaixo do piso.",
       "adversarial": true,
-      "execucao_id": 764,
+      "execucao_id": 864,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 480,
@@ -11696,6 +11704,10 @@
           "razao_adaptativo_pleno": 0.5,
           "razao_adaptativo_fixo": 0.9412
         }
+      },
+      "central": {
+        "decisoes": 8,
+        "comandos": 4
       },
       "serie": [
         {
@@ -15545,7 +15557,7 @@
       "cenario": "fluxo_intenso_de_madrugada",
       "descricao": "Horario avancado com fluxo intenso: o horario nao pode mandar sozinho.",
       "adversarial": false,
-      "execucao_id": 765,
+      "execucao_id": 868,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 720,
@@ -15593,6 +15605,10 @@
           "razao_adaptativo_pleno": 1.0,
           "razao_adaptativo_fixo": 1.92
         }
+      },
+      "central": {
+        "decisoes": 12,
+        "comandos": 6
       },
       "serie": [
         {
@@ -21362,7 +21378,7 @@
       "cenario": "madrugada_ociosa",
       "descricao": "Via praticamente vazia por duas horas: o sistema deve ficar no piso da classe.",
       "adversarial": false,
-      "execucao_id": 767,
+      "execucao_id": 872,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 1440,
@@ -21410,6 +21426,10 @@
           "razao_adaptativo_pleno": 0.5,
           "razao_adaptativo_fixo": 0.9796
         }
+      },
+      "central": {
+        "decisoes": 24,
+        "comandos": 12
       },
       "serie": [
         {
@@ -32939,7 +32959,7 @@
       "cenario": "noite_tipica",
       "descricao": "Movimentacao caindo ao longo da noite ate o vale da madrugada e voltando ao amanhecer.",
       "adversarial": false,
-      "execucao_id": 770,
+      "execucao_id": 875,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 5760,
@@ -32962,9 +32982,9 @@
       "h3": {
         "janela": "volume observado abaixo do tercil inferior, sem ocorrencia",
         "ciclos_em_janela_baixa": 1800,
-        "ciclos_em_transicao": 745,
-        "fracao_em_transicao": 0.4139,
-        "minutos_ate_o_piso": 272.08
+        "ciclos_em_transicao": 793,
+        "fracao_em_transicao": 0.4406,
+        "minutos_ate_o_piso": 276.08
       },
       "mudancas": {
         "subidas_bruscas": 2,
@@ -32974,19 +32994,23 @@
       },
       "energia": {
         "REF-40W": {
-          "adaptativo_wh": 251.658,
+          "adaptativo_wh": 251.992,
           "pleno_constante_wh": 320.0,
           "horario_fixo_wh": 280.833,
-          "razao_adaptativo_pleno": 0.7864,
-          "razao_adaptativo_fixo": 0.8961
+          "razao_adaptativo_pleno": 0.7875,
+          "razao_adaptativo_fixo": 0.8973
         },
         "REF-440W": {
-          "adaptativo_wh": 2768.241,
+          "adaptativo_wh": 2771.908,
           "pleno_constante_wh": 3520.0,
           "horario_fixo_wh": 3089.167,
-          "razao_adaptativo_pleno": 0.7864,
-          "razao_adaptativo_fixo": 0.8961
+          "razao_adaptativo_pleno": 0.7875,
+          "razao_adaptativo_fixo": 0.8973
         }
+      },
+      "central": {
+        "decisoes": 96,
+        "comandos": 49
       },
       "serie": [
         {
@@ -59007,6 +59031,390 @@
         },
         {
           "minuto": 271.0,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 271.083,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 271.167,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 271.25,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 271.333,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 271.417,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 271.5,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 271.583,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 271.667,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 271.75,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 271.833,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 271.917,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.0,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.083,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.167,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.25,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.333,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.417,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.5,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.583,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.667,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.75,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.833,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 272.917,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.0,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.083,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.167,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.25,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.333,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.417,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.5,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.583,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.667,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.75,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.833,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 273.917,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.0,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.083,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.167,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.25,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.333,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.417,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.5,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.583,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.667,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.75,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.833,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 274.917,
+          "emitido": 0.625,
+          "observada": 0.03,
+          "degrau": 1.5,
+          "ocorrencia": false,
+          "sem_dado": false
+        },
+        {
+          "minuto": 275.0,
           "emitido": 0.617,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59014,7 +59422,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 271.083,
+          "minuto": 275.083,
           "emitido": 0.609,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59022,7 +59430,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 271.167,
+          "minuto": 275.167,
           "emitido": 0.601,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59030,7 +59438,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 271.25,
+          "minuto": 275.25,
           "emitido": 0.593,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59038,7 +59446,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 271.333,
+          "minuto": 275.333,
           "emitido": 0.585,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59046,7 +59454,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 271.417,
+          "minuto": 275.417,
           "emitido": 0.577,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59054,7 +59462,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 271.5,
+          "minuto": 275.5,
           "emitido": 0.569,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59062,7 +59470,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 271.583,
+          "minuto": 275.583,
           "emitido": 0.561,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59070,7 +59478,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 271.667,
+          "minuto": 275.667,
           "emitido": 0.553,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59078,7 +59486,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 271.75,
+          "minuto": 275.75,
           "emitido": 0.545,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59086,7 +59494,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 271.833,
+          "minuto": 275.833,
           "emitido": 0.537,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59094,7 +59502,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 271.917,
+          "minuto": 275.917,
           "emitido": 0.529,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59102,7 +59510,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 272.0,
+          "minuto": 276.0,
           "emitido": 0.521,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59110,7 +59518,7 @@
           "sem_dado": false
         },
         {
-          "minuto": 272.083,
+          "minuto": 276.083,
           "emitido": 0.513,
           "observada": 0.03,
           "degrau": 2.0,
@@ -59118,392 +59526,8 @@
           "sem_dado": false
         },
         {
-          "minuto": 272.167,
-          "emitido": 0.505,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 272.25,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 272.333,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 272.417,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 272.5,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 272.583,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 272.667,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 272.75,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 272.833,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 272.917,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.0,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.083,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.167,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.25,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.333,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.417,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.5,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.583,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.667,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.75,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.833,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 273.917,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.0,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.083,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.167,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.25,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.333,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.417,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.5,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.583,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.667,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.75,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.833,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 274.917,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.0,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.083,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.167,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.25,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.333,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.417,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.5,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.583,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.667,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.75,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.833,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 275.917,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 276.0,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
-          "minuto": 276.083,
-          "emitido": 0.5,
-          "observada": 0.03,
-          "degrau": 2.0,
-          "ocorrencia": false,
-          "sem_dado": false
-        },
-        {
           "minuto": 276.167,
-          "emitido": 0.5,
+          "emitido": 0.505,
           "observada": 0.03,
           "degrau": 2.0,
           "ocorrencia": false,
@@ -79076,7 +79100,7 @@
       "cenario": "ocorrencia_na_madrugada",
       "descricao": "Movimentacao baixa com ocorrencia reportada: elevacao imediata e retorno apos o encerramento.",
       "adversarial": false,
-      "execucao_id": 776,
+      "execucao_id": 880,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 1080,
@@ -79124,6 +79148,10 @@
           "razao_adaptativo_pleno": 0.6811,
           "razao_adaptativo_fixo": 1.3254
         }
+      },
+      "central": {
+        "decisoes": 18,
+        "comandos": 9
       },
       "serie": [
         {
@@ -87773,7 +87801,7 @@
       "cenario": "ruido_na_fronteira",
       "descricao": "Madrugada com o volume oscilando em torno do tercil inferior: a tabela em degraus alterna entre classes; a logica nebulosa deve ficar estavel.",
       "adversarial": false,
-      "execucao_id": 778,
+      "execucao_id": 884,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 1440,
@@ -87821,6 +87849,10 @@
           "razao_adaptativo_pleno": 0.75,
           "razao_adaptativo_fixo": 1.4694
         }
+      },
+      "central": {
+        "decisoes": 24,
+        "comandos": 12
       },
       "serie": [
         {
@@ -99350,7 +99382,7 @@
       "cenario": "saida_de_evento",
       "descricao": "Via calma que recebe fluxo subito (saida de evento) e volta a esvaziar.",
       "adversarial": false,
-      "execucao_id": 779,
+      "execucao_id": 887,
       "modo_previsao": "antecipado",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 1080,
@@ -99398,6 +99430,10 @@
           "razao_adaptativo_pleno": 0.8369,
           "razao_adaptativo_fixo": 0.8369
         }
+      },
+      "central": {
+        "decisoes": 18,
+        "comandos": 9
       },
       "serie": [
         {

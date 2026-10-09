@@ -1,5 +1,5 @@
 {
-  "gerado_em": "2026-10-08T04:47:50.106185+00:00",
+  "gerado_em": "2026-10-09T02:36:59.491925+00:00",
   "modo_previsao": "reativo",
   "passo_s": 5.0,
   "base_regras": "v6-zurique",
@@ -14,7 +14,7 @@
       "cenario": "camera_inicio_da_noite_controle",
       "descricao": "Camera correta entre os minutos 30 e 150; movimento real pelo perfil da suite (inicio da noite).",
       "adversarial": false,
-      "execucao_id": 801,
+      "execucao_id": 927,
       "modo_previsao": "reativo",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 2880,
@@ -62,6 +62,10 @@
           "razao_adaptativo_pleno": 0.8932,
           "razao_adaptativo_fixo": 0.8932
         }
+      },
+      "central": {
+        "decisoes": 48,
+        "comandos": 26
       },
       "serie": [
         {
@@ -23111,7 +23115,7 @@
       "cenario": "camera_inicio_da_noite_falha",
       "descricao": "Camera contando zero entre os minutos 30 e 150; movimento real pelo perfil da suite (inicio da noite).",
       "adversarial": false,
-      "execucao_id": 804,
+      "execucao_id": 931,
       "modo_previsao": "reativo",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 2880,
@@ -23159,6 +23163,10 @@
           "razao_adaptativo_pleno": 0.7218,
           "razao_adaptativo_fixo": 0.7218
         }
+      },
+      "central": {
+        "decisoes": 48,
+        "comandos": 24
       },
       "serie": [
         {
@@ -46208,7 +46216,7 @@
       "cenario": "camera_madrugada_controle",
       "descricao": "Camera correta entre os minutos 30 e 150; movimento real pelo perfil da suite (madrugada).",
       "adversarial": false,
-      "execucao_id": 807,
+      "execucao_id": 935,
       "modo_previsao": "reativo",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 2880,
@@ -46256,6 +46264,10 @@
           "razao_adaptativo_pleno": 0.7064,
           "razao_adaptativo_fixo": 1.3982
         }
+      },
+      "central": {
+        "decisoes": 48,
+        "comandos": 25
       },
       "serie": [
         {
@@ -69305,7 +69317,7 @@
       "cenario": "camera_madrugada_falha",
       "descricao": "Camera contando zero entre os minutos 30 e 150; movimento real pelo perfil da suite (madrugada).",
       "adversarial": false,
-      "execucao_id": 810,
+      "execucao_id": 938,
       "modo_previsao": "reativo",
       "modelo": "xgboost-zurique-15min-v1",
       "decisoes": 2880,
@@ -69353,6 +69365,10 @@
           "razao_adaptativo_pleno": 0.6112,
           "razao_adaptativo_fixo": 1.2097
         }
+      },
+      "central": {
+        "decisoes": 48,
+        "comandos": 25
       },
       "serie": [
         {

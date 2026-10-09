@@ -2289,7 +2289,29 @@ CONSEQUENCIAS PARA O TEXTO E A BANCADA:
 PROTOCOLO DA REEXECUCAO: cenarios/PROTOCOLO_ARQUITETURA_71.md (fixado antes).
          Resultados anteriores (v6, ciclo de 5 s) em
          cenarios/resultados/v6_ciclo5s/.
-RESULTADOS: PENDENTE.
+RESULTADOS (08/10/2026; entre parenteses a v6 com o ciclo de 5 s). ZERO
+         violacoes de piso e taxa nas 17 execucoes (a taxa agora e conferida
+         sobre a luz do controlador a cada 5 s). 258 testes passam.
+         Trafego: na suite, a central decidiu 324 vezes e publicou 175
+         comandos em 13.440 passos de 5 s (antes, 13.440 comandos): ~1,3 % do
+         trafego. Noites de Zurique: 649 comandos em 69.120 passos (0,9 %).
+         Suite: aderencia 98,2 % (98,2 %); 75,7 % do pleno e 106,7 % do fixo
+         (75,7 e 106,6); H3 47,2 % x 40,4 % (46,9 x 40,2) - NAO confirmada.
+         Noites: 62,4 % do pleno e 78,6 % do fixo (iguais); H3 27,9 % x
+         23,3 % (27,8 x 23,2). Aderencia dos regimes: igual.
+         Substitutos, teste 1: contencao do XGBoost 70,7 % (72,4 %) x media
+         sazonal 62,4 % (62,4 %); energia 62,4 % x 63,4 % (iguais) -> previsao
+         NAO substituivel (mesma conclusao). Deficit com margem 0,02: 194,7 x
+         149,7 min (209,7 x 164,7); adaptativo nunca >= 2 lux abaixo.
+         Ruido: Mamdani 140 inversoes x 86 (iguais). Suavidade a 15 %:
+         Mamdani 12 (13), tabela 13, tabela com histerese 9; a 6 %: 20, 13, 9
+         (iguais) -> logica nebulosa continua SUBSTITUIVEL (a histerese segue
+         com menos mudancas). Com a decisao so na chegada do dado, o Mamdani
+         passou a ter uma mudanca perceptivel a menos que a tabela a 15 %:
+         declarar, sem apresentar como vantagem.
+LEITURA: a arquitetura nova reproduz os resultados da v6 (diferencas na
+         terceira casa), com ~1 % dos comandos. Todas as conclusoes mantidas.
+         Pendente: firmware na placa (rampa e CT18) e deploy na VM (009).
 TEXTO:   PENDENTE (rodada v20).
 
 ===============================================================================
