@@ -352,6 +352,18 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         de verificacao continua sendo "invariante": agora o piso e conferido
         na central e no no, e a taxa no no, pela mesma regra.
 
+[ ] C34. Defesa do percentil 99 (DIVERGENCIAS 72, 09/10/2026). Da IA: os
+        quatro requisitos, a comparacao com as alternativas, o desenho do teste
+        de sensibilidade e a regra de leitura (>= 90 % de concordancia
+        noturna), o texto proposto para 3.6. Conferir: (a) se os quatro
+        requisitos sao os de voces; (b) declarar no texto que o teste e
+        posterior a escolha; (c) NAO exagerar a instabilidade do p99,9 (os
+        dados mostram 4,6 % x 3,9 %); (d) a referencia HAN, J.; KAMBER, M.;
+        PEI, J. Data Mining: Concepts and Techniques. 3. ed. Morgan Kaufmann,
+        2011 - a IA NAO leu o livro; confirmar na secao de normalizacao
+        (3.5.2 na 3a edicao, segundo fontes secundarias) que trata de min-max
+        e z-score antes de citar; o ano aparece como 2011 ou 2012.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

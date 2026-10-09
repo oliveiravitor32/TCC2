@@ -2314,6 +2314,53 @@ LEITURA: a arquitetura nova reproduz os resultados da v6 (diferencas na
          Pendente: firmware na placa (rampa e CT18) e deploy na VM (009).
 TEXTO:   PENDENTE (rodada v20).
 
+-------------------------------------------------------------------------------
+72. DEFESA DO PERCENTIL 99 DA REGUA: TESTE DE SENSIBILIDADE (09/10/2026)
+-------------------------------------------------------------------------------
+Trecho: 3.6 (normalizacao da serie) e 3.7 (regua do trecho); 6.3.
+MOTIVO:  pedido do autor: defender a escolha do p99 sem se comprometer com
+         citacoes especificas que nao fixam o valor 99.
+PROTOCOLO: modelo/PROTOCOLO_SENSIBILIDADE_P99.md (a2055e4, antes de rodar).
+         TESTE A POSTERIORI: o p99 ja estava em uso; o teste nao o escolhe.
+CODIGO:  modelo/sensibilidade_percentil.py ->
+         modelo/resultados/sensibilidade_percentil.json.
+RESULTADOS (Zurique, teste 2019, 413.998 blocos; 206.689 noturnos):
+         percentil        95      99     99,5    99,9
+         blocos acima*   134      27      13       3   (*em 28 dias)
+         tercis      .097/.410 .068/.294 .061/.264 .047/.216
+         saturacao      5,5 %   1,1 %   0,6 %   0,1 %
+         concordancia de faixa com o p99, noite:
+           regua do treino   96,4 %   --   99,2 %  97,1 %
+           regua de 28 dias  96,5 %   --   98,5 %  95,7 %
+         variacao diaria da regua de 28 dias (p95 entre pontos e dias):
+                         4,8 %   3,9 %   3,7 %   4,6 %
+         Leitura pela regra fixada (>= 90 % noturno para p95 e p99,5):
+         POUCO SENSIVEL (menor concordancia 96,4 %).
+         Declarar: (a) a instabilidade do p99,9 e PEQUENA nos dados (4,6 % x
+         3,9 %): o argumento dos "3 blocos" vale como raciocinio, mas os dados
+         nao mostram instabilidade forte; nao exagerar; (b) os tercis do p99
+         aqui (0,0682 e 0,2941) diferem na terceira casa dos do modelo (0,0693
+         e 0,2946) porque o teste usa todos os blocos validos, sem o corte de
+         atributos do treino; (c) o p95 deixa 5,5 % dos blocos "travados" em 1.
+TEXTO PROPOSTO (3.6, para a rodada v20; a redacao final e dos autores):
+         "A regua de cada trecho e o percentil 99 das medias de 15 min dos
+         ultimos 28 dias, e o nivel e limitado a 1 (winsorizacao). A escolha
+         segue quatro requisitos do projeto: escala de 0 (via vazia) a 1 (o
+         cheio tipico da via), pouca influencia de eventos raros, estabilidade
+         com 28 dias de dado e calculo simples, trecho a trecho, no banco. A
+         normalizacao pelo maximo deixaria um unico evento definir a escala; a
+         padronizacao pela media e pelo desvio produz valores negativos e sem
+         limite; a escala pela mediana e pela dispersao central explode a noite,
+         quando a mediana e quase zero; a transformacao em postos perde a
+         proporcao entre os volumes. Em 28 dias, o percentil 99 e definido por
+         cerca dos 27 blocos mais cheios: o bastante para a estimativa ser
+         estavel e pouco o bastante para deixar os eventos raros acima dela.
+         O valor 99 e criterio dos autores. Num teste de sensibilidade feito
+         depois da escolha, trocar o 99 por 95, 99,5 ou 99,9 manteve a mesma
+         faixa de movimento em 95,7 % a 99,2 % dos blocos noturnos de 2019."
+         Referencia geral sugerida para as tecnicas de normalizacao: HAN;
+         KAMBER; PEI (2011) - NAO conferida pela IA (REVISAR C34).
+
 ===============================================================================
 FIM
 ===============================================================================
