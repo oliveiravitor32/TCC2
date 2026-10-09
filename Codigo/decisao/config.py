@@ -20,9 +20,22 @@ DATABASE_URL = os.environ.get(
 # versao_base_regras.
 REGRAS = Path(__file__).resolve().parent / "regras" / os.environ.get("REGRAS", "v6-zurique.toml")
 
-# Ciclo de decisao e failsafe do no (DIVERGENCIAS 1 e 2).
+# Arquitetura de implantacao (DIVERGENCIAS 71; Caderno de Encargos 7.1.1 e
+# 7.2.1): a central decide quando chega volume ou ocorrencia e so publica
+# quando o alvo muda ou falta RENOVAR_ANTES_S para o comando vencer; a rampa
+# e a validade ficam no controlador.
+#
+# PERIODO_S = passo da rampa no no (DIVERGENCIAS 1) e amostragem da luz nos
+# cenarios. Com a taxa de 0,1/min e 3 casas, 5 s da a rampa P3 -> P5 em 5,2
+# min; um passo de 1 s arredondaria a queda para 0,001 e alongaria a rampa.
 PERIODO_S = float(os.environ.get("PERIODO_S", "5"))
-TIMEOUT_FAILSAFE_S = float(os.environ.get("TIMEOUT_FAILSAFE_S", "15"))
+# Varredura da central: comandos perto de vencer e regua diaria. Nao publica
+# nada sozinha; so decide de novo os pontos cujo comando esta vencendo.
+VARREDURA_S = float(os.environ.get("VARREDURA_S", "60"))
+# RNF03 (DIVERGENCIAS 71): comando efetivado no no em ate 180 s, o prazo da
+# rede de conectividade do Caderno de Encargos (7.2.1). Referencia para a
+# medicao; o servico nao depende dele.
+LATENCIA_MAX_S = float(os.environ.get("LATENCIA_MAX_S", "180"))
 
 # Volume (DIVERGENCIAS 56): a plataforma publica a media de pessoas de cada
 # trecho a cada PERIODO_VOLUME_S - 5 min, o tempo minimo que a norma impoe
@@ -31,6 +44,13 @@ TIMEOUT_FAILSAFE_S = float(os.environ.get("TIMEOUT_FAILSAFE_S", "15"))
 # ciclo considera que nao ha dado e decide o pleno (DIVERGENCIAS 23).
 PERIODO_VOLUME_S = int(os.environ.get("PERIODO_VOLUME_S", "300"))
 VALIDADE_VOLUME_S = float(os.environ.get("VALIDADE_VOLUME_S", str(3 * PERIODO_VOLUME_S)))
+# Validade do comando no no: no maximo a do volume (DIVERGENCIAS 71), e no
+# caso geral ate vencer o volume que sustenta a decisao - sem dado vigente, o
+# no volta ao pleno na mesma hora em que a central decidiria o pleno.
+VALIDADE_COMANDO_MAX_S = int(os.environ.get("VALIDADE_COMANDO_MAX_S", str(int(VALIDADE_VOLUME_S))))
+RENOVAR_ANTES_S = float(os.environ.get("RENOVAR_ANTES_S", str(PERIODO_VOLUME_S)))
+# Regua do trecho recalculada uma vez por dia (DIVERGENCIAS 71).
+REFERENCIA_A_CADA_S = float(os.environ.get("REFERENCIA_A_CADA_S", str(24 * 3600)))
 # Ocorrencia: vale ate a plataforma publicar o encerramento ou ate vencer a
 # vigencia informada, o que vier primeiro; sem vigencia, este prazo.
 VALIDADE_OCORRENCIA_S = float(os.environ.get("VALIDADE_OCORRENCIA_S", "900"))

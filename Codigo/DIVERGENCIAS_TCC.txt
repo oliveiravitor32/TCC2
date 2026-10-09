@@ -2219,6 +2219,79 @@ LEITURA: a v6 melhora a aderencia, a H3 em valor absoluto e a contencao da
          confirmada.
 TEXTO:   PENDENTE (rodada v20, Zurique como principal).
 
+-------------------------------------------------------------------------------
+71. ARQUITETURA DE IMPLANTACAO: DECISAO POR EVENTO, RAMPA E VALIDADE NO
+    CONTROLADOR, REGUA DIARIA, RNF03 = 180 s (08/10/2026)
+-------------------------------------------------------------------------------
+Trecho: 3.2, 3.4 (no), 3.5.2, 3.7 (verificacao em duas barreiras), 3.11,
+        4.4 (RNF03, RNF07), 4.6 (Quadro 12, 13), 4.6.2 (Quadro 14: comando),
+        4.6.3 (percurso), 4.7.3 (Quadro 16: colunas novas), 4.10 / 5.3
+        (CT18 e rampa a refazer na bancada), 6.3 (sai a limitacao dos ~120 mil
+        comandos/s).
+MOTIVO:  pedido do autor: o sistema deve funcionar como no parque real, e nao
+         ser otimizado para a bancada de um no. O ciclo de 5 s mandava comando a
+         todos os pontos (~120 mil/s no parque) e recalculava a regua (p99 de
+         28 dias) a cada ciclo.
+FONTE:   Caderno de Encargos da concessao (Anexo III do edital da PPP, 2015):
+         7.1.1 - "A logica e os modos de atuacao devem ser processados
+         localmente" no controlador, que funciona sem comunicacao com o CCO,
+         com relogio, calendario e memoria; p. 4 - a central manda comando
+         isolado ou em grupo, programacao agendada ou atualizacao de "agenda
+         residente no ativo", capaz de funcionar off-line; 7.2.1 - intercambio
+         central <-> luminaria em no maximo 180 s e varredura ao menos a cada
+         60 min. NAO se sabe o que foi de fato implantado (o 4o termo aditivo
+         mexeu na telegestao): o texto diz "o Caderno exige", nao "Sao Paulo
+         usa". TALQ: a central envia programas e calendarios que o
+         controlador executa; estado padrao 100 % sem comando ativo.
+DECISAO (autor, 08/10/2026): seguir o modelo do Caderno; RNF03 passa a ser o
+         prazo do contrato (180 s).
+CODIGO:  - decisao/rampa.py (novo, puro): Comando {decisao_id, nivel (alvo),
+           validade_s, piso, taxa_min}; Controlador (liga no pleno; sobe na
+           hora; desce pela mesma `verificar` a cada PERIODO_S; vencido ->
+           pleno); deve_publicar (so se o alvo mudou, ou se o anterior vence em
+           ate RENOVAR_ANTES_S = 300 s e o novo vence depois dele);
+         - ciclo.decidir: a central verifica so o PISO do alvo (a taxa fica no
+           controlador); grava validade_s = ate vencer o volume que sustenta a
+           decisao, no maximo 900 s; refs opcional; pontos_do_evento,
+           pontos_vencendo, ultimo_publicado; regua: atualizar_referencias
+           (diaria, grava trecho_via.referencia_aprendida), referencias (le a
+           gravada em operacao; calcula nos cenarios), calcular_referencias;
+           telemetria aceita "nivel" (aplicado ao responder);
+         - servico: LISTEN evento_urbano -> decide os pontos do trecho do
+           evento; varredura a cada VARREDURA_S = 60 s (regua diaria e comandos
+           vencendo); sem laco de 5 s;
+         - simulador/no_simulado.py e firmware/no/no.ino: controlador com rampa
+           de 5 s, piso e taxa do comando, validade no relogio do no,
+           telemetria com o nivel aplicado. Firmware compila (arduino-cli,
+           DOIT ESP32 DEVKIT V1); NAO gravado nem testado na placa;
+         - diagnostico e view auditoria_decisao comparam o lux com o nivel
+           aplicado (telemetria.nivel_aplicado), nao com o alvo;
+         - migracao 009 (decisao.validade_s, telemetria.nivel_aplicado,
+           trecho_via.referencia_aprendida e referencia_calculada_em);
+         - cenarios/executar.py: a central decide nos eventos e na renovacao;
+           o controlador virtual faz a luz a cada 5 s; o relatorio conta
+           decisoes e comandos da central;
+         - testes: tests/test_rampa.py (inclui 2.000 sequencias aleatorias de
+           comandos: zero violacoes de taxa e piso, pleno no vencimento) e
+           test_ciclo.py ajustado.
+CONSEQUENCIAS PARA O TEXTO E A BANCADA:
+         - o failsafe deixa de ser "15 s sem comando" e passa a ser "comando
+           vencido" (ate 900 s): o CT18 precisa ser refeito com o firmware
+           novo, e a rampa medida de novo (5,2 min esperados);
+         - RNF03 (< 2 s) vira <= 180 s; a latencia medida (0,98-1,93 s)
+           continua valendo como medicao da bancada;
+         - diagnostico com menos leituras (uma por comando, nao a cada 5 s):
+           os N ciclos do alerta de perda de controle passam a levar mais
+           tempo; declarar;
+         - ocorrencia encerrada por prazo (sem evento de encerramento) so e
+           reconhecida no evento seguinte ou na renovacao: a luz fica mais
+           tempo no pleno (lado seguro).
+PROTOCOLO DA REEXECUCAO: cenarios/PROTOCOLO_ARQUITETURA_71.md (fixado antes).
+         Resultados anteriores (v6, ciclo de 5 s) em
+         cenarios/resultados/v6_ciclo5s/.
+RESULTADOS: PENDENTE.
+TEXTO:   PENDENTE (rodada v20).
+
 ===============================================================================
 FIM
 ===============================================================================

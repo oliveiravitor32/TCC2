@@ -2,11 +2,14 @@
 
 Instrumento de desenvolvimento, NAO componente da proposta nem fonte de
 resultado: os valores de lux aqui sao sinteticos. Reproduz o contrato do no
-(Quadro 14) e o failsafe (RNF07):
+(Quadro 14) e o controlador da arquitetura de implantacao (DIVERGENCIAS 71),
+pela mesma classe que o executor de cenarios usa (decisao.rampa):
 
 - assina iluminacao/{ponto}/comando e responde em iluminacao/{ponto}/telemetria
-  com o mesmo decisao_id;
-- sem comando por TIMEOUT_FAILSAFE_S, vai sozinho a 1,0;
+  com o mesmo decisao_id e o nivel que aplicava ao receber;
+- desce ate o alvo em rampa, a cada PERIODO_S, sem passar da taxa nem do piso
+  recebidos; sobe na hora;
+- vencida a validade do comando, volta sozinho a 1,0 (RNF07);
 - last will em iluminacao/{ponto}/estado = "offline" (retido).
 
 Execucao:  python -m simulador.no_simulado [--ponto BANCADA-01] [--falha]
@@ -26,6 +29,7 @@ from datetime import datetime, timezone
 import paho.mqtt.client as mqtt
 
 from decisao import config
+from decisao.rampa import Comando, Controlador
 
 # Suposicoes sinteticas, apenas para gerar numeros plausiveis (3.4.2):
 DUTY_PLENO_CLASSE = 0.5   # iluminacao plena da classe em torno de metade do ciclo
@@ -40,9 +44,8 @@ class NoSimulado:
     def __init__(self, ponto: str, falha: bool = False) -> None:
         self.ponto = ponto
         self.falha = falha  # simula ramo de potencia interrompido (3.4.5)
-        self.nivel = 1.0
-        self.ultimo_comando = time.monotonic()
-        self.em_failsafe = False
+        self.ctl = Controlador()
+        self.em_failsafe = True  # liga no pleno, ate o primeiro comando
         self._trava = threading.Lock()
 
         self.cli = mqtt.Client(
@@ -71,39 +74,45 @@ class NoSimulado:
         luz = 0.0 if self.falha else nivel * LUX_PLENO_CLASSE
         return round(max(0.0, luz + LUX_RESIDUAL + random.gauss(0, RUIDO_LUX)), 2)
 
+    @staticmethod
+    def _agora() -> datetime:
+        return datetime.now(timezone.utc)
+
     def _ao_receber(self, cli, _u, msg):
         try:
-            cmd = json.loads(msg.payload)
-            nivel = float(cmd["nivel"])
-            did = str(cmd["decisao_id"])
+            cmd = Comando.de_carga(json.loads(msg.payload))
         except (ValueError, KeyError, TypeError):
             log.warning("comando malformado: %r", msg.payload)
             return
         with self._trava:
-            self.nivel = min(max(nivel, 0.0), 1.0)
-            self.ultimo_comando = time.monotonic()
+            self.ctl.receber(cmd, self._agora())
             self.em_failsafe = False
+            nivel = float(self.ctl.luz)  # a rampa anda no passo; agora e o nivel atual
         telemetria = {
-            "decisao_id": did,
-            "duty": self._duty(self.nivel),
-            "lux": self._lux(self.nivel),
-            "medido_em": datetime.now(timezone.utc).isoformat(),
+            "decisao_id": cmd.decisao_id,
+            "duty": self._duty(nivel),
+            "lux": self._lux(nivel),
+            "nivel": nivel,
+            "medido_em": self._agora().isoformat(),
         }
         cli.publish(f"iluminacao/{self.ponto}/telemetria", json.dumps(telemetria), qos=1)
-        log.info("nivel=%.3f duty=%.4f lux=%.2f", self.nivel, telemetria["duty"], telemetria["lux"])
+        log.info("alvo=%.3f validade=%ss nivel=%.3f lux=%.2f", float(cmd.nivel), cmd.validade_s,
+                 nivel, telemetria["lux"])
 
-    def _vigia_failsafe(self):
+    def _rampa(self):
+        """Passo da rampa e vigia da validade, no relogio do proprio no."""
         while True:
-            time.sleep(0.5)
+            time.sleep(config.PERIODO_S)
             with self._trava:
-                if (not self.em_failsafe
-                        and time.monotonic() - self.ultimo_comando > config.TIMEOUT_FAILSAFE_S):
-                    self.nivel, self.em_failsafe = 1.0, True
-                    log.warning("FAILSAFE: sem comando ha %.0f s -> nivel 1,0",
-                                config.TIMEOUT_FAILSAFE_S)
+                agora = self._agora()
+                vencido = self.ctl.comando is not None and self.ctl.vencido(agora)
+                self.ctl.passo(agora, config.PERIODO_S)
+                if vencido and not self.em_failsafe:
+                    self.em_failsafe = True
+                    log.warning("FAILSAFE: comando vencido sem renovacao -> nivel 1,0")
 
     def executar(self):
-        threading.Thread(target=self._vigia_failsafe, daemon=True).start()
+        threading.Thread(target=self._rampa, daemon=True).start()
         self.cli.connect(config.MQTT_HOST, config.MQTT_PORTA, keepalive=30)
         self.cli.loop_forever()
 

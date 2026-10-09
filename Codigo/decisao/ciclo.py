@@ -21,6 +21,7 @@ from psycopg.types.json import Jsonb
 from . import config
 from .inferencia import BaseRegras, Entrada, horas_desde_18h, inferir
 from .previsao import Historico, Previsor
+from .rampa import Comando
 from .verificacao import PLENO, Criterio, verificar
 
 log = logging.getLogger(__name__)
@@ -46,6 +47,9 @@ class EstadoVia:
     # Media de pessoas do volume vigente de cada trecho; vazio = sem dado.
     volumes: dict[int, float] = field(default_factory=dict)
     evento_ids: list[int] = field(default_factory=list)
+    # Quando vence o volume vigente que vence por ultimo (None sem dado): a
+    # validade do comando nao passa dele (DIVERGENCIAS 71).
+    volume_vence_em: datetime | None = None
 
     @property
     def sem_dado(self) -> bool:
@@ -65,10 +69,17 @@ class DecisaoTomada:
     # Volume observado normalizado (None sem dado) e degrau defuzificado.
     observada: float | None = None
     degrau: float | None = None
+    validade_s: int = 0
+    criterio: Criterio | None = None
 
     def comando(self) -> dict:
-        """Carga do topico iluminacao/{ponto}/comando (Quadro 14)."""
-        return {"decisao_id": str(self.id), "nivel": float(self.nivel_emitido)}
+        """Carga do topico iluminacao/{ponto}/comando (Quadro 14, item 71):
+        alvo verificado, validade e os limites que o controlador tambem impoe."""
+        return self.comando_obj().carga()
+
+    def comando_obj(self) -> Comando:
+        return Comando(str(self.id), self.nivel_emitido, self.validade_s,
+                       self.criterio.piso, self.criterio.taxa_max_decrescimo_min)
 
 
 # ---------------------------------------------------------------------------
@@ -207,7 +218,8 @@ def estado_via(
     filtro = {"agora": agora, "desde": desde, "origens": origens, "ponto": ponto_id}
     volumes = conn.execute(
         """
-        SELECT DISTINCT ON (e.trecho_id) e.id, e.trecho_id, e.pessoas_media
+        SELECT DISTINCT ON (e.trecho_id) e.id, e.trecho_id, e.pessoas_media,
+               COALESCE(e.vigente_ate, e.ocorrido_em + %(validade)s) AS vence
           FROM evento_urbano e
           JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
          WHERE tp.ponto_de_luz_id = %(ponto)s
@@ -240,8 +252,9 @@ def estado_via(
     ).fetchall()
     return EstadoVia(
         ocorrencia=bool(ocorrencias),
-        volumes={trecho: float(media) for _, trecho, media in volumes},
+        volumes={trecho: float(media) for _, trecho, media, _ in volumes},
         evento_ids=sorted([eid for eid, *_ in volumes] + [eid for (eid,) in ocorrencias]),
+        volume_vence_em=max((v for *_, v in volumes), default=None),
     )
 
 
@@ -256,6 +269,72 @@ def observada(estado: EstadoVia, refs: dict[int, float]) -> float | None:
 def referencias(
     conn: psycopg.Connection, agora: datetime, ponto_id: int, origens: list[str] | None = None
 ) -> dict[int, float]:
+    """Regua de cada trecho do ponto, como a decisao a usa.
+
+    Em operacao (origens None), a gravada pela rotina diaria
+    (`atualizar_referencias`, DIVERGENCIAS 71): a aprendida, se ja houver;
+    senao, o valor inicial. Numa execucao de cenario, calculada sobre os
+    eventos da propria execucao (`calcular_referencias`).
+    """
+    if origens is not None:
+        return calcular_referencias(conn, agora, ponto_id, origens)
+    linhas = conn.execute(
+        """
+        SELECT t.id, COALESCE(t.referencia_aprendida, t.referencia_pessoas)
+          FROM trecho_via t
+          JOIN trecho_ponto tp ON tp.trecho_id = t.id AND tp.ponto_de_luz_id = %s
+        """,
+        (ponto_id,),
+    ).fetchall()
+    return {t: float(v) for t, v in linhas}
+
+
+_SQL_P99 = """
+    (SELECT percentile_cont(0.99) WITHIN GROUP (ORDER BY h.media)
+       FROM (SELECT avg(e.pessoas_media) AS media
+               FROM evento_urbano e
+              WHERE e.trecho_id = t.id AND e.tipo = 'volume'
+                AND e.ocorrido_em <= %(agora)s
+                AND e.ocorrido_em > %(agora)s - make_interval(days => %(dias)s)
+                AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
+              GROUP BY date_bin(make_interval(mins => %(bloco)s), e.ocorrido_em,
+                                TIMESTAMPTZ '2000-01-01 00:00+00')) h
+     HAVING count(*) >= %(minimo)s)
+"""
+
+
+def _param_p99(agora: datetime, origens: list[str] | None) -> dict:
+    return {"agora": agora, "dias": config.DIAS_REFERENCIA, "minimo": config.BLOCOS_MINIMOS_REFERENCIA,
+            "bloco": config.BLOCO_PREVISAO_MIN, "origens": origens}
+
+
+def atualizar_referencias(conn: psycopg.Connection, agora: datetime) -> int:
+    """Rotina diaria (DIVERGENCIAS 71): grava a regua aprendida de todos os
+    trechos. A regua muda devagar (percentil 99 de 28 dias); recalcula-la a
+    cada decisao seria repetir a mesma conta. Devolve quantos trechos tem
+    regua aprendida."""
+    n = conn.execute(
+        f"""
+        UPDATE trecho_via t
+           SET referencia_aprendida = NULLIF(GREATEST(COALESCE({_SQL_P99}, 0), 0), 0),
+               referencia_calculada_em = %(agora)s
+        """,
+        _param_p99(agora, None),
+    ).rowcount
+    (com,) = conn.execute(
+        "SELECT count(*) FROM trecho_via WHERE referencia_aprendida IS NOT NULL").fetchone()
+    log.info("regua recalculada em %s trechos (%s com historico suficiente)", n, com)
+    return com
+
+
+def referencias_vencidas(conn: psycopg.Connection, agora: datetime) -> bool:
+    (ultima,) = conn.execute("SELECT min(referencia_calculada_em) FROM trecho_via").fetchone()
+    return ultima is None or (agora - ultima).total_seconds() >= config.REFERENCIA_A_CADA_S
+
+
+def calcular_referencias(
+    conn: psycopg.Connection, agora: datetime, ponto_id: int, origens: list[str] | None = None
+) -> dict[int, float]:
     """Referencia de cada trecho do ponto: o "cheio" tipico daquela via.
 
     Percentil 99 da media de pessoas por bloco de BLOCO_PREVISAO_MIN minutos
@@ -265,23 +344,12 @@ def referencias(
     trecho_via.referencia_pessoas.
     """
     linhas = conn.execute(
-        """
-        SELECT t.id, t.referencia_pessoas,
-               (SELECT percentile_cont(0.99) WITHIN GROUP (ORDER BY h.media)
-                  FROM (SELECT avg(e.pessoas_media) AS media
-                          FROM evento_urbano e
-                         WHERE e.trecho_id = t.id AND e.tipo = 'volume'
-                           AND e.ocorrido_em <= %(agora)s
-                           AND e.ocorrido_em > %(agora)s - make_interval(days => %(dias)s)
-                           AND (%(origens)s::text[] IS NULL OR e.origem = ANY(%(origens)s))
-                         GROUP BY date_bin(make_interval(mins => %(bloco)s), e.ocorrido_em,
-                                           TIMESTAMPTZ '2000-01-01 00:00+00')) h
-                HAVING count(*) >= %(minimo)s) AS aprendida
+        f"""
+        SELECT t.id, t.referencia_pessoas, {_SQL_P99} AS aprendida
           FROM trecho_via t
           JOIN trecho_ponto tp ON tp.trecho_id = t.id AND tp.ponto_de_luz_id = %(ponto)s
         """,
-        {"agora": agora, "dias": config.DIAS_REFERENCIA, "minimo": config.BLOCOS_MINIMOS_REFERENCIA,
-         "bloco": config.BLOCO_PREVISAO_MIN, "origens": origens, "ponto": ponto_id},
+        {**_param_p99(agora, origens), "ponto": ponto_id},
     ).fetchall()
     return {t: float(aprendida) if aprendida and aprendida > 0 else float(inicial)
             for t, inicial, aprendida in linhas}
@@ -366,23 +434,17 @@ def nivel_recente(
 # ---------------------------------------------------------------------------
 # Decisao
 # ---------------------------------------------------------------------------
-def _referencia_de_taxa(
+def _ultima_decisao(
     conn: psycopg.Connection, ponto: Ponto, agora: datetime, execucao_id: int | None = None
-) -> tuple[Decimal | None, Decimal | None]:
-    """Nivel anterior e intervalo para o limite de taxa.
+) -> Decimal | None:
+    """Alvo da ultima decisao anterior a `agora`, so para registro.
 
-    E a ultima decisao ANTERIOR a `agora` - decisao com carimbo futuro nao e
-    "nivel corrente" e travaria a rampa (o intervalo daria zero). Dentro de
-    um cenario, a referencia e a da propria execucao: duas execucoes com
-    relogios virtuais distintos nao sao uma sequencia fisica.
-
-    Se a ultima decisao e mais velha que o timeout do failsafe, o no ja
-    voltou sozinho a 1,0 (RNF07): a rampa recomeca do pleno, e nao do ultimo
-    valor gravado - senao a luz cairia de 1,0 ao nivel antigo num passo so.
+    Desde o item 71 a taxa nao limita o alvo na central: quem desce em rampa
+    e o controlador, a partir da luz que ele estiver aplicando.
     """
     ultima = conn.execute(
         """
-        SELECT nivel_emitido, criado_em FROM decisao
+        SELECT nivel_emitido FROM decisao
          WHERE ponto_de_luz_id = %(ponto)s
            AND criado_em <= %(agora)s
            AND (%(execucao)s::bigint IS NULL OR execucao_id = %(execucao)s)
@@ -390,13 +452,69 @@ def _referencia_de_taxa(
         """,
         {"ponto": ponto.id, "agora": agora, "execucao": execucao_id},
     ).fetchone()
-    if ultima is None:
-        return None, None
-    nivel, quando = ultima
-    segundos = Decimal(str(max((agora - quando).total_seconds(), 0)))
-    if segundos > Decimal(str(config.TIMEOUT_FAILSAFE_S)):
-        return PLENO, Decimal(str(config.PERIODO_S))
-    return Decimal(nivel), segundos
+    return None if ultima is None else Decimal(ultima[0])
+
+
+def validade(estado: EstadoVia, agora: datetime) -> int:
+    """Validade do comando (DIVERGENCIAS 71): ate vencer o volume que o
+    sustenta, no maximo VALIDADE_COMANDO_MAX_S; sem dado, o maximo (o alvo ja
+    e o pleno)."""
+    maximo = config.VALIDADE_COMANDO_MAX_S
+    if estado.volume_vence_em is None:
+        return maximo
+    resta = int((estado.volume_vence_em - agora).total_seconds())
+    return max(1, min(maximo, resta))
+
+
+def ultimo_publicado(conn: psycopg.Connection, ponto_id: int) -> tuple[Decimal, datetime] | None:
+    """(alvo, vence_em) do ultimo comando publicado ao ponto em operacao."""
+    linha = conn.execute(
+        """
+        SELECT nivel_emitido, publicado_em + make_interval(secs => validade_s)
+          FROM decisao
+         WHERE ponto_de_luz_id = %s AND publicado_em IS NOT NULL AND validade_s IS NOT NULL
+           AND execucao_id IS NULL
+         ORDER BY publicado_em DESC LIMIT 1
+        """,
+        (ponto_id,),
+    ).fetchone()
+    return None if linha is None else (Decimal(linha[0]), linha[1])
+
+
+def pontos_do_evento(conn: psycopg.Connection, evento_id: int) -> list[Ponto]:
+    """Pontos de luz dos trechos de um evento: so eles decidem de novo."""
+    return [Ponto(*l) for l in conn.execute(
+        """
+        SELECT p.id, p.codigo, p.classe_codigo
+          FROM evento_urbano e
+          JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
+          JOIN ponto_de_luz p ON p.id = tp.ponto_de_luz_id
+         WHERE e.id = %s AND p.estado_operacional <> 'manutencao'
+         ORDER BY p.id
+        """,
+        (evento_id,),
+    ).fetchall()]
+
+
+def pontos_vencendo(conn: psycopg.Connection, agora: datetime, antes_s: float) -> list[Ponto]:
+    """Pontos cujo ultimo comando vence em ate `antes_s` (ou que nunca
+    receberam comando): a varredura decide de novo so esses."""
+    return [Ponto(*l) for l in conn.execute(
+        """
+        SELECT p.id, p.codigo, p.classe_codigo
+          FROM ponto_de_luz p
+          LEFT JOIN LATERAL (
+                SELECT d.publicado_em + make_interval(secs => d.validade_s) AS vence
+                  FROM decisao d
+                 WHERE d.ponto_de_luz_id = p.id AND d.publicado_em IS NOT NULL
+                   AND d.validade_s IS NOT NULL AND d.execucao_id IS NULL
+                 ORDER BY d.publicado_em DESC LIMIT 1) u ON true
+         WHERE p.estado_operacional <> 'manutencao'
+           AND (u.vence IS NULL OR u.vence <= %(agora)s + make_interval(secs => %(antes)s))
+         ORDER BY p.id
+        """,
+        {"agora": agora, "antes": antes_s},
+    ).fetchall()]
 
 
 def decidir(
@@ -412,6 +530,7 @@ def decidir(
     reativo: bool = False,
     desde: datetime | None = None,
     filtro_observada: Callable[[float], float] | None = None,
+    refs: dict[int, float] | None = None,
 ) -> DecisaoTomada:
     origens = origens_da_execucao(execucao_id)
     estado = estado_via(conn, agora, desde, origens, ponto_id=ponto.id)
@@ -427,7 +546,8 @@ def decidir(
         # aberta, com ou sem volume, tambem leva ao pleno.
         pretendido = PLENO
     else:
-        refs = referencias(conn, agora, ponto.id, origens)
+        if refs is None:
+            refs = referencias(conn, agora, ponto.id, origens)
         obs = observada(estado, refs)
         if filtro_observada is not None and obs is not None:
             # So na avaliacao (DIVERGENCIAS 61): alternativa simples com histerese.
@@ -465,13 +585,12 @@ def decidir(
         "degrau": degrau,
     }
 
-    anterior, segundos = _referencia_de_taxa(conn, ponto, agora, execucao_id)
-    r = verificar(
-        pretendido,
-        criterio(conn, ponto.classe_codigo),
-        nivel_anterior=anterior,
-        segundos_desde_anterior=segundos,
-    )
+    # A central verifica o PISO do alvo; a taxa de descida e garantida no
+    # controlador, pela mesma regra (decisao.rampa, DIVERGENCIAS 71).
+    anterior = _ultima_decisao(conn, ponto, agora, execucao_id)
+    crit = criterio(conn, ponto.classe_codigo)
+    r = verificar(pretendido, crit)
+    val = validade(estado, agora)
 
     did = uuid.uuid4()
     conn.execute(
@@ -479,12 +598,13 @@ def decidir(
         INSERT INTO decisao
             (id, criado_em, ponto_de_luz_id, versao_base_regras_id, versao_modelo_id,
              execucao_id, classe_codigo, previsao_movimentacao, nivel_pretendido,
-             nivel_emitido, restricao_aplicada, nivel_anterior, entrada, ativacoes)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+             nivel_emitido, restricao_aplicada, nivel_anterior, entrada, ativacoes, validade_s)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """,
         (did, agora, ponto.id, versao_regras_id, versao_modelo_id, execucao_id,
          ponto.classe_codigo, previsao, pretendido, r.nivel_emitido,
-         r.restricao_aplicada, anterior, Jsonb(entrada), Jsonb(ativacoes) if ativacoes else None),
+         r.restricao_aplicada, anterior, Jsonb(entrada), Jsonb(ativacoes) if ativacoes else None,
+         val),
     )
     for eid in estado.evento_ids:
         conn.execute("INSERT INTO decisao_evento VALUES (%s, %s)", (did, eid))
@@ -500,6 +620,8 @@ def decidir(
         estado=estado,
         observada=obs,
         degrau=degrau,
+        validade_s=val,
+        criterio=crit,
     )
 
 
@@ -522,10 +644,12 @@ def registrar_telemetria(conn: psycopg.Connection, ponto_codigo: str, carga: dic
         duty = float(carga["duty"])
         lux = float(carga["lux"])
         medido_em = datetime.fromisoformat(carga["medido_em"]) if carga.get("medido_em") else None
+        # Nivel que o no aplicava ao responder (item 71); ausente nos nos antigos.
+        nivel = float(carga["nivel"]) if carga.get("nivel") is not None else None
     except (KeyError, ValueError, TypeError) as erro:
         log.warning("telemetria malformada de %s: %s", ponto_codigo, erro)
         return False
-    if not (0 <= duty <= 1) or lux < 0:
+    if not (0 <= duty <= 1) or lux < 0 or (nivel is not None and not 0 <= nivel <= 1):
         log.warning("telemetria fora do dominio de %s: duty=%s lux=%s", ponto_codigo, duty, lux)
         return False
     if medido_em is not None and medido_em.tzinfo is None:
@@ -533,19 +657,21 @@ def registrar_telemetria(conn: psycopg.Connection, ponto_codigo: str, carga: dic
 
     linha = conn.execute(
         """
-        INSERT INTO telemetria (decisao_id, ponto_de_luz_id, sessao_id, medido_em, duty, lux_medido)
+        INSERT INTO telemetria (decisao_id, ponto_de_luz_id, sessao_id, medido_em, duty, lux_medido,
+                                nivel_aplicado)
         SELECT d.id, d.ponto_de_luz_id,
                (SELECT s.id FROM sessao_medicao s
                  WHERE s.ponto_de_luz_id = d.ponto_de_luz_id AND s.encerrada_em IS NULL
                  ORDER BY s.iniciada_em DESC LIMIT 1),
-               COALESCE(%(medido_em)s, now()), %(duty)s, %(lux)s
+               COALESCE(%(medido_em)s, now()), %(duty)s, %(lux)s, %(nivel)s
           FROM decisao d
           JOIN ponto_de_luz p ON p.id = d.ponto_de_luz_id
          WHERE d.id = %(did)s AND p.codigo = %(ponto)s
         ON CONFLICT (decisao_id) DO NOTHING
         RETURNING id
         """,
-        {"did": did, "ponto": ponto_codigo, "duty": duty, "lux": lux, "medido_em": medido_em},
+        {"did": did, "ponto": ponto_codigo, "duty": duty, "lux": lux, "medido_em": medido_em,
+         "nivel": nivel},
     ).fetchone()
     return linha is not None
 

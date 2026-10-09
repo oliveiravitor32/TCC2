@@ -172,8 +172,11 @@ class Monitor:
         """
         linha = conn.execute(
             """
-            SELECT d.ponto_de_luz_id, d.nivel_emitido,
-                   d.nivel_emitido * c.iluminancia_media_min_lux AS lux_esperado,
+            -- No meio de uma rampa, o no responde com o nivel que aplicava
+            -- (DIVERGENCIAS 71): e com ele que o lux se compara.
+            SELECT d.ponto_de_luz_id, COALESCE(t.nivel_aplicado, d.nivel_emitido),
+                   COALESCE(t.nivel_aplicado, d.nivel_emitido) * c.iluminancia_media_min_lux
+                       AS lux_esperado,
                    t.lux_medido - COALESCE(s.lux_residual, 0)     AS lux_liquido
               FROM decisao d
               JOIN classe_iluminacao c ON c.codigo = d.classe_codigo

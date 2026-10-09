@@ -52,7 +52,11 @@ CREATE TABLE trecho_via (
     -- normalizar o volume observado e a serie da previsao como no treino
     -- (3.6). O servico aprende o percentil 99 das medias apos 7 dias; ate la
     -- vale este valor inicial, declarado para rua local (DIVERGENCIAS 55).
-    referencia_pessoas NUMERIC(8,2) NOT NULL DEFAULT 5 CHECK (referencia_pessoas > 0)
+    referencia_pessoas NUMERIC(8,2) NOT NULL DEFAULT 5 CHECK (referencia_pessoas > 0),
+    -- Percentil 99 aprendido, recalculado uma vez por dia (DIVERGENCIAS 71);
+    -- NULL enquanto nao ha historico suficiente.
+    referencia_aprendida    NUMERIC(8,2) CHECK (referencia_aprendida > 0),
+    referencia_calculada_em TIMESTAMPTZ
 );
 
 -- ---------------------------------------------------------------------------
@@ -146,7 +150,7 @@ CREATE INDEX evento_urbano_ocorrido_idx ON evento_urbano (ocorrido_em DESC);
 CREATE INDEX evento_urbano_trecho_idx   ON evento_urbano (trecho_id, ocorrido_em DESC);
 
 -- Evento novo acorda o servico de decisao na hora (LISTEN evento_urbano):
--- esperar o proximo ciclo de 5 s estouraria o RNF03 (< 2 s).
+-- desde o item 71 a decisao e por evento, e e este aviso que a dispara.
 CREATE FUNCTION avisar_evento_urbano() RETURNS trigger
 LANGUAGE plpgsql AS $$
 BEGIN
@@ -236,6 +240,9 @@ CREATE TABLE decisao (
     -- Nivel emitido na decisao anterior, base do limite de taxa.
     nivel_anterior         NUMERIC(4,3) CHECK (nivel_anterior BETWEEN 0 AND 1),
     publicado_em           TIMESTAMPTZ,
+    -- Validade do comando, contada no no a partir do recebimento: vencida,
+    -- o controlador volta ao pleno (RNF07, DIVERGENCIAS 71).
+    validade_s             INTEGER CHECK (validade_s > 0),
     -- Por que (painel e RNF04): entradas da inferencia (volume por trecho,
     -- observada, ocorrencia, previsao, faixa horaria, niveis da classe e degrau) e o grau de
     -- ativacao de cada regra.
@@ -293,7 +300,9 @@ CREATE TABLE telemetria (
     recebido_em      TIMESTAMPTZ NOT NULL DEFAULT now(),
     -- Ciclo de trabalho aplicado, 0..1 (PWM de 12 bits no no).
     duty             NUMERIC(5,4) NOT NULL CHECK (duty BETWEEN 0 AND 1),
-    lux_medido       NUMERIC(8,2) NOT NULL CHECK (lux_medido >= 0)
+    lux_medido       NUMERIC(8,2) NOT NULL CHECK (lux_medido >= 0),
+    -- Nivel aplicado ao responder (no meio da rampa, ainda nao e o alvo).
+    nivel_aplicado   NUMERIC(4,3) CHECK (nivel_aplicado BETWEEN 0 AND 1)
 );
 
 CREATE INDEX telemetria_ponto_tempo_idx ON telemetria (ponto_de_luz_id, medido_em DESC);
@@ -358,7 +367,8 @@ SELECT d.id                          AS decisao_id,
        t.lux_medido,
        s.lux_residual,
        (t.lux_medido - COALESCE(s.lux_residual, 0))
-           / NULLIF(d.nivel_emitido * c.iluminancia_media_min_lux, 0) AS razao_entregue,
+           / NULLIF(COALESCE(t.nivel_aplicado, d.nivel_emitido) * c.iluminancia_media_min_lux, 0)
+                                     AS razao_entregue,
        t.recebido_em - d.criado_em   AS latencia_decisao,
        t.recebido_em - ev.ultimo_evento_em AS latencia_evento
   FROM decisao d

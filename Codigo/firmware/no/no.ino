@@ -1,13 +1,21 @@
 // Firmware do no de iluminacao (TCC 3.4, 4.6.1, Quadro 14).
 //
-// O no NAO decide. Ele:
-//   1. assina iluminacao/{ponto}/comando e recebe {decisao_id, nivel};
-//   2. converte o nivel (fracao do fluxo pleno) em ciclo de trabalho pela
-//      tabela de calibracao MEDIDA na bancada (calibracao.h, 3.3);
-//   3. aplica o PWM (5 kHz, 12 bits) e mede a iluminancia (BH1750);
-//   4. publica em iluminacao/{ponto}/telemetria {decisao_id, duty, lux,
-//      medido_em} - o decisao_id liga a leitura a decisao (4.6.2);
-//   5. FAILSAFE (RNF07): sem comando por 15 s, vai sozinho ao nivel pleno.
+// O no NAO decide. Ele e o controlador da arquitetura de implantacao
+// (DIVERGENCIAS 71; Caderno de Encargos 7.1.1: a logica roda no controlador):
+//   1. assina iluminacao/{ponto}/comando e recebe {decisao_id, nivel,
+//      validade_s, piso, taxa_min}; o nivel e o ALVO, ja verificado na central;
+//   2. sobe na hora; desce ate o alvo em RAMPA, a cada 5 s, no maximo
+//      taxa_min por minuto, e nunca abaixo do piso (segunda barreira). A conta
+//      e a mesma da camada de verificacao (decisao/verificacao.py,
+//      decisao/rampa.py), com 3 casas;
+//   3. converte o nivel (fracao do fluxo pleno) em ciclo de trabalho pela
+//      tabela de calibracao MEDIDA na bancada (calibracao.h, 3.3), aplica o
+//      PWM (5 kHz, 12 bits) e mede a iluminancia (BH1750);
+//   4. publica em iluminacao/{ponto}/telemetria {decisao_id, duty, lux, nivel,
+//      medido_em} - o decisao_id liga a leitura a decisao (4.6.2) e o nivel e o
+//      que estava aplicado (no meio da rampa, ainda nao e o alvo);
+//   5. FAILSAFE (RNF07): vencida a validade do comando (contada no relogio do
+//      proprio no, a partir do recebimento) sem comando novo, vai ao pleno.
 //   6. MANUTENCAO pela serial (bancada/conferir.py e bancada/calibrar.py):
 //      conferencia e recalibracao sem trocar de sketch. Enquanto dura, o no
 //      ignora os comandos do servico e o failsafe (quem controla a luz e a
@@ -54,8 +62,9 @@ const int FREQ_PWM = 5000;
 const int BITS_PWM = 12;
 const int DUTY_MAX = 4095;
 
-// RNF07: 3 x o periodo do ciclo de decisao (5 s). Ver DIVERGENCIAS item 2.
-const unsigned long TIMEOUT_FAILSAFE_MS = 15000;
+// Passo da rampa (DIVERGENCIAS 1 e 71): com 0,1/min e 3 casas, 5 s da a
+// rampa P3 -> P5 em 5,2 min, a mesma da central e dos cenarios.
+const unsigned long PASSO_RAMPA_MS = 5000;
 
 // O BH1750 mede continuamente: as leituras logo apos trocar o duty ainda sao
 // de conversoes iniciadas ANTES da troca. Mesma regra da calibracao
@@ -74,7 +83,10 @@ const int MAX_PONTOS_TABELA = 48;
 // ---- Estado ----------------------------------------------------------------
 struct Comando {
   char decisao_id[40];
-  float nivel;
+  float nivel;              // alvo
+  unsigned long validade_s;
+  float piso;
+  float taxa_min;           // decrescimo maximo por minuto
 };
 
 BH1750 sensor(0x23);
@@ -83,7 +95,10 @@ QueueHandle_t filaComandos;  // o evento MQTT roda em outra tarefa: fila entre e
 
 float nivelAtual = 1.0f;
 int dutyAtual = 0;
-unsigned long ultimoComando = 0;
+unsigned long ultimoComando = 0;  // millis() do recebimento
+unsigned long validadeMs = 0;
+unsigned long ultimoPasso = 0;
+float alvo = 1.0f, pisoCmd = 1.0f, taxaCmd = 0.0f;
 bool emFailsafe = true;           // ate o primeiro comando, o no esta no pleno
 char decisaoPendente[40] = "";    // telemetria ainda devida
 int leiturasADescartar = 0;
@@ -150,6 +165,9 @@ void carregarTabela() {
   sessaoTabela = CALIBRACAO_SESSAO;
 }
 
+// 3 casas, como NUMERIC(4,3) e a verificacao da central.
+float tresCasas(float x) { return lroundf(x * 1000.0f) / 1000.0f; }
+
 void aplicarNivel(float nivel) {
   nivel = constrain(nivel, 0.0f, 1.0f);
   nivelAtual = nivel;
@@ -160,8 +178,18 @@ void aplicarNivel(float nivel) {
 
 // ---- Carga dos topicos -------------------------------------------------------
 // JSON pequeno e de formato fixo: extraido a mao, sem biblioteca extra.
+bool extrairNumero(const char *buf, const char *chave, float &saida) {
+  const char *n = strstr(buf, chave);
+  if (!n) return false;
+  n = strchr(n + strlen(chave), ':');
+  if (!n) return false;
+  char *depois;
+  saida = strtof(n + 1, &depois);
+  return depois != n + 1;
+}
+
 bool extrairComando(const char *dados, int tam, Comando &c) {
-  char buf[160];
+  char buf[220];
   if (tam <= 0 || tam >= (int)sizeof(buf)) return false;
   memcpy(buf, dados, tam);
   buf[tam] = '\0';
@@ -177,13 +205,16 @@ bool extrairComando(const char *dados, int tam, Comando &c) {
   memcpy(c.decisao_id, p + 1, fim - p - 1);
   c.decisao_id[fim - p - 1] = '\0';
 
-  const char *n = strstr(buf, "\"nivel\"");
-  if (!n) return false;
-  n = strchr(n + 7, ':');
-  if (!n) return false;
-  char *depois;
-  c.nivel = strtof(n + 1, &depois);
-  return depois != n + 1;
+  float v;
+  if (!extrairNumero(buf, "\"nivel\"", v) || v < 0 || v > 1) return false;
+  c.nivel = v;
+  if (!extrairNumero(buf, "\"validade_s\"", v) || v < 1) return false;
+  c.validade_s = (unsigned long)v;
+  if (!extrairNumero(buf, "\"piso\"", v) || v < 0 || v > 1) return false;
+  c.piso = v;
+  if (!extrairNumero(buf, "\"taxa_min\"", v) || v <= 0 || v > 1) return false;
+  c.taxa_min = v;
+  return true;
 }
 
 void carimboAgora(char *saida, size_t tam) {
@@ -202,8 +233,8 @@ void publicarTelemetria(const char *decisao_id, float lux) {
   char quando[32], carga[200];
   carimboAgora(quando, sizeof(quando));
   int n = snprintf(carga, sizeof(carga),
-                   "{\"decisao_id\":\"%s\",\"duty\":%.4f,\"lux\":%.2f%s%s%s}",
-                   decisao_id, dutyAtual / (float)DUTY_MAX, lux,
+                   "{\"decisao_id\":\"%s\",\"duty\":%.4f,\"lux\":%.2f,\"nivel\":%.3f%s%s%s}",
+                   decisao_id, dutyAtual / (float)DUTY_MAX, lux, nivelAtual,
                    quando[0] ? ",\"medido_em\":\"" : "", quando, quando[0] ? "\"" : "");
   esp_mqtt_client_publish(cliente, TOPICO_TELEMETRIA, carga, n, 1, 0);  // QoS 1, sem retain
 }
@@ -495,23 +526,46 @@ void loop() {
       // fica sem telemetria (a relacao e 1:1, mas nao obrigatoria).
       Serial.printf("decisao %s sem telemetria (substituida)\n", decisaoPendente);
     }
-    aplicarNivel(c.nivel);
-    strncpy(decisaoPendente, c.decisao_id, sizeof(decisaoPendente) - 1);
+    alvo = c.nivel;
+    pisoCmd = ceilf(c.piso * 1000.0f - 1e-3f) / 1000.0f;  // piso para CIMA, como a central
+    taxaCmd = c.taxa_min;
+    validadeMs = c.validade_s * 1000UL;
     ultimoComando = millis();
+    // Subir e na hora; descer e no passo da rampa (abaixo).
+    float alvoEfetivo = max(alvo, pisoCmd);
+    if (alvoEfetivo >= nivelAtual) aplicarNivel(alvoEfetivo);
+    ultimoPasso = millis();
+    strncpy(decisaoPendente, c.decisao_id, sizeof(decisaoPendente) - 1);
     if (emFailsafe) Serial.println("comando recebido: saindo do failsafe");
     emFailsafe = false;
-    Serial.printf("nivel %.3f -> duty %d (%s)\n", c.nivel, dutyAtual, c.decisao_id);
+    Serial.printf("alvo %.3f validade %lu s; nivel %.3f duty %d (%s)\n",
+                  c.nivel, c.validade_s, nivelAtual, dutyAtual, c.decisao_id);
   }
 
-  // 2. Failsafe (RNF07): sem comando, pleno.
-  if (!emFailsafe && millis() - ultimoComando > TIMEOUT_FAILSAFE_MS) {
+  // 2. Failsafe (RNF07): comando vencido sem renovacao -> pleno. A subtracao
+  //    de unsigned long continua certa quando o millis() da a volta (49 dias).
+  if (!emFailsafe && millis() - ultimoComando >= validadeMs) {
     aplicarNivel(1.0f);
     emFailsafe = true;
     decisaoPendente[0] = '\0';
-    Serial.println("FAILSAFE: sem comando ha 15 s -> nivel 1,0");
+    Serial.printf("FAILSAFE: comando vencido (%lu s sem renovacao) -> nivel 1,0\n",
+                  validadeMs / 1000);
   }
 
-  // 3. Leitura do sensor e telemetria da decisao pendente.
+  // 3. Rampa: a cada 5 s, desce no maximo taxa x 5 s / 60 (arredondada para
+  //    BAIXO a 3 casas, como a verificacao), sem passar do alvo nem do piso.
+  if (!emFailsafe && millis() - ultimoPasso >= PASSO_RAMPA_MS) {
+    ultimoPasso += PASSO_RAMPA_MS;
+    float alvoEfetivo = max(alvo, pisoCmd);
+    if (nivelAtual > alvoEfetivo) {
+      float queda = floorf(taxaCmd * (PASSO_RAMPA_MS / 1000.0f) / 60.0f * 1000.0f + 1e-3f) / 1000.0f;
+      float novo = tresCasas(max(alvoEfetivo, nivelAtual - queda));
+      aplicarNivel(novo);
+      Serial.printf("  rampa: nivel %.3f (alvo %.3f)\n", novo, alvoEfetivo);
+    }
+  }
+
+  // 4. Leitura do sensor e telemetria da decisao pendente.
   if (sensorOk && sensor.measurementReady(false)) {
     float lux = sensor.readLightLevel();
     if (lux >= 0) {

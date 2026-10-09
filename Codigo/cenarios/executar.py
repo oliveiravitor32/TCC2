@@ -6,9 +6,18 @@
     python -m cenarios.executar --cenario noite_tipica
 
 RELOGIO VIRTUAL. O cenario roda em tempo simulado, com passo igual ao
-periodo do ciclo. Uma rampa de cinco minutos continua tendo 60 passos e
-continua limitada a 0,1 do pleno por minuto - o que muda e so quanto tempo
-de parede a execucao consome. Isso torna a suite repetivel (RF10) e permite
+passo da rampa do controlador. Uma rampa de cinco minutos continua tendo 60
+passos e continua limitada a 0,1 do pleno por minuto - o que muda e so quanto
+tempo de parede a execucao consome.
+
+ARQUITETURA DE IMPLANTACAO (DIVERGENCIAS 71). A central decide quando o
+cenario publica volume ou ocorrencia (e quando o comando esta para vencer) e
+so "publica" se o alvo mudou ou se precisa renovar - a mesma regra do
+servico (rampa.deve_publicar). Quem desce em rampa e volta ao pleno no
+vencimento e o controlador virtual (rampa.Controlador), o mesmo do no
+simulado. O registro tem uma linha por passo com a LUZ do controlador: e
+sobre ela que se contam piso, taxa, envelope, energia e H3. A regua do
+trecho e a do inicio da execucao (a rotina diaria). Isso torna a suite repetivel (RF10) e permite
 cenarios de horas. A latencia fisica (RNF03) nao se mede aqui: ela e medida
 na Etapa 5, com o no.
 
@@ -43,6 +52,7 @@ from decisao.energia import (
 )
 from decisao.inferencia import carregar, em_degraus
 from decisao.previsao import carregar_previsor
+from decisao.rampa import Controlador, deve_publicar
 
 AQUI = Path(__file__).resolve().parent
 SUITE = AQUI / "suite"
@@ -258,10 +268,17 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
         registro: list[dict] = []
         versao_regras_id = ciclo.registrar_versao_regras(conn, base)
         versao_modelo_id = ciclo.id_modelo(conn, previsor.rotulo)
+        ctl = Controlador()
+        ultimo = None          # (alvo, vence_em) do ultimo comando "publicado"
+        d = None               # ultima decisao da central
+        tentou_renovar = None  # vence_em para o qual a renovacao ja foi tentada
+        n_decisoes = n_comandos = 0
         agora, i = inicio, 0
         while agora < fim:
             minuto = (agora - inicio).total_seconds() / 60
+            houve_evento = False
             while i < len(pendentes) and pendentes[i]["em_min"] <= minuto:
+                houve_evento = True
                 e = pendentes[i]
                 vig = e.get("vigente_min")
                 vigente_ate = agora + timedelta(minutes=vig) if vig else None
@@ -274,22 +291,42 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
                                     e.get("periodo_s", config.PERIODO_VOLUME_S), vigente_ate,
                                     origem=f"cenario:{execucao_id}")
                 i += 1
-            d = ciclo.decidir(
-                conn, base=base, previsor=previsor, ponto=ponto, agora=agora,
-                versao_regras_id=versao_regras_id, versao_modelo_id=versao_modelo_id,
-                execucao_id=execucao_id, reativo=reativo, desde=inicio,
-                filtro_observada=filtro,
-            )
+            renovar = (ultimo is not None and ultimo[1] != tentou_renovar
+                       and (ultimo[1] - agora).total_seconds() <= config.RENOVAR_ANTES_S)
+            if d is None or houve_evento or renovar:
+                if renovar:
+                    tentou_renovar = ultimo[1]
+                d = ciclo.decidir(
+                    conn, base=base, previsor=previsor, ponto=ponto, agora=agora,
+                    versao_regras_id=versao_regras_id, versao_modelo_id=versao_modelo_id,
+                    execucao_id=execucao_id, reativo=reativo, desde=inicio,
+                    filtro_observada=filtro, refs=refs,
+                )
+                n_decisoes += 1
+                vence = agora + timedelta(seconds=d.validade_s)
+                if deve_publicar(ultimo, d.nivel_emitido, vence, agora, config.RENOVAR_ANTES_S):
+                    if ultimo is None:
+                        # O cenario comeca em regime: o no ja esta no primeiro
+                        # alvo (como antes do item 71), e nao ligando no pleno.
+                        ctl.luz = d.nivel_emitido
+                    ctl.receber(d.comando_obj(), agora)
+                    ultimo = (d.nivel_emitido, ctl.vence_em)
+                    n_comandos += 1
+            anterior = ctl.luz
+            vencido = ctl.vencido(agora)
+            alvo = ctl.alvo(agora)
+            luz = ctl.passo(agora, config.PERIODO_S) if registro else ctl.luz
             registro.append({
                 "minuto": round(minuto, 3),
                 "nivel_pretendido": float(d.nivel_pretendido),
-                "nivel_emitido": float(d.nivel_emitido),
-                "nivel_anterior": float(d.nivel_anterior) if d.nivel_anterior is not None else None,
-                "restricao": d.restricao_aplicada,
-                "observada": d.observada,
-                "degrau": d.degrau,
-                "sem_dado": d.estado.sem_dado,
-                "ocorrencia": d.estado.ocorrencia,
+                "nivel_emitido": float(luz),
+                "nivel_anterior": float(anterior),
+                "alvo": float(alvo),
+                "restricao": "taxa" if luz > alvo else d.restricao_aplicada,
+                "observada": None if vencido else d.observada,
+                "degrau": None if vencido else d.degrau,
+                "sem_dado": d.estado.sem_dado or vencido,
+                "ocorrencia": d.estado.ocorrencia and not vencido,
                 "criado_em": agora,
             })
             agora += timedelta(seconds=config.PERIODO_S)
@@ -298,6 +335,8 @@ def executar(conn, cenario: Cenario, *, reativo: bool, previsao: str | None,
     criterio = ciclo.criterio(conn, ponto.classe_codigo)
     r = avaliar(cenario, registro, execucao_id, criterio, previsor.rotulo, reativo, inicio, fim,
                 fronteira_baixa=fronteira_baixa(base))
+    # Quantas vezes a central decidiu e quantos comandos "publicou" (item 71).
+    r["central"] = {"decisoes": n_decisoes, "comandos": n_comandos}
     if serie:
         r["serie"] = [{"minuto": x["minuto"], "emitido": x["nivel_emitido"],
                        "observada": x["observada"], "degrau": x["degrau"],

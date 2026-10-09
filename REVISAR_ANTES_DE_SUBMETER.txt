@@ -336,6 +336,22 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         efeito da v5. Conferir a decisao e declarar no texto que foi
         posterior; os resultados da v5 ficam no repositorio.
 
+[ ] C33. Arquitetura de implantacao (DIVERGENCIAS 71, 08/10/2026). A decisao
+        de seguir o Caderno de Encargos foi do autor; o DESENHO e da IA:
+        - comando com validade = ate vencer o volume que sustenta a decisao,
+          no maximo 900 s (substitui o failsafe de 15 s);
+        - renovar quando faltam 300 s, e so se o comando novo vencer depois;
+        - varredura da central a cada 60 s; regua recalculada a cada 24 h;
+        - taxa garantida no controlador (a central verifica so o piso do alvo);
+          piso e taxa viajam no comando (segunda barreira no no);
+        - RNF03 = 180 s pelo Caderno 7.2.1 (decisao do autor).
+        Conferir: (a) se a validade e a renovacao fazem sentido para voces;
+        (b) que o texto diga "o Caderno EXIGE", nao "Sao Paulo USA" (nao se
+        sabe o que foi implantado; 4o termo aditivo); (c) as citacoes do
+        Caderno (7.1.1, 7.1.2, 7.2.1 e p. 4) abrindo o PDF; (d) que a camada
+        de verificacao continua sendo "invariante": agora o piso e conferido
+        na central e no no, e a taxa no no, pela mesma regra.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

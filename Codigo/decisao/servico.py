@@ -1,8 +1,16 @@
 """Servico de decisao: processo sempre ligado (TCC 4.6.1).
 
-A cada PERIODO_S, para cada ponto de luz: decide, confirma no banco, publica
-o comando (QoS 1, sem retain) e marca o instante da publicacao. Em paralelo,
-recebe a telemetria e o estado (last will) dos nos.
+Arquitetura de implantacao (DIVERGENCIAS 71; Caderno de Encargos 7.1.1 e
+7.2.1): a decisao e POR EVENTO. Chegou volume ou ocorrencia de um trecho, o
+servico decide para os pontos daquele trecho, confirma no banco e publica o
+comando (QoS 1, sem retain) SO se o alvo mudou ou se o comando anterior esta
+para vencer. Quem desce em rampa e volta ao pleno no vencimento e o
+controlador (decisao.rampa; firmware/no/no.ino).
+
+Uma varredura a cada VARREDURA_S decide de novo so os pontos cujo comando
+esta vencendo (sem volume novo, o alvo vira o pleno) e recalcula a regua dos
+trechos uma vez por dia. Em paralelo, recebe a telemetria e o estado (last
+will) dos nos.
 
 Execucao:  python -m decisao.servico [--reativo] [--execucao-id N]
 """
@@ -16,24 +24,31 @@ import signal
 import ssl
 import threading
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import paho.mqtt.client as mqtt
 import psycopg
 
 from . import config
 from .ciclo import (
+    Ponto,
     atualizar_estado_ponto,
+    atualizar_referencias,
     decidir,
     id_modelo,
     marcar_publicada,
     pontos,
+    pontos_do_evento,
+    pontos_vencendo,
+    referencias_vencidas,
     registrar_telemetria,
     registrar_versao_regras,
+    ultimo_publicado,
 )
 from .diagnostico import Monitor
 from .inferencia import carregar
 from .previsao import carregar_previsor
+from .rampa import deve_publicar
 
 log = logging.getLogger("decisao")
 
@@ -114,22 +129,31 @@ class Servico:
         except (json.JSONDecodeError, psycopg.Error) as erro:
             log.warning("mensagem de %s ignorada: %s", msg.topic, erro)
 
-    # -- Ciclo ---------------------------------------------------------------
-    def passo(self) -> None:
-        for ponto in pontos(self.db_ciclo):
+    # -- Decisao ---------------------------------------------------------------
+    def decidir_pontos(self, alvos: list[Ponto]) -> int:
+        """Decide para os pontos dados; publica so o necessario. Devolve
+        quantos comandos foram publicados."""
+        publicados = 0
+        for ponto in alvos:
             try:
+                agora = _agora()
                 with self.db_ciclo.transaction():
                     d = decidir(
                         self.db_ciclo,
                         base=self.base,
                         previsor=self.previsor,
                         ponto=ponto,
-                        agora=_agora(),
+                        agora=agora,
                         versao_regras_id=self.versao_regras_id,
                         versao_modelo_id=self.versao_modelo_id,
                         execucao_id=self.execucao_id,
                         reativo=self.reativo,
                     )
+                    ultimo = ultimo_publicado(self.db_ciclo, ponto.id)
+                vence = agora + timedelta(seconds=d.validade_s)
+                if not deve_publicar(ultimo, d.nivel_emitido, vence, agora, config.RENOVAR_ANTES_S):
+                    log.debug("%s alvo %s mantido; nada publicado", ponto.codigo, d.nivel_emitido)
+                    continue
                 # A decisao ja esta confirmada: a telemetria pode referencia-la.
                 info = self.mqtt.publish(
                     config.TOPICO_COMANDO.format(ponto=ponto.codigo),
@@ -140,28 +164,42 @@ class Servico:
                 if info.rc == mqtt.MQTT_ERR_SUCCESS:
                     with self.db_ciclo.transaction():
                         marcar_publicada(self.db_ciclo, d.id, _agora())
+                    publicados += 1
                 else:
                     log.warning("comando %s nao publicado (rc=%s)", d.id, info.rc)
                 log.info(
-                    "%s pretendido=%s emitido=%s restricao=%s",
+                    "%s pretendido=%s alvo=%s restricao=%s validade=%ss",
                     ponto.codigo, d.nivel_pretendido, d.nivel_emitido, d.restricao_aplicada,
+                    d.validade_s,
                 )
             except psycopg.Error:
-                log.exception("falha de banco no ciclo de %s", ponto.codigo)
+                log.exception("falha de banco na decisao de %s", ponto.codigo)
+        return publicados
 
-    def _aguardar(self, aviso: psycopg.Connection, ate: float) -> None:
-        """Espera o proximo ciclo; um evento novo antecipa a decisao (RNF03).
+    def passo(self) -> int:
+        """Decide para todos os pontos (partida do servico e testes)."""
+        return self.decidir_pontos(pontos(self.db_ciclo))
 
-        O ciclo periodico continua existindo: ele conduz a rampa e mantem o
-        no alimentado de comandos, longe do failsafe.
-        """
-        while not self._parar.is_set():
-            restante = ate - time.monotonic()
-            if restante <= 0:
-                return
-            # Fatias curtas para que o sinal de parada seja atendido.
-            if list(aviso.notifies(timeout=min(restante, 0.5), stop_after=1)):
-                self.passo()
+    def varrer(self) -> int:
+        """Regua diaria e renovacao dos comandos que estao vencendo."""
+        agora = _agora()
+        try:
+            if referencias_vencidas(self.db_ciclo, agora):
+                with self.db_ciclo.transaction():
+                    atualizar_referencias(self.db_ciclo, agora)
+            alvos = pontos_vencendo(self.db_ciclo, agora, config.RENOVAR_ANTES_S)
+        except psycopg.Error:
+            log.exception("falha de banco na varredura")
+            return 0
+        return self.decidir_pontos(alvos)
+
+    def ao_evento(self, evento_id: int) -> int:
+        try:
+            alvos = pontos_do_evento(self.db_ciclo, evento_id)
+        except psycopg.Error:
+            log.exception("falha de banco ao ler o evento %s", evento_id)
+            return 0
+        return self.decidir_pontos(alvos)
 
     def executar(self, *, uma_vez: bool = False) -> None:
         aviso = psycopg.connect(config.DATABASE_URL, autocommit=True)
@@ -169,13 +207,19 @@ class Servico:
         self.mqtt.connect_async(config.MQTT_HOST, config.MQTT_PORTA, keepalive=30)
         self.mqtt.loop_start()
         try:
-            proximo = time.monotonic()
-            while not self._parar.is_set():
-                self.passo()
-                if uma_vez:
-                    break
-                proximo += config.PERIODO_S
-                self._aguardar(aviso, proximo)
+            self.varrer()
+            self.passo()
+            proxima = time.monotonic() + config.VARREDURA_S
+            while not uma_vez and not self._parar.is_set():
+                # Fatias curtas para que o sinal de parada seja atendido.
+                for n in aviso.notifies(timeout=0.5):
+                    try:
+                        self.ao_evento(int(n.payload))
+                    except ValueError:
+                        log.warning("aviso de evento malformado: %r", n.payload)
+                if time.monotonic() >= proxima:
+                    self.varrer()
+                    proxima = time.monotonic() + config.VARREDURA_S
         finally:
             self.mqtt.loop_stop()
             self.mqtt.disconnect()

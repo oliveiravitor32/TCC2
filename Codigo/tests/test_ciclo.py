@@ -156,47 +156,54 @@ def test_volume_alto_fica_na_classe_da_via(conn, ponto):
     assert d.nivel_emitido == Decimal("1.000") and d.degrau == pytest.approx(0.0)
 
 
-def test_descida_respeita_a_taxa_entre_ciclos(conn, ponto):
+def test_central_manda_o_alvo_e_a_rampa_fica_no_controlador(conn, ponto):
+    # Item 71: a central verifica so o piso do alvo; a taxa de descida e
+    # garantida pelo controlador (test_rampa.py), pela mesma regra.
     decidir(conn, ponto, T0)  # sem dado: 1,0
     volume(conn, em=T0, vigente_ate=T0 + UMA_HORA)
     d = decidir(conn, ponto, T0 + timedelta(seconds=5))
     assert d.nivel_anterior == Decimal("1.000")
-    assert d.nivel_emitido == Decimal("0.992") and d.restricao_aplicada == "taxa"
+    assert d.nivel_emitido == Decimal("0.500") and d.restricao_aplicada == "nenhuma"
+    cmd = d.comando()
+    assert cmd["nivel"] == 0.5 and cmd["piso"] == 0.5 and cmd["taxa_min"] == 0.1
 
 
-def test_rampa_completa_leva_pelo_menos_cinco_minutos(conn, ponto):
-    decidir(conn, ponto, T0)
-    volume(conn, em=T0, vigente_ate=T0 + UMA_HORA)
-    agora, niveis = T0, []
-    for _ in range(80):  # 80 x 5 s = 6 min 40 s
-        agora += timedelta(seconds=5)
-        niveis.append(decidir(conn, ponto, agora).nivel_emitido)
-    primeiro_no_piso = niveis.index(Decimal("0.500"))
-    assert (primeiro_no_piso + 1) * 5 >= 300
-    assert all(a - b <= Decimal("0.0084") for a, b in zip(niveis, niveis[1:]))
+def test_validade_do_comando_acompanha_o_volume(conn, ponto):
+    # Sem dado: o maximo. Com volume: ate ele vencer (15 min depois do fim
+    # do periodo), nunca mais que o maximo.
+    assert decidir(conn, ponto, T0).validade_s == config.VALIDADE_COMANDO_MAX_S
+    volume(conn, em=T0, media=0.02)
+    assert decidir(conn, ponto, T0 + timedelta(minutes=4)).validade_s == 11 * 60
+    volume(conn, em=T0, media=0.02, trecho=ASCENSO_FERNANDES,
+           vigente_ate=T0 + timedelta(hours=2))
+    assert decidir(conn, ponto, T0 + timedelta(minutes=5)).validade_s == config.VALIDADE_COMANDO_MAX_S
 
 
-def test_volume_alto_eleva_na_hora_e_a_queda_libera_em_rampa(conn, ponto):
-    volume(conn, em=T0, vigente_ate=T0 + UMA_HORA)
-    for s in range(0, 400, 5):
-        decidir(conn, ponto, T0 + timedelta(seconds=s))  # desce ao piso
-    volume(conn, em=T0 + timedelta(seconds=401), media=4)
-    d = decidir(conn, ponto, T0 + timedelta(seconds=405))
-    assert d.nivel_emitido == Decimal("1.000")  # elevacao imediata, sem limite de taxa
-    volume(conn, em=T0 + timedelta(seconds=406), media=0, vigente_ate=T0 + UMA_HORA)
-    d = decidir(conn, ponto, T0 + timedelta(seconds=410))
-    assert d.nivel_emitido == Decimal("0.992")  # volta a descer, em rampa
+def test_validade_e_gravada_e_o_ultimo_publicado_e_lido(conn, ponto):
+    volume(conn, em=T0, media=0.02)
+    d = decidir(conn, ponto, T0 + timedelta(minutes=1))
+    assert ciclo.ultimo_publicado(conn, ponto.id) is None  # nao publicada
+    ciclo.marcar_publicada(conn, d.id, T0 + timedelta(minutes=1))
+    nivel, vence = ciclo.ultimo_publicado(conn, ponto.id)
+    assert nivel == Decimal("0.500") and vence == T0 + timedelta(minutes=15)
 
 
-def test_apos_failsafe_a_rampa_recomeca_do_pleno(conn, ponto):
-    # Servico estava parado: ultima decisao (0,5) ha 60 s, mais que o timeout.
-    volume(conn, em=T0, vigente_ate=T0 + UMA_HORA)
-    for s in range(0, 400, 5):
-        decidir(conn, ponto, T0 + timedelta(seconds=s))
-    volta = T0 + timedelta(seconds=395 + 60)
-    d = decidir(conn, ponto, volta)
-    assert d.nivel_anterior == Decimal("1.000")
-    assert d.nivel_emitido == Decimal("0.992")  # e nao 0,5 de uma vez
+def test_evento_acorda_so_os_pontos_do_trecho(conn, ponto, simulado):
+    ev = volume(conn, em=T0, trecho=VARZEA_DA_PALMA)
+    assert [p.codigo for p in ciclo.pontos_do_evento(conn, ev)] == ["SIMULADO-02"]
+    ev = volume(conn, em=T0, trecho=VINHAIS)
+    assert ciclo.pontos_do_evento(conn, ev) == []
+
+
+def test_varredura_pega_so_comando_vencendo(conn, ponto, simulado):
+    volume(conn, em=T0, media=0.02)
+    for p in (ponto, simulado):
+        ciclo.marcar_publicada(conn, decidir(conn, p, T0).id, T0)
+    # BANCADA-01 vence em 15 min (volume); SIMULADO-02, sem dado, em 15 min tambem.
+    cedo = {p.codigo for p in ciclo.pontos_vencendo(conn, T0 + timedelta(minutes=5), 300)}
+    assert not cedo & {"BANCADA-01", "SIMULADO-02"}
+    vencendo = {p.codigo for p in ciclo.pontos_vencendo(conn, T0 + timedelta(minutes=10), 300)}
+    assert {"BANCADA-01", "SIMULADO-02"} <= vencendo
 
 
 def test_ocorrencia_com_via_vazia_leva_a_classe_da_via(conn, ponto):
@@ -293,9 +300,17 @@ def test_referencia_e_aprendida_com_historico_suficiente(conn, ponto):
     # aprendida e 2, e nao 5 (DIVERGENCIAS 69).
     for k in range(1, 675):
         volume(conn, em=T0 - timedelta(minutes=15 * k), media=2)
+    assert ciclo.calcular_referencias(conn, T0, ponto.id)[ANTONIO_VIANA] == pytest.approx(2.0)
+    # Em operacao, a decisao le a regua gravada pela rotina diaria (item 71):
+    # antes dela, o valor inicial; depois, a aprendida.
+    conn.execute("UPDATE trecho_via SET referencia_aprendida = NULL, referencia_calculada_em = NULL")
+    assert ciclo.referencias(conn, T0, ponto.id)[ANTONIO_VIANA] == pytest.approx(5.0)
+    assert ciclo.referencias_vencidas(conn, T0)
+    ciclo.atualizar_referencias(conn, T0)
     refs = ciclo.referencias(conn, T0, ponto.id)
     assert refs[ANTONIO_VIANA] == pytest.approx(2.0)
     assert refs[ASCENSO_FERNANDES] == pytest.approx(5.0)  # sem historico: valor inicial
+    assert not ciclo.referencias_vencidas(conn, T0 + timedelta(hours=23))
 
 
 def test_previsao_do_modelo_e_gravada(conn, ponto):
