@@ -504,6 +504,15 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         Periodo: inicio 13/09/2026 (informado pelo
         autor); data final, CPFs, local e data ainda em branco.
 
+[ ] C46. v36 (11/10/2026): fotos do no de bancada. Marcacoes feitas pela
+        IA e conferidas pelo autor (o papel na frente da fita e o difusor).
+        Textos novos da IA: frase em 3.4 ("a Figura 1 mostra o no montado"),
+        "(Figura 2)" em 3.4.3 e o paragrafo do Apendice C. Figuras renumeradas
+        pela ordem de aparicao (arquitetura = 3, sequencia = 4, ER = 5); as
+        legendas antigas subiram para cima da imagem. Conferir no Word se os
+        numeros de pagina da Lista de figuras batem e se a legenda de cada
+        foto e legivel impressa.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

@@ -4,7 +4,7 @@ Responda sempre em **português do Brasil**. O autor é iniciante em eletrônica
 
 ## Fonte da verdade
 
-> **Estado em 10/10/2026:** a versão mais recente do texto é a **v35** (`..._SP_v35.docx`), que acumula todas as rodadas; as versões v4 a v35 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
+> **Estado em 10/10/2026:** a versão mais recente do texto é a **v36** (`..._SP_v36.docx`), que acumula todas as rodadas; as versões v4 a v36 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
 
 A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v2.docx` (26/09/2026, com as duas rodadas de revisão aceitas pelo autor). **Siga o TCC.**
 
@@ -42,7 +42,8 @@ A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Tra
 - `..._SP_v32_revisado.docx` = v31 aceito + grupo 2 do REVISAR (11/10/2026): 3.7 parágrafo norma × tercis (C35); 3.12.6.3 com o **exemplo real da bancada de 10/10** (decisão 92b2a978, nível 0,500, validade 887 s, rampa 5 min 15 s); restos da arquitetura antiga em 3.4.2, 3.4.5, 3.11, Quadro 13 e 3.12.6.1; **Pasolini et al. (2024)** em 2.8 e nas Referências; **Quadros 19 e 20 viram Tabelas 3 e 4, Quadros 21 e 22 viram 19 e 20**, com Lista de tabelas. `..._SP_v32.docx` = a mesma com tudo aceito.
 - `..._SP_v33_revisado.docx` = v32 aceito + **hashes de commit do Quadro 20 atualizados** depois da limpeza do histórico do git (11/10/2026: pastas Docs/Estagio e Docs/Atividades_Qualidade-de-Software retiradas de todo o histórico; cópia em `Documents/Arquivos_UNIP_retirados_do_TCC2`, backup em `Documents/TCC2_backup_antes_limpeza_20261011.bundle`). Todos os commits anteriores a essa data mudaram de código; hashes citados em DIVERGENCIAS e notas antigas seguem os códigos velhos. `..._SP_v33.docx` = a mesma com tudo aceito.
 - `..._SP_v34_revisado.docx` = v33 aceito + Apêndice A: parágrafo da programação em par (decisão do autor), percentuais **provisórios** da IA no Quadro 19 (o autor vai repreencher) e início do uso em 21/09/2026. `..._SP_v34.docx` = a mesma com tudo aceito; **editada pelo autor no Word** (percentuais do Quadro 19 definitivos do autor).
-- `..._SP_v35_revisado.docx` = v34 do autor + início do uso de IA em **13/09/2026** e Quadro 20 ajustado à largura da página (grade 1900/3000/4171, layout fixo, cabeçalho repetido; sem marca de revisão na formatação). `..._SP_v35.docx` = a mesma com tudo aceito (**a mais recente**). **Referências a seções nas entradas v2–v27 acima seguem a numeração da época.** **Não afirmar** sem fonte: telegestão em operação, parque em fluxo pleno, regras "da literatura".
+- `..._SP_v35_revisado.docx` = v34 do autor + início do uso de IA em **13/09/2026** e Quadro 20 ajustado à largura da página (grade 1900/3000/4171, layout fixo, cabeçalho repetido; sem marca de revisão na formatação). `..._SP_v35.docx` = a mesma com tudo aceito.
+- `..._SP_v36_revisado.docx` = v35 aceito + **fotos do nó de bancada** com marcações numeradas (`Codigo/figuras/fotos_marcadas.py`, originais em `Docs/Fotos`): **Figura 1** nó montado (3.4), **Figura 2** interior do anteparo (3.4.3), **Figura 6** vista posterior no novo **Apêndice C**; as antigas Figuras 1, 2 e 3 viram **3, 4 e 5** (arquitetura, sequência, ER); legendas das figuras acima da imagem (NBR 14724), movidas sem marca de revisão. `..._SP_v36.docx` = a mesma com tudo aceito (**a mais recente**). **Referências a seções nas entradas v2–v27 acima seguem a numeração da época.** **Não afirmar** sem fonte: telegestão em operação, parque em fluxo pleno, regras "da literatura".
 - Novas mudanças no texto: com controle de alterações, sobre a versão com tudo aceito, salvando como arquivo novo (nunca sobrescrever a versão vigente).
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
@@ -72,8 +73,8 @@ Seções mais importantes da versão vigente (numeração da v28):
 | Decisões de arquitetura (Quadro 12) · Componentes (Quadro 13) | 3.12.6 | Quadros 9 e 10 |
 | Implantação em nuvem | 3.12.6.1 | 7.2.1 |
 | Contratos das interfaces (Quadro 14) | 3.12.6.2 | Quadro 13 |
-| **Percurso de uma decisão (Figura 2: diagrama de sequência; exemplo real)** | **3.12.6.3** | nova |
-| Banco: entidades (Quadro 16), ER (Figura 3) e modelo físico | 3.13.1 · 3.13.2 · 3.13.3 | 8.5 |
+| **Percurso de uma decisão (Figura 4, até a v35 Figura 2: diagrama de sequência; exemplo real)** | **3.12.6.3** | nova |
+| Banco: entidades (Quadro 16), ER (Figura 5; Figura 3 até a v35) e modelo físico | 3.13.1 · 3.13.2 · 3.13.3 | 8.5 |
 | Modelo físico (Quadro 17) | 3.13.3 | — |
 | Casos de teste CT01–CT20 (Quadro 15) · resultado (CT15–CT20 satisfeitos) | 3.12.7 / 3.12.9 | — |
 | Resultados · Análise (limitações em 5.3) · Conclusões e recomendações (6.1) | Cap. 4 · Cap. 5 · Cap. 6 | Caps. 5, 6 e 7 até a v27 |
