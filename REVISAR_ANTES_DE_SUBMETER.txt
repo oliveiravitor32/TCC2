@@ -391,6 +391,18 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         energia de bancada so pelo duty; (d) o ensaio de estabilidade de 10 min
         (0,2 %) e da caixa antiga e foi mantido com essa ressalva.
 
+[ ] C37. Rodada v22 (10/10/2026): retirada de afirmacoes sem base
+        (AUDITORIA_AFIRMACOES_v21.md). Ler no _v22_revisado.docx. Onde a IA
+        SUAVIZOU em vez de tirar (por ser trecho importante), conferir: 1.2.1
+        ("Neste trabalho, cidade inteligente designa"), 2.4 (criterio dos quatro
+        atributos "adotado neste trabalho"), Quadro 1 ("Nao se localizou registro
+        publico de controle conforme o uso da via"), Quadro 5 (ESP8266 com PWM
+        por software; refletor e luminaria com fluxo muito superior), 3.7 (regras
+        = norma + "criterios de projeto dos autores"), 3.11 (janela 0 h-5 h
+        "escolhida pelos autores"; regulador "pode variar"). Grupo C da auditoria
+        segue pendente. O objetivo b) (1.5.2) ainda fala em dados publicos
+        municipais, que nao foram usados para os cenarios: decidir.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
