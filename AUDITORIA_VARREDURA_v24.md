@@ -7,7 +7,7 @@ Leitura integral da `..._SP_v24.docx` (aceita). Quatro grupos:
 - **F. Sem base** (afirmação sem fonte ou sem dado).
 - **G. Texto solto, erro de redação.**
 
-Nenhum item foi corrigido ainda.
+**Situação:** corrigido na v25 (10/10/2026), exceto D16 e D17 (Apêndice A, dos autores), F7 (C39), G8 (atualizar campos no Word) e G9 (estilo). D12: os dois conjuntos de noites são sorteios diferentes (pontos 1357, 52, 1358, 65 × 52, 53, 2, 32). D13: 5 min e 15 min, conferido em suite_antecipado.json.
 
 ## D. Contradições
 

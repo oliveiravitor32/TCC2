@@ -422,6 +422,18 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         do autor; Stratumseind (2.8) ficou so com o que o resumo de Galic e
         Gellert sustenta.
 
+[ ] C40. Rodada v25 (10/10/2026, AUDITORIA_VARREDURA_v24.md), redigida pela
+        IA. Conferir: (a) 1.6, 3o eixo, reescrito sem "nao se resolve por tabela";
+        (b) 3.7: a escolha da inferencia nebulosa fica fundamentada so na
+        legibilidade da base (a "resposta gradual" saiu, por contradizer 5.6);
+        (c) 2.1 ganhou excecao para normas, especificacoes tecnicas, documentos
+        setoriais e o relato de Perry (2020); (d) Reia e Cruz (2023) retirados;
+        (e) Quadro 7: classe da via "atribuida pelos autores". PENDENTE dos
+        autores: D16 (Quadro 21 fala em termos de busca e operadores booleanos,
+        o 2.1 diz revisao narrativa) e D17 (declaracao de que todas as citacoes
+        foram checadas). No Word: atualizar sumario e listas (F9) e conferir a
+        Figura 1 (verificacao: piso no servico, taxa no no).
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
