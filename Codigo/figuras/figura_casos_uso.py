@@ -83,7 +83,7 @@ avaliador = ator(1.2, 0.95, "Avaliador")
 no = ator(13.8, 5.6, "Nó de\niluminação")
 
 assoc(plataforma, publicar)
-for c in (acompanhar, energia, parametros):
+for c in (acompanhar, energia, parametros, diagnosticar):
     assoc(operador, c)
 assoc(avaliador, cenarios)
 for c in (emitir, aplicar, diagnosticar):
