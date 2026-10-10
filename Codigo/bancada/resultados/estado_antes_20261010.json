@@ -2,12 +2,12 @@
   "teste": "estado do no antes do comando na telemetria (DIVERGENCIAS 74)",
   "programa": "python -m bancada.teste_estado_antes",
   "ponto": "BANCADA-01",
-  "descida": {"publicado": "2026-10-11T16:03:09-03:00", "evento": "volume 0 nos trechos 20159, 22661, 21198",
+  "descida": {"publicado": "2026-10-10T16:03:09-03:00", "evento": "volume 0 nos trechos 20159, 22661, 21198",
               "decisao_id": "1b6e37cc", "nivel_emitido": 0.625, "degrau": 1.5, "ativacoes": {"R5": 1.0, "R7": 1.0}},
   "espera_s": 340,
-  "subida": {"publicado": "2026-10-11T16:09:09-03:00", "evento": "ocorrencia seguranca no trecho 20159",
+  "subida": {"publicado": "2026-10-10T16:09:09-03:00", "evento": "ocorrencia seguranca no trecho 20159",
              "decisao_id": "6233129a-2b81-4e2f-95ca-35bbd65e582b",
              "telemetria": {"medido_em": "2026-10-10T19:09:11Z", "duty": 0.6562, "lux_medido": 10.98,
                             "nivel_aplicado": 1.0, "nivel_antes": 0.625, "lux_antes": 6.79}},
-  "observacao": "medido_em vem do relogio da VM/no em UTC; o horario local do teste foi 16h03-16h09"
+  "observacao": "medido_em em UTC; horario local do teste: 16h03-16h09 de 10/10/2026"
 }

@@ -520,7 +520,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         anterior fica no banco, ainda que so com o comando seguinte").
         Figuras 4 e 5 regeradas. Testado na bancada em 11/10/2026
         (DIVERGENCIAS 74): nivel_antes 0,625 e lux_antes 6,79 na telemetria
-        da subida. Esse teste NAO entrou no texto; decidir se entra em 3.12.9.
+        da subida (teste de 10/10/2026; o "11/10" acima e erro de data da IA).
 
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)

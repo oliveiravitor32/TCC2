@@ -5,7 +5,7 @@
 Desce o ponto (volume 0 nos trechos), espera a rampa, sobe por ocorrencia de
 seguranca e confere nivel_antes/lux_antes na telemetria da subida; no fim,
 encerra a ocorrencia. A chave vem de bancada/chave_vm.txt e nao e impressa.
-Resultado de 11/10/2026: bancada/resultados/estado_antes_20261011.json.
+Resultado de 10/10/2026: bancada/resultados/estado_antes_20261010.json.
 """
 import time
 from datetime import datetime, timedelta, timezone
