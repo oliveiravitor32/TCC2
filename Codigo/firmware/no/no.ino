@@ -103,6 +103,10 @@ bool emFailsafe = true;           // ate o primeiro comando, o no esta no pleno
 char decisaoPendente[40] = "";    // telemetria ainda devida
 int leiturasADescartar = 0;
 float ultimaLux = -1;
+// Estado quando o comando pendente chegou, antes de aplica-lo (migracao 010):
+// e onde a rampa anterior terminou. Vai junto da telemetria dessa decisao.
+float nivelAntesPendente = -1;
+float luxAntesPendente = -1;
 // Sem sensor no inicio, nao se le: a biblioteca imprimiria "Device is not
 // configured" a cada volta do loop e afogaria o serial.
 bool sensorOk = false;
@@ -230,11 +234,17 @@ void carimboAgora(char *saida, size_t tam) {
 
 void publicarTelemetria(const char *decisao_id, float lux) {
   if (!cliente) return;
-  char quando[32], carga[200];
+  char quando[32], antes[64] = "", carga[280];
   carimboAgora(quando, sizeof(quando));
+  // Estado antes do comando: so se havia leitura (o primeiro comando apos
+  // ligar pode chegar antes da primeira medicao do sensor).
+  if (nivelAntesPendente >= 0 && luxAntesPendente >= 0) {
+    snprintf(antes, sizeof(antes), ",\"nivel_antes\":%.3f,\"lux_antes\":%.2f",
+             nivelAntesPendente, luxAntesPendente);
+  }
   int n = snprintf(carga, sizeof(carga),
-                   "{\"decisao_id\":\"%s\",\"duty\":%.4f,\"lux\":%.2f,\"nivel\":%.3f%s%s%s}",
-                   decisao_id, dutyAtual / (float)DUTY_MAX, lux, nivelAtual,
+                   "{\"decisao_id\":\"%s\",\"duty\":%.4f,\"lux\":%.2f,\"nivel\":%.3f%s%s%s%s}",
+                   decisao_id, dutyAtual / (float)DUTY_MAX, lux, nivelAtual, antes,
                    quando[0] ? ",\"medido_em\":\"" : "", quando, quando[0] ? "\"" : "");
   esp_mqtt_client_publish(cliente, TOPICO_TELEMETRIA, carga, n, 1, 0);  // QoS 1, sem retain
 }
@@ -526,6 +536,9 @@ void loop() {
       // fica sem telemetria (a relacao e 1:1, mas nao obrigatoria).
       Serial.printf("decisao %s sem telemetria (substituida)\n", decisaoPendente);
     }
+    // Antes de aplicar: o nivel em que o no estava e a ultima luz medida.
+    nivelAntesPendente = nivelAtual;
+    luxAntesPendente = ultimaLux;
     alvo = c.nivel;
     pisoCmd = ceilf(c.piso * 1000.0f - 1e-3f) / 1000.0f;  // piso para CIMA, como a central
     taxaCmd = c.taxa_min;

@@ -85,6 +85,9 @@ class NoSimulado:
             log.warning("comando malformado: %r", msg.payload)
             return
         with self._trava:
+            # Estado quando o comando chegou, antes de aplica-lo (migracao 010).
+            nivel_antes = float(self.ctl.luz)
+            lux_antes = self._lux(nivel_antes)
             self.ctl.receber(cmd, self._agora())
             self.em_failsafe = False
             nivel = float(self.ctl.luz)  # a rampa anda no passo; agora e o nivel atual
@@ -93,6 +96,8 @@ class NoSimulado:
             "duty": self._duty(nivel),
             "lux": self._lux(nivel),
             "nivel": nivel,
+            "nivel_antes": nivel_antes,
+            "lux_antes": lux_antes,
             "medido_em": self._agora().isoformat(),
         }
         cli.publish(f"iluminacao/{self.ponto}/telemetria", json.dumps(telemetria), qos=1)

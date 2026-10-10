@@ -61,7 +61,7 @@ seta(y, M, N, "entrega o comando")
 y -= 1.25
 numero(y, 7); proprio(y + 0.2, N, "rampa até o alvo (taxa);\nnível → ciclo de trabalho\n(calibração); mede\na iluminância")
 y -= 1.45
-numero(y, 8); seta(y, N, M, "telemetria\n{decisao_id, duty, lux, nivel}")
+numero(y, 8); seta(y, N, M, "telemetria {decisao_id, duty, lux,\nnivel, nivel_antes, lux_antes}")
 y -= 1.05
 seta(y, M, S, "entrega a telemetria")
 y -= 1.25

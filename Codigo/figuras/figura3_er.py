@@ -20,7 +20,8 @@ ENT = {
                 ("", "nivel_emitido"), ("", "restricao_aplicada"), ("FK", "id_versao"), ("", "entrada (JSON)"),
                 ("", "ativacoes (JSON)"), ("", "validade_s")],
     "telemetria": [("PK", "id_telemetria"), ("", "carimbo_tempo"), ("FK", "id_decisao"), ("FK", "id_ponto"),
-                   ("", "ciclo_trabalho"), ("", "iluminancia_medida"), ("", "nivel_aplicado")],
+                   ("", "ciclo_trabalho"), ("", "iluminancia_medida"), ("", "nivel_aplicado"),
+                   ("", "nivel_antes"), ("", "iluminancia_antes")],
     "evento_urbano": [("PK", "id_evento"), ("", "carimbo_tempo"), ("", "tipo"), ("", "pessoas_media"), ("", "periodo_s"), ("", "ocorrencia"),
                       ("FK", "id_trecho"), ("", "origem"), ("", "vigente_ate")],
     "decisao_evento": [("PK,FK", "id_decisao"), ("PK,FK", "id_evento")],
@@ -52,7 +53,7 @@ def caixa(nome):
 
 
 LARG = COL[3] + W_BOX + 25
-ALT = 1540
+ALT = 1660
 fig = plt.figure(figsize=(LARG / 100, ALT / 100), dpi=100)
 ax = fig.add_axes([0, 0, 1, 1])
 ax.set_xlim(0, LARG)

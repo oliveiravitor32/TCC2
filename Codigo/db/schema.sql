@@ -302,7 +302,11 @@ CREATE TABLE telemetria (
     duty             NUMERIC(5,4) NOT NULL CHECK (duty BETWEEN 0 AND 1),
     lux_medido       NUMERIC(8,2) NOT NULL CHECK (lux_medido >= 0),
     -- Nivel aplicado ao responder (no meio da rampa, ainda nao e o alvo).
-    nivel_aplicado   NUMERIC(4,3) CHECK (nivel_aplicado BETWEEN 0 AND 1)
+    nivel_aplicado   NUMERIC(4,3) CHECK (nivel_aplicado BETWEEN 0 AND 1),
+    -- Estado do no quando o comando chegou, antes de aplica-lo (migracao 010):
+    -- e onde a rampa anterior terminou, que de outro modo so ficava na serial.
+    nivel_antes      NUMERIC(4,3) CHECK (nivel_antes BETWEEN 0 AND 1),
+    lux_antes        NUMERIC(8,2) CHECK (lux_antes >= 0)
 );
 
 CREATE INDEX telemetria_ponto_tempo_idx ON telemetria (ponto_de_luz_id, medido_em DESC);

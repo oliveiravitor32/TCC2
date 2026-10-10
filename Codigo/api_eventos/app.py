@@ -278,7 +278,7 @@ def consultar_pontos(conn: psycopg.Connection = Conn) -> list[dict]:
                c.iluminancia_media_min_lux AS lux_pleno,
                cm.iluminancia_media_min_lux / c.iluminancia_media_min_lux AS piso_fracao,
                u.nivel_emitido, u.restricao_aplicada, u.criado_em AS decidido_em,
-               t.lux_medido, t.duty, t.medido_em
+               t.lux_medido, t.duty, t.medido_em, t.nivel_antes, t.lux_antes
           FROM ponto_de_luz p
           JOIN classe_iluminacao c       ON c.codigo = p.classe_codigo
           LEFT JOIN classe_iluminacao cm ON cm.codigo = c.classe_min_dimerizacao
@@ -568,7 +568,7 @@ def consultar_telemetria(
     return conn.execute(
         """
         SELECT t.decisao_id, p.codigo AS ponto, t.medido_em, t.recebido_em,
-               t.duty, t.lux_medido
+               t.duty, t.lux_medido, t.nivel_aplicado, t.nivel_antes, t.lux_antes
           FROM telemetria t
           JOIN ponto_de_luz p ON p.id = t.ponto_de_luz_id
          WHERE (%(ponto)s::text         IS NULL OR p.codigo = %(ponto)s)

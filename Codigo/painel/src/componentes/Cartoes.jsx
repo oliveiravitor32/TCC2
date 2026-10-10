@@ -142,6 +142,14 @@ export function Entregue({ ponto, latenciaMs }) {
           </dd>
         </div>
         <div className="flex justify-between gap-2">
+          <dt>antes do comando</dt>
+          <dd className="tabular-nums text-texto">
+            {ponto?.nivel_antes != null
+              ? `${ponto.nivel_antes.toFixed(3)} · ${lux(ponto.lux_antes)}`
+              : "--"}
+          </dd>
+        </div>
+        <div className="flex justify-between gap-2">
           <dt>entregue / esperado</dt>
           <dd className="tabular-nums text-texto">
             {razao ? razao.toFixed(3) : "--"}

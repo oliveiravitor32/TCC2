@@ -126,6 +126,11 @@ class Telemetria(BaseModel):
     recebido_em: datetime
     duty: float
     lux_medido: float
+    # Nivel aplicado ao responder e estado quando o comando chegou, antes de
+    # aplica-lo (migracao 010); nulos nos nos antigos.
+    nivel_aplicado: float | None = None
+    nivel_antes: float | None = None
+    lux_antes: float | None = None
 
 
 class Ponto(BaseModel):
@@ -145,6 +150,8 @@ class Ponto(BaseModel):
     lux_medido: float | None
     duty: float | None
     medido_em: datetime | None
+    nivel_antes: float | None = None
+    lux_antes: float | None = None
 
 
 class Alerta(BaseModel):

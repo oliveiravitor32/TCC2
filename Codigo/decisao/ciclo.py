@@ -646,10 +646,16 @@ def registrar_telemetria(conn: psycopg.Connection, ponto_codigo: str, carga: dic
         medido_em = datetime.fromisoformat(carga["medido_em"]) if carga.get("medido_em") else None
         # Nivel que o no aplicava ao responder (item 71); ausente nos nos antigos.
         nivel = float(carga["nivel"]) if carga.get("nivel") is not None else None
+        # Estado quando o comando chegou, antes de aplica-lo (migracao 010);
+        # ausente nos nos antigos e no primeiro comando sem leitura previa.
+        nivel_antes = float(carga["nivel_antes"]) if carga.get("nivel_antes") is not None else None
+        lux_antes = float(carga["lux_antes"]) if carga.get("lux_antes") is not None else None
     except (KeyError, ValueError, TypeError) as erro:
         log.warning("telemetria malformada de %s: %s", ponto_codigo, erro)
         return False
-    if not (0 <= duty <= 1) or lux < 0 or (nivel is not None and not 0 <= nivel <= 1):
+    if (not (0 <= duty <= 1) or lux < 0 or (nivel is not None and not 0 <= nivel <= 1)
+            or (nivel_antes is not None and not 0 <= nivel_antes <= 1)
+            or (lux_antes is not None and lux_antes < 0)):
         log.warning("telemetria fora do dominio de %s: duty=%s lux=%s", ponto_codigo, duty, lux)
         return False
     if medido_em is not None and medido_em.tzinfo is None:
@@ -658,12 +664,13 @@ def registrar_telemetria(conn: psycopg.Connection, ponto_codigo: str, carga: dic
     linha = conn.execute(
         """
         INSERT INTO telemetria (decisao_id, ponto_de_luz_id, sessao_id, medido_em, duty, lux_medido,
-                                nivel_aplicado)
+                                nivel_aplicado, nivel_antes, lux_antes)
         SELECT d.id, d.ponto_de_luz_id,
                (SELECT s.id FROM sessao_medicao s
                  WHERE s.ponto_de_luz_id = d.ponto_de_luz_id AND s.encerrada_em IS NULL
                  ORDER BY s.iniciada_em DESC LIMIT 1),
-               COALESCE(%(medido_em)s, now()), %(duty)s, %(lux)s, %(nivel)s
+               COALESCE(%(medido_em)s, now()), %(duty)s, %(lux)s, %(nivel)s,
+               %(nivel_antes)s, %(lux_antes)s
           FROM decisao d
           JOIN ponto_de_luz p ON p.id = d.ponto_de_luz_id
          WHERE d.id = %(did)s AND p.codigo = %(ponto)s
@@ -671,7 +678,7 @@ def registrar_telemetria(conn: psycopg.Connection, ponto_codigo: str, carga: dic
         RETURNING id
         """,
         {"did": did, "ponto": ponto_codigo, "duty": duty, "lux": lux, "medido_em": medido_em,
-         "nivel": nivel},
+         "nivel": nivel, "nivel_antes": nivel_antes, "lux_antes": lux_antes},
     ).fetchone()
     return linha is not None
 

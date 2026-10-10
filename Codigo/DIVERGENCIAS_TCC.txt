@@ -2387,6 +2387,26 @@ CODIGO:  bancada/sessao_ct.py (latencia alterna ocorrencia aberta/encerrada
          com volume 0; RNF03 180 s; piso espera a rampa).
 TEXTO:   v21 (10/10/2026).
 
+74. ESTADO DO NO ANTES DO COMANDO NA TELEMETRIA (11/10/2026)
+MOTIVO:  a telemetria e a primeira leitura DEPOIS de aplicar o comando. Numa
+         descida, ela mostra o comeco da rampa; numa subida, ja o nivel novo.
+         Onde a rampa terminou (o piso, por exemplo) nunca ficava no banco, so
+         na serial do no. Pergunta do autor; opcao A escolhida pelo autor.
+DECISAO: o no guarda, quando o comando chega e antes de aplica-lo, o nivel
+         que aplicava e o ultimo lux medido, e envia os dois junto da leitura
+         nova: {decisao_id, duty, lux, nivel, nivel_antes, lux_antes,
+         medido_em}. Continua uma telemetria por decisao (1 : 0..1).
+         Limite: o estado final de uma rampa so chega ao banco com o comando
+         SEGUINTE; o lux_antes e a ultima leitura do sensor, que pode ser de
+         ate um periodo de integracao antes do comando.
+CODIGO:  migracao 010 (telemetria.nivel_antes, telemetria.lux_antes, nulas
+         para nos antigos), schema.sql, ciclo.registrar_telemetria, GET
+         /telemetria e /pontos, simulador, firmware (no.ino), painel (cartao
+         "luz entregue"), Figuras 4 e 5 (scripts em figuras/).
+VM:      PENDENTE (migracao 010 com backup antes, rebuild dos conteineres,
+         firmware gravado no ESP32).
+TEXTO:   v38.
+
 ===============================================================================
 FIM
 ===============================================================================

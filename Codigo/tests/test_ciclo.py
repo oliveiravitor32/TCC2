@@ -357,11 +357,31 @@ def test_telemetria_e_gravada_uma_vez_so(conn, ponto):
 @pytest.mark.parametrize(
     "ponto_msg,extra",
     [("OUTRO-PONTO", {}), ("BANCADA-01", {"duty": 1.5}), ("BANCADA-01", {"lux": -1}),
-     ("BANCADA-01", {"decisao_id": "nao-e-uuid"})],
+     ("BANCADA-01", {"decisao_id": "nao-e-uuid"}), ("BANCADA-01", {"nivel_antes": 1.2}),
+     ("BANCADA-01", {"lux_antes": -0.5})],
 )
 def test_telemetria_invalida_e_descartada(conn, ponto, ponto_msg, extra):
     d = decidir(conn, ponto, T0)
     assert not ciclo.registrar_telemetria(conn, ponto_msg, _carga(d, **extra))
+
+
+def test_telemetria_guarda_o_estado_antes_do_comando(conn, ponto):
+    # Migracao 010: onde a rampa anterior terminou (o piso, por exemplo) fica
+    # no banco junto da leitura nova.
+    d = decidir(conn, ponto, T0)
+    assert ciclo.registrar_telemetria(conn, "BANCADA-01", _carga(d, nivel=1.0, nivel_antes=0.5, lux_antes=5.1))
+    linha = conn.execute(
+        "SELECT nivel_antes, lux_antes FROM telemetria WHERE decisao_id = %s", (d.id,)
+    ).fetchone()
+    assert (float(linha[0]), float(linha[1])) == (0.5, 5.1)
+
+
+def test_telemetria_de_no_antigo_fica_sem_estado_anterior(conn, ponto):
+    d = decidir(conn, ponto, T0)
+    assert ciclo.registrar_telemetria(conn, "BANCADA-01", _carga(d))
+    assert conn.execute(
+        "SELECT nivel_antes, lux_antes FROM telemetria WHERE decisao_id = %s", (d.id,)
+    ).fetchone() == (None, None)
 
 
 def test_telemetria_liga_a_sessao_aberta(conn, ponto):
