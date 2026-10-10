@@ -537,6 +537,12 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         porque o alvo nao mudou. Figuras renumeradas: ER = 7, foto
         posterior = 8. Conferir a Lista de figuras (paginas) no Word.
 
+[ ] C50. v42: Figuras 7 (consumo) e 8 (registro de decisoes) do painel e
+        paragrafo da IA. O "82,5 % do pleno" e da janela de 30 min da captura,
+        que inclui os ensaios do dia (nao e resultado de avaliacao). O painel
+        mostrava "--1550,9 %" quando o consumo passava do pleno (luz externa no
+        sensor); corrigido o sinal (826c5e8). ER = Figura 9, foto = Figura 10.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
