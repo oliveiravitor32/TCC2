@@ -2408,7 +2408,12 @@ VM:      11/10/2026: backup ~/backup_antes_010_2026-10-11.sql (65 MB); codigo
          historico de antes da limpeza, foi substituida); migracao 010
          aplicada; api e decisao reconstruidos. GET /telemetria ja devolve
          nivel_antes e lux_antes (nulos ate o firmware novo ser gravado).
-         FALTA: gravar o firmware no ESP32 e o teste curto na bancada.
+         Firmware gravado pelo autor no mesmo dia.
+TESTE:   11/10/2026, 16h03-16h09 (horario de Brasilia, de dia): volume 0 nos
+         3 trechos -> emitido 0,625 (decisao 1b6e37cc); 5 min 40 s de rampa;
+         ocorrencia de seguranca -> decisao 6233129a, telemetria com nivel
+         1,000, 10,98 lux, nivel_antes 0,625 e lux_antes 6,79. O estado em que
+         a rampa terminou chegou ao banco. Ocorrencia encerrada em seguida.
 TEXTO:   v38.
 
 ===============================================================================
