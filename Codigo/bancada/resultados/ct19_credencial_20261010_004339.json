@@ -1,0 +1,23 @@
+{
+  "host": "tcc-iluminacao-publica.duckdns.org",
+  "porta": 8883,
+  "sem_credencial": {
+    "codigo": "Not authorized",
+    "aceito": false,
+    "tls": "TLSv1.3",
+    "cifra": "TLS_AES_256_GCM_SHA384"
+  },
+  "senha_errada": {
+    "codigo": "Not authorized",
+    "aceito": false,
+    "tls": "TLSv1.3",
+    "cifra": "TLS_AES_256_GCM_SHA384"
+  },
+  "com_credencial": {
+    "codigo": "Success",
+    "aceito": true,
+    "tls": "TLSv1.3",
+    "cifra": "TLS_AES_256_GCM_SHA384"
+  },
+  "aprovado": true
+}

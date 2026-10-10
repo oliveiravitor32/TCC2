@@ -1,0 +1,12 @@
+{
+  "origem": "rampa da caixa nova registrada na serial (ct18_vencimento_serial_20261010.log), 03:27:46 a 03:33:01",
+  "tabela": "sessao 113",
+  "potencia_segmento_w": 0.864,
+  "duty_pleno": 2687,
+  "passos": 64,
+  "duracao_s": 315.0,
+  "energia_duty_mwh": 37.66,
+  "energia_pleno_mwh": 49.61,
+  "razao": 0.7593,
+  "observacao": "sem estimativa pela luz: na arquitetura do item 71 o no so mede ao receber comando; a rampa e registrada pelo nivel aplicado"
+}

@@ -1,0 +1,23 @@
+{
+  "caso": "CT18 (arquitetura de implantacao, DIVERGENCIAS 71) e rampa na caixa nova",
+  "calibracao": "sessao 113 (caixa nova)",
+  "comando_recebido_no_no": "2026-10-10T03:27:46.034Z (alvo 0.500, validade 887 s)",
+  "rampa": {
+    "inicio": "2026-10-10T03:27:46.034Z",
+    "chegou_ao_piso": "2026-10-10T03:33:01.031Z",
+    "duracao_min": 5.25,
+    "passo": "0.008 a cada 5 s"
+  },
+  "servico_parado": "2026-10-10T03:33:02Z",
+  "vencimento_esperado_no_relogio_do_no": "2026-10-10T03:42:33.0Z",
+  "vencimento_esperado_no_relogio_do_servico": "2026-10-10T03:42:31.658Z (publicado_em + validade_s)",
+  "failsafe_no_no": "2026-10-10T03:42:33.033Z",
+  "sensor_no_pleno": "2026-10-10T03:42:35.334Z (9.96 lx; a leitura de 03:42:33.108, 4.98 lx, ainda era da conversao anterior)",
+  "servico_religado": "2026-10-10T03:43:11Z (comando alvo 1.000 recebido)",
+  "resultado": "satisfeito: no no pleno ao vencer a validade, medido pelo sensor 2,3 s depois",
+  "observacoes": [
+    "Primeira execucao da latencia interrompida: a ocorrencia preliminar de acerto de relogio venceu por prazo e prendeu o alvo no pleno (limitacao declarada em 6.3); o script passou a encerra-la explicitamente.",
+    "Depois de reiniciar (ao abrir a serial), o no ficou no pleno sem receber comando, porque o alvo nao mudou; o servico so reenviaria na renovacao. Para seguir, abriu-se e encerrou-se uma ocorrencia."
+  ],
+  "log_serial": "bancada/resultados/ct18_vencimento_serial_20261010.log"
+}

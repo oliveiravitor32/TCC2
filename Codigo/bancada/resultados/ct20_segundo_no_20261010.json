@@ -1,0 +1,11 @@
+{
+  "caso": "CT20 (RNF09), arquitetura de implantacao",
+  "ponto": "SIMULADO-02 (no simulado, lux sintetico)",
+  "conectado": "2026-10-10T03:44:02Z",
+  "evento": "volume 0 no trecho 19400 (03:44:11Z)",
+  "decisao": "03:44:11Z, alvo 0.500",
+  "comando_recebido": "alvo 0.500, validade 899 s",
+  "telemetria": "03:44:11Z, lux 10.24 (nivel aplicado 1.000; a rampa corre no no)",
+  "alteracao_no_servico": "nenhuma (sem git pull, rebuild ou reinicio)",
+  "resultado": "satisfeito"
+}

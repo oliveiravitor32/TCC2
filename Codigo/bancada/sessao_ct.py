@@ -39,7 +39,7 @@ from bancada.calibrar import RAIZ
 from bancada.destino import DestinoApi, tolerancia_do_relatorio, ultimo_relatorio
 
 PASTA = RAIZ / "bancada" / "resultados"
-LIMITE_RNF03_S = 2.0
+LIMITE_RNF03_S = 180.0  # Caderno de Encargos 7.2.1 (DIVERGENCIAS 71); antes, 2 s
 
 
 def _iso(s: str) -> datetime:
@@ -78,14 +78,8 @@ def _esperar_decisao(api, ponto: str, evento_id: int, ate: float) -> dict | None
 
 
 def _esperar_telemetria(api, ponto: str, evento_id: int, ate: float) -> tuple[dict, dict] | None:
-    """Primeira telemetria de QUALQUER decisao que usou o evento.
-
-    A decisao provocada pelo evento pode ficar sem telemetria: se o tique
-    periodico do ciclo (5 s) cai antes de o no terminar a leitura (~1,3 s),
-    o comando seguinte a substitui (relacao 1:1, mas nao obrigatoria; 4.7.2).
-    O duty ja foi aplicado; a decisao seguinte usa o mesmo evento e e a que
-    traz a medicao.
-    """
+    """Primeira telemetria de QUALQUER decisao que usou o evento (com a
+    arquitetura do item 71 nao ha tique periodico; fica por robustez)."""
     while time.monotonic() < ate:
         decs = {d["id"]: d for d in api._pedir("GET", f"/decisoes?ponto={ponto}&limite=30")
                 if evento_id in d["evento_ids"]}
@@ -116,20 +110,42 @@ def cmd_latencia(api: DestinoApi, args) -> int:
                            "vigente_ate": (t0 + timedelta(seconds=5)).isoformat()})
     t1 = datetime.now(timezone.utc)
     desvio = _iso(prev["recebido_em"]) - (t0 + (t1 - t0) / 2)
+    # Item 71: ocorrencia vencida por prazo so e reconhecida no evento
+    # seguinte; o encerramento explicito libera o alvo na hora.
+    _publicar(api, {"ocorrido_em": (datetime.now(timezone.utc) + desvio).isoformat(),
+                    "tipo": "ocorrencia", "ocorrencia": "encerrada",
+                    "origem": "bancada-ct17-relogio", "trecho": trecho})
     print(f"{args.repeticoes} repeticoes no {args.ponto} (trecho {trecho}), intervalo {args.intervalo} s;"
           f" tolerancia do CT15 {tol:.1%}")
     print(f"relogio da VM - relogio do notebook = {desvio.total_seconds():+.3f} s (corrigido nos carimbos)\n")
+    # Item 71: o servico so publica quando o alvo muda. Volume zero mantem o
+    # alvo baixo; cada repeticao abre uma ocorrencia (alvo sobe na hora:
+    # comando e telemetria) e, depois da medicao, a encerra (alvo volta a
+    # descer, em rampa no no).
+    def volume_zero():
+        quando = (datetime.now(timezone.utc) + desvio).isoformat()
+        _publicar(api, [{"ocorrido_em": quando, "tipo": "volume", "pessoas_media": 0,
+                         "periodo_s": 300, "origem": "bancada-ct17", "trecho": t}
+                        for t in p["trechos"]])
+        return time.monotonic() + 240
+    renovar = volume_zero()
+    ate = time.monotonic() + 120
+    while time.monotonic() < ate and (_ponto(api, args.ponto)["nivel_emitido"] or 1.0) >= 1.0:
+        time.sleep(1)
+    print(f"alvo antes das repeticoes: {_ponto(api, args.ponto)['nivel_emitido']}")
     time.sleep(args.intervalo)
 
     reps = []
     for i in range(1, args.repeticoes + 1):
+        if time.monotonic() >= renovar:
+            renovar = volume_zero()
+            time.sleep(2)
         agora = datetime.now(timezone.utc) + desvio
-        # Ocorrencia de seguranca: decisao imediata (o evento acorda o ciclo).
-        # Vigencia curta, para nao prender a luz entre as repeticoes.
+        # Ocorrencia de seguranca: decisao imediata (o evento acorda o servico).
         ev = _publicar(api, {
             "ocorrido_em": agora.isoformat(), "tipo": "ocorrencia", "ocorrencia": "seguranca",
             "origem": "bancada-ct17", "trecho": trecho,
-            "vigente_ate": (agora + timedelta(seconds=args.intervalo)).isoformat()})
+            "vigente_ate": (agora + timedelta(seconds=10 * args.intervalo)).isoformat()})
         limite = time.monotonic() + 15
         dec = _esperar_decisao(api, args.ponto, ev["id"], limite)
         achou = _esperar_telemetria(api, args.ponto, ev["id"], limite) if dec else None
@@ -149,6 +165,9 @@ def cmd_latencia(api: DestinoApi, args) -> int:
                   "ct15_ok": razao is not None and abs(razao - 1) <= tol,
                   "latencia_evento_s": round((_iso(tel["recebido_em"]) - _iso(ev["recebido_em"])).total_seconds(), 3)}
         reps.append(r)
+        _publicar(api, {"ocorrido_em": (datetime.now(timezone.utc) + desvio).isoformat(),
+                        "tipo": "ocorrencia", "ocorrencia": "encerrada",
+                        "origem": "bancada-ct17", "trecho": trecho})
         lat = r.get("latencia_evento_s")
         print(f"  {i:2d}: decisao {r.get('latencia_decisao_s', '-')} s | ate a telemetria "
               f"{lat if lat is not None else 'SEM TELEMETRIA'} s | lux {r.get('lux_medido', '-')}"
@@ -173,7 +192,7 @@ def cmd_latencia(api: DestinoApi, args) -> int:
     l = resumo["latencia_evento_s"]
     print(f"\nlatencia evento -> telemetria: min {l['min']} | mediana {l['mediana']} | "
           f"p95 {l['p95']} | max {l['max']} s; sem telemetria: {sem}")
-    print(f"CT17 (todas < 2 s): {'APROVADO' if resumo['ct17_aprovado'] else 'REPROVADO'}")
+    print(f"CT17 (todas < {LIMITE_RNF03_S:.0f} s): {'APROVADO' if resumo['ct17_aprovado'] else 'REPROVADO'}")
     print(f"CT15 (lux corresponde ao nivel): {'APROVADO' if resumo['ct15_aprovado'] else 'REPROVADO'}")
     print(f"registro: {arq}")
     return 0 if resumo["ct17_aprovado"] and resumo["ct15_aprovado"] else 1
@@ -203,9 +222,11 @@ def cmd_piso(api: DestinoApi, args) -> int:
         nivel = _ponto(api, args.ponto)["nivel_emitido"]
         print(f"  {datetime.now():%H:%M:%S} nivel emitido {nivel}")
         if nivel is not None and abs(nivel - piso) < 1e-3:
-            print("\nNO PISO. Agora, na VM:  docker compose -f docker-compose.prod.yml stop decisao")
-            print("e acompanhe o Monitor Serial: em ate 15 s deve aparecer FAILSAFE e o lux voltar a ~10.")
-            print("Depois:  docker compose -f docker-compose.prod.yml start decisao")
+            # Item 71: o alvo e o piso; o no ainda desce em rampa (>= 5 min).
+            print(f"\nALVO NO PISO. Aguarde ~{args.rampa_min} min a rampa do no; depois, na VM:")
+            print("  docker compose -f docker-compose.prod.yml stop decisao   (e pare de publicar)")
+            print("O no deve voltar ao pleno quando vencer a validade do ultimo comando (log da serial).")
+            time.sleep(args.rampa_min * 60)
             return 0
         time.sleep(15)
     print("nao chegou ao piso no tempo dado (veja a docstring: previsao da hora)")
@@ -313,6 +334,7 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--repeticoes", type=int, default=30)
     p.add_argument("--intervalo", type=float, default=20.0, help="segundos entre repeticoes")
     p.add_argument("--minutos", type=float, default=30.0, help="piso: tempo maximo de espera")
+    p.add_argument("--rampa-min", type=float, default=6.0, help="piso: espera da rampa do no")
     args = p.parse_args(argv)
     api = DestinoApi()
     acoes = {"latencia": cmd_latencia, "piso": cmd_piso, "alertas": cmd_alertas,
