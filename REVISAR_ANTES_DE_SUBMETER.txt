@@ -513,6 +513,14 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         numeros de pagina da Lista de figuras batem e se a legenda de cada
         foto e legivel impressa.
 
+[ ] C47. v38 (11/10/2026): estado do no antes do comando na telemetria
+        (decisao do autor, opcao A; DIVERGENCIAS 74). Texto da IA: Quadros 14,
+        16 e 17, passo (8) de 3.12.6.3, nota no exemplo de 3.12.6.3 e frase
+        nova em 3.13.2 ("e por ela que o ponto em que terminou a rampa
+        anterior fica no banco, ainda que so com o comando seguinte").
+        Figuras 4 e 5 regeradas. Ainda NAO testado na bancada: falta aplicar a
+        migracao 010 na VM, atualizar os conteineres e gravar o firmware.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

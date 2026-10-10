@@ -4,7 +4,7 @@ Responda sempre em **português do Brasil**. O autor é iniciante em eletrônica
 
 ## Fonte da verdade
 
-> **Estado em 10/10/2026:** a versão mais recente do texto é a **v37** (`..._SP_v37.docx`), que acumula todas as rodadas; as versões v4 a v37 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
+> **Estado em 10/10/2026:** a versão mais recente do texto é a **v38** (`..._SP_v38.docx`), que acumula todas as rodadas; as versões v4 a v38 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
 
 A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v2.docx` (26/09/2026, com as duas rodadas de revisão aceitas pelo autor). **Siga o TCC.**
 
@@ -44,7 +44,8 @@ A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Tra
 - `..._SP_v34_revisado.docx` = v33 aceito + Apêndice A: parágrafo da programação em par (decisão do autor), percentuais **provisórios** da IA no Quadro 19 (o autor vai repreencher) e início do uso em 21/09/2026. `..._SP_v34.docx` = a mesma com tudo aceito; **editada pelo autor no Word** (percentuais do Quadro 19 definitivos do autor).
 - `..._SP_v35_revisado.docx` = v34 do autor + início do uso de IA em **13/09/2026** e Quadro 20 ajustado à largura da página (grade 1900/3000/4171, layout fixo, cabeçalho repetido; sem marca de revisão na formatação). `..._SP_v35.docx` = a mesma com tudo aceito.
 - `..._SP_v36_revisado.docx` = v35 aceito + **fotos do nó de bancada** com marcações numeradas (`Codigo/figuras/fotos_marcadas.py`, originais em `Docs/Fotos`): **Figura 1** nó montado (3.4), **Figura 2** interior do anteparo (3.4.3), **Figura 6** vista posterior no novo **Apêndice C**; as antigas Figuras 1, 2 e 3 viram **3, 4 e 5** (arquitetura, sequência, ER); legendas das figuras acima da imagem (NBR 14724), movidas sem marca de revisão. `..._SP_v36.docx` = a mesma com tudo aceito.
-- `..._SP_v37.docx` = v36 com as fotos marcadas trocadas (item 10 = papel difusor nas Figuras 1 e 2); sem mudança de texto, por isso o `_v37_revisado.docx` é idêntico (**a mais recente**). **Referências a seções nas entradas v2–v27 acima seguem a numeração da época.** **Não afirmar** sem fonte: telegestão em operação, parque em fluxo pleno, regras "da literatura".
+- `..._SP_v37.docx` = v36 com as fotos marcadas trocadas (item 10 = papel difusor nas Figuras 1 e 2); sem mudança de texto, por isso o `_v37_revisado.docx` é idêntico.
+- `..._SP_v38_revisado.docx` = v37 aceito + **estado do nó antes do comando na telemetria** (DIVERGENCIAS 74, migração 010: `nivel_antes`, `lux_antes`): Quadros 14, 16 e 17, passo (8) e nota no exemplo de 3.12.6.3, parágrafo em 3.13.2; Figuras 4 e 5 regeradas (sem marca de revisão nas imagens). `..._SP_v38.docx` = a mesma com tudo aceito (**a mais recente**). **Referências a seções nas entradas v2–v27 acima seguem a numeração da época.** **Não afirmar** sem fonte: telegestão em operação, parque em fluxo pleno, regras "da literatura".
 - Novas mudanças no texto: com controle de alterações, sobre a versão com tudo aceito, salvando como arquivo novo (nunca sobrescrever a versão vigente).
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
@@ -97,7 +98,7 @@ Fluxo: evento urbano (REST) → serviço de decisão [previsão → inferência 
 - **Failsafe no nó (4ª regra, autoria dos autores, RNF07):** sem comando por X segundos → nível 1,0.
 - A decisão grava **nível pretendido** (inferência) e **nível emitido** (após verificação) separados, mais a restrição aplicada e a versão da base de regras.
 - Parâmetros normativos ficam **em tabela** (`classe_iluminacao`), não no código (RF09).
-- `decisao_id` trafega no comando e volta na telemetria. Telemetria de decisão é **1:1** com decisão; leituras periódicas sem comando **não** vão para essa tabela (3.13.2); decisão que mantém o alvo e não gera comando não tem telemetria (1 : 0..1).
+- `decisao_id` trafega no comando e volta na telemetria, que leva também o estado do nó **antes** de aplicar o comando (`nivel_antes`, `lux_antes`, migração 010, item 74). Telemetria de decisão é **1:1** com decisão; leituras periódicas sem comando **não** vão para essa tabela (3.13.2); decisão que mantém o alvo e não gera comando não tem telemetria (1 : 0..1).
 - Nenhum dado pessoal, imagem, áudio ou identificador trafega ou é salvo (RNF08, 3.10).
 
 ### Publicação por trecho e identificação espacial (3.5.2, itens 54 e 56)
@@ -167,7 +168,7 @@ volume observado (média de 5 min ÷ referência do trecho) · movimentação pr
 - `GET /decisoes` — nível pretendido, nível emitido, restrição aplicada, versão da base de regras, entrada e ativações
 - `GET /telemetria` — duty aplicado e lux medido, por ponto de luz
 - MQTT `iluminacao/{ponto}/comando` — nível (fração do pleno) + `decisao_id`
-- MQTT `iluminacao/{ponto}/telemetria` — duty aplicado + lux + `decisao_id`
+- MQTT `iluminacao/{ponto}/telemetria` — duty aplicado + lux + nível + `nivel_antes`/`lux_antes` (estado quando o comando chegou) + `decisao_id`
 
 ## Banco (Quadro 16 + 3.13.2)
 
