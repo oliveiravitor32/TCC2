@@ -4,7 +4,7 @@ Responda sempre em **português do Brasil**. O autor é iniciante em eletrônica
 
 ## Fonte da verdade
 
-> **Estado em 10/10/2026:** a versão mais recente do texto é a **v42** (`..._SP_v42.docx`), que acumula todas as rodadas; as versões v4 a v42 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
+> **Estado em 10/10/2026:** a versão mais recente do texto é a **v43** (`..._SP_v43.docx`), que acumula todas as rodadas; as versões v4 a v43 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
 
 A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v2.docx` (26/09/2026, com as duas rodadas de revisão aceitas pelo autor). **Siga o TCC.**
 
@@ -49,7 +49,8 @@ A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Tra
 - `..._SP_v39_revisado.docx` = v38 aceito + teste de bancada de 10/10/2026, 16h (DIVERGENCIAS 74) em 3.12.9: volume 0 → 0,625 (degrau 1,5: de dia o relógio conta como início da noite, R5 + R7), ocorrência → pleno, telemetria com `nivel_antes` 0,625 e `lux_antes` 6,79; linha nova no Quadro 20 (`bancada/teste_estado_antes.py`, 3f94fe4). `..._SP_v39.docx` = a mesma com tudo aceito.
 - `..._SP_v40_revisado.docx` = v39 aceito + teste refeito depois de a caixa mexer: conferência reprovada (+9,8 % a +11,0 %), **recalibração sessão 115** (duty 10 lx = 2462, 5 lx = 1275), telemetria com `lux_antes` 6,23 (−0,3 %) e 9,96 lux no pleno; Quadro 20 com a03a21f. `..._SP_v40.docx` = a mesma com tudo aceito.
 - `..._SP_v41_revisado.docx` = v40 aceito + **capturas do painel** (10/10/2026, dados da VM; `Docs/Fotos/painel_*.jpg`) no fim de 3.12.6.3: **Figura 5** monitoramento e **Figura 6** decisão explicada (R5 + R7, 0,625, sem telemetria porque o alvo não mudou), com parágrafo de apresentação; o ER passa a **Figura 7** e a foto posterior a **Figura 8**; Quadro 19 diz "Figuras 3, 4 e 7". `..._SP_v41.docx` = a mesma com tudo aceito; **editada pelo autor** (marca-texto amarelo retirado).
-- `..._SP_v42_revisado.docx` = v41 do autor + **Figuras 7 (consumo estimado) e 8 (registro de decisões, diagnóstico e publicações)** do painel no fim de 3.12.6.3, com parágrafo; ER = **Figura 9**, foto posterior = **Figura 10**; Quadro 19 "Figuras 3, 4 e 9". `..._SP_v42.docx` = a mesma com tudo aceito (**a mais recente**). **Calibração vigente do nó: sessão 115** (o texto de 3.4.4 e os CT15–CT20 seguem a sessão 113, usada naquela sessão). **Referências a seções nas entradas v2–v27 acima seguem a numeração da época.** **Não afirmar** sem fonte: telegestão em operação, parque em fluxo pleno, regras "da literatura".
+- `..._SP_v42_revisado.docx` = v41 do autor + **Figuras 7 (consumo estimado) e 8 (registro de decisões, diagnóstico e publicações)** do painel no fim de 3.12.6.3, com parágrafo; ER = **Figura 9**, foto posterior = **Figura 10**; Quadro 19 "Figuras 3, 4 e 9". `..._SP_v42.docx` = a mesma com tudo aceito.
+- `..._SP_v43_revisado.docx` = v42 aceito + item 1 do levantamento final: **3.12.1** (5 partes interessadas; elicitação só documental, declarada como limitação), **3.12.2** (iterativo e incremental guiado pela especificação; Vitor = software e montagem, Bruno e Lucas = documentação e apoio à pesquisa), **3.12.5** com o **diagrama de casos de uso = Figura 3** (`Codigo/figuras/figura_casos_uso.py`), **3.12.8** cronograma em lista pelas datas do git (transição de tema 16/08). Figuras 3–10 viram **4–11** (arquitetura 4, sequência 5, painel 6–9, ER 10, foto posterior 11); Quadro 19 "Figuras 3, 4, 5 e 10". `..._SP_v43.docx` = a mesma com tudo aceito (**a mais recente**). **Calibração vigente do nó: sessão 115** (o texto de 3.4.4 e os CT15–CT20 seguem a sessão 113, usada naquela sessão). **Referências a seções nas entradas v2–v27 acima seguem a numeração da época.** **Não afirmar** sem fonte: telegestão em operação, parque em fluxo pleno, regras "da literatura".
 - Novas mudanças no texto: com controle de alterações, sobre a versão com tudo aceito, salvando como arquivo novo (nunca sobrescrever a versão vigente).
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
@@ -79,8 +80,8 @@ Seções mais importantes da versão vigente (numeração da v28):
 | Decisões de arquitetura (Quadro 12) · Componentes (Quadro 13) | 3.12.6 | Quadros 9 e 10 |
 | Implantação em nuvem | 3.12.6.1 | 7.2.1 |
 | Contratos das interfaces (Quadro 14) | 3.12.6.2 | Quadro 13 |
-| **Percurso de uma decisão (Figura 4, até a v35 Figura 2: diagrama de sequência; exemplo real)** | **3.12.6.3** | nova |
-| Banco: entidades (Quadro 16), ER (Figura 9; 7 na v41; 5 na v36–v40; 3 até a v35) e modelo físico | 3.13.1 · 3.13.2 · 3.13.3 | 8.5 |
+| **Percurso de uma decisão (Figura 5; 4 na v36–v42; 2 até a v35: diagrama de sequência; exemplo real)** | **3.12.6.3** | nova |
+| Banco: entidades (Quadro 16), ER (Figura 10; 9 na v42; 7 na v41; 5 na v36–v40; 3 até a v35) e modelo físico | 3.13.1 · 3.13.2 · 3.13.3 | 8.5 |
 | Modelo físico (Quadro 17) | 3.13.3 | — |
 | Casos de teste CT01–CT20 (Quadro 15) · resultado (CT15–CT20 satisfeitos) | 3.12.7 / 3.12.9 | — |
 | Resultados · Análise (limitações em 5.3) · Conclusões e recomendações (6.1) | Cap. 4 · Cap. 5 · Cap. 6 | Caps. 5, 6 e 7 até a v27 |
