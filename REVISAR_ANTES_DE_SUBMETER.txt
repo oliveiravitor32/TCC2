@@ -525,9 +525,9 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
 [ ] C48. v39: paragrafo novo da IA em 3.12.9 sobre o teste do estado antes
         do comando (10/10/2026, 16h) e linha nova no Quadro 20. Conferir: (a)
         a explicacao do 0,625 (de dia, horas_desde_18h = 0, R5 e R7 com grau
-        1,0, degrau 1,5) contra a decisao 1b6e37cc; (b) "o que se atribui a
-        luz do dia no recinto" e INTERPRETACAO da IA, sem medicao da residual
-        naquele momento - manter, suavizar ou retirar.
+        1,0, degrau 1,5) contra a decisao 1b6e37cc; (b) RESOLVIDO na v40: a sobra
+        era a caixa deslocada (residual 0,00 lx); recalibrado (sessao 115) e
+        teste refeito, lux_antes 6,23 (-0,3 %); a frase da luz do dia saiu.
 
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
