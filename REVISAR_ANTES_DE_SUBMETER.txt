@@ -495,7 +495,14 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         antecipado x reativo continuou desfavoravel); C42(c): nao se achou
         versao ABNT da ISO/IEC 25010:2023 no catalogo (busca de 11/10/2026;
         so um edital de concurso cita "NBR ISO/IEC 25010:2024", sem
-        confirmacao) - termos mantidos.
+        confirmacao) - termos mantidos. C15: resolvido pelo autor (pergunta
+        de pesquisa fica como esta no texto).
+
+[ ] C45. v34 (11/10/2026): Apendice A. Paragrafo da programacao em par
+        (texto da IA, aprovado pelo autor). Quadro 19 (matriz de IA): os
+        percentuais 10/20/40/30/50/30/40 sao ESTIMATIVA PROVISORIA DA IA; o
+        autor vai repreencher. Periodo: inicio 21/09/2026 (informado pelo
+        autor); data final, CPFs, local e data ainda em branco.
 
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
