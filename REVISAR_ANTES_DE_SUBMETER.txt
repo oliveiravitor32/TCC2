@@ -562,6 +562,10 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         transponivel a outros servicos municipais"; anomalia da madrugada
         "efeito da rampa, e nao de falha da decisao".
 
+[ ] C53. v48: Resumo e Abstract redigidos pela IA e aprovados pelo autor no
+        chat. Conferir se os numeros batem com a versao final do Capitulo 4
+        (667.200 passos; 1,03-1,47 s; 24,3 % e 37,6 %) caso o texto mude.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
