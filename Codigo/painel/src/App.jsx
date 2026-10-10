@@ -96,8 +96,9 @@ export default function App() {
   const estado = ESTADOS[ponto?.estado_operacional] ?? ESTADOS.sem_comunicacao;
 
   return (
-    <div className="mx-auto flex min-h-full max-w-7xl flex-col gap-4 p-4 sm:p-6">
-      <header className="-mx-4 -mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 bg-tinta px-4 py-4 text-white sm:-mx-6 sm:-mt-6 sm:px-6">
+    <div className="flex min-h-full flex-col">
+      <header className="w-full bg-tinta text-white">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-5 gap-y-3 px-4 py-4 text-center sm:px-6">
         <h1 className="flex items-center gap-2 text-lg font-bold tracking-tight">
           <Lightbulb size={20} className="text-luz" aria-hidden="true" />
           Iluminação adaptativa
@@ -123,12 +124,12 @@ export default function App() {
             </select>
           </label>
         )}
-        <span className={`inline-flex items-center gap-1 text-xs ${estado.cor}`}>
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold text-white uppercase tracking-wide ${estado.cor.replace("text-", "bg-")}`}>
           <CircleDot size={12} aria-hidden="true" />
           {estado.texto}
         </span>
 
-        <div className="flex w-full flex-wrap items-center gap-3 text-xs text-white/70 md:ml-auto md:w-auto">
+        <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-white/70">
           <button
             type="button"
             onClick={() => setModalAberto(true)}
@@ -155,7 +156,10 @@ export default function App() {
             atualizar
           </button>
         </div>
+      </div>
       </header>
+
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 p-4 sm:p-6">
 
       {erro && (
         <p className="flex items-center gap-2 border-l-4 border-falha bg-falha/10 p-3 text-sm text-falha">
@@ -235,11 +239,15 @@ export default function App() {
       </>
       )}
 
-      <footer className="-mx-4 -mb-4 mt-auto bg-tinta px-4 py-4 text-[11px] leading-relaxed text-white/70 sm:-mx-6 sm:-mb-6 sm:px-6">
+      </main>
+
+      <footer className="w-full bg-tinta text-[11px] leading-relaxed text-white/70">
+        <div className="mx-auto max-w-7xl px-4 py-5 text-center sm:px-6">
         O painel não decide: o botão de simulação só publica o volume ou a ocorrência de um trecho, como a plataforma
         de monitoramento faria. A decisão é produzida no serviço municipal e verificada contra
         a ABNT NBR 5101 antes de qualquer comando; nenhum dado pessoal trafega aqui
         (RNF08).
+        </div>
       </footer>
     </div>
   );

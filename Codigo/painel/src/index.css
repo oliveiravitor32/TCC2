@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* fundos dos selos de estado no cabecalho (classe montada a partir de ESTADOS) */
+@source inline("bg-ok bg-falha bg-suave");
+
 /* Paleta do painel, inspirada no portal do Smart Sampa (branco, preto e azul):
    o painel e a ponta visivel de uma integracao com a plataforma municipal, e
    fala a mesma lingua visual dela. Cores de estado (piso, taxa, ok, falha)
