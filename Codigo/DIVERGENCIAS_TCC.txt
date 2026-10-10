@@ -2361,6 +2361,32 @@ TEXTO PROPOSTO (3.6, para a rodada v20; a redacao final e dos autores):
          Referencia geral sugerida para as tecnicas de normalizacao: HAN;
          KAMBER; PEI (2011) - NAO conferida pela IA (REVISAR C34).
 
+-------------------------------------------------------------------------------
+73. CAIXA NOVA E SESSAO DE BANCADA COM A ARQUITETURA DO ITEM 71 (10/10/2026)
+-------------------------------------------------------------------------------
+Trecho: Quadro 4 (anteparo), 3.4.2, 3.4.4, 4.10, 5.3, 5.5, 6.3, Apendice B.
+MOTIVO:  o autor trocou a caixa da bancada (depois da sessao de 4-5/10):
+         polipropileno preto fosco, 43,7 x 31 x 24 cm, sem forro, fita e sensor
+         nas paredes menores (0,437 m), difusor mantido. Decisao do autor:
+         refazer a bancada na caixa nova e GUARDAR os dados da caixa antiga
+         (nao apagar).
+VM:      backup ~/backup_antes_007_009_2026-10-10.sql (64 MB); migracoes 007,
+         008 e 009; codigo levado por git bundle (sem push); imagem corrigida
+         para levar o modelo de Zurique (89b9f8f; antes caia na persistencia).
+RESULTADOS: teto 2,05x -> difusor ajustado -> 1,57x; calibracao sessao 113
+         (duty 10 lx = 2687, 5 lx = 1392; dispersao 0,86 %; tolerancia 3,4 %).
+         CT15 +0,7 %; CT16 falha total em 3 leituras, encerrada 30 s apos
+         religar (comandos provocados a cada 10 s); CT17 1,03-1,47 s (mediana
+         1,25; 30/30 com telemetria), DUAS execucoes: a primeira interrompida
+         porque a ocorrencia preliminar venceu por prazo e prendeu o alvo (erro
+         do roteiro; a limitacao de 6.3); CT18 pleno no vencimento (887 s),
+         sensor 2,3 s depois; CT19 e CT20 satisfeitos. Rampa 5,25 min; energia
+         37,7 mWh = 75,9 % do pleno, so pelo duty (sem leitura de lux na rampa).
+         Achado: no reiniciado fica no pleno ate mudar o alvo ou renovar.
+CODIGO:  bancada/sessao_ct.py (latencia alterna ocorrencia aberta/encerrada
+         com volume 0; RNF03 180 s; piso espera a rampa).
+TEXTO:   v21 (10/10/2026).
+
 ===============================================================================
 FIM
 ===============================================================================

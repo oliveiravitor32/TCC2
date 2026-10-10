@@ -382,6 +382,15 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         - a referencia HAN; KAMBER; PEI NAO foi posta no texto (C34);
         - 6.1, 6.2, 6.4, 7, Resumo e Abstract continuam PENDENTES (autores).
 
+[ ] C36. Rodada v21 (10/10/2026, DIVERGENCIAS 73) - texto redigido pela IA com
+        os resultados da caixa nova: Quadro 4, 3.4.2, 3.4.4, 4.10, 5.3, 5.5, 6.3
+        e Apendice B. Conferir contra bancada/resultados/sessao_113.json e
+        ct*_20261010*. Pontos: (a) o CT16 usou comandos provocados (ocorrencia
+        aberta/encerrada a cada 10 s), desenho da IA; (b) a primeira execucao do
+        CT17 foi interrompida por erro do roteiro, declarado em 5.3; (c) a
+        energia de bancada so pelo duty; (d) o ensaio de estabilidade de 10 min
+        (0,2 %) e da caixa antiga e foi mantido com essa ressalva.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
