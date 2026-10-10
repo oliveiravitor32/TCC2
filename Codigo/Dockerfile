@@ -17,8 +17,10 @@ RUN python -c "import tomllib; print('\n'.join(tomllib.load(open('pyproject.toml
 
 COPY api_eventos ./api_eventos
 COPY decisao ./decisao
-COPY modelo/__init__.py modelo/modelo_previsao.json ./modelo/
-COPY modelo/resultados/metricas.json ./modelo/resultados/
+# Modelo em operacao (Zurique, 15 min, item 69) e o horario de Melbourne,
+# guardado para reexecutar decisoes antigas (rotulo xgboost-v1).
+COPY modelo/__init__.py modelo/modelo_previsao_zurique.json modelo/modelo_previsao.json ./modelo/
+COPY modelo/resultados/metricas_zurique.json modelo/resultados/metricas.json ./modelo/resultados/
 
 # Sem privilegio de root dentro do conteiner.
 RUN useradd --create-home --uid 10001 app
