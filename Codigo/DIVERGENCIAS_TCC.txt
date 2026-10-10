@@ -2387,7 +2387,7 @@ CODIGO:  bancada/sessao_ct.py (latencia alterna ocorrencia aberta/encerrada
          com volume 0; RNF03 180 s; piso espera a rampa).
 TEXTO:   v21 (10/10/2026).
 
-74. ESTADO DO NO ANTES DO COMANDO NA TELEMETRIA (11/10/2026)
+74. ESTADO DO NO ANTES DO COMANDO NA TELEMETRIA (10/10/2026)
 MOTIVO:  a telemetria e a primeira leitura DEPOIS de aplicar o comando. Numa
          descida, ela mostra o comeco da rampa; numa subida, ja o nivel novo.
          Onde a rampa terminou (o piso, por exemplo) nunca ficava no banco, so
@@ -2403,7 +2403,7 @@ CODIGO:  migracao 010 (telemetria.nivel_antes, telemetria.lux_antes, nulas
          para nos antigos), schema.sql, ciclo.registrar_telemetria, GET
          /telemetria e /pontos, simulador, firmware (no.ino), painel (cartao
          "luz entregue"), Figuras 4 e 5 (scripts em figuras/).
-VM:      11/10/2026: backup ~/backup_antes_010_2026-10-11.sql (65 MB); codigo
+VM:      10/10/2026: backup ~/backup_antes_010_2026-10-11.sql (65 MB); codigo
          levado por git bundle (bd06d52; a referencia bundle/main antiga, do
          historico de antes da limpeza, foi substituida); migracao 010
          aplicada; api e decisao reconstruidos. GET /telemetria ja devolve
