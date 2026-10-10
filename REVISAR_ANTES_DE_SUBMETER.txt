@@ -500,8 +500,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
 
 [ ] C45. v34 (11/10/2026): Apendice A. Paragrafo da programacao em par
         (texto da IA, aprovado pelo autor). Quadro 19 (matriz de IA): os
-        percentuais 10/20/40/30/50/30/40 sao ESTIMATIVA PROVISORIA DA IA; o
-        autor vai repreencher. Periodo: inicio 21/09/2026 (informado pelo
+        percentuais foram repreenchidos pelo autor na v34 (30/20/40/50/70/40/40).
+        autor vai repreencher. Periodo: inicio 13/09/2026 (informado pelo
         autor); data final, CPFs, local e data ainda em branco.
 
 -------------------------------------------------------------------------------
