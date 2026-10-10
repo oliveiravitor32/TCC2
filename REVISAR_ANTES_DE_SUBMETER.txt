@@ -403,6 +403,16 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         segue pendente. O objetivo b) (1.5.2) ainda fala em dados publicos
         municipais, que nao foram usados para os cenarios: decidir.
 
+[ ] C38. Rodada v23 (10/10/2026), redigida pela IA: (a) 2.1 passou a declarar
+        revisao NARRATIVA e saiu a lista de bases/termos, porque o autor nao
+        confirmou a busca; (b) objetivo b) reescrito (1.5.2) - conferir se a
+        conclusao (Cap. 7) o declara cumprido; (c) Reia e Cruz (2023) NAO
+        sustentam "arquitetura definida por fornecedores em contratos
+        setoriais": 2.2 e 3.2 reescritos com o que o resumo diz; (d) Lana et al.
+        so pelo resumo (texto completo pago); (e) NAO conferidos: Catlett et al.
+        (postes, "jamais imagens") e Galic e Gellert (captcha da Elsevier); C2 e
+        C3 (redacao da NBR 5101) seguem com os autores.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------

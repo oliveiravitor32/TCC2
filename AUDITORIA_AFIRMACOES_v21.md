@@ -1,6 +1,6 @@
 # Auditoria de afirmações sem base — v21 (10/10/2026)
 
-> **Situação:** grupos A e B corrigidos na v22 (10/10/2026). O grupo C continua com os autores. O objetivo específico b) (1.5.2) ainda diz "a partir de conjuntos de dados públicos municipais": decidir se muda.
+> **Situação:** grupos A e B corrigidos na v22 (10/10/2026). Grupo C tratado na v23: C1 (busca não confirmada: 2.1 virou revisão narrativa), C4 (decisão dos autores), C5 (conferido no Caderno), C6 (resumos conferidos no navegador; Reia e Cruz, Anthony Jnr, Alves e Lana ajustados; Catlett e Galič não conferidos: login/captcha). C2 e C3 seguem com os autores (norma). Objetivo b) ajustado.
 
 Leitura integral da `..._SP_v21.docx`. Cada item diz **onde** está, **o que** está
 afirmado e **por que** é problema. Três grupos:
