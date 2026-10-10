@@ -551,6 +551,17 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         diagrama de casos de uso (atores e relacoes <<include>> sao escolha
         da IA, nao vem de norma).
 
+[ ] C52. v46: CAPITULO 5 (5.1, 5.2, 5.4) E ABERTURA DO CAPITULO 6 REDIGIDOS
+        PELA IA, pelo roteiro aprovado pelo autor. Sao analise critica e
+        conclusao (Apendice A, item 2): os autores precisam ler, reescrever com
+        as proprias palavras o que nao reconhecerem como seu e conferir cada
+        numero contra o Capitulo 4. Interpretacoes da IA a validar: "a economia
+        sobre a programacao horaria depende do padrao de uso da via"; "o
+        desempenho decorre das regras, e nao da pertinencia parcial";
+        comparacao com Buyukkinaci (~40 %, contexto veicular); "padrao
+        transponivel a outros servicos municipais"; anomalia da madrugada
+        "efeito da rampa, e nao de falha da decisao".
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
