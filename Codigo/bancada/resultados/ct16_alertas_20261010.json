@@ -1,0 +1,18 @@
+{
+  "caso": "CT16, caixa nova, arquitetura do item 71",
+  "procedimento": "fonte de 12 V retirada da tomada com o ESP32 no USB; comandos provocados a cada 10 s (ocorrencia aberta e encerrada, com volume 0), porque o no so mede ao receber comando",
+  "leituras": "03:59:47 e 03:59:56 com 10,07 lx; 04:00:07, 04:00:16 e 04:00:27 com 0,00 lx, nivel aplicado 1,000",
+  "alerta": [
+    {
+      "id": 10,
+      "ponto": "BANCADA-01",
+      "tipo": "falha_total",
+      "razao": 0.0,
+      "tolerancia": 0.034,
+      "ciclos": 3,
+      "aberto_em": "2026-10-10T04:00:27.516455Z",
+      "encerrado_em": "2026-10-10T04:00:57.805422Z"
+    }
+  ],
+  "resultado": "satisfeito: falha total aberta apos tres leituras consecutivas (04:00:27) e encerrada ao religar a fonte (04:00:57, 30 s depois)"
+}
