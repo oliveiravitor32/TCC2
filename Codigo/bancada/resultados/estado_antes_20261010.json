@@ -2,12 +2,19 @@
   "teste": "estado do no antes do comando na telemetria (DIVERGENCIAS 74)",
   "programa": "python -m bancada.teste_estado_antes",
   "ponto": "BANCADA-01",
-  "descida": {"publicado": "2026-10-10T16:03:09-03:00", "evento": "volume 0 nos trechos 20159, 22661, 21198",
-              "decisao_id": "1b6e37cc", "nivel_emitido": 0.625, "degrau": 1.5, "ativacoes": {"R5": 1.0, "R7": 1.0}},
-  "espera_s": 340,
-  "subida": {"publicado": "2026-10-10T16:09:09-03:00", "evento": "ocorrencia seguranca no trecho 20159",
-             "decisao_id": "6233129a-2b81-4e2f-95ca-35bbd65e582b",
-             "telemetria": {"medido_em": "2026-10-10T19:09:11Z", "duty": 0.6562, "lux_medido": 10.98,
-                            "nivel_aplicado": 1.0, "nivel_antes": 0.625, "lux_antes": 6.79}},
-  "observacao": "medido_em em UTC; horario local do teste: 16h03-16h09 de 10/10/2026"
+  "execucao_valida": {
+    "calibracao": "sessao 115 (recalibrada as 16h27 de 10/10/2026: conferencia de 16h21 reprovou, +9,8 % a +11,0 %, caixa deslocada; residual 0,00 lx)",
+    "descida": {"publicado": "2026-10-10T16:34:40-03:00", "evento": "volume 0 nos trechos 20159, 22661, 21198",
+                "decisao_id": "5c2b7afa", "nivel_emitido": 0.625, "degrau": 1.5, "ativacoes": {"R5": 1.0, "R7": 1.0}},
+    "subida": {"publicado": "2026-10-10T16:40:40-03:00", "evento": "ocorrencia seguranca no trecho 20159",
+               "decisao_id": "185cbd56-3847-43fd-8e73-a9f29f1032a3",
+               "telemetria": {"medido_em": "2026-10-10T19:40:42Z", "duty": 0.6012, "lux_medido": 9.96,
+                              "nivel_aplicado": 1.0, "nivel_antes": 0.625, "lux_antes": 6.23}}
+  },
+  "execucoes_descartadas": [
+    {"hora": "16h03-16h09", "motivo": "caixa deslocada (tabela da sessao 113 fora da tolerancia, confirmado pela conferencia de 16h21)",
+     "subida_decisao_id": "6233129a", "nivel_antes": 0.625, "lux_antes": 6.79, "lux_medido": 10.98},
+    {"hora": "16h27-16h34", "motivo": "ocorrencia publicada pelo painel as 16h15, ainda vigente: alvo ficou no pleno, sem descida"}
+  ],
+  "observacao": "medido_em em UTC; horarios locais de 10/10/2026"
 }

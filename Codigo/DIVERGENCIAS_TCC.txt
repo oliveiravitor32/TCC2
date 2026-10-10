@@ -2414,6 +2414,13 @@ TESTE:   10/10/2026, 16h03-16h09 (horario de Brasilia, de dia): volume 0 nos
          ocorrencia de seguranca -> decisao 6233129a, telemetria com nivel
          1,000, 10,98 lux, nivel_antes 0,625 e lux_antes 6,79. O estado em que
          a rampa terminou chegou ao banco. Ocorrencia encerrada em seguida.
+         Lux 8,6 % acima do esperado: a CAIXA MEXEU (autor). Conferencia das
+         16h21 reprovada (+9,8 % a +11,0 %, residual 0,00 lx), recalibrada
+         (sessao 115: duty 10 lx = 2462, 5 lx = 1275; aprovada a -0,4 %).
+         Reexecucao 16h27 sem descida (ocorrencia do painel das 16h15 ainda
+         vigente). Execucao valida 16h34-16h40: 0,625 (decisao 5c2b7afa) ->
+         pleno (185cbd56): 1,000, 9,96 lux, nivel_antes 0,625, lux_antes
+         6,23 (-0,3 %). Registro: bancada/resultados/estado_antes_20261010.json.
 TEXTO:   v38.
 
 ===============================================================================
