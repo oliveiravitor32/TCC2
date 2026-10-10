@@ -413,6 +413,15 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         (postes, "jamais imagens") e Galic e Gellert (captcha da Elsevier); C2 e
         C3 (redacao da NBR 5101) seguem com os autores.
 
+[ ] C39. Conferencia da NBR 5101:2024 (10/10/2026, por trechos publicos na busca;
+        a norma original nao foi aberta): C2 (iluminancia vertical e reconhecimento
+        facial) CONFERE; 6.10 (classes nao dimerizaveis, duas classes, 1/10 por
+        minuto, nevoeiro) CONFERE; Quadro 8 CONFERE. FALTA: os pesos da tabela de
+        ponderacao da classe P e a soma que leva a P3 (3.8) - conferir na norma
+        original (biblioteca). v24: Catlett e SmartSantander retirados por decisao
+        do autor; Stratumseind (2.8) ficou so com o que o resumo de Galic e
+        Gellert sustenta.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
