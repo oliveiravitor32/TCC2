@@ -459,6 +459,12 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         28/07/2022). (c) Quadro 11: termos em portugues da ISO/IEC 25010:2023
         escolhidos sem a traducao ABNT; conferir se ha versao NBR.
 
+[ ] C43. v31 (11/10/2026): correcoes da validacao das referencias
+        (VALIDACAO_REFERENCIAS_v30.md), redacao da IA: 3.10 (Perry) reescrito
+        conforme o artigo; 2.7 (Grinsztajn) com o alcance do estudo; 3.5.2 com a
+        data da contagem do GeoSampa. Ainda pendentes: Lin et al. (tres camadas,
+        texto pago) e os pesos da classe P na NBR 5101 (C39).
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
