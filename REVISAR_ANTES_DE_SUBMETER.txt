@@ -565,6 +565,28 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
 [ ] C53. v48: Resumo e Abstract redigidos pela IA e aprovados pelo autor no
         chat. Conferir se os numeros batem com a versao final do Capitulo 4
         (667.200 passos; 1,03-1,47 s; 24,3 % e 37,6 %) caso o texto mude.
+[ ] C54. v51: NOVA SUBSECAO 3.12.6.4 "Arquitetura de referencia para operacao
+        em escala" REDIGIDA PELA IA, a pedido do autor (proposta, nao
+        implantada nem ensaiada). E desenho de projeto: os autores precisam
+        concordar com cada escolha e saber defende-la na banca:
+        - registro distribuido de eventos particionado por trecho (ex.: Kafka)
+          no lugar do pg_notify;
+        - decisao em replicas sem estado + estado em armazenamento
+          compartilhado (ex.: Redis);
+        - verificacao normativa REPETIDA no adaptador de telegestao (defesa em
+          profundidade) - ideia da IA, nao existe no codigo;
+        - treino da previsao fora do caminho, com registro de versoes;
+        - adaptador TALQ com reenvio idempotente pelo decisao_id;
+        - banco relacional gerenciado com replica + serie temporal para
+          eventos/telemetria; painel com login do municipio e perfis;
+        - orquestracao (ex.: Kubernetes) em mais de uma zona, cofre de
+          segredos, rastreamento pelo decisao_id.
+        Os produtos entre parenteses NAO estao no texto (ficou generico de
+        proposito); se quiserem cita-los, pedir. Sem fonte bibliografica: e
+        proposta dos autores. Conferir tambem a limitacao nova em 5.3 (VM
+        unica da camada gratuita, escolhida pelo custo, ponto unico de
+        falha, copias de seguranca manuais), a frase acrescentada no fim de
+        3.12.6.1 e a recomendacao nova em 6.1.
 
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
