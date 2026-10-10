@@ -1,0 +1,4 @@
+# configuracao local do Claude Code (servidores de preview)
+.claude/
+# arquivos de bloqueio do Word
+~$*

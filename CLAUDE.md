@@ -4,6 +4,8 @@ Responda sempre em **português do Brasil**. O autor é iniciante em eletrônica
 
 ## Fonte da verdade
 
+> **Limpeza de 10/10/2026:** na pasta ficaram só a **v48, v49 e v50** (com os `_revisado`); as demais versões citadas abaixo, o `_SP_7` obsoleto e as figuras soltas `Figura2_*.png` saíram da pasta e continuam no histórico do git (`git log -- <arquivo>` e `git show <commit>:<arquivo>`). Manter no máximo as 3 últimas versões.
+
 > **Estado em 10/10/2026:** a versão mais recente do texto é a **v50** (`..._SP_v50.docx`), que acumula todas as rodadas; as versões v4 a v50 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
 
 A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v2.docx` (26/09/2026, com as duas rodadas de revisão aceitas pelo autor). **Siga o TCC.**

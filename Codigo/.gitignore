@@ -27,3 +27,6 @@ ca_vm.crt
 modelo/dados/*.parquet
 # Coleta por minuto de Melbourne (modelo/coletar_melbourne_minuto.py): dados brutos fora do git
 modelo/dados/melbourne_minuto/
+
+# saida da compilacao do firmware (arduino-cli)
+firmware/no/build/
