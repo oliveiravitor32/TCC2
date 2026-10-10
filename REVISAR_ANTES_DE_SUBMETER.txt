@@ -546,7 +546,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
 [ ] C51. v43: 3.12.1, 3.12.2, 3.12.5 e 3.12.8 redigidos pela IA com as
         respostas do autor. Conferir: (a) as cinco partes interessadas e o
         interesse atribuido a cada uma; (b) a frase de LIMITACAO no fim de
-        3.12.1 (elicitacao so documental) - decidir se tambem entra em 5.3;
+        3.12.1 (elicitacao so documental) - ENTROU em 5.3 na v44 (autor);
         (c) as fases do cronograma, montadas pelas datas dos commits; (d) o
         diagrama de casos de uso (atores e relacoes <<include>> sao escolha
         da IA, nao vem de norma).
