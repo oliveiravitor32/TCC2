@@ -449,6 +449,16 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         e 3.13"); (c) atualizar sumario e listas (F9) - o sumario passou a
         mostrar 4 niveis (3.12.6.1 etc.).
 
+[ ] C42. v29 (11/10/2026): revisao de referencias do colega (sobre a v18),
+        conferida pela IA no navegador. (a) Stratumseind (2.8): o colega diz que
+        funcionou de 2014 a 2018 - a IA NAO achou essas datas no resumo de Galic e
+        Gellert; o texto foi so para o passado. Se o colega tiver a fonte, incluir
+        as datas. (b) Quadro 3: "certificacao instituida em 2017, prazos a partir
+        de 2019, consolidada em 2022" - redacao da IA; os prazos de 2019 foram
+        adiados pelas Portarias 239 e 308 de 2019 (nota do Inmetro de
+        28/07/2022). (c) Quadro 11: termos em portugues da ISO/IEC 25010:2023
+        escolhidos sem a traducao ABNT; conferir se ha versao NBR.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
