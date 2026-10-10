@@ -465,6 +465,38 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         data da contagem do GeoSampa. Ainda pendentes: Lin et al. (tres camadas,
         texto pago) e os pesos da classe P na NBR 5101 (C39).
 
+[ ] C44. v32 (11/10/2026), redacao da IA a ler:
+        (a) 3.7: paragrafo novo "A divisao de responsabilidades entre a norma e
+        os tercis..." (C35, aprovado pelo autor).
+        (b) 3.12.6.3: exemplo trocado pela decisao real da bancada de 10/10/2026
+        (92b2a978..., volume nulo nos tres trechos, R5 = 1,0, degrau 2, nivel
+        0,500 sem restricao, validade 887 s, rampa de 5 min 15 s, vencimento
+        as 0 h 42 min 33 s). Dados: SELECT de leitura na VM (decisao,
+        decisao_evento, telemetria) e bancada/resultados/
+        ct18_vencimento_serial_20261010.log. Conferir os horarios (texto em
+        horario de Brasilia; banco e serial em UTC).
+        (c) Restos da arquitetura antiga corrigidos: 3.4.2 (rampa no no, painel
+        mostra alvo e lux), 3.4.5 ("a cada leitura recebida"), 3.11 (passos da
+        rampa pela serial; telemetria so com comando), Quadro 13 e 3.12.6.1
+        ("cada decisao").
+        (d) 2.8: paragrafo novo sobre Pasolini et al. (2024), aberto no
+        navegador (PMC11435540): Tan An 3.815 luminarias, Meda 2.957, Cesena 32;
+        TAI desce 1 ou 2 classes apos duas amostras abaixo do limiar e sobe na
+        hora; FAI continua, com luminancia e meteorologia. A frase
+        "convergente com o resultado de 4.6" e interpretacao da IA. O artigo
+        da os limiares como "lower than 50 %" e "lower than 75 %" do nominal
+        (parece invertido); por isso o texto nao cita os percentuais.
+        (e) C19 (decisao do autor, opcao b): Quadros 19 e 20 viraram Tabelas 3
+        e 4; Quadros 21 e 22 viraram 19 e 20; Lista de tabelas criada. Os itens
+        D4, E1, E3 e E5 deste arquivo usam a numeracao antiga.
+        (f) Decisoes do autor registradas: C4, C10 e E5 mostrados ao
+        orientador, que mandou seguir; H3 sera declarada REJEITADA no 5.1 (a
+        troca para Zurique mudou a serie da previsao, mas a comparacao
+        antecipado x reativo continuou desfavoravel); C42(c): nao se achou
+        versao ABNT da ISO/IEC 25010:2023 no catalogo (busca de 11/10/2026;
+        so um edital de concurso cita "NBR ISO/IEC 25010:2024", sem
+        confirmacao) - termos mantidos.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
