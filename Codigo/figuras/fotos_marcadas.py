@@ -16,11 +16,12 @@ NOMES = {
     2: "Protoboard",
     3: "Módulo MOSFET D4184 (aciona a fita)",
     4: "Sensor de luz BH1750",
-    5: "Fita de LED de 12 V, atrás do papel difusor",
+    5: "Fita de LED de 12 V (atrás do difusor)",
     6: "Fonte de 12 V da fita",
     7: "Fonte USB do ESP32",
     8: "Caixa de polipropileno",
     9: "Cabo de alimentação da fita",
+    10: "Papel difusor da luz da fita",
 }
 
 FOTOS = {
@@ -29,6 +30,7 @@ FOTOS = {
         (2, (1290, 880), (1450, 800)),
         (3, (770, 975), (880, 860)),
         (5, (400, 420), (190, 330)),
+        (10, (360, 455), (170, 520)),
         (6, (640, 1190), (420, 1330)),
         (7, (820, 1150), (930, 1330)),
         (8, (700, 700), (520, 560)),
@@ -45,6 +47,7 @@ FOTOS = {
     "Hardware_Visao_de_cima_da_caixa.jpeg": [
         (4, (160, 780), (330, 760)),
         (5, (1320, 800), (1130, 700)),
+        (10, (1290, 960), (1120, 1010)),
         (6, (640, 125), (800, 70)),
         (8, (760, 870), (760, 1050)),
     ],
@@ -81,7 +84,7 @@ def marcar(arquivo, marcas):
         x = 40 + (i % 2) * (w // 2)
         y = h + 22 + (i // 2) * 46
         d.text((x, y), f"{n}", fill="black", font=fnl)
-        d.text((x + 40, y), NOMES[n], fill="black", font=fleg)
+        d.text((x + 58, y), NOMES[n], fill="black", font=fleg)
     SAIDA.mkdir(exist_ok=True)
     destino = SAIDA / arquivo.replace(".jpeg", "_marcada.jpg")
     tela.save(destino, quality=92)
