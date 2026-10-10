@@ -2403,8 +2403,12 @@ CODIGO:  migracao 010 (telemetria.nivel_antes, telemetria.lux_antes, nulas
          para nos antigos), schema.sql, ciclo.registrar_telemetria, GET
          /telemetria e /pontos, simulador, firmware (no.ino), painel (cartao
          "luz entregue"), Figuras 4 e 5 (scripts em figuras/).
-VM:      PENDENTE (migracao 010 com backup antes, rebuild dos conteineres,
-         firmware gravado no ESP32).
+VM:      11/10/2026: backup ~/backup_antes_010_2026-10-11.sql (65 MB); codigo
+         levado por git bundle (bd06d52; a referencia bundle/main antiga, do
+         historico de antes da limpeza, foi substituida); migracao 010
+         aplicada; api e decisao reconstruidos. GET /telemetria ja devolve
+         nivel_antes e lux_antes (nulos ate o firmware novo ser gravado).
+         FALTA: gravar o firmware no ESP32 e o teste curto na bancada.
 TEXTO:   v38.
 
 ===============================================================================
