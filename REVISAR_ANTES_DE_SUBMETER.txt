@@ -529,6 +529,14 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         era a caixa deslocada (residual 0,00 lx); recalibrado (sessao 115) e
         teste refeito, lux_antes 6,23 (-0,3 %); a frase da luz do dia saiu.
 
+[ ] C49. v41: capturas do painel (Figuras 5 e 6, fim de 3.12.6.3) e paragrafo
+        de apresentacao redigido pela IA. Para a Figura 5 ter a cadeia
+        completa, a IA publicou uma ocorrencia de seguranca de 3 min
+        (origem captura-painel, 16h47 de 10/10/2026) e a encerrou depois. A
+        Figura 6 mostra a decisao das 16h34 (R5 + R7, 0,625) sem medicao,
+        porque o alvo nao mudou. Figuras renumeradas: ER = 7, foto
+        posterior = 8. Conferir a Lista de figuras (paginas) no Word.
+
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
