@@ -46,7 +46,11 @@ export default function Energia({ energia }) {
                   detalhe={`pleno: ${whPleno.toFixed(2)} Wh · horário fixo: ${whFixo.toFixed(2)} Wh`} />
           <Numero
             rotulo="ante o fluxo pleno"
-            valor={economia != null ? `−${(economia * 100).toFixed(1)}%` : "--"}
+            // acima do pleno (luz externa no sensor, por exemplo) o sinal se inverte;
+            // antes saia "−-1550.9%"
+            valor={economia != null
+              ? `${economia >= 0 ? "−" : "+"}${Math.abs(economia * 100).toFixed(1)}%`
+              : "--"}
             detalhe={razao != null ? `consome ${(razao * 100).toFixed(1)}% do pleno` : ""}
             icone={economia > 0 ? TrendingDown : null}
           />
