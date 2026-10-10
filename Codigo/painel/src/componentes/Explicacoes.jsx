@@ -145,7 +145,7 @@ export default function Explicacoes({ eventos, selecionado, setSelecionado }) {
   return (
     <div className="grid gap-4 lg:grid-cols-[18rem_1fr]">
       <section className="rounded-xl border border-borda bg-carta p-3">
-        <h2 className="mb-2 text-xs font-medium tracking-wide text-suave uppercase">publicações recebidas</h2>
+        <h2 className="mb-2 border-l-4 border-luz pl-2 text-xs font-bold tracking-wide text-luz uppercase">publicações recebidas</h2>
         <ul className="max-h-[32rem] space-y-1 overflow-y-auto text-xs">
           {eventos.map((e) => (
             <li key={e.id}>

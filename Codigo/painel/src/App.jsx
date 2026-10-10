@@ -97,23 +97,23 @@ export default function App() {
 
   return (
     <div className="mx-auto flex min-h-full max-w-7xl flex-col gap-4 p-4 sm:p-6">
-      <header className="flex flex-wrap items-center gap-x-4 gap-y-2">
-        <h1 className="flex items-center gap-2 text-lg font-semibold">
+      <header className="-mx-4 -mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 bg-tinta px-4 py-4 text-white sm:-mx-6 sm:-mt-6 sm:px-6">
+        <h1 className="flex items-center gap-2 text-lg font-bold tracking-tight">
           <Lightbulb size={20} className="text-luz" aria-hidden="true" />
           Iluminação adaptativa
         </h1>
-        <span className="text-xs text-suave">
+        <span className="text-xs text-white/70">
           {ponto
             ? `${ponto.codigo}${ponto.placa ? ` (poste ${ponto.placa})` : ""} · classe ${ponto.classe_codigo} · pleno ${ponto.lux_pleno} lx`
             : "sem ponto de luz"}
         </span>
         {dados.pontos.length > 1 && (
-          <label className="inline-flex items-center gap-1 text-xs text-suave">
+          <label className="inline-flex items-center gap-1 text-xs text-white/70">
             ponto
             <select
               value={ponto?.codigo ?? ""}
               onChange={(e) => setSelecionado(e.target.value)}
-              className="rounded-md border border-borda bg-carta px-2 py-1 text-texto"
+              className="border border-white/30 bg-tinta px-2 py-1 text-white hover:border-luz"
             >
               {dados.pontos.map((p) => (
                 <option key={p.codigo} value={p.codigo}>
@@ -128,11 +128,11 @@ export default function App() {
           {estado.texto}
         </span>
 
-        <div className="ml-auto flex items-center gap-3 text-xs text-suave">
+        <div className="flex w-full flex-wrap items-center gap-3 text-xs text-white/70 md:ml-auto md:w-auto">
           <button
             type="button"
             onClick={() => setModalAberto(true)}
-            className="inline-flex items-center gap-1 rounded-md bg-luz px-3 py-1.5 font-medium text-fundo hover:opacity-90"
+            className="inline-flex items-center gap-1 bg-luz px-3 py-1.5 font-semibold text-white uppercase tracking-wide transition-colors hover:bg-white hover:text-tinta"
           >
             <FlaskConical size={14} />
             simular publicação
@@ -141,7 +141,7 @@ export default function App() {
           <button
             type="button"
             onClick={() => setRodando((v) => !v)}
-            className="inline-flex items-center gap-1 rounded-md border border-borda px-2 py-1 hover:bg-borda/40"
+            className="inline-flex items-center gap-1 border border-white/30 px-2 py-1 text-white transition-colors hover:border-luz hover:bg-luz"
           >
             {rodando ? <Pause size={12} /> : <Play size={12} />}
             {rodando ? "pausar" : "retomar"}
@@ -149,7 +149,7 @@ export default function App() {
           <button
             type="button"
             onClick={buscar}
-            className="inline-flex items-center gap-1 rounded-md border border-borda px-2 py-1 hover:bg-borda/40"
+            className="inline-flex items-center gap-1 border border-white/30 px-2 py-1 text-white transition-colors hover:border-luz hover:bg-luz"
           >
             <RefreshCw size={12} />
             atualizar
@@ -158,7 +158,7 @@ export default function App() {
       </header>
 
       {erro && (
-        <p className="flex items-center gap-2 rounded-lg border border-falha/40 bg-falha/10 p-3 text-sm text-falha">
+        <p className="flex items-center gap-2 border-l-4 border-falha bg-falha/10 p-3 text-sm text-falha">
           <WifiOff size={16} aria-hidden="true" />
           sem resposta da interface de dados ({erro}). Os valores abaixo são os últimos
           recebidos e podem estar desatualizados.
@@ -174,7 +174,7 @@ export default function App() {
             key={a.id}
             type="button"
             onClick={() => setAba(a.id)}
-            className={`-mb-px border-b-2 px-3 py-2 ${aba === a.id ? "border-luz text-texto" : "border-transparent text-suave hover:text-texto"}`}
+            className={`-mb-px border-b-[3px] px-3 py-2 font-semibold tracking-wide uppercase transition-colors ${aba === a.id ? "border-luz text-luz" : "border-transparent text-suave hover:border-luz/40 hover:text-texto"}`}
           >
             {a.rotulo}
           </button>
@@ -209,8 +209,8 @@ export default function App() {
         <Entregue ponto={ponto} latenciaMs={latenciaMs} />
       </div>
 
-      <section className="rounded-xl border border-borda bg-carta p-4">
-        <h2 className="mb-1 text-xs font-medium tracking-wide text-suave uppercase">
+      <section className="border border-borda bg-carta p-4">
+        <h2 className="mb-1 border-l-4 border-luz pl-2 text-xs font-bold tracking-wide text-luz uppercase">
           trajetória do nível
         </h2>
         <Trajetoria
@@ -235,7 +235,7 @@ export default function App() {
       </>
       )}
 
-      <footer className="pb-2 text-[11px] text-suave">
+      <footer className="-mx-4 -mb-4 mt-auto bg-tinta px-4 py-4 text-[11px] leading-relaxed text-white/70 sm:-mx-6 sm:-mb-6 sm:px-6">
         O painel não decide: o botão de simulação só publica o volume ou a ocorrência de um trecho, como a plataforma
         de monitoramento faria. A decisão é produzida no serviço municipal e verificada contra
         a ABNT NBR 5101 antes de qualquer comando; nenhum dado pessoal trafega aqui

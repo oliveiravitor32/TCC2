@@ -179,7 +179,7 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
             cancelar
           </button>
           <button type="button" onClick={publicar} disabled={enviando || trecho === ""}
-            className="inline-flex items-center gap-2 rounded-md bg-luz px-3 py-2 text-sm font-medium text-fundo disabled:opacity-50">
+            className="inline-flex items-center gap-2 rounded-md bg-luz px-3 py-2 text-sm font-semibold text-white uppercase tracking-wide transition-colors hover:bg-tinta disabled:opacity-50 disabled:hover:bg-luz">
             <Send size={14} />
             {enviando ? "enviando..." : "publicar"}
           </button>

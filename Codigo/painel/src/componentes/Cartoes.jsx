@@ -15,11 +15,11 @@ import { OCORRENCIAS, RESTRICOES, lux, pct } from "../api";
 export function Cartao({ icone: Icone, titulo, children, destaque }) {
   return (
     <section
-      className={`rounded-xl border bg-carta p-4 ${
-        destaque ? "border-luz/40" : "border-borda"
+      className={`border bg-carta p-4 ${
+        destaque ? "border-luz" : "border-borda"
       }`}
     >
-      <h2 className="mb-2 flex items-center gap-2 text-xs font-medium tracking-wide text-suave uppercase">
+      <h2 className="mb-2 flex items-center gap-2 border-l-4 border-luz pl-2 text-xs font-bold tracking-wide text-luz uppercase">
         <Icone size={14} aria-hidden="true" />
         {titulo}
       </h2>
@@ -125,7 +125,7 @@ export function Entregue({ ponto, latenciaMs }) {
       : null;
   return (
     <Cartao icone={Lightbulb} titulo="luz entregue">
-      <p className="text-3xl font-semibold tabular-nums text-luz">
+      <p className="text-3xl font-extrabold tabular-nums text-luz">
         {lux(ponto?.lux_medido)}
       </p>
       <p className="text-xs text-suave">
