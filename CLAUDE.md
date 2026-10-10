@@ -4,7 +4,7 @@ Responda sempre em **português do Brasil**. O autor é iniciante em eletrônica
 
 ## Fonte da verdade
 
-> **Estado em 10/10/2026:** a versão mais recente do texto é a **v27** (`..._SP_v27.docx`), que acumula todas as rodadas; as versões v4 a v27 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
+> **Estado em 10/10/2026:** a versão mais recente do texto é a **v28** (`..._SP_v28.docx`), que acumula todas as rodadas; as versões v4 a v28 ainda aguardam a aprovação do autor no Word. A v2 abaixo é a última aprovada formalmente.
 
 A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v2.docx` (26/09/2026, com as duas rodadas de revisão aceitas pelo autor). **Siga o TCC.**
 
@@ -34,12 +34,13 @@ A especificação vigente é a **v2**: `C:\Users\vitor\Documents\GitHub\TCC2\Tra
 - `..._SP_v24_revisado.docx` = v23 aceito + retirada de Catlett et al. (Array of Things) e Sanchez et al. (SmartSantander) por decisão do autor (2.1, 2.2, 3.5.2, Quadro 18, Referências); Stratumseind (2.8) sem "meteorologia" e "há mais de uma década", que o resumo de Galič e Gellert não sustenta. `..._SP_v24.docx` = a mesma com tudo aceito.
 - `..._SP_v25_revisado.docx` = v24 aceito + correções da varredura (`AUDITORIA_VARREDURA_v24.md`, grupos D a G): verificação = piso no serviço e taxa no nó em 3.2, 3.7, 4.6 e Quadro 13; 1.2.3 e 1.6 sem "não se resolve por tabela"; ciclos 65,6 %/34,0 % e passo 0,008 (3.4.2, Quadro 6, 3.7); decisão–telemetria um para no máximo um; SP156/CGE fora do Quadro 1 e do 6.3; Reia e Cruz retirados; exceção de normas e documentos técnicos no 2.1; classe da via atribuída pelos autores (Quadro 7). Fora: D16/D17 (Apêndice A), F7, G8 (atualizar campos no Word), G9. `..._SP_v25.docx` = a mesma com tudo aceito.
 - `..._SP_v26_revisado.docx` = v25 aceito + D16 (Quadro 21: revisão narrativa, por decisão do autor) e **Figuras 1, 2 e 3 refeitas** (sem marca de revisão nas imagens): Figura 1 com VM e contêineres (não PaaS), PostgreSQL em contêiner, painel fora da VM, verificação = piso e nó com rampa e validade; Figura 2 com comando {nivel, validade_s, piso, taxa_min}, publicação só na mudança ou renovação e rampa no nó; Figura 3 com as colunas da migração 009 e decisão–telemetria 1 : 0..1. Scripts em `Codigo/figuras/`. `..._SP_v26.docx` = a mesma com tudo aceito.
-- `..._SP_v27_revisado.docx` = v26 aceito + Etapa 7 do 3.9 no estilo de lista das demais etapas (formatação marcada). `..._SP_v27.docx` = a mesma com tudo aceito (**a mais recente**). **Não afirmar** sem fonte: telegestão em operação, parque em fluxo pleno, regras "da literatura".
+- `..._SP_v27_revisado.docx` = v26 aceito + Etapa 7 do 3.9 no estilo de lista das demais etapas (formatação marcada). `..._SP_v27.docx` = a mesma com tudo aceito.
+- `..._SP_v28_revisado.docx` = v27 aceito + **reestruturação pelo roteiro do orientador** (11/10/2026): o antigo Capítulo 4 (Engenharia de Software) entrou na Metodologia como **3.12 Engenharia de software** e **3.13 Banco de dados**; 4.8–4.10 movidos para antes do banco (3.12.7–3.12.9); Resultados, Análise e Conclusões passam a ser os **Capítulos 4, 5 e 6**; Quadros renumerados (**15 = casos de teste, 16 = entidades, 17 = tabelas**); todas as referências cruzadas convertidas; sumário com quatro níveis. `..._SP_v28.docx` = a mesma com tudo aceito (**a mais recente**). **Referências a seções nas entradas v2–v27 acima seguem a numeração da época.** **Não afirmar** sem fonte: telegestão em operação, parque em fluxo pleno, regras "da literatura".
 - Novas mudanças no texto: com controle de alterações, sobre a versão com tudo aceito, salvando como arquivo novo (nunca sobrescrever a versão vigente).
 
 > O arquivo antigo `TCC_Iluminacao_Adaptativa_SP_7.docx` está **obsoleto**: a numeração de seções e quadros mudou. Referências a "7.x", "Capítulo 8" ou "Quadro 13 = interfaces" em código, comentários, `DIVERGENCIAS_TCC.txt` e `LACUNAS_TCC.txt` seguem a numeração antiga e devem ser atualizadas para a tabela abaixo quando forem tocadas.
 
-Seções mais importantes da versão nova:
+Seções mais importantes da versão vigente (numeração da v28):
 
 | Assunto | Seção nova | (antiga) |
 |---|---|---|
@@ -52,22 +53,24 @@ Seções mais importantes da versão nova:
 | Funções de diagnóstico | 3.4.5 | 7.3.5 |
 | Dados urbanos e cenários | 3.5 / 3.5.1 | — |
 | **Publicação por trecho e identificação espacial** | **3.5.2** | nova |
-| **Especificação da interface de integração (Quadro 18)** | **5.4** | nova |
+| **Especificação da interface de integração (Quadro 18)** | **4.4** | nova |
 | Previsão (Melbourne, avaliação contra persistência e média sazonal) | 3.6 | 7.5 |
 | Inferência Mamdani + verificação normativa + failsafe (Quadro 7) | 3.7 | 7.6 |
 | Classe P3/P5 (Quadro 8) | 3.8 | 7.7 |
 | Etapas 3 a 7 da avaliação e envelope esperado | 3.9 | — |
 | Dados pessoais (RNF08) | 3.10 | — |
 | **Energia e linhas de base (Quadro 9, fórmula fechada)** | **3.11** | nova |
-| RF (Quadro 10) · RNF (Quadro 11) | 4.3 · 4.4 | Quadros 11 e 12 |
-| Decisões de arquitetura (Quadro 12) · Componentes (Quadro 13) | 4.6 | Quadros 9 e 10 |
-| Implantação em nuvem | 4.6.1 | 7.2.1 |
-| Contratos das interfaces (Quadro 14) | 4.6.2 | Quadro 13 |
-| **Percurso de uma decisão (Figura 2: diagrama de sequência; exemplo real)** | **4.6.3** | nova |
-| Banco: entidades (Quadro 15), ER e modelo físico | 4.7.1 · 4.7.2 · 4.7.3 | 8.5 |
-| Modelo físico (Quadro 16) | 4.7.3 | — |
-| Casos de teste CT01–CT20 (Quadro 17) · resultado (4.10: CT15–CT20 PENDENTE) | 4.8 / 4.10 | — |
-| **Avaliação dos componentes de IA (Quadros 19 e 20)** | **5.6** | nova |
+| Engenharia de software (subseção da Metodologia, pelo roteiro) | 3.12 | Cap. 4 até a v27 |
+| RF (Quadro 10) · RNF (Quadro 11) | 3.12.3 · 3.12.4 | Quadros 11 e 12 |
+| Decisões de arquitetura (Quadro 12) · Componentes (Quadro 13) | 3.12.6 | Quadros 9 e 10 |
+| Implantação em nuvem | 3.12.6.1 | 7.2.1 |
+| Contratos das interfaces (Quadro 14) | 3.12.6.2 | Quadro 13 |
+| **Percurso de uma decisão (Figura 2: diagrama de sequência; exemplo real)** | **3.12.6.3** | nova |
+| Banco: entidades (Quadro 16), ER (Figura 3) e modelo físico | 3.13.1 · 3.13.2 · 3.13.3 | 8.5 |
+| Modelo físico (Quadro 17) | 3.13.3 | — |
+| Casos de teste CT01–CT20 (Quadro 15) · resultado (CT15–CT20 satisfeitos) | 3.12.7 / 3.12.9 | — |
+| Resultados · Análise (limitações em 5.3) · Conclusões e recomendações (6.1) | Cap. 4 · Cap. 5 · Cap. 6 | Caps. 5, 6 e 7 até a v27 |
+| **Avaliação dos componentes de IA (Quadros 19 e 20)** | **4.6** | nova |
 | Matriz de uso de IA (renumerada) | Quadro 21 | Quadro 16 |
 | **Reprodutibilidade (Quadro 22: programa, dados, comando e commit de cada resultado)** | **Apêndice B** | novo |
 
@@ -81,11 +84,11 @@ Fluxo: evento urbano (REST) → serviço de decisão [previsão → inferência 
 - **Camada de verificação** (invariante de segurança, sempre no caminho do comando; nenhum caminho da inferência chega ao nó sem passar por ela):
   1. piso: nível emitido ≥ piso da classe mínima de dimerização (lido do banco);
   2. taxa: **decréscimo** ≤ 0,1 do pleno por minuto (elevação é livre e imediata);
-  - (meteorologia **retirada** do sistema — item 49 do DIVERGENCIAS; a recomendação da NBR 5101 6.10 vira limitação declarada em 6.3.)
+  - (meteorologia **retirada** do sistema — item 49 do DIVERGENCIAS; a recomendação da NBR 5101 6.10 vira limitação declarada em 5.3.)
 - **Failsafe no nó (4ª regra, autoria dos autores, RNF07):** sem comando por X segundos → nível 1,0.
 - A decisão grava **nível pretendido** (inferência) e **nível emitido** (após verificação) separados, mais a restrição aplicada e a versão da base de regras.
 - Parâmetros normativos ficam **em tabela** (`classe_iluminacao`), não no código (RF09).
-- `decisao_id` trafega no comando e volta na telemetria. Telemetria de decisão é **1:1** com decisão; leituras periódicas sem comando **não** vão para essa tabela (4.7.2).
+- `decisao_id` trafega no comando e volta na telemetria. Telemetria de decisão é **1:1** com decisão; leituras periódicas sem comando **não** vão para essa tabela (3.13.2); decisão que mantém o alvo e não gera comando não tem telemetria (1 : 0..1).
 - Nenhum dado pessoal, imagem, áudio ou identificador trafega ou é salvo (RNF08, 3.10).
 
 ### Publicação por trecho e identificação espacial (3.5.2, itens 54 e 56)
@@ -103,7 +106,7 @@ Fluxo: evento urbano (REST) → serviço de decisão [previsão → inferência 
 volume observado (média de 5 min ÷ referência do trecho) · movimentação prevista (próxima hora) · ocorrência reportada (categórica) · faixa horária (relógio do serviço) · classe da via (atributo do ponto de luz).
 - **Saída em degraus de classe** (0 = classe da via, 1 = uma abaixo, 2 = classe mínima), convertida em fração por interpolação entre as classes **lidas de `classe_iluminacao`** (`ciclo.niveis_classe`): P3 → 1,0 / 0,75 / 0,5 (P3, P4, P5). Três degraus porque a norma admite descer no máximo duas classes. Classe sem degraus → sempre pleno.
 - R1 ocorrência → classe da via; R2 observada alta → classe da via; R3 prevista alta → classe da via; R4 observada média → uma abaixo; R5 observada baixa + prevista baixa → mínima; R6 observada baixa + prevista média → uma abaixo; R7 observada baixa + início da noite → uma abaixo. **Toda regra que desce exige ocorrência = não.** Uma pessoa sozinha NÃO força o pleno (P5 já é classe de pedestres).
-- Observada e prevista: baixa/média/alta, **trapezoidais**, fronteiras nos **tercis** de Melbourne (0,1038 e 0,4053). A norma não dá números para pouco/muito movimento: os dois tercis são **únicos** (todas as horas, todos os sensores reunidos), aplicados sobre o nível **normalizado por trecho**; critério dos autores (limitação em 6.3); à noite, 54 % das horas ficam na faixa baixa. Reativo = prevista ← observada. Sem volume, nenhuma regra de movimentação dispara.
+- Observada e prevista: baixa/média/alta, **trapezoidais**, fronteiras nos **tercis** de Melbourne (0,1038 e 0,4053). A norma não dá números para pouco/muito movimento: os dois tercis são **únicos** (todas as horas, todos os sensores reunidos), aplicados sobre o nível **normalizado por trecho**; critério dos autores (limitação em 5.3); à noite, 54 % das horas ficam na faixa baixa. Reativo = prevista ← observada. Sem volume, nenhuma regra de movimentação dispara.
 - Série da previsão = média horária dos volumes ÷ referência do trecho (p99 de 28 dias, mínimo 168 h; antes, 5 pessoas); maior entre os trechos. A previsão é também "segunda evidência" contra erro de contagem.
 - Regras só de origem normativa ou de literatura (nunca de decisões rotuladas pelos autores); base pequena e legível (RNF05). Cada decisão grava `entrada` (inclui `niveis_classe` e `degrau`) e `ativacoes`; `GET /eventos/{id}/explicacao` monta a cadeia para o painel.
 
@@ -135,7 +138,7 @@ volume observado (média de 5 min ÷ referência do trecho) · movimentação pr
 
 ### Hipótese H3 (atenção)
 
-6.1 exige comparar **acionamento antecipado (com previsão) × puramente reativo** (fração da janela de baixa demanda gasta em transição). As etapas de 3.9 ainda não preveem isso: o executor de cenários deve permitir rodar a mesma suíte com a previsão ligada e desligada.
+5.1 exige comparar **acionamento antecipado (com previsão) × puramente reativo** (fração da janela de baixa demanda gasta em transição). As etapas de 3.9 ainda não preveem isso: o executor de cenários deve permitir rodar a mesma suíte com a previsão ligada e desligada.
 
 ## Stack (Quadro 13)
 
@@ -157,9 +160,9 @@ volume observado (média de 5 min ÷ referência do trecho) · movimentação pr
 - MQTT `iluminacao/{ponto}/comando` — nível (fração do pleno) + `decisao_id`
 - MQTT `iluminacao/{ponto}/telemetria` — duty aplicado + lux + `decisao_id`
 
-## Banco (Quadro 15 + 4.7.2)
+## Banco (Quadro 16 + 3.13.2)
 
-`classe_iluminacao`, `ponto_de_luz` (com placa e UTM), `trecho_via`, `trecho_ponto`, `evento_urbano` (tipo volume|ocorrencia, pessoas_media, periodo_s, ocorrência, trecho obrigatório), `versao_base_regras`, `decisao`, `telemetria` **e a tabela associativa `decisao` ↔ `evento_urbano` (N:N)** — registra em quais eventos cada decisão se apoiou. Reclassificação de via = registro novo, nunca UPDATE do existente. A seção 4.7.3 (Quadro 16) foi escrita a partir do `schema.sql`: mudança no schema exige atualizar o Quadro 16 (e a Figura 3, o diagrama entidade-relacionamento, gerada por script a partir do schema; até a v10 ela era a Figura 2).
+`classe_iluminacao`, `ponto_de_luz` (com placa e UTM), `trecho_via`, `trecho_ponto`, `evento_urbano` (tipo volume|ocorrencia, pessoas_media, periodo_s, ocorrência, trecho obrigatório), `versao_base_regras`, `decisao`, `telemetria` **e a tabela associativa `decisao` ↔ `evento_urbano` (N:N)** — registra em quais eventos cada decisão se apoiou. Reclassificação de via = registro novo, nunca UPDATE do existente. A seção 3.13.3 (Quadro 17) foi escrita a partir do `schema.sql`: mudança no schema exige atualizar o Quadro 17 (e a Figura 3, o diagrama entidade-relacionamento, gerada por script a partir do schema; até a v10 ela era a Figura 2).
 
 Entidades acrescentadas pelo código (item 16 do `DIVERGENCIAS_TCC.txt`): `versao_modelo_previsao` (RNF04), `execucao_cenario` (RF10, 3.11, H3: regime + modo antecipado/reativo), `sessao_medicao` (residual, descarte 5 %), `calibracao` (duty × lux por série; origem da tabela do firmware), `alerta_diagnostico` (RF11), `luminaria_referencia` (Quadro 9). A view `auditoria_decisao` dá a razão entregue/esperado e a latência evento → telemetria.
 
@@ -216,7 +219,7 @@ Na VM, `~/coleta_melbourne/` (fora do repositório e dos contêineres): cron a c
 
 ## Decisões em aberto (perguntar ao autor antes de assumir)
 
-- Confirmado pelo autor: passo da rampa de 5 s, failsafe de 15 s, raio de 25 m, um trecho por publicação, decisão por **volume** (não por presença), volume a cada 5 min válido 15 min, ocorrência na hora (encerrada ou prazo), pacote aceito, níveis = classes da norma. Rejeitado pelo autor (complexo demais): campos de qualidade da leitura/condição adversa e detecção de contagem suspeita — fica como limitação em 6.3.
+- Confirmado pelo autor: passo da rampa de 5 s, failsafe de 15 s, raio de 25 m, um trecho por publicação, decisão por **volume** (não por presença), volume a cada 5 min válido 15 min, ocorrência na hora (encerrada ou prazo), pacote aceito, níveis = classes da norma. Rejeitado pelo autor (complexo demais): campos de qualidade da leitura/condição adversa e detecção de contagem suspeita — fica como limitação em 5.3.
 
 
 ## Hardware atual (já montado e testado)

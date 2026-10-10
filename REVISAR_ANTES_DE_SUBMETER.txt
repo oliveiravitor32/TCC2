@@ -1,3 +1,8 @@
+NUMERACAO (11/10/2026, v28): as referencias a secoes e quadros deste arquivo foram
+convertidas para a estrutura da v28 (Engenharia de software = 3.12, Banco de dados = 3.13;
+Resultados = Cap. 4, Analise = Cap. 5, Conclusoes = Cap. 6; Quadro 15 = casos de teste,
+16 = entidades, 17 = tabelas). Itens de norma e do Caderno (6.10, 7.2.1 etc.) nao mudaram.
+
 ===============================================================================
 REVISAR ANTES DE SUBMETER - o que os autores precisam dominar
 ===============================================================================
@@ -21,7 +26,7 @@ A. CRITERIOS E LIMIARES QUE NAO VEM DE NORMA NEM DE LITERATURA
 [ ] A1. Tercis -> classes. Movimento baixo/medio/alto (tercis do proprio trecho)
         ligado a classe minima / uma abaixo / classe da via. A norma nao da
         numeros; o criterio e "dos autores".
-        Onde: 3.7, 6.3.  Conferir: voces defendem esse criterio? Saberiam
+        Onde: 3.7, 5.3.  Conferir: voces defendem esse criterio? Saberiam
         responder "por que tercis e nao outro corte?".
 [ ] A2. Limiares do experimento de Zurique: ganho minimo de 2 pontos
         percentuais no acerto da faixa E 0,02 no F1. Foram sugeridos pela IA,
@@ -30,10 +35,10 @@ A. CRITERIOS E LIMIARES QUE NAO VEM DE NORMA NEM DE LITERATURA
         minima escolhida, vale por ter sido fixada antes).
 [ ] A3. Criterio Mamdani x tabela: exigia menos inversoes E menor variacao
         total. O Mamdani nao passou (variou menos, mas inverteu mais).
-        Onde: 3.7, 5.6, 6.3.
+        Onde: 3.7, 4.6, 5.3.
 [ ] A4. Criterio XGBoost x media sazonal no sistema: acerto da contencao maior
         ou deficit menor, sem gastar mais de 2 pp de energia. Nao passou.
-        Onde: 3.6, 5.6 (Quadro 19), 6.3.
+        Onde: 3.6, 4.6 (Quadro 19), 5.3.
 [ ] A5. "Nivel que a situacao pede" (metrica de deficit): classe da via com
         ocorrencia ou volume alto; uma classe abaixo com volume medio; margem
         de 0,02. Definicao criada para medir o horario fixo.
@@ -42,7 +47,7 @@ A. CRITERIOS E LIMIARES QUE NAO VEM DE NORMA NEM DE LITERATURA
         ou 15 min. A justificativa dos 5 min (tempo minimo da rampa P3->P5) foi
         formulada com a IA.  Onde: 3.5.2, Quadro 18.
 [ ] A7. Estimativa de ~170 mensagens por segundo para 50 mil cameras: e
-        calculo (50.000 / 300 s), nao teste.  Onde: 3.5.2, 6.3.
+        calculo (50.000 / 300 s), nao teste.  Onde: 3.5.2, 5.3.
 
 -------------------------------------------------------------------------------
 B. DESENHO DOS EXPERIMENTOS (inferencia empirica)
@@ -59,12 +64,12 @@ B. DESENHO DOS EXPERIMENTOS (inferencia empirica)
 [ ] B3. Experimento de Zurique (item 60): janela 2016-2019, pontos com >= 730
         dias e cobertura >= 95 %, treino ate 2018, teste 2019, alvo = media dos
         proximos 60 min. Escolhas feitas com a IA.
-        Onde: 3.6, 5.1, Quadro 20.  Arquivo: Codigo/modelo/PROTOCOLO_ZURIQUE.md
+        Onde: 3.6, 4.1, Quadro 20.  Arquivo: Codigo/modelo/PROTOCOLO_ZURIQUE.md
         Conferir: saber explicar por que 2016-2019 (mais pontos, antes da
         pandemia) e que o experimento mede a PREVISAO, nao a luz.
 [ ] B4. Conferencias posteriores de Zurique (por ponto, referencias mais
         espertas, intervalo de 95 %): feitas DEPOIS do protocolo e declaradas
-        assim.  Onde: 5.6.
+        assim.  Onde: 4.6.
 [ ] B5. Rodar pelo menos um comando do Quadro 22 (Apendice B) e conferir que o
         numero bate com o do texto. Sugestao:
           python -m modelo.experimento_zurique   (precisa do arquivo de dados)
@@ -75,32 +80,32 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
 -------------------------------------------------------------------------------
 [ ] C1. "Retirar as regras custa luz": o horario fixo fica uma classe abaixo do
         pedido por centenas de minutos; o adaptativo nunca fica 2 lux abaixo.
-        Onde: 5.6.  Depende de A5.
+        Onde: 4.6.  Depende de A5.
 [ ] C2. "Com a serie horaria, o XGBoost e substituivel pela media sazonal no
         sistema." Afirmacao forte e desfavoravel; esta no texto por honestidade.
-        Onde: 5.6, 6.3.  Conferir: voces concordam em afirmar isso?
+        Onde: 4.6, 5.3.  Conferir: voces concordam em afirmar isso?
 [ ] C3. "Com serie de 15 min, o XGBoost supera as referencias simples; o ganho
         e moderado (erra a faixa em ~9 % contra ~13 %)."
-        Onde: 5.1, 5.6.  Nao dizer "ML indispensavel".
+        Onde: 4.1, 4.6.  Nao dizer "ML indispensavel".
 [ ] C4. "A pertinencia nebulosa e forma de expressao e execucao das regras, com
         efeito na suavidade, e nao componente cuja retirada degrade seguranca
-        ou consumo."  Onde: 3.7, 6.3.  Conferir com o orientador: ele aceita
+        ou consumo."  Onde: 3.7, 5.3.  Conferir com o orientador: ele aceita
         essa formulacao para o requisito de "IA que faca sentido"?
 [ ] C5. Explicacao de por que o ML nao ganha com serie horaria: regras leem a
         previsao em 3 faixas; subida da luz e imediata; movimento noturno e
         regular; modelo treinado para erro medio e nao para a faixa. Os tres
         primeiros sao medidos; o ultimo e HIPOTESE, nao investigada.
-        Onde: 6.3.
+        Onde: 5.3.
 [ ] C6. "A previsao e segunda evidencia contra erro de contagem." Medido so no
         inicio da noite (0,153 x 0,280); na madrugada nao protege (119,5 min
         na classe minima indevidamente, com ou sem previsao).
         Onde: 3.7, Quadro 19.
 [ ] C7. H3 NAO confirmada em nenhuma rodada (antecipado gasta mais janela em
-        transicao que o reativo). A redacao de 6.1 ainda esta PENDENTE e a
+        transicao que o reativo). A redacao de 5.1 ainda esta PENDENTE e a
         decisao de como declarar e dos autores.
 [ ] C8. Energia: adaptativo = 102,1 % do horario fixo na suite e 87,0 % nas
         noites reais. Nao prometer economia sobre o horario fixo.
-        Onde: 3.11, 5.5 (PENDENTE), Quadro 19.
+        Onde: 3.11, 4.5 (PENDENTE), Quadro 19.
 [ ] C9. "Uma pessoa sozinha nao forca o pleno, porque a classe minima (P5) ja e
         classe de pedestres." Decisao do autor, argumento redigido com a IA.
         Onde: 3.7.
@@ -110,7 +115,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         a 15 %; 24 x 5 a 6 %), com a mesma energia. O argumento da "suavidade"
         nao se sustentou com dado real. Criterios (20 %, limiares de 15 % e
         6 %, histerese de 0,05) sugeridos pela IA e fixados antes.
-        Onde: ainda nao esta no docx (entrar em 3.7, 5.6, 6.3).
+        Onde: ainda nao esta no docx (entrar em 3.7, 4.6, 5.3).
         Conferir: decidir com o orientador como declarar o papel do fuzzy.
 
 [ ] C11. CONFLITO entre 2.6 e os resultados. A secao 2.6 afirma tres
@@ -123,7 +128,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         - "rastreabilidade": vale, mas a tabela tambem e rastreavel.
         A justificativa por interpretabilidade (Rudin; Pickering et al.)
         continua de pe. Corrigir 2.6 na proxima rodada de texto, junto com o
-        item 61, para o Capitulo 2 nao prometer o que o Capitulo 5 nao entrega.
+        item 61, para o Capitulo 2 nao prometer o que o Capitulo 4 nao entrega.
 
 [ ] C12. Redacao de 3.7 sobre os tercis. O texto diz "calculados por ponto de
         medicao, os tercis acompanham o patamar local". Na pratica: por ponto
@@ -137,7 +142,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         da serie de Melbourne (treino e teste juntos, modelo/treinar.py), e
         nao so sobre as horas noturnas, que e quando o sistema decide. A noite
         as vias passam mais de um terco do tempo na faixa baixa. O texto (3.7)
-        nao diz isso. Conferir: declarar em 3.7 ou 6.3 que o corte usa o dia
+        nao diz isso. Conferir: declarar em 3.7 ou 5.3 que o corte usa o dia
         inteiro, e saber responder "por que nao tercis so da noite?".
 
 [ ] C14. Objecao "um sistema melhor invalida a proposta" (conversa de
@@ -149,7 +154,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         "a melhor": afirmar que e viavel com o que existe e segura pela norma.
         PONTO A CONFERIR NO TEXTO: a cobertura das cameras nao e a dos postes
         (nem toda via iluminada tem camera). Nao foi achada limitacao
-        explicita sobre isso em 6.3; sem volume vigente o sistema fica no
+        explicita sobre isso em 5.3; sem volume vigente o sistema fica no
         pleno, o que e seguro, mas reduz o alcance da proposta. Decidir se
         entra como limitacao.
 
@@ -169,7 +174,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
             o nivel de iluminacao publica conforme o uso observado da via, sem
             transgredir os limites da ABNT NBR 5101?"
             CONFIRMAR COM O ORIENTADOR antes de trocar (frase do pre-projeto).
-        (c) frase-sintese para o Resumo e o Capitulo 7 (escolhida pelo autor):
+        (c) frase-sintese para o Resumo e o Capitulo 6 (escolhida pelo autor):
             "O trabalho mostra que a cidade pode iluminar conforme o uso real
             da rua, com mais seguranca que o horario fixo e menos consumo que
             a luz plena, aproveitando cameras e luminarias que ja estao
@@ -200,24 +205,24 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         diz quem associa cada camera aos trechos que ela observa (campo de
         visao, camera de esquina que ve mais de um trecho). Proposta da IA,
         APLICADA na v9 (ler e conferir): (a) frase em 3.5.2 atribuindo essa associacao a
-        plataforma; (b) limitacao em 6.3 de que ela nao foi construida nem
+        plataforma; (b) limitacao em 5.3 de que ela nao foi construida nem
         verificada. Nao afirmar que a telegestao de Sao Paulo usa TALQ: o
         texto so diz que o protocolo existe.
 
 [ ] C19. Rodada v10 (02/10/2026) - resultados redigidos pela IA, a ler:
-        - 5.2: 53.760 decisoes na suite e 667.200 no total, zero violacoes;
+        - 4.2: 53.760 decisoes na suite e 667.200 no total, zero violacoes;
           594 correcoes por taxa e 0 por piso no modo em operacao.
-        - 5.4, Tabela 1: aderencia por cenario dos tres regimes. A aderencia
+        - 4.4, Tabela 1: aderencia por cenario dos tres regimes. A aderencia
           do fluxo pleno (58,0 %) e do horario fixo (72,2 %) foi calculada
           agora (cenarios/aderencia_regimes.py); os envelopes sao dos autores.
-        - 5.5, Tabela 2: energia a 40 W e 440 W. A frase "27,5 % menos que o
+        - 4.5, Tabela 2: energia a 40 W e 440 W. A frase "27,5 % menos que o
           pleno e 2,1 % mais que o horario fixo" e leitura da tabela.
-        - Abertura de 6.3: paragrafo que liga cada limitacao ao resultado que
+        - Abertura de 5.3: paragrafo que liga cada limitacao ao resultado que
           ela afeta. E ANALISE; conferir se concordam.
         - "Tabela 1" e "Tabela 2": a IA usou "Tabela" (dado numerico) para nao
           renumerar os Quadros 19 a 22. Os Quadros 19 e 20 tambem sao
           numericos; decidir se padroniza e se cria lista de tabelas.
-        - Item 42 (pista e calcada) em 6.3 e 7.1.
+        - Item 42 (pista e calcada) em 5.3 e 6.1.
         Conferir os numeros contra cenarios/resultados/suite_*.json.
 
 [ ] C20. Subsecao 4.6.3 "Percurso de uma decisao" (v11, 02/10/2026), redigida
@@ -235,7 +240,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         - As tres mensagens de exemplo estao como paragrafos, e nao em quadro.
 
 [ ] C21. Transposicao do diagnostico para o campo (v12, 02/10/2026), redigida
-        pela IA a partir de ideia do autor: em 3.4.5, 4.6.2 e 6.3 o texto diz
+        pela IA a partir de ideia do autor: em 3.4.5, 3.12.6.2 e 5.3 o texto diz
         que, no parque, a conferencia da execucao usaria a telemetria ELETRICA
         do controlador (potencia medida x potencia esperada para o nivel), e
         que ela confirma o consumo, nao a luz que chega a via (sujeira,
@@ -243,13 +248,13 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         O texto NAO afirma que a concessionaria estima a iluminancia pelo
         consumo: falta fonte (ver D12). Conferir se concordam com a redacao.
 
-[ ] C22. 6.3 (v13, 02/10/2026): o item que juntava tres assuntos foi separado,
+[ ] C22. 5.3 (v13, 02/10/2026): o item que juntava tres assuntos foi separado,
         a pedido do autor. (a) "Cada ponto de luz e decidido isoladamente..."
         (controle coordenado); (b) protecao de dados na integracao real, com
         uma frase nova da IA: "O que o trabalho assegura e que a camada de
         decisao nao consome imagem nem identificador (3.10)". A "tensao de
         rede" saiu daqui (ja esta no item do no em baixa tensao). Conferir.
-[ ] C23. 6.3: o item "O prototipo e um no unico..." pode confundir, porque o
+[ ] C23. 5.3: o item "O prototipo e um no unico..." pode confundir, porque o
         sistema tem dois pontos de luz cadastrados (bancada e simulado) e o
         CT20 preve um segundo no. Ajustar a frase depois da sessao de bancada,
         conforme o que for demonstrado.
@@ -262,7 +267,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         no Subanexo I (so leis tributarias e administrativas). A referencia
         SAO PAULO, 2015 passou a nomear os Anexos III e V juntos; conferir se
         a forma atende a ABNT ou se e melhor separar em 2015a e 2015b.
-[ ] C25. 6.3 (v14): limitacao nova da IA sobre o indicador NI. A conclusao
+[ ] C25. 5.3 (v14): limitacao nova da IA sobre o indicador NI. A conclusao
         "um ponto atenuado ate a classe minima ... seria contado como nao
         atendido" e INTERPRETACAO da IA: o Anexo V zera o fator do ponto
         abaixo de 80 % do minimo, e P5 = 50 % de P3. A IA procurou
@@ -272,7 +277,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         como aferir a iluminancia de ponto dimerizado. Busca por palavra, nao
         leitura integral; os aditivos tambem nao tratam disso. Conferir.
 
-[ ] C26. 6.3 (v16, 03/10/2026): limitacao nova da IA sobre a cadencia de
+[ ] C26. 5.3 (v16, 03/10/2026): limitacao nova da IA sobre a cadencia de
         comando de 5 s. Calculo da IA: 600 mil pontos / 5 s = 120 mil
         comandos/s. Frase suavizada a pedido do autor: so diz que a
         viabilidade desse volume nao foi avaliada (sem afirmar que o enlace
@@ -292,13 +297,13 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
 [ ] C28. CT18 (04/10/2026, DIVERGENCIAS 66): o no aplicou o pleno 15,0 s apos o
         ultimo comando (RNF07 cumprido), mas o SENSOR so confirmou o pleno
         17,3 s apos o ultimo comando (~15,4 s apos a parada do servico). O
-        Quadro 17 diz "no pleno em ate 15 s, medido pelo sensor". DECIDIR:
+        Quadro 15 diz "no pleno em ate 15 s, medido pelo sensor". DECIDIR:
         (a) declarar o CT18 como nao atendido pelo texto estrito, explicando
         os 2,3 s de leitura; ou (b) reescrever o criterio do CT18 para medir
         a troca de nivel (e o sensor como confirmacao), declarando que a
         mudanca de criterio foi feita depois do ensaio. A IA nao escolheu.
 
-[ ] C29. v17 (05/10/2026): a IA redigiu 4.10, 5.3 e a energia de bancada em 5.5
+[ ] C29. v17 (05/10/2026): a IA redigiu 3.12.9, 4.3 e a energia de bancada em 4.5
         a partir dos registros da sessao (DIVERGENCIAS 66). Interpretacoes da
         IA a conferir: (1) latencia ate a telemetria como "limite superior" do
         RNF03; (2) "a resposta imediata pressupoe relogios sincronizados" como
@@ -312,7 +317,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         do experimento, hiperparametros da RF e o limiar de 2 % sao escolhas
         da IA, fixadas no protocolo antes de rodar. Resultado: XGBoost
         superior ao linear e EQUIVALENTE a Random Forest. Na v19 a IA redigiu
-        2.7, 3.6 e 5.1; a frase "A permanencia do reforco de gradiente
+        2.7, 3.6 e 4.1; a frase "A permanencia do reforco de gradiente
         apoia-se ... no menor custo de previsao" e justificativa da IA.
 [ ] D14. Fonte nova proposta pela IA: MAKRIDAKIS, S.; SPILIOTIS, E.;
         ASSIMAKOPOULOS, V. M5 accuracy competition: results, findings, and
@@ -369,25 +374,25 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         arquitetura, citando o Caderno 7.1.1, 7.1.2 e 7.2.1), 3.6 (Zurique como
         serie principal; paragrafo da regua p99; paragrafo da troca de serie,
         DECLARANDO que foi decidida depois dos resultados de Melbourne), 3.7,
-        3.9, 4.4 (RNF03 = 180 s, RNF07 por validade), 4.6, 4.10, Capitulo 5
+        3.9, 3.12.4 (RNF03 = 180 s, RNF07 por validade), 3.12.6, 3.12.9, Capitulo 4
         (todos os numeros trocados: conferir contra os JSON citados no Quadro
-        22), 6.3 e 7.1. Pontos de atencao:
+        22), 5.3 e 6.1. Pontos de atencao:
         - a frase "cerca de mil comandos por segundo" no parque e CALCULO da IA
           (620 mil pontos / 600 s de renovacao), nao medicao;
-        - o exemplo de 4.6.3 e da arquitetura anterior; foi acrescentado um
+        - o exemplo de 3.12.6.3 e da arquitetura anterior; foi acrescentado um
           paragrafo dizendo isso, sem refazer o exemplo;
-        - CT18 e a rampa precisam ser refeitos com o firmware novo (4.10);
+        - CT18 e a rampa precisam ser refeitos com o firmware novo (3.12.9);
         - o paragrafo explicativo "norma x tercil e regua" aprovado antes NAO
           foi incluido nesta rodada (o texto dele nao estava registrado);
         - a referencia HAN; KAMBER; PEI NAO foi posta no texto (C34);
-        - 6.1, 6.2, 6.4, 7, Resumo e Abstract continuam PENDENTES (autores).
+        - 5.1, 5.2, 5.4, 7, Resumo e Abstract continuam PENDENTES (autores).
 
 [ ] C36. Rodada v21 (10/10/2026, DIVERGENCIAS 73) - texto redigido pela IA com
-        os resultados da caixa nova: Quadro 4, 3.4.2, 3.4.4, 4.10, 5.3, 5.5, 6.3
+        os resultados da caixa nova: Quadro 4, 3.4.2, 3.4.4, 3.12.9, 4.3, 4.5, 5.3
         e Apendice B. Conferir contra bancada/resultados/sessao_113.json e
         ct*_20261010*. Pontos: (a) o CT16 usou comandos provocados (ocorrencia
         aberta/encerrada a cada 10 s), desenho da IA; (b) a primeira execucao do
-        CT17 foi interrompida por erro do roteiro, declarado em 5.3; (c) a
+        CT17 foi interrompida por erro do roteiro, declarado em 4.3; (c) a
         energia de bancada so pelo duty; (d) o ensaio de estabilidade de 10 min
         (0,2 %) e da caixa antiga e foi mantido com essa ressalva.
 
@@ -425,7 +430,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
 [ ] C40. Rodada v25 (10/10/2026, AUDITORIA_VARREDURA_v24.md), redigida pela
         IA. Conferir: (a) 1.6, 3o eixo, reescrito sem "nao se resolve por tabela";
         (b) 3.7: a escolha da inferencia nebulosa fica fundamentada so na
-        legibilidade da base (a "resposta gradual" saiu, por contradizer 5.6);
+        legibilidade da base (a "resposta gradual" saiu, por contradizer 4.6);
         (c) 2.1 ganhou excecao para normas, especificacoes tecnicas, documentos
         setoriais e o relato de Perry (2020); (d) Reia e Cruz (2023) retirados;
         (e) Quadro 7: classe da via "atribuida pelos autores". PENDENTE dos
@@ -433,6 +438,16 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         o 2.1 diz revisao narrativa) e D17 (declaracao de que todas as citacoes
         foram checadas). No Word: atualizar sumario e listas (F9) e conferir a
         Figura 1 (verificacao: piso no servico, taxa no no).
+
+[ ] C41. v28 (11/10/2026): reestruturacao pelo roteiro do orientador, feita pela IA.
+        Antigo Cap. 4 -> 3.12 (Engenharia de software) e 3.13 (Banco de dados);
+        4.8-4.10 movidos para 3.12.7-3.12.9, antes do banco; Caps. 5-7 -> 4-6;
+        Quadros 15/16/17 renumerados (casos de teste/entidades/tabelas); 111
+        referencias cruzadas convertidas por script (log conferido). Conferir no
+        Word: (a) a frase nova de abertura de 3.12 ("o banco de dados, que o
+        roteiro trata a parte, segue em 3.13"); (b) 1.7 ("ao final dele, em 3.12
+        e 3.13"); (c) atualizar sumario e listas (F9) - o sumario passou a
+        mostrar 4 niveis (3.12.6.1 etc.).
 
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
@@ -447,7 +462,7 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         Codigo/cenarios/resultados/avaliacao_ia_*.json e
         Codigo/modelo/resultados/experimento_zurique.json e
         conferencia_zurique.json.
-[ ] D5. 5.1: MAE 0,047 / 0,057 / 0,081 e RMSE 0,076 / 0,091 / 0,122 contra
+[ ] D5. 4.1: MAE 0,047 / 0,057 / 0,081 e RMSE 0,076 / 0,091 / 0,122 contra
         Codigo/modelo/resultados/metricas.json.
 
 [ ] D6. Limiar de percepcao de variacao de luz (pesquisa de 01/10/2026, feita
@@ -476,7 +491,7 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         fuzzy nem ML; economia de 24,6 % a 51 %. Muito proximo deste trabalho
         (e da "tabela com histerese" do item 61). Lido so por resumo
         automatico: os percentuais dos limiares precisam ser conferidos no
-        artigo. Candidato a entrar em 2.8 (trabalhos correlatos) e 6.2.
+        artigo. Candidato a entrar em 2.8 (trabalhos correlatos) e 5.2.
 
 [ ] D9. Conferencia de D6 feita pela IA em 01/10/2026 (rodada v8):
         - SHIKAKURA et al. (2003): resumo lido no J-STAGE; referencia completa
@@ -511,7 +526,7 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         6 %: 24, 5, 5 | 15 %: 7, 4, 4 | 20 %: 3, 3, 3 | 30 %: 2, 3, 3.
         A 30 % o fuzzy tem UMA mudanca a menos (um evento em oito noites) e
         saltos maximos menores (42 % x 50 %): e o unico ponto favoravel, e
-        pequeno. Nao apresentar como vitoria. Conferir a redacao de 3.9 e 5.6.
+        pequeno. Nao apresentar como vitoria. Conferir a redacao de 3.9 e 4.6.
 
 [ ] D12. BUSCA NECESSARIA ANTES DE FECHAR O DOCUMENTO (pedida pelo autor em
         02/10/2026): achar fonte para a afirmacao de que a telegestao usa a
@@ -639,8 +654,8 @@ E. DECLARACAO E ENTREGA
 [ ] E3. Os tres autores leram os Quadros 19 e 20 e sabem explica-los.
 [ ] E4. git push feito e repositorio tornado publico (o Apendice B afirma que e
         publico); antes, conferir que nao ha segredo no historico.
-[ ] E5. Mostrar os Quadros 19 e 20 ao orientador ANTES de escrever 6.1, 6.2,
-        6.4 e o Capitulo 7.
+[ ] E5. Mostrar os Quadros 19 e 20 ao orientador ANTES de escrever 5.1, 5.2,
+        5.4 e o Capitulo 6.
 
 ===============================================================================
 FIM
