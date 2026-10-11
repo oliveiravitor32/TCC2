@@ -1,3 +1,8 @@
+NOTA 10/10/2026: por decisao do autor no chat, marcados como prontos D1-D15
+(fontes conferidas pela equipe), C54 e C55 (arquitetura e custo revisados),
+C52, C56 e C57 (Cap. 5/6 conferidos e conclusao reescrita pelo autor;
+percentuais do Quadro 19 preenchidos). A IA so registrou a marcacao.
+
 NUMERACAO (11/10/2026, v28): as referencias a secoes e quadros deste arquivo foram
 convertidas para a estrutura da v28 (Engenharia de software = 3.12, Banco de dados = 3.13;
 Resultados = Cap. 4, Analise = Cap. 5, Conclusoes = Cap. 6; Quadro 15 = casos de teste,
@@ -319,7 +324,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         superior ao linear e EQUIVALENTE a Random Forest. Na v19 a IA redigiu
         2.7, 3.6 e 4.1; a frase "A permanencia do reforco de gradiente
         apoia-se ... no menor custo de previsao" e justificativa da IA.
-[ ] D14. Fonte nova proposta pela IA: MAKRIDAKIS, S.; SPILIOTIS, E.;
+[x] D14. Fonte nova proposta pela IA: MAKRIDAKIS, S.; SPILIOTIS, E.;
         ASSIMAKOPOULOS, V. M5 accuracy competition: results, findings, and
         conclusions. International Journal of Forecasting, v. 38, n. 4,
         p. 1346-1364, 2022 (dados conferidos no Crossref). O conteudo (metodos
@@ -551,7 +556,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         diagrama de casos de uso (atores e relacoes <<include>> sao escolha
         da IA, nao vem de norma).
 
-[ ] C52. v46: CAPITULO 5 (5.1, 5.2, 5.4) E ABERTURA DO CAPITULO 6 REDIGIDOS
+[x] C52. v46: CAPITULO 5 (5.1, 5.2, 5.4) E ABERTURA DO CAPITULO 6 REDIGIDOS
         PELA IA, pelo roteiro aprovado pelo autor. Sao analise critica e
         conclusao (Apendice A, item 2): os autores precisam ler, reescrever com
         as proprias palavras o que nao reconhecerem como seu e conferir cada
@@ -565,7 +570,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
 [ ] C53. v48: Resumo e Abstract redigidos pela IA e aprovados pelo autor no
         chat. Conferir se os numeros batem com a versao final do Capitulo 4
         (667.200 passos; 1,03-1,47 s; 24,3 % e 37,6 %) caso o texto mude.
-[ ] C54. v51: NOVA SUBSECAO 3.12.6.4 "Arquitetura de referencia para operacao
+[x] C54. v51: NOVA SUBSECAO 3.12.6.4 "Arquitetura de referencia para operacao
         em escala" REDIGIDA PELA IA, a pedido do autor (proposta, nao
         implantada nem ensaiada). E desenho de projeto: os autores precisam
         concordar com cada escolha e saber defende-la na banca:
@@ -588,7 +593,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         unica da camada gratuita, escolhida pelo custo, ponto unico de
         falha, copias de seguranca manuais), a frase acrescentada no fim de
         3.12.6.1 e a recomendacao nova em 6.1.
-[ ] C55. v53: APENDICE D + QUADRO 21 (custo da arquitetura de referencia na
+[x] C55. v53: APENDICE D + QUADRO 21 (custo da arquitetura de referencia na
         AWS, Sao Paulo): ~US$ 2.976/mes (~US$ 36 mil/ano). Precos: AWS Price
         List oficial, sob demanda, consultada pela IA em 10/10/2026 (conta em
         Codigo/custo/estimativa_aws.py). O DIMENSIONAMENTO E DA IA e os
@@ -604,7 +609,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         R$, converter citando a cotacao e a data. Fora da conta (declarado
         no texto): transferencia, LCU/GB processado, CloudWatch, backup
         extra, impostos, suporte, descontos de 1-3 anos, homologacao.
-[ ] C56. v55: QUADRO 19 com seis linhas novas, % EM BRANCO. Depois da
+[x] C56. v55: QUADRO 19 com seis linhas novas, % EM BRANCO. Depois da
         conferencia manual, preencher o percentual de cada uma conforme o
         que os autores realmente fizeram. Pontos combinados no chat para nao
         esbarrar na "Vedacao Expressa" do modelo da declaracao:
@@ -616,7 +621,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
           fechar C54 e C55.
         - Saber explicar na banca, sem o texto, cada decisao (ex.: por que
           H3 foi rejeitada, por que Kafka).
-[ ] C57. v56: CONCLUSAO DO CAP. 6 trocada pela versao em seis sentencas
+[x] C57. v56: CONCLUSAO DO CAP. 6 trocada pela versao em seis sentencas
         feita a partir do rascunho do autor (a IA condensou e corrigiu os
         fatos: 98,2 % e do regime com previsao; noites de Zurique sao do
         periodo de teste; previsao so ganha com 15 min). Ler e, se quiser,
@@ -629,20 +634,20 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
 -------------------------------------------------------------------------------
-[ ] D1. Referencia STADT ZURICH (2026): abrir o link, conferir titulo, licenca
+[x] D1. Referencia STADT ZURICH (2026): abrir o link, conferir titulo, licenca
         CC0 e que os valores sao de 15 min. Ajustar o negrito no Word.
-[ ] D2. Array of Things (CATLETT et al., 2017): conferir na fonte que o arranjo
+[x] D2. Array of Things (CATLETT et al., 2017): conferir na fonte que o arranjo
         e "resumir na origem e publicar so a medida derivada".  Onde: 3.5.2.
-[ ] D3. NBR 5101, 6.10.2: conferir no texto da norma o limite de descida e que
+[x] D3. NBR 5101, 6.10.2: conferir no texto da norma o limite de descida e que
         se admite descer no maximo duas classes.  Onde: 3.5.2, 3.7.
-[ ] D4. Numeros dos Quadros 19 e 20: conferir contra os arquivos
+[x] D4. Numeros dos Quadros 19 e 20: conferir contra os arquivos
         Codigo/cenarios/resultados/avaliacao_ia_*.json e
         Codigo/modelo/resultados/experimento_zurique.json e
         conferencia_zurique.json.
-[ ] D5. 4.1: MAE 0,047 / 0,057 / 0,081 e RMSE 0,076 / 0,091 / 0,122 contra
+[x] D5. 4.1: MAE 0,047 / 0,057 / 0,081 e RMSE 0,076 / 0,091 / 0,122 contra
         Codigo/modelo/resultados/metricas.json.
 
-[ ] D6. Limiar de percepcao de variacao de luz (pesquisa de 01/10/2026, feita
+[x] D6. Limiar de percepcao de variacao de luz (pesquisa de 01/10/2026, feita
         pela IA so por resumos de busca, SEM ler os artigos): Akashi e Neches
         (2004) - metade das pessoas detecta reducao de ~15 %; Shikakura,
         Morikawa e Nakamura (2003) - detectam ~6 % (aumento) e ~8 % (reducao),
@@ -651,7 +656,7 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         5-10 lux. Se for usar no texto: abrir cada artigo, conferir os numeros
         e declarar que sao de ambiente interno.
 
-[ ] D7. "Fuzzy e muito usado em iluminacao": a IA afirmou isso sem fonte. A
+[x] D7. "Fuzzy e muito usado em iluminacao": a IA afirmou isso sem fonte. A
         busca de 01/10/2026 (so resumos) achou prototipos com Arduino, sensor
         de presenca e de luz ambiente, saida de 0 a 100 %, comparados com
         "sem fuzzy" ou liga/desliga (ex.: "Internet of things and fuzzy logic
@@ -660,7 +665,7 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         2022; "A Traffic-aware Street Lighting System Based on Fuzzy Logic
         Controller", IEEE, 2022). NAO achou comparacao de fuzzy contra tabela
         com as mesmas regras. So citar depois de abrir cada artigo.
-[ ] D8. Pasolini et al. (2024), Sensors 24(18):5942, "Comprehensive Assessment
+[x] D8. Pasolini et al. (2024), Sensors 24(18):5942, "Comprehensive Assessment
         of Context-Adaptive Street Lighting": implantacao real em larga escala
         (Vietna e Italia, milhares de luminarias) com regra DETERMINISTICA por
         classe da EN 13201: desce de classe apos duas amostras seguidas abaixo
@@ -670,7 +675,7 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         automatico: os percentuais dos limiares precisam ser conferidos no
         artigo. Candidato a entrar em 2.8 (trabalhos correlatos) e 5.2.
 
-[ ] D9. Conferencia de D6 feita pela IA em 01/10/2026 (rodada v8):
+[x] D9. Conferencia de D6 feita pela IA em 01/10/2026 (rodada v8):
         - SHIKAKURA et al. (2003): resumo lido no J-STAGE; referencia completa
           (v. 27, n. 2, p. 75-82, DOI 10.2150/jlve.27.75). Diz: variacao de
           0,92 a 1,06 nao e percebida por observador atento. OK para o 6 %.
@@ -685,7 +690,7 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
           lux; o trabalho conta ELEVACOES em via a 5-10 lux. A extrapolacao
           esta declarada em 3.9; saber defende-la ou assumir como limite.
 
-[ ] D10. Por decisao do autor (01/10/2026), a citacao de AKASHI; NECHES (2004)
+[x] D10. Por decisao do autor (01/10/2026), a citacao de AKASHI; NECHES (2004)
         foi RETIRADA do texto e das referencias (v8), por o artigo nao ter
         sido lido. Ficou so SHIKAKURA et al. (2003), conferida pelo resumo no
         J-STAGE. Em 3.9, o limiar de 6 % e o da fonte; o de 15 % passou a ser
@@ -694,7 +699,7 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         Shikakura (DOI 10.2150/jlve.27.75) e saber dizer que e estudo de
         escritorio.
 
-[ ] D11. Limiares de percepcao no texto (v8, reorganizado em 01/10/2026). O
+[x] D11. Limiares de percepcao no texto (v8, reorganizado em 01/10/2026). O
         autor sugeriu trocar o limiar fixado pelo achado na fonte; a IA NAO
         fez isso (o protocolo com 15 % e 6 % esta no commit 1f376d9, anterior
         ao resultado). O texto de 3.9 diz: o protocolo fixou 15 % e 6 %; so o
@@ -705,7 +710,7 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         saltos maximos menores (42 % x 50 %): e o unico ponto favoravel, e
         pequeno. Nao apresentar como vitoria. Conferir a redacao de 3.9 e 4.6.
 
-[ ] D12. BUSCA NECESSARIA ANTES DE FECHAR O DOCUMENTO (pedida pelo autor em
+[x] D12. BUSCA NECESSARIA ANTES DE FECHAR O DOCUMENTO (pedida pelo autor em
         02/10/2026): achar fonte para a afirmacao de que a telegestao usa a
         medicao eletrica (corrente, potencia) para monitorar a luminaria e, se
         for o caso, para ESTIMAR a luz emitida a partir do consumo.
@@ -733,7 +738,7 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
         aparecer, da para reforcar 3.4.5 e o Quadro 3; se nao aparecer, deixar
         como esta.
 
-[ ] D13. BUSCA NECESSARIA (pergunta do orientador em 03/10/2026, "o que a
+[x] D13. BUSCA NECESSARIA (pergunta do orientador em 03/10/2026, "o que a
         legislacao determina sobre a quantidade minima"): achar a CLAUSULA que
         torna a ABNT NBR 5101 obrigatoria no municipio de Sao Paulo - em
         principio, o contrato de concessao e o Caderno de Encargos (SAO PAULO,
@@ -796,7 +801,7 @@ D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
           pelo 4o termo aditivo (cronograma de modernizacao de out/2022 a
           ago/2024), mas continua previsto.
 
-[ ] D15. Fontes novas propostas pela IA para justificar a normalizacao pelo
+[x] D15. Fontes novas propostas pela IA para justificar a normalizacao pelo
         percentil 99 (07/10/2026; ainda NAO estao no texto):
         (1) DIXON, W. J. Simplified estimation from censored normal samples.
             The Annals of Mathematical Statistics, v. 31, n. 2, p. 385-391,
