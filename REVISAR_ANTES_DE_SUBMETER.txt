@@ -630,6 +630,13 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         a da inferencia nebulosa com mais variaveis e conjectura do autor.
         O autor declarou no chat que a conclusao e texto dele (a IA so
         resumiu); confirmar que a linha do Quadro 19 reflete isso.
+[ ] C58. v59 (checagem do roteiro): texto novo da IA a conferir - (a) 3.12.2,
+        justificativa do processo iterativo e incremental (prazo curto,
+        equipe pequena, especificacao como criterio); (b) paragrafo novo no
+        fim de 5.4 com os trabalhos em sequencia; (c) 4.6 reescrito so com a
+        leitura pelo criterio (a interpretacao ficou em 5.2); (d) frase das
+        hipoteses e "arranjo nao localizado na revisao" no Resumo/Abstract
+        (Resumo agora com 289 palavras).
 
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)

@@ -125,15 +125,17 @@ Para conferir à mão, use a coluna "Onde olhar".
 
 ## Lista de correções (para marcar à mão)
 
+[x] = aplicado pela IA na v59, a conferir no Word.
+
 - [ ] F9 no Word (Sumário com 3.12.6.4 e Apêndice D; Quadro 21 na lista)
-- [ ] Resumo e Abstract: uma frase sobre a revisão/lacuna e as hipóteses
+- [x] Resumo e Abstract: uma frase sobre a revisão/lacuna e as hipóteses
 - [ ] 3.1: citar autor de metodologia lido pela equipe
-- [ ] 3.12: trocar "que o roteiro trata à parte" por "que se apresenta em 3.13"
-- [ ] 3.12.2: uma frase justificando o processo iterativo e incremental
-- [ ] 3.12.9: número e data dos testes automatizados (CT01–CT14)
-- [ ] 4.4 e 4.6: mover a interpretação para 5.2 (deixar só números e leitura pelo critério)
-- [ ] 4.1 e 4.6: "O/no/do Tabela" → "A/na/da Tabela"
-- [ ] 5.4: parágrafo curto sugerindo os trabalhos em sequência (remete a 6.1)
-- [ ] Cap. 6: citar os objetivos a) e b) na 2ª sentença
-- [ ] GALIC → GALIČ nas citações
+- [x] 3.12: trocar "que o roteiro trata à parte" por "que se apresenta em 3.13"
+- [x] 3.12.2: uma frase justificando o processo iterativo e incremental
+- [x] 3.12.9: número e data dos testes automatizados (CT01–CT14)
+- [x] 4.4 e 4.6: mover a interpretação para 5.2 (deixar só números e leitura pelo critério)
+- [x] 4.1 e 4.6: "O/no/do Tabela" → "A/na/da Tabela"
+- [x] 5.4: parágrafo curto sugerindo os trabalhos em sequência (remete a 6.1)
+- [x] Cap. 6: citar os objetivos a) e b) na 2ª sentença
+- [x] GALIC → GALIČ nas citações
 - [ ] Decidir com o orientador: autor-data alfabético × numérico; incluir "Bibliografia consultada"
