@@ -637,6 +637,15 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         leitura pelo criterio (a interpretacao ficou em 5.2); (d) frase das
         hipoteses e "arranjo nao localizado na revisao" no Resumo/Abstract
         (Resumo agora com 289 palavras).
+[ ] C59. v60: paragrafo novo em 3.1 com WAZLAWICK (2009), redigido pela IA
+        a partir do cap. 2 do livro (secoes 2.2, 2.3 e 2.6, lidas pela IA):
+        conferir que o enquadramento (pesquisa empirica, "apresentacao de
+        algo presumivelmente melhor", hipotese como "coracao da monografia")
+        e o que voces querem. As categorias aplicada/quantitativa/exploratoria
+        da 3.1 NAO vem do Wazlawick (o livro nao usa essa classificacao); se
+        a banca perguntar a fonte delas, citar outro autor lido. Wazlawick e
+        de 2009, fora do recorte de 10 anos de 2.1 (mas e obra de metodologia,
+        nao fonte da revisao). Conferir a BIBLIOGRAFIA CONSULTADA (10 docs).
 
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
