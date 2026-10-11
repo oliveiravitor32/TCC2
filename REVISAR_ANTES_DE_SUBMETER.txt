@@ -581,8 +581,9 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
           eventos/telemetria; painel com login do municipio e perfis;
         - orquestracao (ex.: Kubernetes) em mais de uma zona, cofre de
           segredos, rastreamento pelo decisao_id.
-        Os produtos entre parenteses NAO estao no texto (ficou generico de
-        proposito); se quiserem cita-los, pedir. Sem fonte bibliografica: e
+        v52: os produtos foram citados no texto, a pedido do autor, como
+        exemplos de codigo aberto (Kong, Kafka, Redis, MLflow, TimescaleDB,
+        Keycloak, Kubernetes, Vault, OpenTelemetry/Prometheus/Grafana). Sem fonte bibliografica: e
         proposta dos autores. Conferir tambem a limitacao nova em 5.3 (VM
         unica da camada gratuita, escolhida pelo custo, ponto unico de
         falha, copias de seguranca manuais), a frase acrescentada no fim de
