@@ -604,6 +604,18 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         R$, converter citando a cotacao e a data. Fora da conta (declarado
         no texto): transferencia, LCU/GB processado, CloudWatch, backup
         extra, impostos, suporte, descontos de 1-3 anos, homologacao.
+[ ] C56. v55: QUADRO 19 com seis linhas novas, % EM BRANCO. Depois da
+        conferencia manual, preencher o percentual de cada uma conforme o
+        que os autores realmente fizeram. Pontos combinados no chat para nao
+        esbarrar na "Vedacao Expressa" do modelo da declaracao:
+        - Cap. 5 e abertura do Cap. 6: confirmar cada julgamento (H1, H2,
+          H3, implicacoes) e reescrever com palavras proprias ao menos a
+          conclusao do Cap. 6 - a linha diz "texto conferido e reescrito".
+        - Cap. 2: opcao B (declarar a redacao de trechos pela IA).
+        - 3.12.6.4/Apendice D: so vale "revisadas e aprovadas" depois de
+          fechar C54 e C55.
+        - Saber explicar na banca, sem o texto, cada decisao (ex.: por que
+          H3 foi rejeitada, por que Kafka).
 
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
