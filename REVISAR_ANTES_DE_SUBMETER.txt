@@ -646,6 +646,18 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         a banca perguntar a fonte delas, citar outro autor lido. Wazlawick e
         de 2009, fora do recorte de 10 anos de 2.1 (mas e obra de metodologia,
         nao fonte da revisao). Conferir a BIBLIOGRAFIA CONSULTADA (10 docs).
+[ ] C60. v61: 3.12.6.4, Apendice D e 5.3 REESCRITOS PELA IA a partir do
+        VALIDACAO_ARQUITETURA.md. Conferir: (a) grupo de controle = postes com
+        o mesmo conjunto de trechos; a afirmacao "nao altera nenhum nivel" vale
+        porque cada poste ja decide pelo maior volume e por qualquer ocorrencia
+        dos seus trechos; (b) numeros de escala (170/730 publ./s; 850/3.700
+        decisoes/s; ~1.000 decisoes/s por grupo; ~250 previsoes/s; "dezenas de
+        milhares" no Brasil) sao CALCULO a partir do recorte (5,1 postes por
+        trecho, ~2 por grupo), nao teste; (c) failsafe de campo = agenda
+        residente com sinal de vida por grupo: PROPOSTA, difere do RNF07
+        ensaiado; (d) Apendice D: os mesmos US$ 2.976/mes passam a valer tambem
+        para a cobertura total so por causa da decisao por grupo e da previsao
+        por trecho - estimativa da IA, nao recalculada por teste de carga.
 
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)
