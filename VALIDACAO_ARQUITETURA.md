@@ -158,3 +158,40 @@ Os números de escala são **cálculo, não teste de carga**.
 4. **3.12.6.4:** uma frase sobre eventos atrasados e sobre DR em outra região.
 5. **Apêndice D:** declarar que o custo vale para a cobertura atual (~50 mil câmeras) e que a cobertura total exige redimensionar.
 6. **5.3:** limitação sobre a capacidade de descida das redes de telegestão, não avaliada.
+
+---
+
+## 5. Arquitetura corrigida: decisões que dão escala (18/10/2026)
+
+**Dado novo, do recorte real do Jardim Helena:** 34 postes associados formam **17 grupos distintos**. Grupo é o conjunto de postes que enxergam exatamente os mesmos trechos. Na média, 2 postes por grupo.
+
+| # | Decisão | Efeito em São Paulo, cobertura total |
+|---|---|---|
+| 1 | **Unidade de decisão = grupo de controle** (postes com o mesmo conjunto de trechos, ou o circuito ou grupo da telegestão), com o lado seguro: maior volume dos trechos e ocorrência em qualquer um | ~330 mil grupos no lugar de 663 mil pontos |
+| 2 | **Previsão por trecho, a cada 15 min, em lote** | ~243 previsões/s no lugar de ~3.700 |
+| 3 | **Uma decisão por grupo por janela de 5 min**, agregando os avisos dos trechos | ~1.100 decisões/s × 0,8 ms ≈ 1 núcleo de inferência; cabe em 2 a 4 vCPU com folga |
+| 4 | **Comando em grupo, só quando o nível muda** (TALQ prevê grupos; o Caderno prevê comando isolado ou em grupo) | da ordem de dezenas a ~100 comandos/s, no lugar de ~1.000 |
+| 5 | **Failsafe de campo = agenda residente no controlador**, com validade longa e **sinal de vida por gateway ou grupo**, não por luminária | descida para a rede de campo fica mínima; sem a central, a luminária volta à agenda ou ao pleno |
+| 6 | **Dois estágios na fila:** eventos por trecho → avisos por grupo (um único dono por grupo) | elimina a corrida (ponto C) |
+| 7 | **Registro completo só da decisão que muda o nível**, em série temporal comprimida; retenção quente de ~90 dias, depois arquivo frio | da ordem de ~10 GB/dia sem compressão, ~1 GB/dia comprimido; a auditoria se mantém (RNF04 reexecuta pelos eventos) |
+| 8 | **Retomada escalonada** com limite de taxa e prioridade para ocorrências | sem pico na rede de campo depois de uma falha |
+| 9 | **Hora do evento, não da chegada**, e descarte do que já venceu | resolve atraso e ordem |
+| 10 | **Células por município ou região**, cada uma com sua fila, decisão, banco e adaptador para a central da concessionária local. Base de regras, tabela de classes e modelos vêm de um registro comum e versionado | escala para muitos municípios e para o país sem sistema central único; falha de uma célula não afeta as outras |
+| 11 | **Backup em outra região** e RTO/RPO declarados | recuperação de desastre |
+
+**Escala nacional (ordem de grandeza):** ~22 milhões de pontos no país (ABCIP, 2024a), ~33 vezes São Paulo. São ~36 mil decisões por segundo **somadas entre as células**. Cada município roda a sua, e o maior é São Paulo. Não há gargalo central.
+
+## 6. Revalidação dos pontos A a H com a arquitetura corrigida
+
+| Ponto | Antes | Com a correção | Restou |
+|---|---|---|---|
+| A. Armazenamento | ❌ 150–300 GB/dia no RDS | ✅ ~1 GB/dia comprimido (decisões 7) | dimensionar a retenção com a prefeitura |
+| B. Processamento | ⚠️ 20–30 vCPU na cobertura total | ✅ 2–4 vCPU (decisões 1–3) | confirmar por teste de carga |
+| C. Corrida trecho × ponto | ⚠️ | ✅ dono único por grupo (decisão 6) | — |
+| D. Rede de telegestão | ❌ ~1.000 descidas/s permanentes | ✅ dezenas/s, só na mudança, em grupo; failsafe residente (decisões 4–5) | capacidade real da central e da rede da concessionária não é pública: limitação declarada |
+| E. Retomada | ⚠️ pico | ✅ escalonada (decisão 8) | — |
+| F. Tempo e ordem | ⚠️ | ✅ hora do evento (decisão 9) | — |
+| G. Desastre | ⚠️ uma região | ✅ backup em outra região; células independentes (decisões 10–11) | — |
+| H. Custo | ⚠️ subestimado para a cobertura total | ✅ com 1–3 e 7, a infraestrutura do Apêndice D passa a caber também na cobertura total de SP | recalcular para confirmar |
+
+**Perda aceita:** dentro de um grupo, todos os postes recebem o mesmo nível. Ele é o mais exigente entre os trechos do grupo, ou seja, o lado seguro. Isso troca um pouco de economia por muito menos tráfego, o mesmo compromisso que o texto já declara em 3.3 para comando de circuito.
