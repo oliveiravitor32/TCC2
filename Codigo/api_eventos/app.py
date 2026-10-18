@@ -16,7 +16,10 @@ com a chave publica, qualquer pessoa gravaria uma calibracao falsa.
 
 from __future__ import annotations
 
+import logging
 import os
+import time as _relogio
+import uuid
 from pathlib import Path
 import secrets
 from collections.abc import Iterator
@@ -26,8 +29,10 @@ from datetime import datetime, time, timedelta, timezone
 from typing import Any
 
 import psycopg
-from fastapi import Body, Depends, FastAPI, Header, HTTPException, Query, Response, status
+from fastapi import Body, Depends, FastAPI, Header, HTTPException, Query, Request, Response, status
+from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from psycopg.errors import ForeignKeyViolation
 from psycopg.rows import dict_row
@@ -79,6 +84,26 @@ HORA_FIM_ATENUACAO = time(5, 0)
 
 _pool: ConnectionPool | None = None
 
+# Log da API (chave=valor, hora UTC). Nunca registra a chave de acesso nem
+# dado pessoal (RNF08): so origem da requisicao, trecho, tipo e motivo.
+log = logging.getLogger("api")
+if not log.handlers:
+    _saida = logging.StreamHandler()
+    _formato = logging.Formatter("%(asctime)sZ %(levelname)s api %(message)s", "%Y-%m-%dT%H:%M:%S")
+    _formato.converter = _relogio.gmtime
+    _saida.setFormatter(_formato)
+    log.addHandler(_saida)
+    log.setLevel(logging.INFO)
+    log.propagate = False
+
+
+def _cliente(request: Request) -> str:
+    """IP de quem chamou; atras do Caddy, o primeiro de X-Forwarded-For."""
+    encaminhado = request.headers.get("x-forwarded-for")
+    if encaminhado:
+        return encaminhado.split(",")[0].strip()
+    return request.client.host if request.client else "-"
+
 
 @asynccontextmanager
 async def _ciclo_de_vida(_: FastAPI):
@@ -97,8 +122,39 @@ app = FastAPI(
     lifespan=_ciclo_de_vida,
 )
 
+@app.middleware("http")
+async def _registro(request: Request, chamar):
+    """Identificador da requisicao (devolvido em X-Request-ID) e registro das
+    escritas e de toda resposta de erro, com a duracao."""
+    rid = request.headers.get("x-request-id") or uuid.uuid4().hex[:12]
+    request.state.rid = rid
+    inicio = _relogio.perf_counter()
+    try:
+        resposta = await chamar(request)
+    except Exception:
+        log.exception("rid=%s %s %s erro interno", rid, request.method, request.url.path)
+        resposta = JSONResponse({"detail": "erro interno", "request_id": rid}, status_code=500)
+    ms = (_relogio.perf_counter() - inicio) * 1000
+    if request.method != "GET" or resposta.status_code >= 400:
+        nivel = logging.WARNING if resposta.status_code >= 400 else logging.INFO
+        log.log(nivel, "rid=%s %s %s status=%s ms=%.0f ip=%s", rid, request.method,
+                request.url.path, resposta.status_code, ms, _cliente(request))
+    resposta.headers["X-Request-ID"] = rid
+    return resposta
+
+
+@app.exception_handler(RequestValidationError)
+async def _validacao(request: Request, erro: RequestValidationError):
+    motivos = "; ".join(".".join(str(x) for x in e.get("loc", ())) + ": " + str(e.get("msg"))
+                        for e in erro.errors()[:5])
+    log.warning("rid=%s %s recusado: %s", getattr(request.state, "rid", "-"),
+                request.url.path, motivos)
+    return await request_validation_exception_handler(request, erro)
+
+
 app.add_middleware(
     CORSMiddleware,
+    expose_headers=["X-Request-ID"],
     allow_origins=ORIGENS,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
@@ -116,7 +172,14 @@ def conexao() -> Iterator[psycopg.Connection]:
 Conn = Depends(conexao)
 
 
-def exigir_chave(x_chave_api: str | None = Header(default=None)) -> None:
+def _recusar_chave(request: Request) -> None:
+    log.warning("rid=%s chave ausente ou invalida em %s %s ip=%s",
+                getattr(request.state, "rid", "-"), request.method, request.url.path,
+                _cliente(request))
+    raise HTTPException(status.HTTP_401_UNAUTHORIZED, "chave de acesso ausente ou invalida")
+
+
+def exigir_chave(request: Request, x_chave_api: str | None = Header(default=None)) -> None:
     """So quem tem a chave publica eventos: sem ela, qualquer pessoa na
     internet mudaria a luz. A comparacao em tempo constante nao entrega a
     chave por diferenca de tempo de resposta."""
@@ -124,10 +187,10 @@ def exigir_chave(x_chave_api: str | None = Header(default=None)) -> None:
         return
     validas = [c for c in (CHAVE_API, CHAVE_DEMO) if c]
     if x_chave_api is None or not any(secrets.compare_digest(x_chave_api, c) for c in validas):
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "chave de acesso ausente ou invalida")
+        _recusar_chave(request)
 
 
-def exigir_chave_secreta(x_chave_api: str | None = Header(default=None)) -> None:
+def exigir_chave_secreta(request: Request, x_chave_api: str | None = Header(default=None)) -> None:
     """Para gravar dados de medicao: so a CHAVE_API, nunca a CHAVE_DEMO.
 
     A chave do painel e publica (esta na aplicacao estatica); aceita-la aqui
@@ -138,7 +201,7 @@ def exigir_chave_secreta(x_chave_api: str | None = Header(default=None)) -> None
     if not CHAVE_API:
         return
     if x_chave_api is None or not secrets.compare_digest(x_chave_api, CHAVE_API):
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "chave de acesso ausente ou invalida")
+        _recusar_chave(request)
 
 
 # ---------------------------------------------------------------------------
@@ -160,10 +223,17 @@ def _gravar(conn: psycopg.Connection, evento: EventoEntrada) -> dict:
         ).fetchone()
 
 
+def _log_aceito(rid: str, ev: dict) -> None:
+    medida = (f"pessoas_media={ev['pessoas_media']}" if ev["tipo"] == "volume"
+              else f"ocorrencia={ev['ocorrencia']}")
+    log.info("rid=%s evento=%s trecho=%s tipo=%s %s origem=%s", rid, ev["id"], ev["trecho"],
+             ev["tipo"], medida, ev["origem"])
+
+
 @app.post("/eventos", response_model=Evento | ResultadoPacote, status_code=status.HTTP_201_CREATED,
           dependencies=[Depends(exigir_chave)])
 def publicar_evento(
-    response: Response, corpo: Any = Body(...), conn: psycopg.Connection = Conn
+    request: Request, response: Response, corpo: Any = Body(...), conn: psycopg.Connection = Conn
 ) -> dict:
     """Um item ou um pacote (lista) de itens (DIVERGENCIAS 56).
 
@@ -178,9 +248,12 @@ def publicar_evento(
         except ValidationError as erro:
             raise RequestValidationError(erro.errors()) from None
         try:
-            return _gravar(conn, evento)
+            gravado = _gravar(conn, evento)
+            _log_aceito(request.state.rid, gravado)
+            return gravado
         except ForeignKeyViolation:
             # Trecho fora do cadastro: o evento nao tem a que luminaria se referir.
+            log.warning("rid=%s recusado: trecho %s nao cadastrado", request.state.rid, evento.trecho)
             raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT,
                                 f"trecho {evento.trecho} nao cadastrado") from None
     if not isinstance(corpo, list) or not 1 <= len(corpo) <= config.MAX_ITENS_PACOTE:
@@ -196,8 +269,13 @@ def publicar_evento(
             continue
         try:
             aceitos.append(_gravar(conn, evento))
+            _log_aceito(request.state.rid, aceitos[-1])
         except ForeignKeyViolation:
             recusados.append({"indice": i, "erro": f"trecho {evento.trecho} nao cadastrado"})
+    for r in recusados:
+        log.warning("rid=%s pacote item=%s recusado: %s", request.state.rid, r["indice"], r["erro"])
+    log.info("rid=%s pacote itens=%s aceitos=%s recusados=%s", request.state.rid, len(corpo),
+             len(aceitos), len(recusados))
     response.status_code = status.HTTP_200_OK
     return {"aceitos": aceitos, "recusados": recusados}
 
@@ -594,6 +672,8 @@ def gravar_sessao_bancada(corpo: SessaoBancadaEntrada, conn: psycopg.Connection 
             conn, corpo.ponto, corpo.lux_residual, corpo.aprovada, corpo.observacao)
     except PontoNaoCadastrado:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "ponto nao cadastrado") from None
+    log.info("bancada conferencia ponto=%s sessao=%s aprovada=%s residual=%s descartada=%s",
+             corpo.ponto, sid, corpo.aprovada, corpo.lux_residual, descartada)
     return {"sessao_id": sid, "descartada": descartada}
 
 
@@ -608,4 +688,6 @@ def gravar_calibracao_bancada(corpo: CalibracaoEntrada, conn: psycopg.Connection
             corpo.observacao, corpo.potencia_plena_w)
     except PontoNaoCadastrado:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "ponto nao cadastrado") from None
+    log.info("bancada calibracao ponto=%s sessao=%s pontos_da_curva=%s", corpo.ponto, sid,
+             len(corpo.linhas))
     return {"sessao_id": sid, "descartada": False}

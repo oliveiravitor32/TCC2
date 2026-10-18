@@ -2426,3 +2426,22 @@ TEXTO:   v38.
 ===============================================================================
 FIM
 ===============================================================================
+
+75. LOGS DA API E CORRELACAO COM A DECISAO (18/10/2026)
+    A API de eventos nao tinha log proprio (so o acesso do uvicorn). Acrescentado
+    (api_eventos/app.py), em chave=valor e hora UTC, sem chave de acesso nem dado
+    pessoal (RNF08):
+    - identificador de requisicao (X-Request-ID, gerado ou recebido e devolvido);
+    - registro de toda escrita e de toda resposta de erro, com duracao e IP;
+    - 401: tentativa sem chave ou com chave errada (IP e caminho, nunca a chave);
+    - 422: motivo da recusa; no pacote, cada item recusado e o resumo;
+    - evento aceito: evento_id, trecho, tipo, volume/ocorrencia e origem;
+    - erro interno: rastro do erro e request_id devolvido no corpo;
+    - gravacoes da bancada (conferencia e calibracao).
+    Servico de decisao (decisao/servico.py): cada decisao registra decisao_id e o
+    motivo (evento=ID, varredura ou partida), o que liga o log da API ao comando
+    e a telemetria; aviso separado quando a verificacao corrige o piso; registro
+    quando nao ha volume vigente (pleno).
+    docker-compose.prod.yml: logs dos conteineres limitados a 5 x 10 MB por servico.
+    Testes: 5 novos (267 no total). Texto: falta uma frase em 3.12.6.1 e o ajuste
+    da limitacao em 5.3 (proxima versao do texto). VM: nao atualizada ainda.

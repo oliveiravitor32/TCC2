@@ -515,3 +515,58 @@ def test_bancada_ponto_desconhecido_e_404(cliente, com_chave):
     r = cliente.post("/bancada/sessoes", json={**SESSAO, "ponto": "NAO-EXISTE"},
                      headers={"X-Chave-Api": "segredo-de-teste"})
     assert r.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# Logs da API (rastreabilidade operacional)
+# ---------------------------------------------------------------------------
+@pytest.fixture
+def linhas_de_log():
+    import logging
+
+    from api_eventos.app import log as log_api
+
+    linhas: list[str] = []
+
+    class Coletor(logging.Handler):
+        def emit(self, registro):
+            linhas.append(registro.getMessage())
+
+    h = Coletor()
+    log_api.addHandler(h)
+    yield linhas
+    log_api.removeHandler(h)
+
+
+def test_log_de_chave_invalida_nao_mostra_a_chave(cliente, com_chave, linhas_de_log):
+    r = cliente.post("/eventos", json=MOV, headers={"X-Chave-Api": "tentativa-123"})
+    assert r.status_code == 401
+    assert any("chave ausente ou invalida" in l for l in linhas_de_log)
+    assert not any("tentativa-123" in l or "segredo-de-teste" in l for l in linhas_de_log)
+
+
+def test_log_de_evento_aceito_traz_id_trecho_e_request_id(cliente, linhas_de_log):
+    r = cliente.post("/eventos", json=MOV, headers={"X-Request-ID": "abc123"})
+    assert r.status_code == 201
+    assert r.headers["X-Request-ID"] == "abc123"
+    aceito = [l for l in linhas_de_log if "evento=" in l]
+    assert aceito and "rid=abc123" in aceito[0] and f"evento={r.json()['id']}" in aceito[0]
+    assert "trecho=20159" in aceito[0]
+
+
+def test_log_de_pacote_registra_recusados(cliente, linhas_de_log):
+    r = cliente.post("/eventos", json=[MOV, {**MOV, "pessoas_media": -1}])
+    assert r.status_code == 200
+    assert any("item=1 recusado" in l for l in linhas_de_log)
+    assert any("aceitos=1 recusados=1" in l for l in linhas_de_log)
+
+
+def test_log_de_validacao_registra_o_motivo(cliente, linhas_de_log):
+    r = cliente.post("/eventos", json={**MOV, "pessoas_media": -1})
+    assert r.status_code == 422
+    assert any("recusado" in l and "pessoas_media" in l for l in linhas_de_log)
+
+
+def test_consulta_get_bem_sucedida_nao_gera_log(cliente, linhas_de_log):
+    assert cliente.get("/trechos").status_code == 200
+    assert linhas_de_log == []

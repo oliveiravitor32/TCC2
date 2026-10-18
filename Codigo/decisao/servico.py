@@ -130,9 +130,10 @@ class Servico:
             log.warning("mensagem de %s ignorada: %s", msg.topic, erro)
 
     # -- Decisao ---------------------------------------------------------------
-    def decidir_pontos(self, alvos: list[Ponto]) -> int:
+    def decidir_pontos(self, alvos: list[Ponto], motivo: str = "partida") -> int:
         """Decide para os pontos dados; publica so o necessario. Devolve
-        quantos comandos foram publicados."""
+        quantos comandos foram publicados. `motivo` (evento=ID, varredura ou
+        partida) vai para o log, para ligar a decisao ao evento da API."""
         publicados = 0
         for ponto in alvos:
             try:
@@ -152,7 +153,8 @@ class Servico:
                     ultimo = ultimo_publicado(self.db_ciclo, ponto.id)
                 vence = agora + timedelta(seconds=d.validade_s)
                 if not deve_publicar(ultimo, d.nivel_emitido, vence, agora, config.RENOVAR_ANTES_S):
-                    log.debug("%s alvo %s mantido; nada publicado", ponto.codigo, d.nivel_emitido)
+                    log.debug("decisao=%s ponto=%s motivo=%s alvo=%s mantido; nada publicado",
+                              d.id, ponto.codigo, motivo, d.nivel_emitido)
                     continue
                 # A decisao ja esta confirmada: a telemetria pode referencia-la.
                 info = self.mqtt.publish(
@@ -166,14 +168,22 @@ class Servico:
                         marcar_publicada(self.db_ciclo, d.id, _agora())
                     publicados += 1
                 else:
-                    log.warning("comando %s nao publicado (rc=%s)", d.id, info.rc)
+                    log.warning("decisao=%s comando nao publicado (rc=%s)", d.id, info.rc)
                 log.info(
-                    "%s pretendido=%s alvo=%s restricao=%s validade=%ss",
-                    ponto.codigo, d.nivel_pretendido, d.nivel_emitido, d.restricao_aplicada,
-                    d.validade_s,
+                    "decisao=%s ponto=%s motivo=%s pretendido=%s alvo=%s restricao=%s validade=%ss",
+                    d.id, ponto.codigo, motivo, d.nivel_pretendido, d.nivel_emitido,
+                    d.restricao_aplicada, d.validade_s,
                 )
+                # Eventos de seguranca em destaque (correcao da verificacao e
+                # falta de dado), para nao se perderem entre as decisoes.
+                if d.restricao_aplicada == "piso":
+                    log.warning("decisao=%s ponto=%s verificacao corrigiu o piso: %s -> %s",
+                                d.id, ponto.codigo, d.nivel_pretendido, d.nivel_emitido)
+                if d.observada is None:
+                    log.info("decisao=%s ponto=%s sem volume vigente: nivel pleno",
+                                d.id, ponto.codigo)
             except psycopg.Error:
-                log.exception("falha de banco na decisao de %s", ponto.codigo)
+                log.exception("falha de banco na decisao de %s (motivo=%s)", ponto.codigo, motivo)
         return publicados
 
     def passo(self) -> int:
@@ -191,7 +201,7 @@ class Servico:
         except psycopg.Error:
             log.exception("falha de banco na varredura")
             return 0
-        return self.decidir_pontos(alvos)
+        return self.decidir_pontos(alvos, "varredura")
 
     def ao_evento(self, evento_id: int) -> int:
         try:
@@ -199,7 +209,7 @@ class Servico:
         except psycopg.Error:
             log.exception("falha de banco ao ler o evento %s", evento_id)
             return 0
-        return self.decidir_pontos(alvos)
+        return self.decidir_pontos(alvos, f"evento={evento_id}")
 
     def executar(self, *, uma_vez: bool = False) -> None:
         aviso = psycopg.connect(config.DATABASE_URL, autocommit=True)

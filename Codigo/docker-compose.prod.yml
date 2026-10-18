@@ -10,10 +10,19 @@
 # rede interna do docker.
 name: iluminacao
 
+# Logs dos conteineres com limite de tamanho: sem isso, crescem ate encher o
+# disco da VM gratuita. Cada servico guarda no maximo 5 arquivos de 10 MB.
+x-logs: &logs
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
 services:
   db:
     image: postgres:16
     restart: unless-stopped
+    logging: *logs
     environment:
       POSTGRES_DB: iluminacao
       POSTGRES_USER: iluminacao
@@ -31,6 +40,7 @@ services:
   broker:
     image: eclipse-mosquitto:2
     restart: unless-stopped
+    logging: *logs
     ports:
       - "8883:8883"
     volumes:
@@ -42,6 +52,7 @@ services:
   api:
     build: .
     restart: unless-stopped
+    logging: *logs
     command: ["uvicorn", "api_eventos.app:app", "--host", "0.0.0.0", "--port", "8000",
               "--proxy-headers", "--forwarded-allow-ips", "*"]
     environment:
@@ -57,6 +68,7 @@ services:
   decisao:
     build: .
     restart: unless-stopped
+    logging: *logs
     command: ["python", "-m", "decisao.servico"]
     environment:
       DATABASE_URL: postgresql://iluminacao:${SENHA_BANCO}@db:5432/iluminacao
@@ -73,6 +85,7 @@ services:
   caddy:
     image: caddy:2
     restart: unless-stopped
+    logging: *logs
     ports:
       - "80:80"
       - "443:443"
