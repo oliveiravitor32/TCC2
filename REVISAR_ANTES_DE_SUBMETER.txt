@@ -658,6 +658,13 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         ensaiado; (d) Apendice D: os mesmos US$ 2.976/mes passam a valer tambem
         para a cobertura total so por causa da decisao por grupo e da previsao
         por trecho - estimativa da IA, nao recalculada por teste de carga.
+[ ] C61. v62: texto da IA a conferir - (a) 3.12.6.4: "o prototipo ja
+        decide assim" (grupo implementado; teste e suite iguais); (b) 3.12.6.3:
+        paragrafo da visao de bairro (33 nos simulados, luz sintetica, fora dos
+        resultados); (c) 3.12.6.1: frase dos logs; (d) Quadros 16 e 17 com
+        grupo_controle e as colunas novas; (e) Figura 10 regerada; (f) 281
+        testes em 18/10. Na banca: deixar claro que o mapa mostra nos
+        SIMULADOS (o proprio painel avisa).
 
 -------------------------------------------------------------------------------
 D. FONTES E DADOS A CONFERIR NA ORIGEM (item 3 da declaracao)

@@ -194,3 +194,48 @@ class Doc:
         p = self.achar(trecho)
         self.trocar(p, self.texto(p), novo)
         return p
+
+    # ------------------------------------------------------------ tabelas
+    def tabela_com(self, trecho):
+        tbls = [t for t in self.body.iter(W + "tbl") if trecho in "".join(x.text or "" for x in t.iter(W + "t"))]
+        if len(tbls) != 1:
+            raise ValueError(f"{len(tbls)} tabelas com {trecho!r}")
+        return tbls[0]
+
+    def linha_com(self, tbl, trecho):
+        ls = [tr for tr in tbl.findall(W + "tr") if trecho in "".join(x.text or "" for x in tr.iter(W + "t"))]
+        if len(ls) != 1:
+            raise ValueError(f"{len(ls)} linhas com {trecho!r}")
+        return ls[0]
+
+    def nova_linha(self, tbl, modelo_trecho, celulas, depois_trecho=None):
+        """Linha nova (marcada como insercao), com a formatacao da linha modelo."""
+        mod = self.linha_com(tbl, modelo_trecho)
+        ref = self.linha_com(tbl, depois_trecho) if depois_trecho else mod
+        tr = copy.deepcopy(mod)
+        trpr = tr.find(W + "trPr")
+        if trpr is None:
+            trpr = etree.Element(W + "trPr")
+            tr.insert(0 if tr.find(W + "tblPrEx") is None else 1, trpr)
+        trpr.append(_marca("ins"))
+        for tc_, texto in zip(tr.findall(W + "tc"), celulas):
+            ps = tc_.findall(W + "p")
+            for extra in ps[1:]:
+                tc_.remove(extra)
+            p = ps[0]
+            run_mod = copy.deepcopy(next((r for r in p.iter(W + "r") if r.find(W + "t") is not None), None))
+            for filho in list(p):
+                if filho.tag != W + "pPr":
+                    p.remove(filho)
+            ppr = p.find(W + "pPr")
+            if ppr is None:
+                ppr = etree.Element(W + "pPr")
+                p.insert(0, ppr)
+            for velho in ppr.findall(W + "rPr"):
+                ppr.remove(velho)
+            etree.SubElement(ppr, W + "rPr").append(_marca("ins"))
+            ins = _marca("ins")
+            ins.append(self._run_novo(texto, run_mod))
+            p.append(ins)
+        ref.addnext(tr)
+        return tr

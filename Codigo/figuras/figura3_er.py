@@ -12,19 +12,22 @@ ENT = {
     "classe_iluminacao": [("PK", "codigo_classe"), ("", "iluminancia_minima"), ("", "ilum_min_dimerizada"),
                           ("FK", "classe_minima_admitida"), ("", "taxa_max_decrescimo")],
     "ponto_de_luz": [("PK", "id_ponto"), ("", "codigo"), ("", "placa"), ("", "latitude / longitude"),
-                     ("", "utm_e / utm_n"), ("", "logradouro"), ("FK", "codigo_classe"), ("", "estado_operacional")],
+                     ("", "utm_e / utm_n"), ("", "logradouro"), ("FK", "codigo_classe"), ("", "estado_operacional"),
+                     ("", "simulado"), ("FK", "id_grupo")],
     "trecho_ponto": [("PK,FK", "id_trecho"), ("PK,FK", "id_ponto"), ("", "distancia_m"), ("", "criterio")],
     "versao_base_regras": [("PK", "id_versao"), ("", "rotulo"), ("", "data_vigencia"), ("", "qtd_regras"),
                            ("", "resumo_alteracoes"), ("", "hash_arquivo")],
     "decisao": [("PK", "id_decisao"), ("", "carimbo_tempo"), ("FK", "id_ponto"), ("", "nivel_pretendido"),
                 ("", "nivel_emitido"), ("", "restricao_aplicada"), ("FK", "id_versao"), ("", "entrada (JSON)"),
-                ("", "ativacoes (JSON)"), ("", "validade_s")],
+                ("", "ativacoes (JSON)"), ("", "validade_s"), ("FK", "id_grupo")],
     "telemetria": [("PK", "id_telemetria"), ("", "carimbo_tempo"), ("FK", "id_decisao"), ("FK", "id_ponto"),
                    ("", "ciclo_trabalho"), ("", "iluminancia_medida"), ("", "nivel_aplicado"),
                    ("", "nivel_antes"), ("", "iluminancia_antes")],
     "evento_urbano": [("PK", "id_evento"), ("", "carimbo_tempo"), ("", "tipo"), ("", "pessoas_media"), ("", "periodo_s"), ("", "ocorrencia"),
                       ("FK", "id_trecho"), ("", "origem"), ("", "vigente_ate")],
     "decisao_evento": [("PK,FK", "id_decisao"), ("PK,FK", "id_evento")],
+    "grupo_controle": [("PK", "id_grupo"), ("", "chave"), ("FK", "codigo_classe"), ("", "trechos"),
+                       ("", "calculado_em")],
     "trecho_via": [("PK", "id_trecho"), ("", "codlog"), ("", "tipo / nome_logradouro"),
                    ("", "numero_inicial / final"), ("", "geometria"), ("", "referencia_pessoas"), ("", "referencia_aprendida"), ("", "referencia_calculada_em")],
 }
@@ -36,9 +39,10 @@ POS = {  # (x, y do topo)
     "trecho_ponto": (COL[0], 1100),
     "versao_base_regras": (COL[1], 25),
     "decisao": (COL[1], 470),
-    "telemetria": (COL[1], 1100),
+    "telemetria": (COL[1], 1130),
     "evento_urbano": (COL[2], 25),
     "decisao_evento": (COL[2], 1100),
+    "grupo_controle": (COL[3], 500),
     "trecho_via": (COL[3], 25),
 }
 
@@ -133,9 +137,22 @@ linha([(vx, yh), (ux + uw, yh)], [(vx - 30, yh - 22, "1"), (ux + uw + 30, yh - 2
 # trecho_via 1:N trecho_ponto (pelo corredor de baixo)
 kx, ky, kw, kh = caixa("trecho_ponto")
 y_fundo = ALT - 30
-xv = vx + vw / 2
-linha([(kx + kw / 2, ky + kh), (kx + kw / 2, y_fundo), (xv, y_fundo), (xv, vy + vh)],
-      [(kx + kw / 2 + 25, ky + kh + 30, "N"), (xv + 25, vy + vh + 35, "1")])
+xv = vx + vw + 14
+y_v = vy + vh - 40
+linha([(kx + kw / 2, ky + kh), (kx + kw / 2, y_fundo), (xv, y_fundo), (xv, y_v), (vx + vw, y_v)],
+      [(kx + kw / 2 + 25, ky + kh + 30, "N"), (vx + vw - 18, y_v - 22, "1")])
+
+# grupo_controle 1:N decisao (horizontal) e 1:N ponto_de_luz (pelos corredores)
+gx, gy, gw, gh = caixa("grupo_controle")
+yh = gy + 200
+linha([(dx + dw, yh), (gx, yh)], [(dx + dw + 30, yh - 22, "N"), (gx - 30, yh - 22, "1")])
+xc0 = (px + pw + dx) / 2
+xc1 = (dx + dw + 945) / 2
+y0 = py + 60
+y_topo = dy - 12
+y_ent = gy + 62
+linha([(px + pw, y0), (xc0, y0), (xc0, y_topo), (xc1, y_topo), (xc1, y_ent), (gx, y_ent)],
+      [(px + pw + 18, y0 - 22, "N"), (gx - 22, y_ent - 22, "1")])
 
 import sys
 fig.savefig(sys.argv[1], dpi=100, facecolor="white")
