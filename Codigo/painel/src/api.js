@@ -76,8 +76,9 @@ export const pct = (v) => (v === null || v === undefined ? "--" : `${(v * 100).t
 export const lux = (v, casas = 2) =>
   v === null || v === undefined ? "--" : `${Number(v).toFixed(casas)} lx`;
 
-// Fronteiras da movimentacao (observada e prevista): os tercis da serie adotada (3.7).
-export const TERCIS = [0.1038, 0.4053];
+// Fronteiras da movimentacao (observada e prevista): os tercis da serie adotada
+// (3.7) - Zurique, base v6-zurique (decisao/regras/v6-zurique.toml).
+export const TERCIS = [0.0693, 0.2946];
 export const faixaMov = (v) =>
   v === null || v === undefined ? "sem dado" : v < TERCIS[0] ? "baixa" : v < TERCIS[1] ? "média" : "alta";
 

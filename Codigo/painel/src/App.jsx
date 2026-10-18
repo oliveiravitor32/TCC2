@@ -19,6 +19,7 @@ import Energia from "./componentes/Energia";
 import Trajetoria from "./componentes/Trajetoria";
 import SimularLeitura from "./componentes/SimularLeitura";
 import Explicacoes from "./componentes/Explicacoes";
+import Mapa from "./componentes/Mapa";
 
 const PERIODO_MS = 2000; // metade do ciclo de decisao (5 s), sem afoga-lo
 const JANELA = 240; // decisoes exibidas na trajetoria
@@ -29,7 +30,7 @@ export default function App() {
     pontos: [], decisoes: [], telemetria: [], eventos: [], todosEventos: [], alertas: [], energia: null,
   });
   const [trechos, setTrechos] = useState([]);
-  const [aba, setAba] = useState("monitoramento");
+  const [aba, setAba] = useState("mapa");
   const [modalAberto, setModalAberto] = useState(false);
   const [eventoExplicado, setEventoExplicado] = useState(null);
   const [erro, setErro] = useState(null);
@@ -44,7 +45,8 @@ export default function App() {
     if (carregando.current) return; // nao empilha requisicao lenta
     carregando.current = true;
     try {
-      const pontos = await api.pontos();
+      const [pontos, trechosAtuais] = await Promise.all([api.pontos(), api.trechos()]);
+      setTrechos(trechosAtuais); // estado das ruas (volume e ocorrencia) para o mapa
       const atual = pontos.find((p) => p.codigo === selecionado) ?? pontos[0];
       const ponto = atual?.codigo;
       const [decisoes, telemetria, todosEventos, todosAlertas, energia] = await Promise.all([
@@ -171,6 +173,7 @@ export default function App() {
 
       <nav className="flex gap-1 border-b border-borda text-sm" aria-label="visões do painel">
         {[
+          { id: "mapa", rotulo: "mapa do bairro" },
           { id: "monitoramento", rotulo: "monitoramento" },
           { id: "explicacoes", rotulo: "decisões explicadas" },
         ].map((a) => (
@@ -198,7 +201,17 @@ export default function App() {
       />
       )}
 
-      {aba === "explicacoes" ? (
+      {aba === "mapa" ? (
+        <Mapa
+          pontos={dados.pontos}
+          trechos={trechos}
+          aoAbrirPonto={(codigo) => {
+            setSelecionado(codigo);
+            setAba("monitoramento");
+          }}
+          aoPublicar={buscar}
+        />
+      ) : aba === "explicacoes" ? (
         <Explicacoes
           eventos={dados.todosEventos}
           selecionado={eventoExplicado}

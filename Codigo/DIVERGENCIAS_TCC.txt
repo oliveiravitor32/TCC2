@@ -2445,3 +2445,34 @@ FIM
     docker-compose.prod.yml: logs dos conteineres limitados a 5 x 10 MB por servico.
     Testes: 5 novos (267 no total). Texto: falta uma frase em 3.12.6.1 e o ajuste
     da limitacao em 5.3 (proxima versao do texto). VM: nao atualizada ainda.
+
+76. GRUPOS DE CONTROLE E VISAO DE BAIRRO (18/10/2026)
+    Decisao do autor: implementar de verdade a decisao por grupo e a visao de
+    bairro com nos simulados (planos PLANO_GRUPOS_E_ESCALA.md e
+    PLANO_MAPA_DEMONSTRACAO.md, unificados).
+    - Grupo de controle = pontos com EXATAMENTE os mesmos trechos e a mesma
+      classe (decisao/grupos.py; migracao 011). O servico avalia uma vez por
+      grupo (estado da via, previsao, inferencia) e registra a decisao de cada
+      ponto (decisao.grupo_id). Resultado identico ao ponto a ponto: teste
+      tests/test_grupos.py e a suite de cenarios rodada de novo com os mesmos
+      numeros (so data e execucao_id mudaram). Sem cascata entre grupos.
+      A previsao continua por ponto/grupo sobre a serie do maior nivel; a
+      previsao por trecho em lote fica so como proposta de escala (3.12.6.4).
+    - Visao de bairro: 33 postes do recorte (35 placas unicas menos os 2 com
+      no) como nos SIMULADOS (ponto_de_luz.simulado), gerados por
+      python -m cadastro.mapa em db/seed_mapa.sql, que NAO entra na carga do
+      banco local (testes e suite seguem com 2 pontos). Um poste nao fica a
+      25 m de nenhum trecho: sempre pleno (sem volume). 18 grupos com ele.
+    - Frota simulada (simulador/frota.py): uma conexao MQTT (FROTA-SIM), ACL
+      so com os topicos dos 33 (deploy/broker/acl, bloco gerado).
+    - Gerador de volumes (simulador/gerador_volumes.py): numeros inventados,
+      origem "gerador-demo", sem os trechos da BANCADA-01 por padrao.
+    - API: /pontos com latitude, longitude, simulado, grupo_id e alertas
+      abertos (reais primeiro); /trechos com geometria WGS84, volume vigente
+      normalizado e ocorrencia aberta; /energia sem ponto = no real.
+    - Painel: aba "mapa do bairro" (tela inicial; Leaflet + OpenStreetMap).
+      Botoes "abrir ocorrencia"/"encerrar" publicam evento em pacote: nenhum
+      comando sai do painel. Correcao: TERCIS do painel estavam nos valores
+      de Melbourne (0,1038/0,4053); passaram aos de Zurique (0,0693/0,2946),
+      os da base v6 em operacao.
+    - VM: frota e gerador no docker-compose.prod.yml com --profile bairro.

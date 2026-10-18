@@ -17,6 +17,10 @@ RUN python -c "import tomllib; print('\n'.join(tomllib.load(open('pyproject.toml
 
 COPY api_eventos ./api_eventos
 COPY decisao ./decisao
+# Visao de bairro (DIVERGENCIAS 76): frota simulada e gerador de volumes,
+# so usados com --profile bairro; o recorte do cadastro lista os postes.
+COPY cadastro ./cadastro
+COPY simulador ./simulador
 # Modelo em operacao (Zurique, 15 min, item 69) e o horario de Melbourne,
 # guardado para reexecutar decisoes antigas (rotulo xgboost-v1).
 COPY modelo/__init__.py modelo/modelo_previsao_zurique.json modelo/modelo_previsao.json ./modelo/

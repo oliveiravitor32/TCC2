@@ -82,6 +82,36 @@ services:
       broker:
         condition: service_started
 
+  # Visao de bairro (DIVERGENCIAS 76): so sobem com --profile bairro.
+  # Nos SIMULADOS, com luz sintetica, so para a demonstracao. A credencial
+  # da frota vem de ./deploy/novo_no.sh FROTA-SIM (SENHA_MQTT_FROTA no .env).
+  frota:
+    build: .
+    restart: unless-stopped
+    logging: *logs
+    profiles: ["bairro"]
+    command: ["python", "-m", "simulador.frota"]
+    environment:
+      MQTT_HOST: broker
+      MQTT_PORTA: "1883"
+      MQTT_USUARIO: FROTA-SIM
+      MQTT_SENHA: ${SENHA_MQTT_FROTA:-}
+    depends_on:
+      broker:
+        condition: service_started
+
+  gerador:
+    build: .
+    restart: unless-stopped
+    logging: *logs
+    profiles: ["bairro"]
+    command: ["python", "-m", "simulador.gerador_volumes", "--ciclo-min", "${CICLO_NOITE_MIN:-60}"]
+    environment:
+      API_URL: http://api:8000
+      CHAVE_API: ${CHAVE_API:?rode deploy/preparar.sh}
+    depends_on:
+      - api
+
   caddy:
     image: caddy:2
     restart: unless-stopped
