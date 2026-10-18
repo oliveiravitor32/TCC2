@@ -6,6 +6,8 @@ transacao desfeita ao final. Sem banco disponivel, os testes sao pulados.
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 import psycopg
 import pytest
 from fastapi.testclient import TestClient
@@ -570,3 +572,22 @@ def test_log_de_validacao_registra_o_motivo(cliente, linhas_de_log):
 def test_consulta_get_bem_sucedida_nao_gera_log(cliente, linhas_de_log):
     assert cliente.get("/trechos").status_code == 200
     assert linhas_de_log == []
+
+
+# ---------------------------------------------------------------------------
+# Visao de bairro (DIVERGENCIAS 76)
+# ---------------------------------------------------------------------------
+def test_ponto_simulado_nunca_e_o_padrao_e_vem_marcado(cliente, conn):
+    conn.execute("INSERT INTO ponto_de_luz (codigo, classe_codigo, simulado, latitude, longitude)"
+                 " VALUES ('AAA-SIM', 'P3', true, -23.48, -46.42)")
+    pontos = cliente.get("/pontos").json()
+    assert pontos[0]["simulado"] is False  # reais primeiro
+    sim = next(p for p in pontos if p["codigo"] == "AAA-SIM")
+    assert sim["simulado"] is True and sim["latitude"] == -23.48
+    assert cliente.get("/energia").json()["ponto"] != "AAA-SIM"
+
+
+def test_trechos_trazem_estado_para_o_mapa(cliente):
+    cliente.post("/eventos", json={**OCO, "ocorrido_em": datetime.now(timezone.utc).isoformat()})
+    t = next(x for x in cliente.get("/trechos").json() if x["id"] == 20159)
+    assert t["ocorrencia_aberta"] is True and "geometria_wgs84" in t

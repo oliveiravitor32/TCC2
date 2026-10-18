@@ -351,6 +351,9 @@ def consultar_pontos(conn: psycopg.Connection = Conn) -> list[dict]:
     return conn.execute(
         """
         SELECT p.codigo, p.placa, p.logradouro, p.classe_codigo, p.estado_operacional,
+               p.latitude, p.longitude, p.simulado, p.grupo_id,
+               (SELECT count(*) FROM alerta_diagnostico a
+                 WHERE a.ponto_de_luz_id = p.id AND a.encerrado_em IS NULL) AS alertas_abertos,
                ARRAY(SELECT tp.trecho_id FROM trecho_ponto tp
                       WHERE tp.ponto_de_luz_id = p.id ORDER BY tp.distancia_m) AS trechos,
                c.iluminancia_media_min_lux AS lux_pleno,
@@ -366,7 +369,7 @@ def consultar_pontos(conn: psycopg.Connection = Conn) -> list[dict]:
                  ORDER BY d.criado_em DESC LIMIT 1
                ) u ON true
           LEFT JOIN telemetria t ON t.decisao_id = u.id
-         ORDER BY p.codigo
+         ORDER BY p.simulado, p.codigo
         """
     ).fetchall()
 
@@ -487,7 +490,21 @@ def consultar_trechos(conn: psycopg.Connection = Conn) -> list[dict]:
                t.numero_inicial, t.numero_final,
                ARRAY(SELECT p.codigo FROM trecho_ponto tp
                        JOIN ponto_de_luz p ON p.id = tp.ponto_de_luz_id
-                      WHERE tp.trecho_id = t.id ORDER BY p.codigo) AS pontos
+                      WHERE tp.trecho_id = t.id ORDER BY p.codigo) AS pontos,
+               t.geometria_wgs84,
+               -- Para o mapa: volume vigente (15 min) normalizado pela regua do
+               -- trecho e ocorrencia aberta (a mais recente nao encerrada e vigente).
+               (SELECT round((e.pessoas_media / COALESCE(t.referencia_aprendida,
+                                                         t.referencia_pessoas))::numeric, 3)
+                  FROM evento_urbano e
+                 WHERE e.trecho_id = t.id AND e.tipo = 'volume'
+                   AND e.ocorrido_em > now() - interval '15 minutes'
+                 ORDER BY e.ocorrido_em DESC LIMIT 1) AS nivel_observado,
+               COALESCE((SELECT e.ocorrencia <> 'encerrada'
+                           AND COALESCE(e.vigente_ate, e.ocorrido_em + interval '15 minutes') > now()
+                  FROM evento_urbano e
+                 WHERE e.trecho_id = t.id AND e.tipo = 'ocorrencia'
+                 ORDER BY e.ocorrido_em DESC LIMIT 1), false) AS ocorrencia_aberta
           FROM trecho_via t
          ORDER BY t.nome_logradouro, t.numero_inicial NULLS LAST, t.id
         """
@@ -545,7 +562,8 @@ def consultar_energia(
           JOIN classe_iluminacao c       ON c.codigo = p.classe_codigo
           LEFT JOIN classe_iluminacao cm ON cm.codigo = c.classe_min_dimerizacao
          WHERE (%s::text IS NULL OR p.codigo = %s)
-         ORDER BY p.codigo LIMIT 1
+         -- Sem ponto indicado: o no real, nunca um simulado da visao de bairro.
+         ORDER BY p.simulado, p.codigo LIMIT 1
         """,
         (ponto, ponto),
     ).fetchone()

@@ -35,6 +35,7 @@ from .ciclo import (
     atualizar_estado_ponto,
     atualizar_referencias,
     decidir,
+    decidir_grupo,
     id_modelo,
     marcar_publicada,
     pontos,
@@ -135,56 +136,74 @@ class Servico:
         quantos comandos foram publicados. `motivo` (evento=ID, varredura ou
         partida) vai para o log, para ligar a decisao ao evento da API."""
         publicados = 0
+        # Uma avaliacao por grupo de controle (DIVERGENCIAS 76); ponto sem
+        # grupo decide sozinho. A ordem dos pontos e preservada.
+        grupos: dict[object, list[Ponto]] = {}
         for ponto in alvos:
+            grupos.setdefault(ponto.grupo_id if ponto.grupo_id is not None else ("ponto", ponto.id),
+                              []).append(ponto)
+        for membros in grupos.values():
             try:
                 agora = _agora()
                 with self.db_ciclo.transaction():
-                    d = decidir(
+                    decisoes = decidir_grupo(
                         self.db_ciclo,
+                        membros,
                         base=self.base,
                         previsor=self.previsor,
-                        ponto=ponto,
                         agora=agora,
                         versao_regras_id=self.versao_regras_id,
                         versao_modelo_id=self.versao_modelo_id,
                         execucao_id=self.execucao_id,
                         reativo=self.reativo,
                     )
-                    ultimo = ultimo_publicado(self.db_ciclo, ponto.id)
-                vence = agora + timedelta(seconds=d.validade_s)
-                if not deve_publicar(ultimo, d.nivel_emitido, vence, agora, config.RENOVAR_ANTES_S):
-                    log.debug("decisao=%s ponto=%s motivo=%s alvo=%s mantido; nada publicado",
-                              d.id, ponto.codigo, motivo, d.nivel_emitido)
-                    continue
-                # A decisao ja esta confirmada: a telemetria pode referencia-la.
-                info = self.mqtt.publish(
-                    config.TOPICO_COMANDO.format(ponto=ponto.codigo),
-                    json.dumps(d.comando()),
-                    qos=config.MQTT_QOS,
-                    retain=False,
-                )
-                if info.rc == mqtt.MQTT_ERR_SUCCESS:
-                    with self.db_ciclo.transaction():
-                        marcar_publicada(self.db_ciclo, d.id, _agora())
-                    publicados += 1
-                else:
-                    log.warning("decisao=%s comando nao publicado (rc=%s)", d.id, info.rc)
-                log.info(
-                    "decisao=%s ponto=%s motivo=%s pretendido=%s alvo=%s restricao=%s validade=%ss",
-                    d.id, ponto.codigo, motivo, d.nivel_pretendido, d.nivel_emitido,
-                    d.restricao_aplicada, d.validade_s,
-                )
-                # Eventos de seguranca em destaque (correcao da verificacao e
-                # falta de dado), para nao se perderem entre as decisoes.
-                if d.restricao_aplicada == "piso":
-                    log.warning("decisao=%s ponto=%s verificacao corrigiu o piso: %s -> %s",
-                                d.id, ponto.codigo, d.nivel_pretendido, d.nivel_emitido)
-                if d.observada is None:
-                    log.info("decisao=%s ponto=%s sem volume vigente: nivel pleno",
-                                d.id, ponto.codigo)
+                    ultimos = [ultimo_publicado(self.db_ciclo, p.id) for p in membros]
             except psycopg.Error:
-                log.exception("falha de banco na decisao de %s (motivo=%s)", ponto.codigo, motivo)
+                log.exception("falha de banco na decisao do grupo de %s (motivo=%s)",
+                              membros[0].codigo, motivo)
+                continue
+            for d, ultimo in zip(decisoes, ultimos):
+                try:
+                    publicados += self._publicar(d, ultimo, agora, motivo)
+                except psycopg.Error:
+                    log.exception("falha de banco ao publicar %s (motivo=%s)", d.ponto.codigo, motivo)
         return publicados
+
+    def _publicar(self, d, ultimo, agora, motivo: str) -> int:
+        """Publica o comando de uma decisao se o alvo mudou ou vai vencer."""
+        ponto = d.ponto
+        vence = agora + timedelta(seconds=d.validade_s)
+        if not deve_publicar(ultimo, d.nivel_emitido, vence, agora, config.RENOVAR_ANTES_S):
+            log.debug("decisao=%s ponto=%s motivo=%s alvo=%s mantido; nada publicado",
+                      d.id, ponto.codigo, motivo, d.nivel_emitido)
+            return 0
+        publicado = 0
+        # A decisao ja esta confirmada: a telemetria pode referencia-la.
+        info = self.mqtt.publish(
+            config.TOPICO_COMANDO.format(ponto=ponto.codigo),
+            json.dumps(d.comando()),
+            qos=config.MQTT_QOS,
+            retain=False,
+        )
+        if info.rc == mqtt.MQTT_ERR_SUCCESS:
+            with self.db_ciclo.transaction():
+                marcar_publicada(self.db_ciclo, d.id, _agora())
+            publicado = 1
+        else:
+            log.warning("decisao=%s comando nao publicado (rc=%s)", d.id, info.rc)
+        log.info(
+            "decisao=%s ponto=%s grupo=%s motivo=%s pretendido=%s alvo=%s restricao=%s validade=%ss",
+            d.id, ponto.codigo, ponto.grupo_id, motivo, d.nivel_pretendido, d.nivel_emitido,
+            d.restricao_aplicada, d.validade_s,
+        )
+        # Eventos de seguranca em destaque (correcao da verificacao e
+        # falta de dado), para nao se perderem entre as decisoes.
+        if d.restricao_aplicada == "piso":
+            log.warning("decisao=%s ponto=%s verificacao corrigiu o piso: %s -> %s",
+                        d.id, ponto.codigo, d.nivel_pretendido, d.nivel_emitido)
+        if d.observada is None:
+            log.info("decisao=%s ponto=%s sem volume vigente: nivel pleno", d.id, ponto.codigo)
+        return publicado
 
     def passo(self) -> int:
         """Decide para todos os pontos (partida do servico e testes)."""

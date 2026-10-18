@@ -37,6 +37,8 @@ class Ponto:
     id: int
     codigo: str
     classe_codigo: str
+    # Grupo de controle (DIVERGENCIAS 76); None = decide sozinho.
+    grupo_id: int | None = None
 
 
 @dataclass(frozen=True)
@@ -121,7 +123,7 @@ def pontos(conn: psycopg.Connection) -> list[Ponto]:
     return [
         Ponto(*l)
         for l in conn.execute(
-            "SELECT id, codigo, classe_codigo FROM ponto_de_luz"
+            "SELECT id, codigo, classe_codigo, grupo_id FROM ponto_de_luz"
             " WHERE estado_operacional <> 'manutencao' ORDER BY id"
         ).fetchall()
     ]
@@ -485,7 +487,7 @@ def pontos_do_evento(conn: psycopg.Connection, evento_id: int) -> list[Ponto]:
     """Pontos de luz dos trechos de um evento: so eles decidem de novo."""
     return [Ponto(*l) for l in conn.execute(
         """
-        SELECT p.id, p.codigo, p.classe_codigo
+        SELECT p.id, p.codigo, p.classe_codigo, p.grupo_id
           FROM evento_urbano e
           JOIN trecho_ponto tp ON tp.trecho_id = e.trecho_id
           JOIN ponto_de_luz p ON p.id = tp.ponto_de_luz_id
@@ -501,7 +503,7 @@ def pontos_vencendo(conn: psycopg.Connection, agora: datetime, antes_s: float) -
     receberam comando): a varredura decide de novo so esses."""
     return [Ponto(*l) for l in conn.execute(
         """
-        SELECT p.id, p.codigo, p.classe_codigo
+        SELECT p.id, p.codigo, p.classe_codigo, p.grupo_id
           FROM ponto_de_luz p
           LEFT JOIN LATERAL (
                 SELECT d.publicado_em + make_interval(secs => d.validade_s) AS vence
@@ -532,6 +534,66 @@ def decidir(
     filtro_observada: Callable[[float], float] | None = None,
     refs: dict[int, float] | None = None,
 ) -> DecisaoTomada:
+    av = _avaliar(conn, base=base, previsor=previsor, ponto=ponto, agora=agora,
+                  execucao_id=execucao_id, reativo=reativo, desde=desde,
+                  filtro_observada=filtro_observada, refs=refs)
+    return _registrar(conn, av, ponto, agora, versao_regras_id, versao_modelo_id, execucao_id)
+
+
+def decidir_grupo(
+    conn: psycopg.Connection,
+    pontos_do_grupo: list[Ponto],
+    *,
+    base: BaseRegras,
+    previsor: Previsor,
+    agora: datetime,
+    versao_regras_id: int,
+    versao_modelo_id: int,
+    execucao_id: int | None = None,
+    reativo: bool = False,
+) -> list[DecisaoTomada]:
+    """Uma decisao por grupo de controle (DIVERGENCIAS 76): a avaliacao
+    (estado da via, previsao e inferencia) e feita uma vez, pelo primeiro ponto,
+    e registrada para cada ponto do grupo. Pontos do grupo tem os mesmos trechos
+    e a mesma classe, de modo que o resultado e identico ao de decidir ponto a
+    ponto; muda so o custo. O nivel anterior e a publicacao continuam por ponto."""
+    if not pontos_do_grupo:
+        return []
+    classes = {p.classe_codigo for p in pontos_do_grupo}
+    if len(classes) != 1:
+        raise ValueError(f"grupo com classes diferentes: {sorted(classes)}")
+    av = _avaliar(conn, base=base, previsor=previsor, ponto=pontos_do_grupo[0], agora=agora,
+                  execucao_id=execucao_id, reativo=reativo)
+    return [_registrar(conn, av, p, agora, versao_regras_id, versao_modelo_id, execucao_id)
+            for p in pontos_do_grupo]
+
+
+@dataclass(frozen=True)
+class _Avaliacao:
+    estado: EstadoVia
+    pretendido: Decimal
+    previsao: float | None
+    obs: float | None
+    degrau: float | None
+    ativacoes: dict
+    entrada: dict
+
+
+def _avaliar(
+    conn: psycopg.Connection,
+    *,
+    base: BaseRegras,
+    previsor: Previsor,
+    ponto: Ponto,
+    agora: datetime,
+    execucao_id: int | None = None,
+    reativo: bool = False,
+    desde: datetime | None = None,
+    filtro_observada: Callable[[float], float] | None = None,
+    refs: dict[int, float] | None = None,
+) -> _Avaliacao:
+    """Estado da via, previsao e inferencia: depende so dos trechos e da
+    classe do ponto, nada do ponto em si."""
     origens = origens_da_execucao(execucao_id)
     estado = estado_via(conn, agora, desde, origens, ponto_id=ponto.id)
     local = agora.astimezone(config.FUSO)
@@ -584,6 +646,22 @@ def decidir(
         "niveis_classe": [float(n) for n in niveis],
         "degrau": degrau,
     }
+    return _Avaliacao(estado=estado, pretendido=pretendido, previsao=previsao, obs=obs,
+                      degrau=degrau, ativacoes=ativacoes, entrada=entrada)
+
+
+def _registrar(
+    conn: psycopg.Connection,
+    av: _Avaliacao,
+    ponto: Ponto,
+    agora: datetime,
+    versao_regras_id: int,
+    versao_modelo_id: int,
+    execucao_id: int | None,
+) -> DecisaoTomada:
+    """Verificacao do piso e gravacao da decisao de um ponto."""
+    estado, pretendido, previsao = av.estado, av.pretendido, av.previsao
+    obs, degrau, ativacoes, entrada = av.obs, av.degrau, av.ativacoes, av.entrada
 
     # A central verifica o PISO do alvo; a taxa de descida e garantida no
     # controlador, pela mesma regra (decisao.rampa, DIVERGENCIAS 71).
@@ -598,13 +676,14 @@ def decidir(
         INSERT INTO decisao
             (id, criado_em, ponto_de_luz_id, versao_base_regras_id, versao_modelo_id,
              execucao_id, classe_codigo, previsao_movimentacao, nivel_pretendido,
-             nivel_emitido, restricao_aplicada, nivel_anterior, entrada, ativacoes, validade_s)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+             nivel_emitido, restricao_aplicada, nivel_anterior, entrada, ativacoes, validade_s,
+             grupo_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """,
         (did, agora, ponto.id, versao_regras_id, versao_modelo_id, execucao_id,
          ponto.classe_codigo, previsao, pretendido, r.nivel_emitido,
          r.restricao_aplicada, anterior, Jsonb(entrada), Jsonb(ativacoes) if ativacoes else None,
-         val),
+         val, ponto.grupo_id),
     )
     for eid in estado.evento_ids:
         conn.execute("INSERT INTO decisao_evento VALUES (%s, %s)", (did, eid))

@@ -152,6 +152,12 @@ class Ponto(BaseModel):
     medido_em: datetime | None
     nivel_antes: float | None = None
     lux_antes: float | None = None
+    # Visao de bairro (DIVERGENCIAS 76).
+    latitude: float | None = None
+    longitude: float | None = None
+    simulado: bool = False
+    grupo_id: int | None = None
+    alertas_abertos: int = 0
 
 
 class Alerta(BaseModel):
@@ -214,6 +220,10 @@ class Trecho(BaseModel):
     numero_inicial: int | None
     numero_final: int | None
     pontos: list[str]
+    # Visao de bairro (DIVERGENCIAS 76): linha em WGS84 e estado atual do trecho.
+    geometria_wgs84: dict | None = None
+    nivel_observado: float | None = None
+    ocorrencia_aberta: bool = False
 
 
 class RegraAtivada(BaseModel):

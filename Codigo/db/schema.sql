@@ -56,7 +56,24 @@ CREATE TABLE trecho_via (
     -- Percentil 99 aprendido, recalculado uma vez por dia (DIVERGENCIAS 71);
     -- NULL enquanto nao ha historico suficiente.
     referencia_aprendida    NUMERIC(8,2) CHECK (referencia_aprendida > 0),
-    referencia_calculada_em TIMESTAMPTZ
+    referencia_calculada_em TIMESTAMPTZ,
+    -- Mesma linha em WGS84 (EPSG:4326), so para o mapa do painel (DIVERGENCIAS 76).
+    geometria_wgs84  JSONB
+);
+
+-- ---------------------------------------------------------------------------
+-- Grupo de controle (3.12.6.4, DIVERGENCIAS 76): pontos de luz associados
+-- exatamente aos mesmos trechos e da mesma classe. Todos recebem a mesma
+-- decisao, que e calculada uma vez por grupo. Recalculado so quando o
+-- cadastro muda (decisao/grupos.py), nunca durante a operacao.
+-- ---------------------------------------------------------------------------
+CREATE TABLE grupo_controle (
+    id             BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    -- classe + trechos ordenados: identifica o grupo de forma unica.
+    chave          TEXT NOT NULL UNIQUE,
+    classe_codigo  TEXT NOT NULL REFERENCES classe_iluminacao (codigo),
+    trechos        BIGINT[] NOT NULL,
+    calculado_em   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 -- ---------------------------------------------------------------------------
@@ -82,6 +99,9 @@ CREATE TABLE ponto_de_luz (
     -- Posicao oficial em EPSG:31983 (metros), base da associacao espacial.
     utm_e               NUMERIC(11,2),
     utm_n               NUMERIC(11,2),
+    -- No ficticio da visao de bairro (lux sintetico): nunca entra em resultado.
+    simulado            BOOLEAN NOT NULL DEFAULT false,
+    grupo_id            BIGINT REFERENCES grupo_controle (id),
     criado_em           TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
@@ -226,6 +246,8 @@ CREATE TABLE decisao (
     versao_base_regras_id  BIGINT NOT NULL REFERENCES versao_base_regras (id),
     versao_modelo_id       BIGINT NOT NULL REFERENCES versao_modelo_previsao (id),
     execucao_id            BIGINT REFERENCES execucao_cenario (id),
+    -- Grupo de controle em que a decisao foi calculada (NULL: decidida so).
+    grupo_id               BIGINT REFERENCES grupo_controle (id),
     -- Classe vigente no momento da decisao: congela o criterio aplicado
     -- mesmo que a via seja reclassificada depois (4.7.2).
     classe_codigo          TEXT NOT NULL REFERENCES classe_iluminacao (codigo),
