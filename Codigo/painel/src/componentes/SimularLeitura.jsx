@@ -26,7 +26,12 @@ const OCORRENCIAS = [
 function nomeTrecho(t) {
   const faixa =
     t.numero_inicial != null && t.numero_final != null ? ` ${t.numero_inicial}–${t.numero_final}` : "";
-  const pontos = t.pontos.length ? ` · ${t.pontos.join(", ")}` : " · sem luminária no sistema";
+  // So os pontos do trabalho pelo nome; os simulados da visao de bairro
+  // (prefixo JH-) entram so como contagem, para a opcao caber na tela.
+  const reais = t.pontos.filter((c) => !c.startsWith("JH-"));
+  const simulados = t.pontos.length - reais.length;
+  const partes = [...reais, ...(simulados ? [`${simulados} simulado${simulados > 1 ? "s" : ""}`] : [])];
+  const pontos = partes.length ? ` · ${partes.join(", ")}` : " · sem luminária no sistema";
   return `${[t.tipo_logradouro, t.nome_logradouro].filter(Boolean).join(" ")}${faixa}${pontos}`;
 }
 
