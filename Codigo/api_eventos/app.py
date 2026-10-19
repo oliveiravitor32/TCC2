@@ -492,6 +492,10 @@ def consultar_trechos(conn: psycopg.Connection = Conn) -> list[dict]:
                        JOIN ponto_de_luz p ON p.id = tp.ponto_de_luz_id
                       WHERE tp.trecho_id = t.id ORDER BY p.codigo) AS pontos,
                t.geometria_wgs84,
+               -- Regua do trecho (3.6): o "cheio" tipico, em pessoas. Aprendida
+               -- (p99 de 28 dias) quando ha historico; senao, o valor inicial.
+               COALESCE(t.referencia_aprendida, t.referencia_pessoas)::float AS regua,
+               t.referencia_aprendida IS NOT NULL AS regua_aprendida,
                -- Para o mapa: volume vigente (15 min) normalizado pela regua do
                -- trecho e ocorrencia aberta (a mais recente nao encerrada e vigente).
                (SELECT round((e.pessoas_media / COALESCE(t.referencia_aprendida,

@@ -222,6 +222,8 @@ class Trecho(BaseModel):
     pontos: list[str]
     # Visao de bairro (DIVERGENCIAS 76): linha em WGS84 e estado atual do trecho.
     geometria_wgs84: dict | None = None
+    regua: float | None = None
+    regua_aprendida: bool = False
     nivel_observado: float | None = None
     ocorrencia_aberta: bool = False
 

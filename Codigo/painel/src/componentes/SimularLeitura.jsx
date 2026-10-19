@@ -6,15 +6,17 @@
 
 import { useMemo, useState } from "react";
 import { Minus, Plus, Send, X } from "lucide-react";
-import { api } from "../api";
+import { TERCIS, api, faixaMov } from "../api";
 
-// Com a referencia inicial de uma rua local (5 pessoas no "cheio"), estes
-// valores caem nas tres faixas: baixa, media e alta.
-const RAPIDOS = [
-  { rotulo: "vazia (0)", media: 0 },
-  { rotulo: "pouco (0,3)", media: 0.3 },
-  { rotulo: "médio (1,5)", media: 1.5 },
-  { rotulo: "alto (4)", media: 4 },
+// Atalhos de volume calculados pela REGUA do trecho escolhido (3.6): cada
+// rua tem o seu "cheio" tipico, e o servico compara o volume com ele. O nivel
+// normalizado (pessoas / regua) cai nas faixas dos tercis (3.7); os alvos
+// abaixo ficam no meio de cada faixa.
+const ALVOS = [
+  { rotulo: "vazia", nivel: 0 },
+  { rotulo: "pouco", nivel: TERCIS[0] / 2 },
+  { rotulo: "médio", nivel: (TERCIS[0] + TERCIS[1]) / 2 },
+  { rotulo: "alto", nivel: Math.min(1, TERCIS[1] * 2) },
 ];
 
 const OCORRENCIAS = [
@@ -45,6 +47,13 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
   const [ocorrencia, setOcorrencia] = useState("seguranca");
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState(null);
+
+  const escolhido = trechos.find((t) => String(t.id) === String(trecho));
+  const regua = escolhido?.regua ?? null;
+  const rapidos = regua
+    ? ALVOS.map((a) => ({ ...a, media: Math.round(a.nivel * regua * 100) / 100 }))
+    : [];
+  const nivelAtual = regua ? media / regua : null;
 
   const ordenados = useMemo(
     () => [...trechos].sort((a, b) => b.pontos.length - a.pontos.length || a.nome_logradouro.localeCompare(b.nome_logradouro)),
@@ -148,10 +157,10 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
                 <Plus size={14} />
               </button>
               <div className="ml-2 flex flex-wrap gap-1">
-                {RAPIDOS.map((r) => (
+                {rapidos.map((r) => (
                   <button key={r.rotulo} type="button" onClick={() => setMedia(r.media)}
                     className={`rounded-md border px-2 py-1 text-xs ${media === r.media ? "border-luz text-luz" : "border-borda text-suave hover:bg-borda/40"}`}>
-                    {r.rotulo}
+                    {r.rotulo} ({r.media.toLocaleString("pt-BR")})
                   </button>
                 ))}
               </div>
@@ -159,6 +168,14 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
             <p className="mt-2 text-[11px] text-suave">
               Ocupação média, e não soma de passagens. O serviço compara com o movimento normal da rua; o volume vale 15 min.
             </p>
+            {regua && (
+              <p className="mt-1 text-[11px] text-suave">
+                Régua deste trecho: <strong>{regua.toLocaleString("pt-BR")} pessoas</strong>
+                {escolhido?.regua_aprendida ? " (aprendida dos últimos 28 dias)" : " (valor inicial, até haver 7 dias de histórico)"}.
+                {" "}{media.toLocaleString("pt-BR")} pessoas = nível {nivelAtual.toFixed(3).replace(".", ",")} →
+                movimento <strong>{faixaMov(nivelAtual)}</strong>.
+              </p>
+            )}
           </fieldset>
         ) : (
           <fieldset className="mb-4">
