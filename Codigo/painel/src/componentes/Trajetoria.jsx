@@ -69,7 +69,7 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
             ["pretendido", sel.nivel_pretendido.toFixed(3), "var(--color-suave)"],
             ["emitido", sel.nivel_emitido.toFixed(3), "var(--color-luz)"],
             ["verificação", RESTRICOES[sel.restricao_aplicada]?.texto ?? sel.restricao_aplicada],
-            ["medido", tSel?.lux_medido != null ? `${tSel.lux_medido.toFixed(2)} lx` : "sem comando", "var(--color-ok)"],
+            ["medido", tSel?.lux_medido != null ? `${tSel.lux_medido.toFixed(2)} lx` : sel.publicado_em ? "sem resposta" : "sem comando", "var(--color-ok)"],
             ["comando enviado", sel.publicado_em ? hora(sel.publicado_em) : "não (alvo mantido)"],
             ...(tSel ? [["resposta do nó", hora(tSel.recebido_em)]] : []),
           ]}

@@ -46,5 +46,9 @@ export function CaixaDica({ x, L, titulo, linhas }) {
   );
 }
 
-export const hora = (iso) =>
-  new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+// Hora com segundos; a data entra quando nao e de hoje.
+export const hora = (iso) => {
+  const t = new Date(iso);
+  const h = t.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  return t.toDateString() === new Date().toDateString() ? h : `${t.toLocaleDateString("pt-BR")} ${h}`;
+};
