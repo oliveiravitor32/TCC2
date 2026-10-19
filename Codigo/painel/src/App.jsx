@@ -95,6 +95,10 @@ export default function App() {
     );
   }, [dados.telemetria, decisao]);
 
+  // Ultimo comando que saiu ao no e ultima resposta (telemetria) que voltou dele.
+  const ultimoComando = dados.decisoes.find((d) => d.publicado_em)?.publicado_em ?? null;
+  const ultimaResposta = dados.telemetria[0]?.recebido_em ?? null;
+
   const estado = ESTADOS[ponto?.estado_operacional] ?? ESTADOS.sem_comunicacao;
 
   return (
@@ -223,7 +227,8 @@ export default function App() {
         <EstadoDaVia eventos={dados.eventos} />
         <Inferencia decisao={decisao} />
         <Verificacao decisao={decisao} piso={piso} />
-        <Entregue ponto={ponto} latenciaMs={latenciaMs} />
+        <Entregue ponto={ponto} latenciaMs={latenciaMs}
+                  ultimoComando={ultimoComando} ultimaResposta={ultimaResposta} />
       </div>
 
       <section className="border border-borda bg-carta p-4">

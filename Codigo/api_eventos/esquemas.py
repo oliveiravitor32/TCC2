@@ -108,6 +108,8 @@ class Decisao(BaseModel):
     restricao_aplicada: Literal["nenhuma", "piso", "taxa"]
     nivel_anterior: float | None
     previsao_movimentacao: float | None
+    # Quando o comando saiu ao no; None = decisao manteve o alvo, sem comando.
+    publicado_em: datetime | None = None
     versao_base_regras: str
     versao_modelo: str
     execucao_id: int | None

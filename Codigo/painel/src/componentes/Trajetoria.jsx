@@ -7,6 +7,9 @@
 //
 // SVG a mao, sem biblioteca de grafico: sao tres linhas e duas referencias.
 
+import { CaixaDica, hora, useDica } from "./Dica";
+import { RESTRICOES } from "../api";
+
 const M = { esq: 38, dir: 12, topo: 12, base: 22 };
 const L = 720;
 const A = 240;
@@ -18,6 +21,11 @@ function caminho(pontos) {
 export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
   // As consultas vem em ordem decrescente; aqui o tempo corre para a direita.
   const serie = [...decisoes].reverse();
+  const t0 = serie.length ? new Date(serie[0].criado_em).getTime() : 0;
+  const t1 = serie.length ? new Date(serie[serie.length - 1].criado_em).getTime() : 0;
+  const span = Math.max(t1 - t0, 1000);
+  const x = (iso) => M.esq + ((new Date(iso).getTime() - t0) / span) * (L - M.esq - M.dir);
+  const dica = useDica(serie.map((d) => x(d.criado_em)), L);
   if (serie.length < 2) {
     return (
       <div className="flex h-60 items-center justify-center text-sm text-suave">
@@ -26,10 +34,6 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
     );
   }
 
-  const t0 = new Date(serie[0].criado_em).getTime();
-  const t1 = new Date(serie[serie.length - 1].criado_em).getTime();
-  const span = Math.max(t1 - t0, 1000);
-  const x = (iso) => M.esq + ((new Date(iso).getTime() - t0) / span) * (L - M.esq - M.dir);
   const y = (v) => M.topo + (1 - Math.min(Math.max(v, 0), 1)) * (A - M.topo - M.base);
 
   const emitido = serie.map((d) => ({ x: x(d.criado_em), y: y(d.nivel_emitido) }));
@@ -52,10 +56,27 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
     taxa: "var(--color-taxa)",
   };
 
+  const sel = dica.i != null ? serie[dica.i] : null;
+  const tSel = sel ? porDecisao.get(sel.id) : null;
+
   return (
-    <figure className="w-full">
-      <svg viewBox={`0 0 ${L} ${A}`} className="w-full" role="img"
-           aria-label="Trajetória do nível de iluminação">
+    <figure className="relative w-full">
+      {sel && (
+        <CaixaDica
+          x={x(sel.criado_em)} L={L}
+          titulo={`decisão às ${hora(sel.criado_em)}`}
+          linhas={[
+            ["pretendido", sel.nivel_pretendido.toFixed(3), "var(--color-suave)"],
+            ["emitido", sel.nivel_emitido.toFixed(3), "var(--color-luz)"],
+            ["verificação", RESTRICOES[sel.restricao_aplicada]?.texto ?? sel.restricao_aplicada],
+            ["medido", tSel?.lux_medido != null ? `${tSel.lux_medido.toFixed(2)} lx` : "sem comando", "var(--color-ok)"],
+            ["comando enviado", sel.publicado_em ? hora(sel.publicado_em) : "não (alvo mantido)"],
+            ...(tSel ? [["resposta do nó", hora(tSel.recebido_em)]] : []),
+          ]}
+        />
+      )}
+      <svg viewBox={`0 0 ${L} ${A}`} className="w-full cursor-crosshair" role="img"
+           aria-label="Trajetória do nível de iluminação" {...dica.eventos}>
         {[0, 0.25, 0.5, 0.75, 1].map((v) => (
           <g key={v}>
             <line x1={M.esq} x2={L - M.dir} y1={y(v)} y2={y(v)}
@@ -85,6 +106,19 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
           <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="none"
                   stroke={corRestricao[p.r]} strokeWidth="1.5" />
         ))}
+        {sel && (
+          <g pointerEvents="none">
+            <line x1={x(sel.criado_em)} x2={x(sel.criado_em)} y1={M.topo} y2={A - M.base}
+                  stroke="var(--color-suave)" strokeWidth="1" strokeDasharray="3 3" />
+            <circle cx={x(sel.criado_em)} cy={y(sel.nivel_emitido)} r="4" fill="var(--color-luz)" />
+            {tSel && (
+              <circle cx={x(sel.criado_em)} cy={y(tSel.lux_medido / luxPleno)} r="4"
+                      fill="var(--color-ok)" />
+            )}
+          </g>
+        )}
+        {/* area transparente para o mouse funcionar em todo o grafico */}
+        <rect x="0" y="0" width={L} height={A} fill="transparent" />
       </svg>
 
       <figcaption className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-suave">

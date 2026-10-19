@@ -319,7 +319,7 @@ def consultar_decisoes(
         """
         SELECT d.id, d.criado_em, p.codigo AS ponto, d.classe_codigo,
                d.nivel_pretendido, d.nivel_emitido, d.restricao_aplicada,
-               d.nivel_anterior, d.previsao_movimentacao,
+               d.nivel_anterior, d.previsao_movimentacao, d.publicado_em,
                r.rotulo AS versao_base_regras, m.rotulo AS versao_modelo,
                d.execucao_id, d.entrada, d.ativacoes,
                COALESCE(array_agg(de.evento_id ORDER BY de.evento_id)

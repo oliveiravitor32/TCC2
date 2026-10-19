@@ -118,7 +118,18 @@ export function Verificacao({ decisao, piso }) {
   );
 }
 
-export function Entregue({ ponto, latenciaMs }) {
+// Hora local (com segundos) e ha quanto tempo: mostra se o no esta conversando.
+function quando(iso) {
+  if (!iso) return "--";
+  const t = new Date(iso);
+  const s = Math.max(0, Math.round((Date.now() - t) / 1000));
+  const ha = s < 60 ? `${s} s` : s < 3600 ? `${Math.round(s / 60)} min`
+    : s < 86400 ? `${Math.round(s / 3600)} h` : `${Math.round(s / 86400)} d`;
+  const dia = s >= 86400 ? `${t.toLocaleDateString("pt-BR")} ` : "";
+  return `${dia}${t.toLocaleTimeString("pt-BR")} · há ${ha}`;
+}
+
+export function Entregue({ ponto, latenciaMs, ultimoComando, ultimaResposta }) {
   const razao =
     ponto?.lux_medido != null && ponto?.nivel_emitido
       ? ponto.lux_medido / (ponto.nivel_emitido * ponto.lux_pleno)
@@ -160,6 +171,14 @@ export function Entregue({ ponto, latenciaMs }) {
           <dd className="tabular-nums text-texto">
             {latenciaMs != null ? `${latenciaMs} ms` : "--"}
           </dd>
+        </div>
+        <div className="flex justify-between gap-2 border-t border-borda pt-1">
+          <dt>último comando enviado</dt>
+          <dd className="tabular-nums text-texto">{quando(ultimoComando)}</dd>
+        </div>
+        <div className="flex justify-between gap-2">
+          <dt>última resposta do nó</dt>
+          <dd className="tabular-nums text-texto">{quando(ultimaResposta)}</dd>
         </div>
       </dl>
     </Cartao>

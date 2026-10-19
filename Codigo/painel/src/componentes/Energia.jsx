@@ -11,6 +11,7 @@
 
 import { Gauge, TrendingDown } from "lucide-react";
 import { Cartao } from "./Cartoes";
+import { CaixaDica, hora, useDica } from "./Dica";
 
 const M = { esq: 44, dir: 12, topo: 14, base: 22 };
 const L = 720;
@@ -87,6 +88,11 @@ function Numero({ rotulo, valor, detalhe, destaque, icone: Icone }) {
 }
 
 function Grafico({ amostras, pico }) {
+  const t0 = amostras.length ? new Date(amostras[0].medido_em).getTime() : 0;
+  const t1 = amostras.length ? new Date(amostras[amostras.length - 1].medido_em).getTime() : 0;
+  const span = Math.max(t1 - t0, 1000);
+  const x = (iso) => M.esq + ((new Date(iso).getTime() - t0) / span) * (L - M.esq - M.dir);
+  const dica = useDica(amostras.map((a) => x(a.medido_em)), L);
   if (amostras.length < 2) {
     return (
       <div className="flex h-48 items-center justify-center text-sm text-suave">
@@ -95,10 +101,6 @@ function Grafico({ amostras, pico }) {
     );
   }
 
-  const t0 = new Date(amostras[0].medido_em).getTime();
-  const t1 = new Date(amostras[amostras.length - 1].medido_em).getTime();
-  const span = Math.max(t1 - t0, 1000);
-  const x = (iso) => M.esq + ((new Date(iso).getTime() - t0) / span) * (L - M.esq - M.dir);
   const y = (w) => M.topo + (1 - Math.min(w / pico, 1)) * (A - M.topo - M.base);
 
   const pts = amostras.map((a) => ({ x: x(a.medido_em), y: y(a.potencia_medida_w) }));
@@ -106,10 +108,23 @@ function Grafico({ amostras, pico }) {
   const area = `${linha} L${pts[pts.length - 1].x},${y(0)} L${pts[0].x},${y(0)} Z`;
   const minutos = Math.round(span / 60000);
 
+  const sel = dica.i != null ? amostras[dica.i] : null;
+
   return (
-    <figure>
-      <svg viewBox={`0 0 ${L} ${A}`} className="w-full" role="img"
-           aria-label="Potência estimada ao longo do tempo">
+    <figure className="relative">
+      {sel && (
+        <CaixaDica
+          x={x(sel.medido_em)} L={L}
+          titulo={`telemetria às ${hora(sel.medido_em)}`}
+          linhas={[
+            ["potência estimada", `${sel.potencia_medida_w.toFixed(1)} W`, "var(--color-luz)"],
+            ["em fluxo pleno", `${pico.toFixed(0)} W`, "var(--color-suave)"],
+            ["fração do pleno", `${((sel.potencia_medida_w / pico) * 100).toFixed(1)}%`],
+          ]}
+        />
+      )}
+      <svg viewBox={`0 0 ${L} ${A}`} className="w-full cursor-crosshair" role="img"
+           aria-label="Potência estimada ao longo do tempo" {...dica.eventos}>
         {/* Fluxo pleno constante: o teto e a linha de base de comparação. */}
         <rect x={M.esq} y={y(pico)} width={L - M.esq - M.dir} height={y(0) - y(pico)}
               fill="var(--color-borda)" opacity="0.35" />
@@ -131,6 +146,14 @@ function Grafico({ amostras, pico }) {
         <circle cx={pts[pts.length - 1].x} cy={pts[pts.length - 1].y} r="3.5"
                 fill="var(--color-luz)" />
 
+        {sel && (
+          <g pointerEvents="none">
+            <line x1={x(sel.medido_em)} x2={x(sel.medido_em)} y1={M.topo} y2={y(0)}
+                  stroke="var(--color-suave)" strokeWidth="1" strokeDasharray="3 3" />
+            <circle cx={x(sel.medido_em)} cy={y(sel.potencia_medida_w)} r="4" fill="var(--color-luz)" />
+          </g>
+        )}
+        <rect x="0" y="0" width={L} height={A} fill="transparent" />
         <line x1={M.esq} x2={L - M.dir} y1={y(0)} y2={y(0)}
               stroke="var(--color-borda)" strokeWidth="1" />
         <text x={M.esq} y={A - 6} fontSize="10" fill="var(--color-suave)">
