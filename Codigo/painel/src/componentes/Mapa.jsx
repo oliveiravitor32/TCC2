@@ -10,7 +10,7 @@
 import { useMemo, useState } from "react";
 import { CircleMarker, MapContainer, Polyline, TileLayer, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { AlertTriangle, ShieldAlert, ShieldCheck } from "lucide-react";
+import { AlertTriangle, ExternalLink, ShieldAlert, ShieldCheck, X } from "lucide-react";
 import { RESTRICOES, TERCIS, api, hora, lux } from "../api";
 
 // Nivel decidido -> classe (P3 pleno, P4 uma abaixo, P5 minima) -> tom de azul.
@@ -45,6 +45,8 @@ const latlng = (geo) => (geo?.coordinates ?? []).map(([lon, lat]) => [lat, lon])
 export default function Mapa({ pontos, trechos, aoAbrirPonto, aoPublicar }) {
   const [selecao, setSelecao] = useState(new Set());
   const [grupoEmFoco, setGrupoEmFoco] = useState(null);
+  const [codigoFoco, setCodigoFoco] = useState(null);
+  const foco = pontos.find((p) => p.codigo === codigoFoco) ?? null;
   const [enviando, setEnviando] = useState(false);
   const [mensagem, setMensagem] = useState(null);
 
@@ -106,7 +108,7 @@ export default function Mapa({ pontos, trechos, aoAbrirPonto, aoPublicar }) {
   return (
     <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
       <section className="self-start border border-borda bg-carta">
-        <div className="h-[60vh] min-h-[22rem] w-full">
+        <div className="isolate h-[60vh] min-h-[22rem] w-full">
           <MapContainer center={centro} zoom={18} scrollWheelZoom className="h-full w-full">
             <TileLayer
               url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -144,7 +146,7 @@ export default function Mapa({ pontos, trechos, aoAbrirPonto, aoPublicar }) {
                     color: foco ? "#0a0a0a" : s.cor, weight: real || foco ? 4 : 3, dashArray: s.tracejado,
                   }}
                   eventHandlers={{
-                    click: () => aoAbrirPonto?.(p.codigo),
+                    click: () => setCodigoFoco(p.codigo),
                     mouseover: () => setGrupoEmFoco(p.grupo_id),
                     mouseout: () => setGrupoEmFoco(null),
                   }}
@@ -154,7 +156,7 @@ export default function Mapa({ pontos, trechos, aoAbrirPonto, aoPublicar }) {
                     <br />poste {p.placa ?? "--"} · grupo {p.grupo_id ?? "--"} ({tamanhoGrupo.get(p.grupo_id) ?? 1} poste(s))
                     <br />nível {p.nivel_emitido ?? "--"} · {RESTRICOES[p.restricao_aplicada]?.texto ?? "sem decisão"}
                     <br />luz {lux(p.lux_medido)} · {s.texto} · {hora(p.decidido_em)}
-                    <br />clique para abrir o monitoramento
+                    <br />clique para ver os detalhes
                   </Tooltip>
                 </CircleMarker>
               );
@@ -169,6 +171,34 @@ export default function Mapa({ pontos, trechos, aoAbrirPonto, aoPublicar }) {
       </section>
 
       <aside className="flex flex-col gap-4">
+        {foco && (
+          <section className="border border-luz bg-carta p-4">
+            <div className="mb-2 flex items-start justify-between gap-2">
+              <h2 className="border-l-4 border-luz pl-2 text-xs font-bold tracking-wide text-luz uppercase">
+                {foco.codigo}
+              </h2>
+              <button type="button" onClick={() => setCodigoFoco(null)} aria-label="fechar detalhes"
+                className="text-suave hover:text-texto"><X size={14} /></button>
+            </div>
+            <p className="mb-2 text-xs text-suave">
+              {foco.codigo === "BANCADA-01" ? "nó real (bancada)" : "nó simulado, luz sintética"} · poste {foco.placa ?? "--"}
+              {foco.logradouro ? ` · ${foco.logradouro}` : ""}
+            </p>
+            <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
+              <dt className="text-suave">grupo</dt>
+              <dd className="text-right">{foco.grupo_id ?? "--"} ({tamanhoGrupo.get(foco.grupo_id) ?? 1} poste(s))</dd>
+              <dt className="text-suave">nível emitido</dt><dd className="text-right font-semibold">{foco.nivel_emitido ?? "--"}</dd>
+              <dt className="text-suave">correção</dt><dd className="text-right">{RESTRICOES[foco.restricao_aplicada]?.texto ?? "--"}</dd>
+              <dt className="text-suave">luz medida</dt><dd className="text-right">{lux(foco.lux_medido)}</dd>
+              <dt className="text-suave">saúde</dt><dd className="text-right">{saude(foco).texto}</dd>
+              <dt className="text-suave">decidido às</dt><dd className="text-right">{hora(foco.decidido_em)}</dd>
+            </dl>
+            <button type="button" onClick={() => aoAbrirPonto?.(foco.codigo)}
+              className="mt-3 inline-flex items-center gap-1 border border-borda px-3 py-1.5 text-xs font-semibold uppercase tracking-wide hover:border-luz hover:text-luz">
+              <ExternalLink size={14} /> ver no monitoramento
+            </button>
+          </section>
+        )}
         <section className="border border-borda bg-carta p-4">
           <h2 className="mb-2 border-l-4 border-luz pl-2 text-xs font-bold tracking-wide text-luz uppercase">recorte</h2>
           <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-sm">
