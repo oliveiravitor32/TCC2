@@ -7,10 +7,19 @@ poucos, comprimida em --ciclo-min minutos e repetida, com alguns trechos
 sempre mais cheios e uma pequena variacao com semente fixa. origem =
 "gerador-demo", para ficar claro na auditoria. Nunca e fonte de resultado.
 
+Cada trecho tem uma ESCALA propria (pessoas no horario de pico): ruas quase
+vazias e ruas movimentadas. Assim a regua aprendida (3.6) difere de trecho
+para trecho, e o mesmo comportamento relativo da noite produz contagens
+absolutas diferentes. --historico DIAS grava de uma vez um passado inventado
+(um dia tipico por dia, com a mesma escala), direto no banco e sem acordar o
+servico de decisao, para que as reguas possam ser aprendidas ja; depois,
+recalcula as reguas.
+
 Por padrao NAO publica nos trechos do no real (BANCADA-01), para nao mexer na
 demonstracao da bancada; --incluir-bancada desliga essa protecao.
 
     API_URL=https://... CHAVE_API=... python -m simulador.gerador_volumes [--ciclo-min 60]
+    DATABASE_URL=... python -m simulador.gerador_volumes --historico 28
 """
 
 from __future__ import annotations
@@ -22,12 +31,18 @@ import os
 import random
 import time
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from cadastro.recorte import RECORTE
 
 TRECHOS_BANCADA = {20159, 21198, 22661}
-PESSOAS_INICIO = 3.0   # pessoas na area no comeco da noite, no trecho medio
+# Pessoas na area no horario de pico de cada trecho, distribuidas pelos trechos
+# em ordem fixa: de rua quase vazia a rua movimentada.
+ESCALAS = [0.5, 1.0, 2.0, 4.0, 8.0, 1.5, 3.0, 6.0]
+INICIO_DA_NOITE = 0.6  # fracao do pico no comeco da "noite" ao vivo
+# Dia tipico (fracao do pico por hora local), para o historico inventado.
+PERFIL_DIA = [0.05, 0.03, 0.02, 0.02, 0.03, 0.08, 0.3, 0.6, 0.7, 0.55, 0.5, 0.55,
+              0.6, 0.55, 0.5, 0.55, 0.7, 0.9, 1.0, 0.85, 0.6, 0.4, 0.25, 0.12]
 PERIODO_S = 300
 
 log = logging.getLogger("gerador")
@@ -38,13 +53,17 @@ def trechos() -> list[int]:
     return sorted(f["properties"]["cd_identificador"] for f in rec["trechos"]["geojson"]["features"])
 
 
+def escalas(ids: list[int]) -> dict[int, float]:
+    return {t: ESCALAS[i % len(ESCALAS)] for i, t in enumerate(sorted(ids))}
+
+
 def pacote(ids: list[int], fracao_da_noite: float, pesos: dict[int, float], rnd: random.Random,
            agora: datetime) -> list[dict]:
-    """Volume de cada trecho: perfil que esvazia (1 - f)^2, peso do trecho e ruido."""
-    base = PESSOAS_INICIO * (1 - fracao_da_noite) ** 2
+    """Volume de cada trecho: perfil que esvazia (1 - f)^2, escala do trecho e ruido de 10 %."""
+    base = INICIO_DA_NOITE * (1 - fracao_da_noite) ** 2
     itens = []
     for t in ids:
-        media = max(0.0, base * pesos[t] + rnd.gauss(0, 0.1))
+        media = max(0.0, base * pesos[t] * (1 + rnd.gauss(0, 0.1)))
         itens.append({"ocorrido_em": agora.isoformat(), "tipo": "volume",
                       "pessoas_media": round(media, 2), "periodo_s": PERIODO_S,
                       "trecho": t, "origem": "gerador-demo"})
@@ -59,6 +78,41 @@ def publicar(url: str, chave: str, itens: list[dict]) -> dict:
         return json.loads(r.read())
 
 
+def gravar_historico(ids: list[int], pesos: dict[int, float], dias: int, rnd: random.Random) -> None:
+    """Passado inventado de `dias` dias, a cada 5 min, direto no banco. O aviso ao
+    servico fica desligado so durante a carga: um evento antigo nao decide nada."""
+    import psycopg
+
+    from decisao import ciclo, config
+
+    agora = datetime.now(timezone.utc).replace(second=0, microsecond=0)
+    agora = agora - timedelta(minutes=agora.minute % 5)
+    inicio = agora - timedelta(days=dias)
+    with psycopg.connect(os.environ.get("DATABASE_URL", config.DATABASE_URL)) as conn:
+        conn.execute("ALTER TABLE evento_urbano DISABLE TRIGGER evento_urbano_aviso")
+        n = 0
+        with conn.cursor().copy(
+            "COPY evento_urbano (ocorrido_em, tipo, pessoas_media, periodo_s, origem, trecho_id)"
+            " FROM STDIN") as copia:
+            t = inicio
+            while t < agora:
+                hora = t.astimezone(config.FUSO).hour
+                for tr in ids:
+                    media = max(0.0, pesos[tr] * PERFIL_DIA[hora] * (1 + rnd.gauss(0, 0.15)))
+                    copia.write_row((t, "volume", round(media, 2), PERIODO_S,
+                                     "gerador-demo-historico", tr))
+                    n += 1
+                t += timedelta(seconds=PERIODO_S)
+        conn.execute("ALTER TABLE evento_urbano ENABLE TRIGGER evento_urbano_aviso")
+        ciclo.atualizar_referencias(conn, datetime.now(timezone.utc))
+        conn.commit()
+        reguas = conn.execute(
+            "SELECT id, referencia_aprendida FROM trecho_via WHERE id = ANY(%s) ORDER BY id",
+            (ids,)).fetchall()
+    log.info("historico: %s volumes em %s dias; reguas aprendidas: %s", n, dias,
+             ", ".join(f"{t}={r}" for t, r in reguas))
+
+
 def main() -> None:
     p = argparse.ArgumentParser(description="volumes inventados para a visao de bairro")
     p.add_argument("--ciclo-min", type=float, default=60, help="duracao de uma 'noite' simulada")
@@ -66,13 +120,18 @@ def main() -> None:
     p.add_argument("--incluir-bancada", action="store_true")
     p.add_argument("--semente", type=int, default=42)
     p.add_argument("--uma-vez", action="store_true")
+    p.add_argument("--historico", type=int, default=0, metavar="DIAS",
+                   help="grava DIAS de passado inventado no banco e recalcula as reguas")
     a = p.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     url = os.environ.get("API_URL", "http://localhost:8000")
     chave = os.environ.get("CHAVE_API", "")
     ids = [t for t in trechos() if a.incluir_bancada or t not in TRECHOS_BANCADA]
     rnd = random.Random(a.semente)
-    pesos = {t: rnd.uniform(0.5, 1.6) for t in ids}  # alguns trechos sempre mais cheios
+    pesos = escalas(ids)  # ruas quase vazias e ruas movimentadas
+    if a.historico:
+        gravar_historico(ids, pesos, a.historico, rnd)
+        return
     inicio = time.monotonic()
     while True:
         f = ((time.monotonic() - inicio) / 60 % a.ciclo_min) / a.ciclo_min
