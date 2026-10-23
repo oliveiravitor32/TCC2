@@ -253,7 +253,7 @@ docker-compose.yml
 
 ## Coleta por minuto de Melbourne (item 67)
 
-Na VM, `~/coleta_melbourne/` (fora do repositório e dos contêineres): cron a cada hora roda `coletar_melbourne_minuto.py` (cópia de `Codigo/modelo/`), que guarda `dados/AAAA-MM-DD.csv` e `coletas.log`. Começou em 06/10/2026. Uso previsto: experimento em 5 min para a avaliação de novembro, com protocolo fixado antes. Para conferir: `tail ~/coleta_melbourne/dados/coletas.log`.
+Na VM, `~/coleta_melbourne/` (fora do repositório e dos contêineres): cron a cada hora roda `coletar_melbourne_minuto.py` (cópia de `Codigo/modelo/`), que guarda `dados/AAAA-MM-DD.csv` e `coletas.log`. Começou em 06/10/2026. Uso previsto: experimento em 5 min para a avaliação de novembro, com protocolo fixado antes. Para conferir: `tail ~/coleta_melbourne/dados/coletas.log`. **Conferência em 23/10/2026:** os dados batem com os arquivos oficiais de set/out que o autor recebeu (99,98 % das 138 mil linhas sobrepostas idênticas; `sensing_datetime` em UTC = hora de Melbourne − 11 h); setembro e 01–09/10 vêm desses arquivos, e a VM continua desde 06/10 13:55 UTC. Faltas da coleta: 20 min por dia (13:35–13:55 UTC; o conjunto é zerado por volta das 15 h UTC, e a coleta horária perdia esse trecho) e 22/10 15:26–22:53 UTC (fonte congelada). Lacunas de 1 min de madrugada e a hora de 04/10 (horário de verão) também existem no arquivo oficial. Cron passou de hora em hora para **a cada 10 min** em 23/10. Para tapar as faltas, pedir à cidade o arquivo de outubro, como o de setembro.
 
 ## Decisões em aberto (perguntar ao autor antes de assumir)
 
