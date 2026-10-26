@@ -319,7 +319,8 @@ def consultar_decisoes(
         """
         SELECT d.id, d.criado_em, p.codigo AS ponto, d.classe_codigo,
                d.nivel_pretendido, d.nivel_emitido, d.restricao_aplicada,
-               d.nivel_anterior, d.previsao_movimentacao, d.publicado_em,
+               d.nivel_anterior, d.previsao_movimentacao, d.publicado_em, d.validade_s,
+               ci.taxa_max_decrescimo_min AS taxa_min, cm.iluminancia_media_min_lux / ci.iluminancia_media_min_lux AS piso,
                r.rotulo AS versao_base_regras, m.rotulo AS versao_modelo,
                d.execucao_id, d.entrada, d.ativacoes,
                COALESCE(array_agg(de.evento_id ORDER BY de.evento_id)
@@ -328,12 +329,14 @@ def consultar_decisoes(
           JOIN ponto_de_luz p            ON p.id = d.ponto_de_luz_id
           JOIN versao_base_regras r      ON r.id = d.versao_base_regras_id
           JOIN versao_modelo_previsao m  ON m.id = d.versao_modelo_id
+          JOIN classe_iluminacao ci      ON ci.codigo = d.classe_codigo
+          LEFT JOIN classe_iluminacao cm ON cm.codigo = ci.classe_min_dimerizacao
           LEFT JOIN decisao_evento de    ON de.decisao_id = d.id
          WHERE (%(ponto)s::text           IS NULL OR p.codigo = %(ponto)s)
            AND (%(inicio)s::timestamptz   IS NULL OR d.criado_em >= %(inicio)s)
            AND (%(fim)s::timestamptz      IS NULL OR d.criado_em <  %(fim)s)
            AND (%(execucao_id)s::bigint   IS NULL OR d.execucao_id = %(execucao_id)s)
-         GROUP BY d.id, p.codigo, r.rotulo, m.rotulo
+         GROUP BY d.id, p.codigo, r.rotulo, m.rotulo, ci.codigo, cm.codigo
          ORDER BY d.criado_em DESC
          LIMIT %(limite)s
         """,

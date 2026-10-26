@@ -1,11 +1,18 @@
 // Trajetoria do nivel ao longo do tempo (RF08).
 //
-// Tres series sobre o mesmo eixo, que e o que torna a camada de verificacao
-// observavel (4.6): o que a inferencia PRETENDEU, o que o sistema EMITIU
-// depois da verificacao, e o que o no ENTREGOU em lux (normalizado pelo
-// valor da classe, para caber na mesma escala).
+// O no so responde a cada comando (uma telemetria por decisao, 3.13.2) e
+// executa a rampa sozinho entre um comando e outro (DIVERGENCIAS 71). Por
+// isso a linha azul e o nivel ESPERADO no no, refeito aqui com a mesma regra
+// do controlador (decisao/rampa.py, firmware/no/no.ino): sobe na hora, desce
+// em passos de 5 s no maximo a taxa da classe, nunca abaixo do piso, e volta
+// ao pleno quando a validade vence sem renovacao.
 //
-// SVG a mao, sem biblioteca de grafico: sao tres linhas e duas referencias.
+// Os pontos sao MEDICAO, para conferir a conta:
+//   - cheio: iluminancia "antes do comando" - onde o no estava de fato quando
+//     o comando seguinte chegou, ou seja, o fim de cada trecho da linha;
+//   - vazado: a primeira leitura depois do comando (mostra a subida imediata).
+//
+// SVG a mao, sem biblioteca de grafico.
 
 import { CaixaDica, hora, useDica } from "./Dica";
 import { RESTRICOES } from "../api";
@@ -13,19 +20,85 @@ import { RESTRICOES } from "../api";
 const M = { esq: 38, dir: 12, topo: 12, base: 22 };
 const L = 720;
 const A = 240;
+const PASSO_S = 5;
 
 function caminho(pontos) {
   return pontos.length ? "M" + pontos.map((p) => `${p.x},${p.y}`).join(" L") : "";
 }
 
+const tresCasas = (v) => Math.round(v * 1000) / 1000;
+
+// Nivel esperado no no de `ini` a `fim` (ms), a partir dos comandos
+// publicados em ordem crescente. Devolve os vertices da linha (degraus da
+// rampa incluidos) e uma funcao que da o nivel num instante.
+function simular(comandos, ini, fim, nivelInicial) {
+  const pts = [];
+  let nivel = nivelInicial;
+  let t = ini;
+  let cmd = null;
+  let recebido = 0;
+  let proximoPasso = Infinity;
+  const marcar = (tt) => pts.push({ t: tt, v: nivel });
+  marcar(t);
+
+  const avancar = (ate) => {
+    while (t < ate) {
+      const vence = cmd ? recebido + cmd.validade_s * 1000 : Infinity;
+      const prox = Math.min(ate, proximoPasso, vence);
+      t = prox;
+      if (cmd && t >= vence) {
+        // Failsafe (RNF07): comando vencido, volta ao pleno.
+        marcar(t);
+        nivel = 1;
+        marcar(t);
+        cmd = null;
+        proximoPasso = Infinity;
+      } else if (t === proximoPasso) {
+        const alvo = Math.max(cmd.nivel_emitido, cmd.piso ?? 0);
+        if (nivel > alvo) {
+          const queda = Math.floor(((cmd.taxa_min ?? 0.1) * PASSO_S) / 60 * 1000 + 1e-3) / 1000;
+          marcar(t);
+          nivel = tresCasas(Math.max(alvo, nivel - queda));
+          marcar(t);
+        }
+        proximoPasso += PASSO_S * 1000;
+      }
+    }
+  };
+
+  const esperadoEm = new Map();
+  for (const c of comandos) {
+    const tc = new Date(c.publicado_em).getTime();
+    if (tc > fim) break;
+    if (tc >= ini) avancar(tc);
+    esperadoEm.set(c.id, nivel); // onde o no deveria estar ao receber
+    cmd = c;
+    recebido = Math.max(tc, ini);
+    proximoPasso = recebido + PASSO_S * 1000;
+    if (c.nivel_emitido >= nivel) {
+      // Subir e livre e imediato.
+      marcar(recebido);
+      nivel = c.nivel_emitido;
+      marcar(recebido);
+    }
+  }
+  avancar(fim);
+  marcar(fim);
+  return { pts, esperadoEm };
+}
+
 export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
   // As consultas vem em ordem decrescente; aqui o tempo corre para a direita.
   const serie = [...decisoes].reverse();
+  const comandos = serie.filter((d) => d.publicado_em && d.validade_s);
   const t0 = serie.length ? new Date(serie[0].criado_em).getTime() : 0;
-  const t1 = serie.length ? new Date(serie[serie.length - 1].criado_em).getTime() : 0;
+  const t1 = Math.max(serie.length ? new Date(serie[serie.length - 1].criado_em).getTime() : 0,
+                      Date.now());
   const span = Math.max(t1 - t0, 1000);
-  const x = (iso) => M.esq + ((new Date(iso).getTime() - t0) / span) * (L - M.esq - M.dir);
-  const dica = useDica(serie.map((d) => x(d.criado_em)), L);
+  const xt = (ms) => M.esq + ((ms - t0) / span) * (L - M.esq - M.dir);
+  const x = (iso) => xt(new Date(iso).getTime());
+  const dica = useDica(comandos.map((d) => x(d.publicado_em)), L);
+
   if (serie.length < 2) {
     return (
       <div className="flex h-60 items-center justify-center text-sm text-suave">
@@ -35,43 +108,49 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
   }
 
   const y = (v) => M.topo + (1 - Math.min(Math.max(v, 0), 1)) * (A - M.topo - M.base);
+  const porDecisao = new Map(telemetria.map((t) => [t.decisao_id, t]));
 
-  const emitido = serie.map((d) => ({ x: x(d.criado_em), y: y(d.nivel_emitido) }));
+  // Ponto de partida: o "antes" medido no primeiro comando da janela, ou o
+  // nivel anterior registrado na decisao; sem nada, o pleno (o no liga no pleno).
+  const primeiro = comandos[0];
+  const inicial = primeiro
+    ? porDecisao.get(primeiro.id)?.nivel_antes ?? primeiro.nivel_anterior ?? 1
+    : serie[0].nivel_emitido;
+  const { pts, esperadoEm } = simular(comandos, t0, t1, inicial);
+  const esperado = pts.map((p) => ({ x: xt(p.t), y: y(p.v) }));
   const pretendido = serie.map((d) => ({ x: x(d.criado_em), y: y(d.nivel_pretendido) }));
 
-  const porDecisao = new Map(telemetria.map((t) => [t.decisao_id, t]));
-  const medido = serie
-    .filter((d) => porDecisao.has(d.id))
-    .map((d) => ({
-      x: x(d.criado_em),
-      y: y(porDecisao.get(d.id).lux_medido / luxPleno),
-    }));
+  const antes = [];
+  const depois = [];
+  for (const d of comandos) {
+    const t = porDecisao.get(d.id);
+    if (!t) continue;
+    if (t.lux_antes != null) antes.push({ x: x(d.publicado_em), y: y(t.lux_antes / luxPleno) });
+    if (t.lux_medido != null) depois.push({ x: x(t.medido_em), y: y(t.lux_medido / luxPleno) });
+  }
 
-  const corrigidas = serie
-    .filter((d) => d.restricao_aplicada !== "nenhuma")
-    .map((d) => ({ x: x(d.criado_em), y: y(d.nivel_emitido), r: d.restricao_aplicada }));
-
-  const corRestricao = {
-    piso: "var(--color-piso)",
-    taxa: "var(--color-taxa)",
-  };
-
-  const sel = dica.i != null ? serie[dica.i] : null;
+  const sel = dica.i != null ? comandos[dica.i] : null;
   const tSel = sel ? porDecisao.get(sel.id) : null;
+  const espSel = sel ? esperadoEm.get(sel.id) : null;
+  const lx = (v) => (v != null ? `${v.toFixed(2)} lx` : "--");
+  const dif = (med, esp) =>
+    med != null && esp ? `${(((med - esp) / esp) * 100).toFixed(1)}%` : "--";
 
   return (
     <figure className="relative w-full">
       {sel && (
         <CaixaDica
-          x={x(sel.criado_em)} L={L}
-          titulo={`decisão às ${hora(sel.criado_em)}`}
+          x={x(sel.publicado_em)} L={L}
+          titulo={`comando às ${hora(sel.publicado_em)}`}
           linhas={[
+            ["antes: esperado", espSel != null ? lx(espSel * luxPleno) : "--", "var(--color-luz)"],
+            ["antes: medido", tSel ? lx(tSel.lux_antes) : "sem resposta", "var(--color-ok)"],
+            ["diferença", tSel ? dif(tSel.lux_antes, espSel * luxPleno) : "--"],
+            ["novo alvo", sel.nivel_emitido.toFixed(3)],
             ["pretendido", sel.nivel_pretendido.toFixed(3), "var(--color-suave)"],
-            ["emitido", sel.nivel_emitido.toFixed(3), "var(--color-luz)"],
             ["verificação", RESTRICOES[sel.restricao_aplicada]?.texto ?? sel.restricao_aplicada],
-            ["medido", tSel?.lux_medido != null ? `${tSel.lux_medido.toFixed(2)} lx` : sel.publicado_em ? "sem resposta" : "sem comando", "var(--color-ok)"],
-            ["comando enviado", sel.publicado_em ? hora(sel.publicado_em) : "não (alvo mantido)"],
-            ...(tSel ? [["resposta do nó", hora(tSel.recebido_em)]] : []),
+            ["após o comando", tSel ? lx(tSel.lux_medido) : "--"],
+            ["validade", `${sel.validade_s} s`],
           ]}
         />
       )}
@@ -98,22 +177,21 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
 
         <path d={caminho(pretendido)} fill="none" stroke="var(--color-suave)"
               strokeWidth="1.5" strokeDasharray="4 4" />
-        <path d={caminho(emitido)} fill="none" stroke="var(--color-luz)" strokeWidth="2.5" />
-        {medido.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r="2" fill="var(--color-ok)" opacity="0.85" />
+        <path d={caminho(esperado)} fill="none" stroke="var(--color-luz)" strokeWidth="2.5" />
+        {depois.map((p, i) => (
+          <circle key={`d${i}`} cx={p.x} cy={p.y} r="2.5" fill="var(--color-carta)"
+                  stroke="var(--color-ok)" strokeWidth="1.2" />
         ))}
-        {corrigidas.map((p, i) => (
-          <circle key={i} cx={p.x} cy={p.y} r="3.5" fill="none"
-                  stroke={corRestricao[p.r]} strokeWidth="1.5" />
+        {antes.map((p, i) => (
+          <circle key={`a${i}`} cx={p.x} cy={p.y} r="3" fill="var(--color-ok)" />
         ))}
         {sel && (
           <g pointerEvents="none">
-            <line x1={x(sel.criado_em)} x2={x(sel.criado_em)} y1={M.topo} y2={A - M.base}
+            <line x1={x(sel.publicado_em)} x2={x(sel.publicado_em)} y1={M.topo} y2={A - M.base}
                   stroke="var(--color-suave)" strokeWidth="1" strokeDasharray="3 3" />
-            <circle cx={x(sel.criado_em)} cy={y(sel.nivel_emitido)} r="4" fill="var(--color-luz)" />
-            {tSel && (
-              <circle cx={x(sel.criado_em)} cy={y(tSel.lux_medido / luxPleno)} r="4"
-                      fill="var(--color-ok)" />
+            {espSel != null && (
+              <circle cx={x(sel.publicado_em)} cy={y(espSel)} r="4" fill="none"
+                      stroke="var(--color-luz)" strokeWidth="2" />
             )}
           </g>
         )}
@@ -123,20 +201,21 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
 
       <figcaption className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-suave">
         <Legenda cor="var(--color-suave)" tracejado>nível pretendido (inferência)</Legenda>
-        <Legenda cor="var(--color-luz)">nível emitido (após verificação)</Legenda>
-        <Legenda cor="var(--color-ok)" ponto>iluminância medida / {luxPleno} lx</Legenda>
+        <Legenda cor="var(--color-luz)">nível esperado no nó (calculado pela rampa)</Legenda>
+        <Legenda cor="var(--color-ok)" ponto>medido antes do comando / {luxPleno} lx</Legenda>
+        <Legenda cor="var(--color-ok)" ponto vazado>medido logo após o comando</Legenda>
         <Legenda cor="var(--color-piso)" tracejado>piso da classe</Legenda>
       </figcaption>
     </figure>
   );
 }
 
-function Legenda({ cor, tracejado, ponto, children }) {
+function Legenda({ cor, tracejado, ponto, vazado, children }) {
   return (
     <span className="inline-flex items-center gap-2">
       <svg width="22" height="8" aria-hidden="true">
         {ponto ? (
-          <circle cx="11" cy="4" r="2.5" fill={cor} />
+          <circle cx="11" cy="4" r="2.5" fill={vazado ? "none" : cor} stroke={cor} />
         ) : (
           <line x1="0" y1="4" x2="22" y2="4" stroke={cor} strokeWidth="2"
                 strokeDasharray={tracejado ? "4 3" : undefined} />

@@ -110,6 +110,11 @@ class Decisao(BaseModel):
     previsao_movimentacao: float | None
     # Quando o comando saiu ao no; None = decisao manteve o alvo, sem comando.
     publicado_em: datetime | None = None
+    # O que o no recebe junto do alvo (rampa.Comando): o painel refaz a rampa.
+    taxa_min: float | None = None
+    piso: float | None = None
+    # Validade do comando no no (RNF07): vencida sem renovacao, volta ao pleno.
+    validade_s: int | None = None
     versao_base_regras: str
     versao_modelo: str
     execucao_id: int | None
