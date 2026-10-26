@@ -131,7 +131,8 @@ class Servico:
             log.warning("mensagem de %s ignorada: %s", msg.topic, erro)
 
     # -- Decisao ---------------------------------------------------------------
-    def decidir_pontos(self, alvos: list[Ponto], motivo: str = "partida") -> int:
+    def decidir_pontos(self, alvos: list[Ponto], motivo: str = "partida",
+                       imediato: bool = False) -> int:
         """Decide para os pontos dados; publica so o necessario. Devolve
         quantos comandos foram publicados. `motivo` (evento=ID, varredura ou
         partida) vai para o log, para ligar a decisao ao evento da API."""
@@ -164,16 +165,18 @@ class Servico:
                 continue
             for d, ultimo in zip(decisoes, ultimos):
                 try:
-                    publicados += self._publicar(d, ultimo, agora, motivo)
+                    publicados += self._publicar(d, ultimo, agora, motivo, imediato)
                 except psycopg.Error:
                     log.exception("falha de banco ao publicar %s (motivo=%s)", d.ponto.codigo, motivo)
         return publicados
 
-    def _publicar(self, d, ultimo, agora, motivo: str) -> int:
-        """Publica o comando de uma decisao se o alvo mudou ou vai vencer."""
+    def _publicar(self, d, ultimo, agora, motivo: str, imediato: bool = False) -> int:
+        """Publica o comando de uma decisao se o alvo mudou ou vai vencer.
+        `imediato` (modo de teste do painel) publica sempre e sem rampa."""
         ponto = d.ponto
         vence = agora + timedelta(seconds=d.validade_s)
-        if not deve_publicar(ultimo, d.nivel_emitido, vence, agora, config.RENOVAR_ANTES_S):
+        if not imediato and not deve_publicar(ultimo, d.nivel_emitido, vence, agora,
+                                              config.RENOVAR_ANTES_S):
             log.debug("decisao=%s ponto=%s motivo=%s alvo=%s mantido; nada publicado",
                       d.id, ponto.codigo, motivo, d.nivel_emitido)
             return 0
@@ -181,13 +184,21 @@ class Servico:
         # A decisao ja esta confirmada: a telemetria pode referencia-la.
         info = self.mqtt.publish(
             config.TOPICO_COMANDO.format(ponto=ponto.codigo),
-            json.dumps(d.comando()),
+            json.dumps(self._carga(d, imediato)),
             qos=config.MQTT_QOS,
             retain=False,
         )
         if info.rc == mqtt.MQTT_ERR_SUCCESS:
             with self.db_ciclo.transaction():
                 marcar_publicada(self.db_ciclo, d.id, _agora())
+                if imediato:
+                    # Fica registrado na decisao (painel e auditoria).
+                    self.db_ciclo.execute(
+                        "UPDATE decisao SET entrada = COALESCE(entrada, '{}'::jsonb)"
+                        " || '{\"teste_imediato\": true}'::jsonb WHERE id = %s", (d.id,))
+            if imediato:
+                log.warning("decisao=%s ponto=%s MODO TESTE: comando imediato, sem rampa",
+                            d.id, ponto.codigo)
             publicado = 1
         else:
             log.warning("decisao=%s comando nao publicado (rc=%s)", d.id, info.rc)
@@ -204,6 +215,13 @@ class Servico:
         if d.observada is None:
             log.info("decisao=%s ponto=%s sem volume vigente: nivel pleno", d.id, ponto.codigo)
         return publicado
+
+    @staticmethod
+    def _carga(d, imediato: bool) -> dict:
+        carga = d.comando()
+        if imediato:
+            carga["imediato"] = True
+        return carga
 
     def passo(self) -> int:
         """Decide para todos os pontos (partida do servico e testes)."""
@@ -225,10 +243,13 @@ class Servico:
     def ao_evento(self, evento_id: int) -> int:
         try:
             alvos = pontos_do_evento(self.db_ciclo, evento_id)
+            origem = self.db_ciclo.execute(
+                "SELECT origem FROM evento_urbano WHERE id = %s", (evento_id,)).fetchone()
         except psycopg.Error:
             log.exception("falha de banco ao ler o evento %s", evento_id)
             return 0
-        return self.decidir_pontos(alvos, f"evento={evento_id}")
+        imediato = bool(origem) and origem[0] == config.ORIGEM_TESTE_IMEDIATO
+        return self.decidir_pontos(alvos, f"evento={evento_id}", imediato)
 
     def executar(self, *, uma_vez: bool = False) -> None:
         aviso = psycopg.connect(config.DATABASE_URL, autocommit=True)

@@ -54,6 +54,10 @@ REFERENCIA_A_CADA_S = float(os.environ.get("REFERENCIA_A_CADA_S", str(24 * 3600)
 # Ocorrencia: vale ate a plataforma publicar o encerramento ou ate vencer a
 # vigencia informada, o que vier primeiro; sem vigencia, este prazo.
 VALIDADE_OCORRENCIA_S = float(os.environ.get("VALIDADE_OCORRENCIA_S", "900"))
+# Modo de teste do painel (so demonstracao, fora do TCC): eventos com esta
+# origem viram comando IMEDIATO - o no vai direto ao alvo, sem a rampa de
+# descida (o piso continua valendo). A API so aceita com MODO_TESTE=1.
+ORIGEM_TESTE_IMEDIATO = "teste-imediato"
 # Um POST pode trazer um trecho ou um pacote (envio por regiao).
 MAX_ITENS_PACOTE = int(os.environ.get("MAX_ITENS_PACOTE", "500"))
 

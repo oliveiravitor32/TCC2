@@ -78,6 +78,9 @@ ORIGENS = [o.strip() for o in os.environ.get("ORIGENS_PAINEL", "*").split(",") i
 # Chave de publicacao (DIVERGENCIAS 22). Vazia = sem exigencia (desenvolvimento).
 CHAVE_API = os.environ.get("CHAVE_API", "")
 CHAVE_DEMO = os.environ.get("CHAVE_DEMO", "")
+# Modo de teste do painel (POST /teste/eventos): so para demonstracao rapida,
+# fora do TCC. Desligado por padrao; ligar com MODO_TESTE=1.
+MODO_TESTE = os.environ.get("MODO_TESTE", "") == "1"
 REGRAS_DIR = Path(__file__).resolve().parent.parent / "decisao" / "regras"
 HORA_INICIO_ATENUACAO = time(0, 0)
 HORA_FIM_ATENUACAO = time(5, 0)
@@ -278,6 +281,26 @@ def publicar_evento(
              len(aceitos), len(recusados))
     response.status_code = status.HTTP_200_OK
     return {"aceitos": aceitos, "recusados": recusados}
+
+
+@app.post("/teste/eventos", response_model=Evento, status_code=status.HTTP_201_CREATED,
+          dependencies=[Depends(exigir_chave)])
+def publicar_evento_teste(request: Request, evento: EventoEntrada,
+                          conn: psycopg.Connection = Conn) -> dict:
+    """Modo de teste do painel: o evento segue o caminho normal (inferencia e
+    piso), mas o comando sai IMEDIATO - o no vai direto ao alvo, sem a rampa
+    de descida. So demonstracao; desligado sem MODO_TESTE=1."""
+    if not MODO_TESTE:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "modo de teste desligado")
+    evento = evento.model_copy(update={"origem": config.ORIGEM_TESTE_IMEDIATO})
+    try:
+        gravado = _gravar(conn, evento)
+    except ForeignKeyViolation:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT,
+                            f"trecho {evento.trecho} nao cadastrado") from None
+    log.warning("rid=%s MODO TESTE: evento imediato id=%s trecho=%s", request.state.rid,
+                gravado["id"], evento.trecho)
+    return gravado
 
 
 @app.get("/eventos", response_model=list[Evento])

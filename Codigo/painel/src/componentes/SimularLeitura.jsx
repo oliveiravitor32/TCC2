@@ -43,6 +43,9 @@ const arredonda = (v) => Math.round(v * 10) / 10;
 export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPublicar }) {
   const [trecho, setTrecho] = useState(trechoInicial ?? trechos[0]?.id ?? "");
   const [tipo, setTipo] = useState("volume");
+  // "normal" = como a plataforma publicaria; "teste" = forcar evento imediato
+  // (POST /teste/eventos): o comando vai ao no sem a rampa de descida.
+  const [modo, setModo] = useState("normal");
   const [media, setMedia] = useState(0);
   const [ocorrencia, setOcorrencia] = useState("seguranca");
   const [enviando, setEnviando] = useState(false);
@@ -69,7 +72,7 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
         ? { ...base, tipo: "volume", pessoas_media: media, periodo_s: 300 }
         : { ...base, tipo: "ocorrencia", ocorrencia };
     try {
-      const evento = await api.publicarLeitura(corpo);
+      const evento = modo === "teste" ? await api.publicarTeste(corpo) : await api.publicarLeitura(corpo);
       aoPublicar(evento);
       fechar();
     } catch (e) {
@@ -97,7 +100,7 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
               Simular publicação da plataforma
             </h2>
             <p className="text-xs text-suave">
-              O que o Smart Sampa enviaria: o volume dos últimos 5 min do trecho, ou uma ocorrência na hora.
+              O que o sistema de monitoramento enviaria: o volume dos últimos 5 min do trecho, ou uma ocorrência na hora.
             </p>
           </div>
           <button type="button" onClick={fechar} className="rounded-md p-1 text-suave hover:bg-borda/40" aria-label="fechar">
@@ -108,6 +111,25 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
         {!api.podePublicar && (
           <p className="mb-3 rounded-md bg-falha/10 p-2 text-xs text-falha">
             Este painel foi publicado sem VITE_CHAVE_DEMO: a API vai recusar o envio.
+          </p>
+        )}
+
+        <div className="mb-4 flex gap-1 border-b border-borda" role="tablist" aria-label="modo">
+          {[
+            { v: "normal", rotulo: "publicação normal" },
+            { v: "teste", rotulo: "forçar evento imediato (teste)" },
+          ].map((m) => (
+            <button key={m.v} type="button" role="tab" aria-selected={modo === m.v} onClick={() => setModo(m.v)}
+              className={`-mb-px border-b-2 px-3 py-2 text-xs ${modo === m.v ? (m.v === "teste" ? "border-taxa text-taxa" : "border-luz text-luz") : "border-transparent text-suave hover:text-texto"}`}>
+              {m.rotulo}
+            </button>
+          ))}
+        </div>
+
+        {modo === "teste" && (
+          <p className="mb-4 rounded-md bg-taxa/10 p-2 text-xs text-taxa">
+            Só para teste e demonstração: o serviço decide normalmente (regras e piso), mas o nó vai
+            direto ao nível, <strong>sem a rampa de descida</strong> que a norma exige. Não usar em resultados.
           </p>
         )}
 
@@ -203,7 +225,7 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
           <button type="button" onClick={publicar} disabled={enviando || trecho === ""}
             className="inline-flex items-center gap-2 rounded-md bg-luz px-3 py-2 text-sm font-semibold text-white uppercase tracking-wide transition-colors hover:bg-tinta disabled:opacity-50 disabled:hover:bg-luz">
             <Send size={14} />
-            {enviando ? "enviando..." : "publicar"}
+            {enviando ? "enviando..." : modo === "teste" ? "forçar agora" : "publicar"}
           </button>
         </div>
       </div>

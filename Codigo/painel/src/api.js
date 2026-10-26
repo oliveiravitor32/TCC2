@@ -47,6 +47,8 @@ export const api = {
   trechos: () => pegar("/trechos"),
   explicacao: (eventoId) => pegar(`/eventos/${eventoId}/explicacao`),
   publicarLeitura: (corpo) => enviar("/eventos", corpo),
+  // Modo de teste (so demonstracao): o comando sai sem a rampa de descida.
+  publicarTeste: (corpo) => enviar("/teste/eventos", corpo),
   decisoes: (params) => pegar("/decisoes", params),
   telemetria: (params) => pegar("/telemetria", params),
   eventos: (params) => pegar("/eventos", params),

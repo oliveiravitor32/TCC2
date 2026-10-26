@@ -60,6 +60,8 @@ services:
       CHAVE_API: ${CHAVE_API:?rode deploy/preparar.sh}
       # Chave do painel de demonstracao (publica por decisao do autor); vazia = desligada.
       CHAVE_DEMO: ${CHAVE_DEMO:-}
+      # Modo de teste do painel (forcar evento imediato); 1 liga. Desligar apos a banca.
+      MODO_TESTE: ${MODO_TESTE:-}
       ORIGENS_PAINEL: ${ORIGENS_PAINEL:-*}
     depends_on:
       db:

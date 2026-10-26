@@ -87,6 +87,7 @@ struct Comando {
   unsigned long validade_s;
   float piso;
   float taxa_min;           // decrescimo maximo por minuto
+  bool imediato;            // modo de teste do painel: sem rampa (piso vale)
 };
 
 BH1750 sensor(0x23);
@@ -218,6 +219,9 @@ bool extrairComando(const char *dados, int tam, Comando &c) {
   c.piso = v;
   if (!extrairNumero(buf, "\"taxa_min\"", v) || v <= 0 || v > 1) return false;
   c.taxa_min = v;
+  // Opcional (modo de teste do painel): "imediato": true -> sem rampa.
+  const char *im = strstr(buf, "\"imediato\"");
+  c.imediato = im && strstr(im, "true") != nullptr;
   return true;
 }
 
@@ -546,7 +550,8 @@ void loop() {
     ultimoComando = millis();
     // Subir e na hora; descer e no passo da rampa (abaixo).
     float alvoEfetivo = max(alvo, pisoCmd);
-    if (alvoEfetivo >= nivelAtual) aplicarNivel(alvoEfetivo);
+    if (alvoEfetivo >= nivelAtual || c.imediato) aplicarNivel(alvoEfetivo);
+    if (c.imediato) Serial.println("MODO TESTE: comando imediato, sem rampa");
     ultimoPasso = millis();
     strncpy(decisaoPendente, c.decisao_id, sizeof(decisaoPendente) - 1);
     if (emFailsafe) Serial.println("comando recebido: saindo do failsafe");

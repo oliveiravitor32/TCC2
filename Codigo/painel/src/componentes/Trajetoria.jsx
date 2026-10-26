@@ -79,7 +79,12 @@ function simular(comandos, ini, fim, nivelInicial) {
     cmd = c;
     recebido = Math.max(tc, ini);
     proximoPasso = recebido + PASSO_S * 1000;
-    if (c.nivel_emitido >= nivel) {
+    if (c.entrada?.teste_imediato) {
+      // Modo de teste do painel: vai direto ao alvo (sem rampa), acima do piso.
+      marcar(recebido);
+      nivel = Math.max(c.nivel_emitido, c.piso ?? 0);
+      marcar(recebido);
+    } else if (c.nivel_emitido >= nivel) {
       // Subir e livre e imediato.
       marcar(recebido);
       nivel = c.nivel_emitido;

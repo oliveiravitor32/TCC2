@@ -36,16 +36,23 @@ class Comando:
     validade_s: int         # contados a partir do recebimento, no relogio do no
     piso: Decimal           # da classe_iluminacao (RF09), segunda barreira
     taxa_min: Decimal       # decrescimo maximo por minuto
+    # So no modo de teste do painel (config.ORIGEM_TESTE_IMEDIATO): vai
+    # direto ao alvo, sem rampa; o piso continua valendo.
+    imediato: bool = False
 
     def carga(self) -> dict:
-        return {"decisao_id": self.decisao_id, "nivel": float(self.nivel),
-                "validade_s": self.validade_s, "piso": float(self.piso),
-                "taxa_min": float(self.taxa_min)}
+        c = {"decisao_id": self.decisao_id, "nivel": float(self.nivel),
+             "validade_s": self.validade_s, "piso": float(self.piso),
+             "taxa_min": float(self.taxa_min)}
+        if self.imediato:
+            c["imediato"] = True
+        return c
 
     @staticmethod
     def de_carga(c: dict) -> "Comando":
         cmd = Comando(str(c["decisao_id"]), Decimal(str(c["nivel"])), int(c["validade_s"]),
-                      Decimal(str(c["piso"])), Decimal(str(c["taxa_min"])))
+                      Decimal(str(c["piso"])), Decimal(str(c["taxa_min"])),
+                      bool(c.get("imediato", False)))
         if not (0 < cmd.validade_s and Decimal(0) <= cmd.nivel <= PLENO):
             raise ValueError(f"comando fora do dominio: {c}")
         return cmd
@@ -82,6 +89,10 @@ class Controlador:
         if alvo == PLENO:
             # Subir e livre e imediato; o pleno e sempre admissivel.
             self.luz = PLENO
+            return self.luz
+        if self.comando.imediato:
+            # Modo de teste: sem rampa, mas nunca abaixo do piso recebido.
+            self.luz = max(alvo, self.comando.piso)
             return self.luz
         crit = Criterio(piso=self.comando.piso, taxa_max_decrescimo_min=self.comando.taxa_min)
         self.luz = verificar(alvo, crit, nivel_anterior=self.luz,
