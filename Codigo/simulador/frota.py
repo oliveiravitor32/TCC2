@@ -82,6 +82,9 @@ class Frota:
             ctl = self.ctl[codigo]
             nivel_antes = float(ctl.luz)
             ctl.receber(cmd, _agora())
+            # Como o firmware: subida aplicada na hora, antes de medir (a
+            # descida comeca no passo seguinte da rampa).
+            ctl.passo(_agora(), 0)
             nivel = float(ctl.luz)
         carga = {
             "decisao_id": cmd.decisao_id,

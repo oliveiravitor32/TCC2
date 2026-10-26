@@ -42,7 +42,7 @@ function corTrecho(t) {
 
 const latlng = (geo) => (geo?.coordinates ?? []).map(([lon, lat]) => [lat, lon]);
 
-export default function Mapa({ pontos, trechos, aoAbrirPonto, aoPublicar }) {
+export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto, aoPublicar }) {
   const [selecao, setSelecao] = useState(new Set());
   const [grupoEmFoco, setGrupoEmFoco] = useState(null);
   const [codigoFoco, setCodigoFoco] = useState(null);
@@ -146,7 +146,11 @@ export default function Mapa({ pontos, trechos, aoAbrirPonto, aoPublicar }) {
                     color: foco ? "#0a0a0a" : s.cor, weight: real || foco ? 4 : 3, dashArray: s.tracejado,
                   }}
                   eventHandlers={{
-                    click: () => setCodigoFoco(p.codigo),
+                    // O clique ja troca o ponto analisado nas outras abas.
+                    click: () => {
+                      setCodigoFoco(p.codigo);
+                      aoSelecionarPonto?.(p.codigo);
+                    },
                     mouseover: () => setGrupoEmFoco(p.grupo_id),
                     mouseout: () => setGrupoEmFoco(null),
                   }}

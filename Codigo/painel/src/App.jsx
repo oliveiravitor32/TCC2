@@ -209,6 +209,7 @@ export default function App() {
         <Mapa
           pontos={dados.pontos}
           trechos={trechos}
+          aoSelecionarPonto={setSelecionado}
           aoAbrirPonto={(codigo) => {
             setSelecionado(codigo);
             setAba("monitoramento");

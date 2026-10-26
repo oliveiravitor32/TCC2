@@ -94,6 +94,14 @@ function simular(comandos, ini, fim, nivelInicial) {
 export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
   // As consultas vem em ordem decrescente; aqui o tempo corre para a direita.
   const [janela, setJanela] = useState(1);
+  // Series visiveis; clicar na legenda esconde ou mostra cada uma.
+  const [ocultas, setOcultas] = useState(() => new Set());
+  const ver = (k) => !ocultas.has(k);
+  const alternar = (k) => setOcultas((o) => {
+    const n = new Set(o);
+    if (n.has(k)) n.delete(k); else n.add(k);
+    return n;
+  });
   const serie = [...decisoes].reverse();
   const todos = serie.filter((d) => d.publicado_em && d.validade_s);
   const tIni = serie.length ? new Date(serie[0].criado_em).getTime() : 0;
@@ -187,21 +195,29 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
         ))}
 
         {/* Piso da classe: o limite que a verificacao nao deixa cruzar. */}
-        <line x1={M.esq} x2={L - M.dir} y1={y(piso)} y2={y(piso)}
-              stroke="var(--color-piso)" strokeWidth="1.5" strokeDasharray="6 4" />
-        <text x={L - M.dir} y={y(piso) - 5} textAnchor="end" fontSize="10"
-              fill="var(--color-piso)">
-          piso P5
-        </text>
+        {ver("piso") && (
+          <>
+            <line x1={M.esq} x2={L - M.dir} y1={y(piso)} y2={y(piso)}
+                  stroke="var(--color-piso)" strokeWidth="1.5" strokeDasharray="6 4" />
+            <text x={L - M.dir} y={y(piso) - 5} textAnchor="end" fontSize="10"
+                  fill="var(--color-piso)">
+              piso P5
+            </text>
+          </>
+        )}
 
-        <path d={caminho(pretendido)} fill="none" stroke="var(--color-suave)"
-              strokeWidth="1.5" strokeDasharray="4 4" />
-        <path d={caminho(esperado)} fill="none" stroke="var(--color-luz)" strokeWidth="2.5" />
-        {depois.map((p, i) => (
+        {ver("pretendido") && (
+          <path d={caminho(pretendido)} fill="none" stroke="var(--color-suave)"
+                strokeWidth="1.5" strokeDasharray="4 4" />
+        )}
+        {ver("esperado") && (
+          <path d={caminho(esperado)} fill="none" stroke="var(--color-luz)" strokeWidth="2.5" />
+        )}
+        {ver("depois") && depois.map((p, i) => (
           <circle key={`d${i}`} cx={p.x} cy={p.y} r="2.5" fill="var(--color-carta)"
                   stroke="var(--color-ok)" strokeWidth="1.2" />
         ))}
-        {antes.map((p, i) => (
+        {ver("antes") && antes.map((p, i) => (
           <circle key={`a${i}`} cx={p.x} cy={p.y} r="3" fill="var(--color-ok)" />
         ))}
         {sel && (
@@ -219,19 +235,27 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
       </svg>
 
       <figcaption className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-suave">
-        <Legenda cor="var(--color-suave)" tracejado>nível pretendido (inferência)</Legenda>
-        <Legenda cor="var(--color-luz)">nível esperado no nó (calculado pela rampa)</Legenda>
-        <Legenda cor="var(--color-ok)" ponto>medido antes do comando / {luxPleno} lx</Legenda>
-        <Legenda cor="var(--color-ok)" ponto vazado>medido logo após o comando</Legenda>
-        <Legenda cor="var(--color-piso)" tracejado>piso da classe</Legenda>
+        {[
+          ["pretendido", { cor: "var(--color-suave)", tracejado: true }, "nível pretendido (inferência)"],
+          ["esperado", { cor: "var(--color-luz)" }, "nível esperado no nó (calculado pela rampa)"],
+          ["antes", { cor: "var(--color-ok)", ponto: true }, `medido antes do comando / ${luxPleno} lx`],
+          ["depois", { cor: "var(--color-ok)", ponto: true, vazado: true }, "medido logo após o comando"],
+          ["piso", { cor: "var(--color-piso)", tracejado: true }, "piso da classe"],
+        ].map(([k, estilo, texto]) => (
+          <Legenda key={k} {...estilo} ativa={ver(k)} aoClicar={() => alternar(k)}>
+            {texto}
+          </Legenda>
+        ))}
       </figcaption>
     </figure>
   );
 }
 
-function Legenda({ cor, tracejado, ponto, vazado, children }) {
+function Legenda({ cor, tracejado, ponto, vazado, ativa, aoClicar, children }) {
   return (
-    <span className="inline-flex items-center gap-2">
+    <button type="button" onClick={aoClicar} aria-pressed={ativa}
+            title={ativa ? "clique para esconder" : "clique para mostrar"}
+            className={`inline-flex items-center gap-2 hover:text-texto ${ativa ? "" : "line-through opacity-40"}`}>
       <svg width="22" height="8" aria-hidden="true">
         {ponto ? (
           <circle cx="11" cy="4" r="2.5" fill={vazado ? "none" : cor} stroke={cor} />
@@ -241,6 +265,6 @@ function Legenda({ cor, tracejado, ponto, vazado, children }) {
         )}
       </svg>
       {children}
-    </span>
+    </button>
   );
 }
