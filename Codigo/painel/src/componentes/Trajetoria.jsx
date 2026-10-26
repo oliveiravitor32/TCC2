@@ -14,6 +14,8 @@
 //
 // SVG a mao, sem biblioteca de grafico.
 
+import { useState } from "react";
+
 import { CaixaDica, hora, useDica } from "./Dica";
 import { RESTRICOES } from "../api";
 
@@ -21,6 +23,8 @@ const M = { esq: 38, dir: 12, topo: 12, base: 22 };
 const L = 720;
 const A = 240;
 const PASSO_S = 5;
+// Janelas de visualizacao (h); a simulacao usa todas as decisoes carregadas.
+const JANELAS = [[1, "1 h"], [6, "6 h"], [24, "24 h"], [null, "tudo"]];
 
 function caminho(pontos) {
   return pontos.length ? "M" + pontos.map((p) => `${p.x},${p.y}`).join(" L") : "";
@@ -89,11 +93,15 @@ function simular(comandos, ini, fim, nivelInicial) {
 
 export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
   // As consultas vem em ordem decrescente; aqui o tempo corre para a direita.
+  const [janela, setJanela] = useState(1);
   const serie = [...decisoes].reverse();
-  const comandos = serie.filter((d) => d.publicado_em && d.validade_s);
-  const t0 = serie.length ? new Date(serie[0].criado_em).getTime() : 0;
+  const todos = serie.filter((d) => d.publicado_em && d.validade_s);
+  const tIni = serie.length ? new Date(serie[0].criado_em).getTime() : 0;
   const t1 = Math.max(serie.length ? new Date(serie[serie.length - 1].criado_em).getTime() : 0,
                       Date.now());
+  const t0 = janela ? Math.max(tIni, t1 - janela * 3600e3) : tIni;
+  const naJanela = (iso) => new Date(iso).getTime() >= t0;
+  const comandos = todos.filter((d) => naJanela(d.publicado_em));
   const span = Math.max(t1 - t0, 1000);
   const xt = (ms) => M.esq + ((ms - t0) / span) * (L - M.esq - M.dir);
   const x = (iso) => xt(new Date(iso).getTime());
@@ -112,13 +120,16 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
 
   // Ponto de partida: o "antes" medido no primeiro comando da janela, ou o
   // nivel anterior registrado na decisao; sem nada, o pleno (o no liga no pleno).
-  const primeiro = comandos[0];
+  const primeiro = todos[0];
   const inicial = primeiro
     ? porDecisao.get(primeiro.id)?.nivel_antes ?? primeiro.nivel_anterior ?? 1
     : serie[0].nivel_emitido;
-  const { pts, esperadoEm } = simular(comandos, t0, t1, inicial);
-  const esperado = pts.map((p) => ({ x: xt(p.t), y: y(p.v) }));
-  const pretendido = serie.map((d) => ({ x: x(d.criado_em), y: y(d.nivel_pretendido) }));
+  // Simula desde a primeira decisao carregada e mostra so a janela escolhida.
+  const { pts, esperadoEm } = simular(todos, tIni, t1, inicial);
+  const esperado = pts.filter((p, i) => p.t >= t0 || pts[i + 1]?.t >= t0)
+    .map((p) => ({ x: xt(Math.max(p.t, t0)), y: y(p.v) }));
+  const pretendido = serie.filter((d) => naJanela(d.criado_em))
+    .map((d) => ({ x: x(d.criado_em), y: y(d.nivel_pretendido) }));
 
   const antes = [];
   const depois = [];
@@ -138,6 +149,14 @@ export default function Trajetoria({ decisoes, telemetria, piso, luxPleno }) {
 
   return (
     <figure className="relative w-full">
+      <div className="mb-1 flex justify-end gap-1 text-xs">
+        {JANELAS.map(([h, rotulo]) => (
+          <button key={rotulo} type="button" onClick={() => setJanela(h)}
+                  className={`px-2 py-0.5 ${janela === h ? "bg-luz text-white" : "text-suave hover:text-texto"}`}>
+            {rotulo}
+          </button>
+        ))}
+      </div>
       {sel && (
         <CaixaDica
           x={x(sel.publicado_em)} L={L}
