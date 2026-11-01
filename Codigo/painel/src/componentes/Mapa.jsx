@@ -22,12 +22,18 @@ const NIVEIS = [
 const SEM_DECISAO = "#c4c7d0";
 const corNivel = (n) => (n === null || n === undefined ? SEM_DECISAO : NIVEIS.find((x) => n >= x.min).cor);
 
-// Saude do ponto -> borda.
+// Saude do ponto -> preenchimento.
+const SAUDE = {
+  ok: { cor: "#16a34a", texto: "ok" },
+  alerta: { cor: "#facc15", texto: "alerta de diagnóstico" },
+  semComunicacao: { cor: "#c62828", texto: "sem comunicação" },
+  manutencao: { cor: "#6b7280", texto: "em manutenção" },
+};
 function saude(p) {
-  if (p.estado_operacional === "sem_comunicacao") return { cor: "#6b7280", texto: "sem comunicação", tracejado: "3 3" };
-  if (p.estado_operacional === "manutencao") return { cor: "#0a0a0a", texto: "em manutenção" };
-  if (p.estado_operacional === "falha" || p.alertas_abertos > 0) return { cor: "#c62828", texto: "alerta de diagnóstico" };
-  return { cor: "#ffffff", texto: "ok" };
+  if (p.estado_operacional === "sem_comunicacao") return SAUDE.semComunicacao;
+  if (p.estado_operacional === "manutencao") return SAUDE.manutencao;
+  if (p.estado_operacional === "falha" || p.alertas_abertos > 0) return SAUDE.alerta;
+  return SAUDE.ok;
 }
 
 // Volume vigente do trecho (normalizado pela regua) -> faixa dos tercis (3.7).
@@ -142,8 +148,8 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
                   center={[p.latitude, p.longitude]}
                   radius={real ? 11 : foco ? 9 : 7}
                   pathOptions={{
-                    fillColor: corNivel(p.nivel_emitido), fillOpacity: 1,
-                    color: foco ? "#0a0a0a" : s.cor, weight: real || foco ? 4 : 3, dashArray: s.tracejado,
+                    fillColor: s.cor, fillOpacity: 1,
+                    color: foco ? "#0a0a0a" : corNivel(p.nivel_emitido), weight: real || foco ? 4 : 3,
                   }}
                   eventHandlers={{
                     // O clique ja troca o ponto analisado nas outras abas.
@@ -248,17 +254,18 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
 
         <section className="border border-borda bg-carta p-4 text-xs">
           <h2 className="mb-2 border-l-4 border-luz pl-2 font-bold tracking-wide text-luz uppercase">legenda</h2>
-          <p className="mb-1 font-semibold">postes: preenchimento = nível decidido</p>
+          <p className="mb-1 font-semibold">postes: preenchimento = saúde</p>
+          <ul className="mb-2 space-y-1">
+            {Object.values(SAUDE).map((s) => (
+              <li key={s.texto} className="flex items-center gap-2"><span className="inline-block h-3 w-3 rounded-full" style={{ background: s.cor }} />{s.texto}</li>
+            ))}
+          </ul>
+          <p className="mb-1 font-semibold">postes: borda = nível decidido</p>
           <ul className="mb-2 space-y-1">
             {NIVEIS.map((n) => (
-              <li key={n.rotulo} className="flex items-center gap-2"><span className="inline-block h-3 w-3" style={{ background: n.cor }} />{n.rotulo}</li>
+              <li key={n.rotulo} className="flex items-center gap-2"><span className="inline-block h-3 w-3 border-2" style={{ borderColor: n.cor }} />{n.rotulo}</li>
             ))}
-            <li className="flex items-center gap-2"><span className="inline-block h-3 w-3" style={{ background: SEM_DECISAO }} />sem decisão</li>
-          </ul>
-          <p className="mb-1 font-semibold">postes: borda = saúde</p>
-          <ul className="mb-2 space-y-1">
-            <li className="flex items-center gap-2"><span className="inline-block h-3 w-3 border-2" style={{ borderColor: "#c62828" }} />alerta de diagnóstico</li>
-            <li className="flex items-center gap-2"><span className="inline-block h-3 w-3 border-2 border-dashed" style={{ borderColor: "#6b7280" }} />sem comunicação</li>
+            <li className="flex items-center gap-2"><span className="inline-block h-3 w-3 border-2" style={{ borderColor: SEM_DECISAO }} />sem decisão</li>
           </ul>
           <p className="mb-1 font-semibold">ruas: volume vigente</p>
           <ul className="space-y-1">
