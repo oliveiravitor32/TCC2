@@ -35,7 +35,10 @@ export function listarAlertas(pontos, alertas) {
     chave: `a${a.id}`, tipo: a.tipo, ponto: porCodigo.get(a.ponto) ?? { codigo: a.ponto }, desde: a.aberto_em,
     detalhe: `razão ${a.razao != null ? a.razao.toFixed(3) : "--"} · tolerância ${a.tolerancia ?? "--"} · ${a.ciclos ?? "--"} ciclos`,
   }));
+  // 'falha' vinda de um alerta de falha total ja tem o cartao do alerta.
+  const comAlerta = new Set(alertas.map((a) => a.ponto));
   for (const p of pontos) {
+    if (p.estado_operacional === "falha" && comAlerta.has(p.codigo)) continue;
     if (["sem_comunicacao", "falha", "manutencao"].includes(p.estado_operacional)) {
       itens.push({ chave: `e${p.codigo}`, tipo: p.estado_operacional, ponto: p, desde: null, detalhe: null });
     }

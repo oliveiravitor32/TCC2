@@ -35,6 +35,25 @@ DUTY_PLENO_CLASSE = 0.5
 LUX_RESIDUAL = 0.3
 RUIDO_LUX = 0.1
 
+# Demonstracao (fora do TCC): postes da frota presos numa situacao de alerta,
+# para mostrar no painel o que acontece em cada uma. Os demais seguem normais.
+#   sem_comunicacao - nao assina comandos e fica "offline" no broker;
+#   manutencao      - publica "manutencao" e ignora comandos;
+#   falha_total     - responde com a luz igual a residual (luminaria apagada);
+#   perda_controle  - responde com 60 % da luz esperada;
+#   falha           - normal aqui; o estado 'falha' e posto no cadastro
+#                     (UPDATE ponto_de_luz), que o servico nao sobrescreve.
+DEMO_ALERTAS = {
+    "JH-IP0410150": "sem_comunicacao",
+    "JH-IP0412429": "sem_comunicacao",
+    "JH-IP0410156": "falha_total",
+    "JH-IP0412425": "falha_total",
+    "JH-IP0412414": "perda_controle",
+    "JH-IP0412420": "falha",
+    "JH-IP0550388": "manutencao",
+}
+FRACAO_PERDA = 0.6
+
 log = logging.getLogger("frota")
 
 
@@ -58,11 +77,23 @@ class Frota:
         self.cli.on_message = self._ao_receber
 
     @staticmethod
-    def _lux(nivel: float) -> float:
+    def _lux(nivel: float, codigo: str | None = None) -> float:
+        modo = DEMO_ALERTAS.get(codigo)
+        if modo == "falha_total":
+            nivel = 0.0
+        elif modo == "perda_controle":
+            nivel *= FRACAO_PERDA
         return round(max(0.0, nivel * LUX_PLENO_CLASSE + LUX_RESIDUAL + random.gauss(0, RUIDO_LUX)), 2)
 
     def _ao_conectar(self, cli, *_):
         for c in self.ctl:
+            modo = DEMO_ALERTAS.get(c)
+            if modo == "sem_comunicacao":
+                cli.publish(f"iluminacao/{c}/estado", "offline", qos=1, retain=True)
+                continue
+            if modo == "manutencao":
+                cli.publish(f"iluminacao/{c}/estado", "manutencao", qos=1, retain=True)
+                continue
             cli.subscribe(f"iluminacao/{c}/comando", qos=1)
             cli.publish(f"iluminacao/{c}/estado", "online", qos=1, retain=True)
         cli.publish(f"iluminacao/{USUARIO_FROTA}/estado", "online", qos=1, retain=True)
@@ -71,7 +102,7 @@ class Frota:
     def _ao_receber(self, cli, _u, msg):
         partes = msg.topic.split("/")
         codigo = partes[1] if len(partes) == 3 else None
-        if codigo not in self.ctl:
+        if codigo not in self.ctl or DEMO_ALERTAS.get(codigo) in ("sem_comunicacao", "manutencao"):
             return
         try:
             cmd = Comando.de_carga(json.loads(msg.payload))
@@ -89,10 +120,10 @@ class Frota:
         carga = {
             "decisao_id": cmd.decisao_id,
             "duty": round(min(1.0, nivel * DUTY_PLENO_CLASSE), 4),
-            "lux": self._lux(nivel),
+            "lux": self._lux(nivel, codigo),
             "nivel": nivel,
             "nivel_antes": nivel_antes,
-            "lux_antes": self._lux(nivel_antes),
+            "lux_antes": self._lux(nivel_antes, codigo),
             "medido_em": _agora().isoformat(),
         }
         cli.publish(f"iluminacao/{codigo}/telemetria", json.dumps(carga), qos=1)
