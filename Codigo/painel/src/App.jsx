@@ -20,6 +20,7 @@ import Trajetoria from "./componentes/Trajetoria";
 import SimularLeitura from "./componentes/SimularLeitura";
 import Explicacoes from "./componentes/Explicacoes";
 import Mapa from "./componentes/Mapa";
+import PainelAlertas, { listarAlertas } from "./componentes/PainelAlertas";
 
 const PERIODO_MS = 2000; // metade do ciclo de decisao (5 s), sem afoga-lo
 const JANELA = 240; // decisoes exibidas na trajetoria
@@ -27,7 +28,7 @@ const JANELA_ENERGIA_MIN = 30; // minutos integrados no cartao de consumo
 
 export default function App() {
   const [dados, setDados] = useState({
-    pontos: [], decisoes: [], telemetria: [], eventos: [], todosEventos: [], alertas: [], energia: null,
+    pontos: [], decisoes: [], telemetria: [], eventos: [], todosEventos: [], alertas: [], todosAlertas: [], energia: null,
   });
   const [trechos, setTrechos] = useState([]);
   const [aba, setAba] = useState("mapa");
@@ -60,7 +61,7 @@ export default function App() {
       const trechos = new Set(atual?.trechos ?? []);
       const eventos = todosEventos.filter((e) => trechos.has(e.trecho));
       const alertas = todosAlertas.filter((a) => a.ponto === ponto);
-      setDados({ pontos, decisoes, telemetria, eventos, todosEventos, alertas, energia });
+      setDados({ pontos, decisoes, telemetria, eventos, todosEventos, alertas, todosAlertas, energia });
       setAtualizadoEm(new Date());
       setErro(null);
     } catch (e) {
@@ -180,6 +181,7 @@ export default function App() {
           { id: "mapa", rotulo: "mapa do bairro" },
           { id: "monitoramento", rotulo: "monitoramento" },
           { id: "explicacoes", rotulo: "decisões explicadas" },
+          { id: "alertas", rotulo: "alertas", contador: listarAlertas(dados.pontos, dados.todosAlertas).length },
         ].map((a) => (
           <button
             key={a.id}
@@ -188,6 +190,9 @@ export default function App() {
             className={`-mb-px border-b-[3px] px-3 py-2 font-semibold tracking-wide uppercase transition-colors ${aba === a.id ? "border-luz text-luz" : "border-transparent text-suave hover:border-luz/40 hover:text-texto"}`}
           >
             {a.rotulo}
+            {a.contador > 0 && (
+              <span className="ml-1.5 rounded-full bg-falha px-1.5 py-0.5 text-[10px] text-white">{a.contador}</span>
+            )}
           </button>
         ))}
       </nav>
@@ -215,6 +220,15 @@ export default function App() {
             setAba("monitoramento");
           }}
           aoPublicar={buscar}
+        />
+      ) : aba === "alertas" ? (
+        <PainelAlertas
+          pontos={dados.pontos}
+          alertas={dados.todosAlertas}
+          aoAbrirPonto={(codigo) => {
+            setSelecionado(codigo);
+            setAba("monitoramento");
+          }}
         />
       ) : aba === "explicacoes" ? (
         <Explicacoes
