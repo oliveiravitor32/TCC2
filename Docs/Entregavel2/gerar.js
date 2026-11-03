@@ -374,11 +374,10 @@ const s5 = [
 const refs = [
   H1("REFERÊNCIAS"),
   ...[
-    "ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. **ABNT NBR 5101**: iluminação pública: procedimento. Rio de Janeiro: ABNT, 2018.",
-    "CHEN, T.; GUESTRIN, C. XGBoost: a scalable tree boosting system. In: ACM SIGKDD INTERNATIONAL CONFERENCE ON KNOWLEDGE DISCOVERY AND DATA MINING, 22., 2016, San Francisco. **Proceedings** [...]. New York: ACM, 2016. p. 785-794.",
-    "CITY OF MELBOURNE. **Pedestrian counting system**. Melbourne: City of Melbourne Open Data, 2026. Disponível em: https://data.melbourne.vic.gov.au. Acesso em: 2026.",
-    "DACAL, B. B.; VERGARA, L. A.; SANTOS, V. O. **Controle inteligente da iluminação pública a partir de dados urbanos já existentes**: proposta de integração entre plataforma de monitoramento e telegestão no município de São Paulo. 2026. Trabalho de Conclusão de Curso (Bacharelado em Ciência da Computação) – Universidade Paulista, São Paulo, 2026.",
-    "STADT ZÜRICH. **Daten der automatischen Fussgänger- und Velozählung**. Zürich: Open Data Zürich, 2026. Disponível em: https://data.stadt-zuerich.ch. Acesso em: 30 set. 2026.",
+    "ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. **NBR 5101**: iluminação viária – procedimentos. 4. ed. Rio de Janeiro: ABNT, 2024. Versão corrigida 2, 20 set. 2024.",
+    "CHEN, Tianqi; GUESTRIN, Carlos. XGBoost: a scalable tree boosting system. In: **Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining**. Nova York: ACM, 2016. p. 785-794. DOI: 10.1145/2939672.2939785.",
+    "CITY OF MELBOURNE. **Pedestrian Counting System (counts per hour)**. Melbourne: City of Melbourne Open Data, 2026. Conjunto de dados. Disponível em: https://data.melbourne.vic.gov.au/explore/dataset/pedestrian-counting-system-monthly-counts-per-hour/. Acesso em: 15 set. 2026.",
+    "STADT ZÜRICH. **Daten der automatischen Fussgänger- und Velozählung**: Viertelstundenwerte. Zürich: Open Data Zürich, 2026. Conjunto de dados. Disponível em: https://data.stadt-zuerich.ch/dataset/ted_taz_verkehrszaehlungen_werte_fussgaenger_velo. Acesso em: 30 set. 2026.",
   ].map((r) => new Paragraph({ children: runs(r), alignment: AlignmentType.LEFT, spacing: { line: 240, after: 240 } })),
 ];
 
