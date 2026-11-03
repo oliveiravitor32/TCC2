@@ -891,6 +891,30 @@ E. DECLARACAO E ENTREGA
         nao aparecem mais na linha de ninguem (so "programacao em par").
         Conferir tambem se o Apendice A precisa citar a divisao.
 
+[ ] E8. v64 (03/11/2026), recomendacoes do orientador sobre a v60, tudo
+        redigido pela IA:
+        a) 5.4: REDACAO DE TERMO ADITIVO para o indicador de iluminancia
+           (afere contra a classe vigente registrada; sem registro, vale a
+           classe da via). E proposta juridica de leigos: conferir se o grupo
+           assume; 6.1 ganhou "submeter a SP Regula".
+        b) Apendice E + Figura 12 (Codigo/figuras/figura_meteorologia.py):
+           desenho da terceira restricao (meteorologia). Escolhas da IA:
+           adaptador fora do servico, condicao por area com validade, sobe
+           na hora e desce na taxa, e FONTE FORA DO AR = so alerta (nao
+           suspende a atenuacao). A forma de acesso ao INMET (webhook?) NAO
+           foi verificada; o texto diz isso.
+        c) 6.1: piloto de validacao espacial com 30 dias de SP (desenho da
+           IA: modelo de Zurique sem retreino, contra persistencia e media
+           sazonal; 30 dias nao bastam para treinar). Remissao em 3.6.
+        d) 3.12.6.4 e 5.3: token JWT de curta duracao, limite de
+           publicacoes por usuario, credencial por sistema para a plataforma.
+        e) Apendice F + Codigo/db/escala/particionamento.sql: DDL testado
+           pela IA em banco descartavel na VM (PostgreSQL 16.15, 03/11/2026).
+           Consequencia declarada: telemetria perde o UNIQUE(decisao_id)
+           sozinho. TimescaleDB so indicado, nao testado.
+        Lembrar: Figura 12 e Apendices E e F nao estao no Quadro 19 (uso de
+        IA): acrescentar linha e percentual. F9 no Word (sumario e listas).
+
 ===============================================================================
 FIM
 ===============================================================================
