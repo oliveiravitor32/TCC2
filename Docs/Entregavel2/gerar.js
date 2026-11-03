@@ -107,9 +107,9 @@ const s1 = [
   H2("1.2 Título da solução e equipe executora"),
   P(`**Título:** ${TITULO.charAt(0) + TITULO.slice(1).toLowerCase().replace("iluminação pública", "iluminação pública")}: proposta de integração entre plataforma de monitoramento e telegestão no município de São Paulo.`),
   ...quadro("Equipe executora e funções no projeto", ["Integrante", "RA", "Função no projeto"], [
-    ["Vitor Oliveira dos Santos", "N083DG1", "Software (firmware, serviço de decisão, API, banco, painel, implantação na nuvem) e montagem do nó de bancada"],
-    ["Bruno Bonavigo Dacal", "N309EC4", "Documentação e apoio à pesquisa"],
-    ["Lucas de Araujo Vergara", "N090758", "Documentação e apoio à pesquisa"],
+    ["Vitor Oliveira dos Santos", "N083DG1", "Borda e infraestrutura: montagem do nó de bancada, firmware do ESP32, comunicação MQTT/TLS, implantação na nuvem e banco de dados"],
+    ["Lucas de Araujo Vergara", "N090758", "Módulo de inteligência: pesquisa e fundamentação da previsão e da inferência nebulosa, análise das métricas e dos resultados, documentação da Seção 4"],
+    ["Bruno Bonavigo Dacal", "N309EC4", "Requisitos e operação: levantamento normativo e dos dados urbanos (NBR 5101, GeoSampa, contrato da concessão), validação do painel e dos alertas, manual de operação e resolução de problemas"],
   ], [3000, 1300, 4771]),
   P("**Orientador:** Prof. Marco Gomes. **Repositório:** github.com/oliveiravitor32/TCC2 (pasta `Codigo/`)."),
   H2("1.3 Visão geral do funcionamento"),

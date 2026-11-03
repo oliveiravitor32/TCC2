@@ -884,6 +884,13 @@ E. DECLARACAO E ENTREGA
         modelo salvo (Docs/Entregavel2/matriz.py); nao estao no TCC.
         Gerar o PDF final pelo Word (o .pdf da pasta e uma previa).
 
+[ ] E7. v63, 3.12.2 e Quadro 1 do Entregavel 2 (redigidos pela IA em
+        02/11/2026): divisao por area (Vitor borda/infra, Lucas IA, Bruno
+        requisitos/operacao). Conferir que cada um fez de fato o que esta
+        escrito e sabe explicar a sua parte; o servico de decisao e o painel
+        nao aparecem mais na linha de ninguem (so "programacao em par").
+        Conferir tambem se o Apendice A precisa citar a divisao.
+
 ===============================================================================
 FIM
 ===============================================================================
