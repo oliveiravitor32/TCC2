@@ -874,6 +874,16 @@ E. DECLARACAO E ENTREGA
 [ ] E5. Mostrar os Quadros 19 e 20 ao orientador ANTES de escrever 5.1, 5.2,
         5.4 e o Capitulo 6.
 
+[ ] E6. Entregavel 2 (Docs/Entregavel2/, redigido pela IA em 02/11/2026):
+        conferir funcoes da equipe (Quadro 1), valores de corrente do ESP32
+        (~240 mA, tipico do fabricante, nao medido) e da fita (~72 mA,
+        calculado), afirmacao de que o GY-302 e o D4184 ja trazem pull-up,
+        capacitor e resistor de porta, a tabela de troubleshooting e a
+        declaracao de uso de IA (4.5). A matriz de confusao e a precisao/
+        revocacao por faixa (Tabelas 2 e 3) foram calculadas pela IA com o
+        modelo salvo (Docs/Entregavel2/matriz.py); nao estao no TCC.
+        Gerar o PDF final pelo Word (o .pdf da pasta e uma previa).
+
 ===============================================================================
 FIM
 ===============================================================================
