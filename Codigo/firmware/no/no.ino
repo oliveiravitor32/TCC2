@@ -494,8 +494,8 @@ void setup() {
 
   WiFi.mode(WIFI_STA);
   WiFi.setAutoReconnect(true);
-  WiFi.begin(WIFI_SSID, WIFI_SENHA);
-  Serial.print("conectando ao Wi-Fi");
+  diagnosticarWifi();  // lista as redes antes de tentar (e chama WiFi.begin)
+  Serial.printf("conectando ao Wi-Fi \"%s\"", WIFI_SSID);
   for (int i = 0; i < 40 && WiFi.status() != WL_CONNECTED; i++) {
     delay(250);
     Serial.print(".");
@@ -503,8 +503,7 @@ void setup() {
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println(" ok, IP " + WiFi.localIP().toString());
   } else {
-    Serial.println(" falhou (segue tentando; a luz fica no pleno)");
-    diagnosticarWifi();
+    Serial.println(" falhou (segue tentando a cada 30 s; a luz fica no pleno)");
   }
 
   configTime(0, 0, "pool.ntp.org", "time.google.com");  // hora UTC para medido_em
@@ -520,7 +519,29 @@ void setup() {
   iniciarMqtt();
 }
 
+// Avisa na serial quando o Wi-Fi conecta ou cai; sem Wi-Fi, varre as redes
+// de novo a cada 30 s (util ao trocar de lugar, ex.: hotspot do celular).
+void vigiarWifi() {
+  static bool conectadoAntes = false;
+  static unsigned long ultimaVarredura = 0;
+  bool conectado = WiFi.status() == WL_CONNECTED;
+  if (conectado && !conectadoAntes) {
+    Serial.printf("Wi-Fi CONECTADO em \"%s\", IP %s, sinal %d dBm\n",
+                  WIFI_SSID, WiFi.localIP().toString().c_str(), WiFi.RSSI());
+  } else if (!conectado && conectadoAntes) {
+    Serial.println("Wi-Fi CAIU (luz vai ao pleno pelo failsafe se nao houver comando)");
+    ultimaVarredura = millis();
+  }
+  if (!conectado && millis() - ultimaVarredura >= 30000UL) {
+    ultimaVarredura = millis();
+    Serial.println("ainda sem Wi-Fi; procurando redes de novo...");
+    diagnosticarWifi();
+  }
+  conectadoAntes = conectado;
+}
+
 void loop() {
+  vigiarWifi();
   // 0. Serial: conferencia e recalibracao (bancada/conferir.py).
   lerSerial();
   if (emManutencao) {
