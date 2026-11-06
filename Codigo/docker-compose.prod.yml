@@ -107,7 +107,7 @@ services:
     restart: unless-stopped
     logging: *logs
     profiles: ["bairro"]
-    command: ["python", "-m", "simulador.gerador_volumes", "--ciclo-min", "${CICLO_NOITE_MIN:-60}"]
+    command: ["python", "-m", "simulador.gerador_volumes", "--ciclo-min", "${CICLO_NOITE_MIN:-60}", "--perfis"]
     environment:
       API_URL: http://api:8000
       CHAVE_API: ${CHAVE_API:?rode deploy/preparar.sh}

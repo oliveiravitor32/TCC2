@@ -45,6 +45,23 @@ PERFIL_DIA = [0.05, 0.03, 0.02, 0.02, 0.03, 0.08, 0.3, 0.6, 0.7, 0.55, 0.5, 0.55
               0.6, 0.55, 0.5, 0.55, 0.7, 0.9, 1.0, 0.85, 0.6, 0.4, 0.25, 0.12]
 PERIODO_S = 300
 
+# --perfis (demonstracao da previsao): cada trecho segue, pelo RELOGIO REAL, um
+# de tres dias tipicos (fracao do pico por hora local, 0 a 23 h), no
+# historico e ao vivo. A noite de 18 h a 21 h e calma nos tres; o que muda e
+# o que vem depois, e so a previsao sabe disso:
+#   dormitorio:    segue vazio -> prevista baixa -> desce a classe minima (R5)
+#   comercial:     enche das 21 h a 1 h -> prevista alta -> fica no pleno (R3)
+#   intermediario: movimento medio a noite toda -> uma classe abaixo (R4/R6)
+PERFIS = {
+    "dormitorio":    [0.02, 0.01, 0.01, 0.01, 0.05, 0.3, 0.9, 1.0, 0.7, 0.4, 0.3, 0.3,
+                      0.35, 0.3, 0.3, 0.35, 0.5, 0.7, 0.04, 0.03, 0.03, 0.02, 0.02, 0.02],
+    "comercial":     [0.8, 0.4, 0.1, 0.03, 0.02, 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5,
+                      0.6, 0.5, 0.4, 0.4, 0.4, 0.3, 0.04, 0.04, 0.05, 0.9, 1.0, 1.0],
+    "intermediario": [0.15, 0.1, 0.05, 0.05, 0.05, 0.1, 0.3, 0.5, 0.5, 0.4, 0.4, 0.4,
+                      0.5, 0.4, 0.4, 0.4, 0.5, 0.6, 0.18, 0.18, 0.18, 0.18, 0.18, 0.17],
+}
+ORDEM_PERFIS = ["dormitorio", "comercial", "intermediario"]
+
 log = logging.getLogger("gerador")
 
 
@@ -55,6 +72,61 @@ def trechos() -> list[int]:
 
 def escalas(ids: list[int]) -> dict[int, float]:
     return {t: ESCALAS[i % len(ESCALAS)] for i, t in enumerate(sorted(ids))}
+
+
+def perfis(ids: list[int]) -> dict[int, str]:
+    return {t: ORDEM_PERFIS[i % len(ORDEM_PERFIS)] for i, t in enumerate(sorted(ids))}
+
+
+def volume_perfil(perfil: str, escala: float, quando: datetime, rnd: random.Random) -> float:
+    """Pessoas em media no periodo, pela hora local, interpolando entre as horas."""
+    from decisao import config
+
+    local = quando.astimezone(config.FUSO)
+    h = local.hour + local.minute / 60
+    v = PERFIS[perfil]
+    f = v[int(h) % 24] + (v[(int(h) + 1) % 24] - v[int(h) % 24]) * (h - int(h))
+    return max(0.0, escala * f * (1 + rnd.gauss(0, 0.1)))
+
+
+def pacote_perfis(ids, pesos, tipos, rnd, agora) -> list[dict]:
+    return [{"ocorrido_em": agora.isoformat(), "tipo": "volume",
+             "pessoas_media": round(volume_perfil(tipos[t], pesos[t], agora, rnd), 2),
+             "periodo_s": PERIODO_S, "trecho": t, "origem": "gerador-demo"} for t in ids]
+
+
+def gravar_historico_perfis(ids, pesos, tipos, dias, rnd) -> None:
+    """Como gravar_historico, mas pelos perfis e comecando depois do ultimo
+    volume ja gravado nesses trechos (nao duplica periodos)."""
+    import psycopg
+
+    from decisao import ciclo, config
+
+    agora = datetime.now(timezone.utc).replace(second=0, microsecond=0)
+    agora = agora - timedelta(minutes=agora.minute % 5)
+    with psycopg.connect(os.environ.get("DATABASE_URL", config.DATABASE_URL)) as conn:
+        ultimo = conn.execute("SELECT max(ocorrido_em) FROM evento_urbano WHERE tipo = 'volume'"
+                              " AND trecho_id = ANY(%s)", (ids,)).fetchone()[0]
+        inicio = agora - timedelta(days=dias)
+        if ultimo and ultimo > inicio:
+            inicio = ultimo + timedelta(seconds=PERIODO_S)
+        conn.execute("ALTER TABLE evento_urbano DISABLE TRIGGER evento_urbano_aviso")
+        n = 0
+        with conn.cursor().copy(
+            "COPY evento_urbano (ocorrido_em, tipo, pessoas_media, periodo_s, origem, trecho_id)"
+            " FROM STDIN") as copia:
+            t = inicio
+            while t < agora:
+                for tr in ids:
+                    copia.write_row((t, "volume", round(volume_perfil(tipos[tr], pesos[tr], t, rnd), 2),
+                                     PERIODO_S, "gerador-demo-historico", tr))
+                    n += 1
+                t += timedelta(seconds=PERIODO_S)
+        conn.execute("ALTER TABLE evento_urbano ENABLE TRIGGER evento_urbano_aviso")
+        ciclo.atualizar_referencias(conn, datetime.now(timezone.utc))
+        conn.commit()
+    log.info("historico por perfis: %s volumes de %s a %s; perfis: %s", n, inicio, agora,
+             ", ".join(f"{t}={tipos[t]}" for t in ids))
 
 
 def pacote(ids: list[int], fracao_da_noite: float, pesos: dict[int, float], rnd: random.Random,
@@ -122,6 +194,8 @@ def main() -> None:
     p.add_argument("--uma-vez", action="store_true")
     p.add_argument("--historico", type=int, default=0, metavar="DIAS",
                    help="grava DIAS de passado inventado no banco e recalcula as reguas")
+    p.add_argument("--perfis", action="store_true",
+                   help="tres dias tipicos por trecho, pelo relogio real (demonstracao da previsao)")
     a = p.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     url = os.environ.get("API_URL", "http://localhost:8000")
@@ -129,9 +203,25 @@ def main() -> None:
     ids = [t for t in trechos() if a.incluir_bancada or t not in TRECHOS_BANCADA]
     rnd = random.Random(a.semente)
     pesos = escalas(ids)  # ruas quase vazias e ruas movimentadas
+    tipos = perfis(ids)
     if a.historico:
-        gravar_historico(ids, pesos, a.historico, rnd)
+        if a.perfis:
+            gravar_historico_perfis(ids, pesos, tipos, a.historico, rnd)
+        else:
+            gravar_historico(ids, pesos, a.historico, rnd)
         return
+    if a.perfis:
+        log.info("perfis: %s", ", ".join(f"{t}={tipos[t]}" for t in ids))
+        while True:
+            try:
+                r = publicar(url, chave, pacote_perfis(ids, pesos, tipos, rnd,
+                                                       datetime.now(timezone.utc)))
+                log.info("perfis: %s aceitos, %s recusados", len(r["aceitos"]), len(r["recusados"]))
+            except Exception as erro:
+                log.warning("publicacao falhou: %s", erro)
+            if a.uma_vez:
+                return
+            time.sleep(a.intervalo_s)
     inicio = time.monotonic()
     while True:
         f = ((time.monotonic() - inicio) / 60 % a.ciclo_min) / a.ciclo_min
