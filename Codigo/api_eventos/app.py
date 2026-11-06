@@ -415,6 +415,28 @@ def _base(rotulo: str):
     return _bases[nome]
 
 
+def _faixas(base) -> dict | None:
+    """Fronteiras (tercis) e meia largura da rampa da movimentacao, tiradas das
+    particoes da propria base de regras, para o painel desenhar as faixas."""
+    if base is None or "baixa" not in base.mov:
+        return None
+    b, m = base.mov["baixa"], base.mov["media"]
+    return {"fronteiras": [round((b[2] + b[3]) / 2, 4), round((m[2] + m[3]) / 2, 4)],
+            "meia_largura_rampa": round((b[3] - b[2]) / 2, 4)}
+
+
+def _reguas(conn: psycopg.Connection, trechos: list[int]) -> dict[str, dict]:
+    """Regua de cada trecho (3.6): p99 aprendido ou, sem historico, o valor inicial."""
+    if not trechos:
+        return {}
+    linhas = conn.execute(
+        "SELECT id, referencia_aprendida, referencia_pessoas FROM trecho_via WHERE id = ANY(%s)",
+        (trechos,)).fetchall()
+    return {str(l["id"]): {
+        "pessoas": float(l["referencia_aprendida"] or l["referencia_pessoas"]),
+        "aprendida": l["referencia_aprendida"] is not None} for l in linhas}
+
+
 def _motivo(restricao: str, pretendido: float, emitido: float, anterior: float | None,
             piso: float | None) -> str:
     if restricao == "piso":
@@ -488,6 +510,9 @@ def explicar_evento(evento_id: int, conn: psycopg.Connection = Conn) -> dict:
             "versao_base_regras": l["versao_base_regras"],
             "entrada": l["entrada"],
             "regras_ativadas": regras,
+            "faixas_movimentacao": _faixas(base),
+            "reguas": _reguas(conn, [int(t) for t in (l["entrada"] or {}).get(
+                "pessoas_media_por_trecho", {})]),
             "nivel_pretendido": pret,
             "restricao_aplicada": l["restricao_aplicada"],
             "motivo_restricao": _motivo(l["restricao_aplicada"], pret, emit, ant, piso),

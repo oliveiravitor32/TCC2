@@ -5,7 +5,8 @@
 // -> luz medida. Tudo vem do registro de auditoria (GET /eventos/{id}/explicacao).
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Brain, Lightbulb, ShieldCheck } from "lucide-react";
+import { ArrowRight, Brain, Info, Lightbulb, ShieldCheck } from "lucide-react";
+import FaixasMovimento from "./FaixasMovimento";
 import { RESTRICOES, api, descreverDegrau, descreverEvento, faixaHoraria, faixaMov, hora, lux, pct } from "../api";
 
 function Etapa({ icone: Icone, titulo, children }) {
@@ -20,7 +21,18 @@ function Etapa({ icone: Icone, titulo, children }) {
   );
 }
 
+function BotaoFaixas({ abrir }) {
+  return (
+    <button type="button" onClick={abrir} title="de onde vêm as faixas baixa, média e alta"
+            aria-label="de onde vêm as faixas baixa, média e alta"
+            className="ml-1 inline-flex align-middle text-luz hover:opacity-70">
+      <Info size={13} />
+    </button>
+  );
+}
+
 function Decisao({ d }) {
+  const [faixasAbertas, setFaixasAbertas] = useState(false);
   if (!d.decidida) {
     return (
       <p className="rounded-lg border border-borda p-3 text-xs text-suave">
@@ -37,6 +49,11 @@ function Decisao({ d }) {
 
   return (
     <div className="space-y-2 rounded-xl border border-borda p-3">
+      {faixasAbertas && (
+        <FaixasMovimento faixas={d.faixas_movimentacao} observada={e.observada} prevista={e.prevista}
+                         reativo={e.modo === "reativo"} reguas={d.reguas}
+                         volumes={e.pessoas_media_por_trecho} fechar={() => setFaixasAbertas(false)} />
+      )}
       <p className="text-sm font-medium">
         {d.ponto}{" "}
         <span className="text-xs font-normal text-suave">
@@ -49,6 +66,7 @@ function Decisao({ d }) {
             <li>
               movimento agora: <b>{faixaMov(e.observada)}</b>{" "}
               <span className="text-suave">({pct(e.observada)} do cheio da rua)</span>
+              {d.faixas_movimentacao && e.observada != null && <BotaoFaixas abrir={() => setFaixasAbertas(true)} />}
               {volumes.length > 0 && (
                 <span className="block text-suave">
                   média de pessoas em 5 min: {volumes.map(([t, n]) => `trecho ${t}: ${n}`).join("; ")}
@@ -61,6 +79,7 @@ function Decisao({ d }) {
             <li>
               {e.modo === "reativo" ? "sem previsão (modo reativo): usa o movimento agora" : "movimento previsto"}:{" "}
               <b>{faixaMov(prev)}</b> <span className="text-suave">({pct(prev)})</span>
+              {d.faixas_movimentacao && prev != null && <BotaoFaixas abrir={() => setFaixasAbertas(true)} />}
             </li>
             <li>
               horário: <b>{faixaHoraria(e.horas_desde_18h)}</b>
