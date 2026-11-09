@@ -5,7 +5,7 @@
 // -> luz medida. Tudo vem do registro de auditoria (GET /eventos/{id}/explicacao).
 
 import { useEffect, useState } from "react";
-import { ArrowRight, Brain, Info, Lightbulb, ShieldCheck } from "lucide-react";
+import { ArrowRight, Brain, ChevronRight, Info, Lightbulb, ShieldCheck, X } from "lucide-react";
 import FaixasMovimento from "./FaixasMovimento";
 import { RESTRICOES, api, descreverDegrau, descreverEvento, faixaHoraria, faixaMov, hora, lux, pct } from "../api";
 
@@ -31,7 +31,78 @@ function BotaoFaixas({ abrir }) {
   );
 }
 
-function Decisao({ d }) {
+// Trechos que o poste enxerga: o "movimento agora" e o MAIOR deles (3.5.2).
+// Percentual pela regua de hoje; destaca o trecho que definiu a entrada.
+function nomeTrecho(t) {
+  if (!t) return null;
+  const rua = [t.tipo_logradouro, t.nome_logradouro].filter(Boolean).join(" ") || "sem nome";
+  return `${rua} ${t.numero_inicial ?? ""}–${t.numero_final ?? ""}`;
+}
+
+function TrechosDaDecisao({ volumes, reguas, trechos }) {
+  const linhas = volumes.map(([t, n]) => {
+    const r = reguas?.[t]?.pessoas;
+    return { t, n, r, f: r ? n / r : null, nome: nomeTrecho(trechos.find((x) => String(x.id) === t)) };
+  });
+  const max = Math.max(...linhas.map((l) => l.f ?? -1));
+  const num = (v) => (v == null ? "--" : Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 2 }));
+  return (
+    <ul className="mt-1 space-y-1.5">
+      {linhas.map((l) => {
+        const decidiu = l.f !== null && l.f === max && linhas.length > 1;
+        return (
+          <li key={l.t} className={`rounded px-1.5 py-1 ${decidiu ? "bg-luz/10 ring-1 ring-luz/40" : ""}`}>
+            <span className={`block text-[11px] ${decidiu ? "font-semibold text-luz" : "text-suave"}`}>
+              {l.nome ?? `trecho ${l.t}`}{decidiu && " · definiu o movimento agora"}
+            </span>
+            <span className="block text-[11px] text-suave">
+              {num(l.n)} de {num(l.r)} pessoas = <b className="text-texto">{l.f !== null ? pct(l.f) : "--"}</b>
+            </span>
+            <span className="mt-0.5 block h-1.5 overflow-hidden rounded bg-borda">
+              <span className={`block h-full ${decidiu ? "bg-luz" : "bg-suave/60"}`}
+                    style={{ width: `${Math.min((l.f ?? 0) * 100, 100)}%` }} />
+            </span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function ModalTrechos({ ponto, observada, children, fechar }) {
+  useEffect(() => {
+    const tecla = (ev) => ev.key === "Escape" && fechar();
+    window.addEventListener("keydown", tecla);
+    return () => window.removeEventListener("keydown", tecla);
+  }, [fechar]);
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog"
+         aria-modal="true" aria-labelledby="titulo-trechos" onClick={fechar}>
+      <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-borda bg-carta p-5 shadow-xl"
+           onClick={(ev) => ev.stopPropagation()}>
+        <div className="mb-2 flex items-start justify-between gap-4">
+          <h2 id="titulo-trechos" className="text-base font-semibold">
+            Movimento agora no {ponto}: {faixaMov(observada)} ({pct(observada)})
+          </h2>
+          <button type="button" onClick={fechar} aria-label="fechar" className="text-suave hover:text-texto">
+            <X size={18} />
+          </button>
+        </div>
+        <p className="mb-3 text-sm text-suave">
+          O poste fica perto destes trechos de rua. Cada um manda a média de pessoas dos últimos 5 min, que é
+          dividida pelo "cheio" típico daquela rua (régua). <b className="text-texto">Vale o maior</b>: basta uma rua
+          movimentada para o poste considerar o movimento daquele trecho.
+        </p>
+        <div className="text-sm">{children}</div>
+        <p className="mt-3 text-xs text-suave">A régua mostrada é a de hoje (recalculada uma vez por dia); numa
+          decisão antiga, a conta pode diferir um pouco.</p>
+      </div>
+    </div>
+  );
+}
+
+function Decisao({ d, trechos }) {
+  const [trechosAbertos, setTrechosAbertos] = useState(false);
   const [faixasAbertas, setFaixasAbertas] = useState(false);
   if (!d.decidida) {
     return (
@@ -46,9 +117,24 @@ function Decisao({ d }) {
   const volumes = Object.entries(e.pessoas_media_por_trecho ?? {});
   const prev = e.modo === "reativo" ? e.observada : e.prevista;
   const niveis = e.niveis_classe ?? [];
+  // Trecho que definiu o "movimento agora" (o maior pela regua de hoje).
+  const maiorTrecho = (() => {
+    let melhor = null, fMax = -1;
+    for (const [t, n] of volumes) {
+      const r = d.reguas?.[t]?.pessoas;
+      const f = r ? n / r : -1;
+      if (f > fMax) { fMax = f; melhor = t; }
+    }
+    return melhor && (nomeTrecho(trechos.find((x) => String(x.id) === melhor)) ?? `trecho ${melhor}`);
+  })();
 
   return (
     <div className="space-y-2 rounded-xl border border-borda p-3">
+      {trechosAbertos && (
+        <ModalTrechos ponto={d.ponto} observada={e.observada} fechar={() => setTrechosAbertos(false)}>
+          <TrechosDaDecisao volumes={volumes} reguas={d.reguas} trechos={trechos} />
+        </ModalTrechos>
+      )}
       {faixasAbertas && (
         <FaixasMovimento faixas={d.faixas_movimentacao} observada={e.observada} prevista={e.prevista}
                          reativo={e.modo === "reativo"} reguas={d.reguas}
@@ -64,13 +150,31 @@ function Decisao({ d }) {
         <Etapa icone={ArrowRight} titulo="entradas da IA">
           <ul className="space-y-1 text-xs">
             <li>
-              movimento agora: <b>{faixaMov(e.observada)}</b>{" "}
-              <span className="text-suave">({pct(e.observada)} do cheio da rua)</span>
-              {d.faixas_movimentacao && e.observada != null && <BotaoFaixas abrir={() => setFaixasAbertas(true)} />}
-              {volumes.length > 0 && (
-                <span className="block text-suave">
-                  média de pessoas em 5 min: {volumes.map(([t, n]) => `trecho ${t}: ${n}`).join("; ")}
-                </span>
+              {volumes.length > 0 ? (
+                <button type="button" onClick={() => setTrechosAbertos(true)}
+                        title="ver de quais trechos veio o movimento"
+                        className="-mx-1 block w-[calc(100%+0.5rem)] rounded-md border border-borda bg-carta px-2 py-1.5 text-left hover:border-luz hover:bg-luz/5">
+                  <span className="flex items-center justify-between gap-1">
+                    <span>movimento agora: <b>{faixaMov(e.observada)}</b>{" "}
+                      <span className="text-suave">({pct(e.observada)} do cheio da rua)</span></span>
+                    <ChevronRight size={14} className="shrink-0 text-luz" aria-hidden="true" />
+                  </span>
+                  {maiorTrecho && (
+                    <span className="block text-[11px] text-suave">
+                      veio de: <b className="text-luz">{maiorTrecho}</b>
+                      {volumes.length > 1 && ` · ${volumes.length} trechos, ver todos`}
+                    </span>
+                  )}
+                </button>
+              ) : (
+                <>movimento agora: <b>{faixaMov(e.observada)}</b>{" "}
+                  <span className="text-suave">({pct(e.observada)} do cheio da rua)</span></>
+              )}
+              {d.faixas_movimentacao && e.observada != null && (
+                <button type="button" onClick={() => setFaixasAbertas(true)}
+                        className="mt-1 flex items-center gap-1 text-left text-[11px] text-luz hover:opacity-70">
+                  <Info size={12} aria-hidden="true" /> de onde vêm baixa, média e alta
+                </button>
               )}
             </li>
             <li>
@@ -139,7 +243,7 @@ function Decisao({ d }) {
   );
 }
 
-export default function Explicacoes({ eventos, selecionado, setSelecionado }) {
+export default function Explicacoes({ eventos, trechos = [], selecionado, setSelecionado }) {
   const [explicacao, setExplicacao] = useState(null);
   const [erro, setErro] = useState(null);
 
@@ -202,7 +306,7 @@ export default function Explicacoes({ eventos, selecionado, setSelecionado }) {
                 Nenhuma luminária do sistema neste trecho: a publicação fica registrada, mas não gera decisão.
               </p>
             ) : (
-              explicacao.decisoes.map((d) => <Decisao key={d.ponto} d={d} />)
+              explicacao.decisoes.map((d) => <Decisao key={d.ponto} d={d} trechos={trechos} />)
             )}
           </>
         )}

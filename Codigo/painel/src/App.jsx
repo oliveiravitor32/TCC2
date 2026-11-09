@@ -233,6 +233,7 @@ export default function App() {
       ) : aba === "explicacoes" ? (
         <Explicacoes
           eventos={dados.todosEventos}
+          trechos={trechos}
           selecionado={eventoExplicado}
           setSelecionado={setEventoExplicado}
         />
