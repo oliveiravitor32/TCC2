@@ -11,7 +11,7 @@ import { useMemo, useState } from "react";
 import { CircleMarker, MapContainer, Polyline, TileLayer, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { AlertTriangle, ExternalLink, ShieldAlert, ShieldCheck, X } from "lucide-react";
-import { RESTRICOES, TERCIS, api, hora, lux } from "../api";
+import { RESTRICOES, TERCIS, agoraServidor, api, hora, lux } from "../api";
 
 // Nivel decidido -> classe (P3 pleno, P4 uma abaixo, P5 minima) -> tom de azul.
 const NIVEIS = [
@@ -96,7 +96,7 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
     if (!selecao.size) return;
     setEnviando(true);
     setMensagem(null);
-    const agora = new Date().toISOString();
+    const agora = agoraServidor();
     const pacote = [...selecao].map((trecho) => ({
       ocorrido_em: agora, tipo: "ocorrencia", ocorrencia: tipo, trecho, origem: "painel-mapa",
     }));

@@ -6,7 +6,7 @@
 
 import { useMemo, useState } from "react";
 import { Minus, Plus, Send, X } from "lucide-react";
-import { TERCIS, api, faixaMov } from "../api";
+import { TERCIS, agoraServidor, api, faixaMov } from "../api";
 
 // Atalhos de volume calculados pela REGUA do trecho escolhido (3.6): cada
 // rua tem o seu "cheio" tipico, e o servico compara o volume com ele. O nivel
@@ -66,7 +66,7 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
   async function publicar() {
     setEnviando(true);
     setErro(null);
-    const base = { ocorrido_em: new Date().toISOString(), trecho: Number(trecho), origem: "painel-demonstracao" };
+    const base = { ocorrido_em: agoraServidor(), trecho: Number(trecho), origem: "painel-demonstracao" };
     const corpo =
       tipo === "volume"
         ? { ...base, tipo: "volume", pessoas_media: media, periodo_s: 300 }

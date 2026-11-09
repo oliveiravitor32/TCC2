@@ -157,7 +157,7 @@ async def _validacao(request: Request, erro: RequestValidationError):
 
 app.add_middleware(
     CORSMiddleware,
-    expose_headers=["X-Request-ID"],
+    expose_headers=["X-Request-ID", "Date"],  # Date: o painel acerta o relogio pela VM
     allow_origins=ORIGENS,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],

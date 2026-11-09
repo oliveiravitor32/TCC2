@@ -7,6 +7,19 @@
 
 const BASE = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
+// Relogio da VM. O painel roda no navegador de quem o abriu, e o relogio
+// desse PC pode estar adiantado: uma leitura carimbada "no futuro" fica de
+// fora da decisao (ciclo usa ocorrido_em <= agora). Cada resposta da API traz
+// o cabecalho Date (hora da VM, em segundos inteiros); guardamos a diferenca
+// e carimbamos as publicacoes com a hora da VM. Como o Date e truncado no
+// segundo e chega depois de gerado, a hora corrigida nunca passa a da VM.
+let diferencaMs = 0;
+function lerRelogio(r) {
+  const d = Date.parse(r.headers.get("Date") ?? "");
+  if (!Number.isNaN(d)) diferencaMs = d - Date.now();
+}
+export const agoraServidor = () => new Date(Date.now() + diferencaMs).toISOString();
+
 async function pegar(caminho, params = {}) {
   if (!BASE) throw new Error("VITE_API_URL nao configurada");
   const url = new URL(BASE + caminho);
@@ -14,6 +27,7 @@ async function pegar(caminho, params = {}) {
     if (v !== undefined && v !== null) url.searchParams.set(k, v);
   }
   const r = await fetch(url, { headers: { Accept: "application/json" } });
+  lerRelogio(r);
   if (!r.ok) throw new Error(`${caminho}: ${r.status} ${r.statusText}`);
   return r.json();
 }
@@ -30,6 +44,7 @@ async function enviar(caminho, corpo) {
     headers: { "Content-Type": "application/json", Accept: "application/json", "X-Chave-Api": CHAVE_DEMO },
     body: JSON.stringify(corpo),
   });
+  lerRelogio(r);
   const dados = await r.json().catch(() => ({}));
   if (!r.ok) {
     const detalhe = Array.isArray(dados.detail)
