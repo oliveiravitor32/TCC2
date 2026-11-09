@@ -32,7 +32,9 @@ export default function App() {
   });
   const [trechos, setTrechos] = useState([]);
   const [aba, setAba] = useState("mapa");
-  const [modalAberto, setModalAberto] = useState(false);
+  // Trechos com que a modal de publicacao abre (null = fechada): os do poste
+  // na tela (botao do topo) ou os selecionados no mapa.
+  const [modalTrechos, setModalTrechos] = useState(null);
   const [eventoExplicado, setEventoExplicado] = useState(null);
   const [erro, setErro] = useState(null);
   const [rodando, setRodando] = useState(true);
@@ -139,7 +141,7 @@ export default function App() {
         <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-white/70">
           <button
             type="button"
-            onClick={() => setModalAberto(true)}
+            onClick={() => setModalTrechos(ponto?.trechos ?? [])}
             className="inline-flex items-center gap-1 bg-luz px-3 py-1.5 font-semibold text-white uppercase tracking-wide transition-colors hover:bg-white hover:text-tinta"
           >
             <FlaskConical size={14} />
@@ -197,11 +199,12 @@ export default function App() {
         ))}
       </nav>
 
-      {modalAberto && (
+      {modalTrechos && (
       <SimularLeitura
-        fechar={() => setModalAberto(false)}
+        fechar={() => setModalTrechos(null)}
         trechos={trechos}
-        trechoInicial={ponto?.trechos?.[0]}
+        trechosIniciais={modalTrechos}
+        pontoAtual={ponto}
         aoPublicar={(evento) => {
           setEventoExplicado(evento.id);
           setAba("explicacoes");
@@ -220,6 +223,7 @@ export default function App() {
             setAba("monitoramento");
           }}
           aoPublicar={buscar}
+          aoPublicarTrechos={(ids) => setModalTrechos(ids)}
         />
       ) : aba === "alertas" ? (
         <PainelAlertas

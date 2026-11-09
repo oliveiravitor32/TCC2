@@ -7,10 +7,10 @@
 // /eventos, como a plataforma faria: nenhum comando sai daqui, e toda decisao
 // continua passando pela verificacao normativa do servico.
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { CircleMarker, MapContainer, Polyline, TileLayer, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { AlertTriangle, ExternalLink, ShieldAlert, ShieldCheck, X } from "lucide-react";
+import { AlertTriangle, ExternalLink, Send, ShieldAlert, ShieldCheck, X } from "lucide-react";
 import { RESTRICOES, TERCIS, agoraServidor, api, hora, lux } from "../api";
 
 // Nivel decidido -> classe (P3 pleno, P4 uma abaixo, P5 minima) -> tom de azul.
@@ -48,7 +48,7 @@ function corTrecho(t) {
 
 const latlng = (geo) => (geo?.coordinates ?? []).map(([lon, lat]) => [lat, lon]);
 
-export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto, aoPublicar }) {
+export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto, aoPublicar, aoPublicarTrechos }) {
   const [selecao, setSelecao] = useState(new Set());
   const [grupoEmFoco, setGrupoEmFoco] = useState(null);
   const [codigoFoco, setCodigoFoco] = useState(null);
@@ -84,13 +84,17 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
     return r;
   }, [pontos]);
 
-  const alternar = (id) =>
+  // Poste OU trechos, nunca os dois: selecionar trecho fecha o poste.
+  const alternar = (id) => {
+    setCodigoFoco(null);
+    setMensagem(null);
     setSelecao((s) => {
       const n = new Set(s);
       if (n.has(id)) n.delete(id);
       else n.add(id);
       return n;
     });
+  };
 
   async function publicarOcorrencia(tipo) {
     if (!selecao.size) return;
@@ -125,10 +129,15 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
               const c = corTrecho(t);
               const sel = selecao.has(t.id);
               return (
+                <Fragment key={`${t.id}-${sel}-${c.cor}`}>
+                {sel && (
+                  // Contorno preto por baixo da cor: marca o trecho selecionado.
+                  <Polyline positions={latlng(t.geometria_wgs84)} interactive={false}
+                    pathOptions={{ color: "#0a0a0a", weight: 15, opacity: 1, lineCap: "round" }} />
+                )}
                 <Polyline
-                  key={`${t.id}-${sel}-${c.cor}`}
                   positions={latlng(t.geometria_wgs84)}
-                  pathOptions={{ color: c.cor, weight: sel ? 11 : 7, opacity: 0.9, dashArray: sel ? "2 8" : null }}
+                  pathOptions={{ color: c.cor, weight: sel ? 9 : 7, opacity: sel ? 1 : 0.9, lineCap: "round" }}
                   eventHandlers={{ click: () => alternar(t.id) }}
                 >
                   <Tooltip sticky>
@@ -136,6 +145,7 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
                     {sel ? " · selecionado" : " · clique para selecionar"}
                   </Tooltip>
                 </Polyline>
+                </Fragment>
               );
             })}
             {comPosicao.map((p) => {
@@ -154,6 +164,8 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
                   eventHandlers={{
                     // O clique ja troca o ponto analisado nas outras abas.
                     click: () => {
+                      setSelecao(new Set());
+                      setMensagem(null);
                       setCodigoFoco(p.codigo);
                       aoSelecionarPonto?.(p.codigo);
                     },
@@ -181,6 +193,51 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
       </section>
 
       <aside className="flex flex-col gap-4">
+        {(selecao.size > 0 || mensagem) && (
+        <section className="border border-luz bg-carta p-4">
+          <div className="mb-2 flex items-start justify-between gap-2">
+            <h2 className="border-l-4 border-luz pl-2 text-xs font-bold tracking-wide text-luz uppercase">publicar nos trechos selecionados</h2>
+            <button type="button" onClick={() => setSelecao(new Set())} aria-label="limpar seleção"
+              className="text-suave hover:text-texto"><X size={14} /></button>
+          </div>
+          <p className="mb-3 text-xs text-suave">
+            {selecao.size} trecho(s) selecionado(s): clique em outros para acrescentar ou tirar. A publicação sai
+            como a plataforma faria; o serviço decide e verifica.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={!selecao.size || !api.podePublicar}
+              onClick={() => aoPublicarTrechos?.([...selecao])}
+              className="inline-flex items-center gap-1 bg-luz px-3 py-1.5 text-xs font-semibold text-white uppercase tracking-wide disabled:opacity-40">
+              <Send size={14} /> volume ou teste…
+            </button>
+            <button type="button" disabled={!selecao.size || enviando || !api.podePublicar}
+              onClick={() => publicarOcorrencia("seguranca")}
+              className="inline-flex items-center gap-1 bg-falha px-3 py-1.5 text-xs font-semibold text-white uppercase tracking-wide disabled:opacity-40">
+              <ShieldAlert size={14} /> abrir ocorrência
+            </button>
+            <button type="button" disabled={!selecao.size || enviando || !api.podePublicar}
+              onClick={() => publicarOcorrencia("encerrada")}
+              className="inline-flex items-center gap-1 border border-borda px-3 py-1.5 text-xs font-semibold uppercase tracking-wide hover:border-luz disabled:opacity-40">
+              <ShieldCheck size={14} /> encerrar
+            </button>
+            {selecao.size > 0 && (
+              <button type="button" onClick={() => setSelecao(new Set())} className="px-2 text-xs text-suave underline">
+                limpar seleção
+              </button>
+            )}
+          </div>
+          {!api.podePublicar && (
+            <p className="mt-2 flex items-center gap-1 text-xs text-falha"><AlertTriangle size={12} /> painel sem chave de publicação</p>
+          )}
+          {mensagem && <p className="mt-2 text-xs">{mensagem}</p>}
+        </section>
+        )}
+        {!foco && selecao.size === 0 && !mensagem && (
+          <p className="border border-dashed border-borda bg-carta p-3 text-xs text-suave">
+            Clique num <strong>poste</strong> para ver os detalhes, ou num <strong>trecho de rua</strong> para
+            publicar volume ou ocorrência nele (um ou outro: ao escolher um, o outro sai).
+          </p>
+        )}
         {foco && (
           <section className="border border-luz bg-carta p-4">
             <div className="mb-2 flex items-start justify-between gap-2">
@@ -203,10 +260,23 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
               <dt className="text-suave">saúde</dt><dd className="text-right">{saude(foco).texto}</dd>
               <dt className="text-suave">decidido às</dt><dd className="text-right">{hora(foco.decidido_em)}</dd>
             </dl>
+            {(foco.trechos ?? []).length > 0 && (
+              <p className="mt-2 text-xs text-suave">
+                enxerga {foco.trechos.length} trecho(s) de rua; o movimento do poste é o maior deles.
+              </p>
+            )}
+            <div className="mt-3 flex flex-wrap gap-2">
+            {(foco.trechos ?? []).length > 0 && (
+              <button type="button" onClick={() => { setSelecao(new Set(foco.trechos)); setCodigoFoco(null); }}
+                className="inline-flex items-center gap-1 border border-luz px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-luz hover:bg-luz/10">
+                selecionar os {foco.trechos.length} trechos
+              </button>
+            )}
             <button type="button" onClick={() => aoAbrirPonto?.(foco.codigo)}
-              className="mt-3 inline-flex items-center gap-1 border border-borda px-3 py-1.5 text-xs font-semibold uppercase tracking-wide hover:border-luz hover:text-luz">
+              className="inline-flex items-center gap-1 border border-borda px-3 py-1.5 text-xs font-semibold uppercase tracking-wide hover:border-luz hover:text-luz">
               <ExternalLink size={14} /> ver no monitoramento
             </button>
+            </div>
           </section>
         )}
         <section className="border border-borda bg-carta p-4">
@@ -223,34 +293,6 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
           </dl>
         </section>
 
-        <section className="border border-borda bg-carta p-4">
-          <h2 className="mb-2 border-l-4 border-luz pl-2 text-xs font-bold tracking-wide text-luz uppercase">ocorrência em área</h2>
-          <p className="mb-3 text-xs text-suave">
-            Clique nos trechos de rua para selecionar ({selecao.size} selecionado(s)). Os botões publicam a ocorrência
-            como a plataforma faria; o serviço decide e verifica.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <button type="button" disabled={!selecao.size || enviando || !api.podePublicar}
-              onClick={() => publicarOcorrencia("seguranca")}
-              className="inline-flex items-center gap-1 bg-falha px-3 py-1.5 text-xs font-semibold text-white uppercase tracking-wide disabled:opacity-40">
-              <ShieldAlert size={14} /> abrir ocorrência
-            </button>
-            <button type="button" disabled={!selecao.size || enviando || !api.podePublicar}
-              onClick={() => publicarOcorrencia("encerrada")}
-              className="inline-flex items-center gap-1 border border-borda px-3 py-1.5 text-xs font-semibold uppercase tracking-wide hover:border-luz disabled:opacity-40">
-              <ShieldCheck size={14} /> encerrar
-            </button>
-            {selecao.size > 0 && (
-              <button type="button" onClick={() => setSelecao(new Set())} className="px-2 text-xs text-suave underline">
-                limpar seleção
-              </button>
-            )}
-          </div>
-          {!api.podePublicar && (
-            <p className="mt-2 flex items-center gap-1 text-xs text-falha"><AlertTriangle size={12} /> painel sem chave de publicação</p>
-          )}
-          {mensagem && <p className="mt-2 text-xs">{mensagem}</p>}
-        </section>
 
         <section className="border border-borda bg-carta p-4 text-xs">
           <h2 className="mb-2 border-l-4 border-luz pl-2 font-bold tracking-wide text-luz uppercase">legenda</h2>

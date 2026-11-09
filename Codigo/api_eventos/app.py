@@ -283,24 +283,23 @@ def publicar_evento(
     return {"aceitos": aceitos, "recusados": recusados}
 
 
-@app.post("/teste/eventos", response_model=Evento, status_code=status.HTTP_201_CREATED,
+@app.post("/teste/eventos", response_model=Evento | ResultadoPacote, status_code=status.HTTP_201_CREATED,
           dependencies=[Depends(exigir_chave)])
-def publicar_evento_teste(request: Request, evento: EventoEntrada,
+def publicar_evento_teste(request: Request, response: Response, corpo: Any = Body(...),
                           conn: psycopg.Connection = Conn) -> dict:
     """Modo de teste do painel: o evento segue o caminho normal (inferencia e
     piso), mas o comando sai IMEDIATO - o no vai direto ao alvo, sem a rampa
-    de descida. So demonstracao; desligado sem MODO_TESTE=1."""
+    de descida. Aceita item ou pacote, como o POST /eventos (o pacote grava
+    todos os trechos numa transacao so: a decisao ja ve todos). So
+    demonstracao; desligado sem MODO_TESTE=1."""
     if not MODO_TESTE:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "modo de teste desligado")
-    evento = evento.model_copy(update={"origem": config.ORIGEM_TESTE_IMEDIATO})
-    try:
-        gravado = _gravar(conn, evento)
-    except ForeignKeyViolation:
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT,
-                            f"trecho {evento.trecho} nao cadastrado") from None
-    log.warning("rid=%s MODO TESTE: evento imediato id=%s trecho=%s", request.state.rid,
-                gravado["id"], evento.trecho)
-    return gravado
+    marcar = lambda item: {**item, "origem": config.ORIGEM_TESTE_IMEDIATO} if isinstance(item, dict) else item  # noqa: E731
+    corpo = [marcar(x) for x in corpo] if isinstance(corpo, list) else marcar(corpo)
+    resultado = publicar_evento(request, response, corpo, conn)
+    ids = [e["id"] for e in resultado["aceitos"]] if "aceitos" in resultado else [resultado["id"]]
+    log.warning("rid=%s MODO TESTE: eventos imediatos ids=%s", request.state.rid, ids)
+    return resultado
 
 
 @app.get("/eventos", response_model=list[Evento])

@@ -38,42 +38,67 @@ function nomeTrecho(t) {
 }
 
 const arredonda = (v) => Math.round(v * 10) / 10;
+const num = (v) => Number(v).toLocaleString("pt-BR", { maximumFractionDigits: 2 });
+const rua = (t) =>
+  `${[t.tipo_logradouro, t.nome_logradouro].filter(Boolean).join(" ")}` +
+  (t.numero_inicial != null && t.numero_final != null ? ` ${t.numero_inicial}–${t.numero_final}` : "");
 
-// Montado so quando aberto: cada abertura nasce do trecho do ponto na tela.
-export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPublicar }) {
-  const [trecho, setTrecho] = useState(trechoInicial ?? trechos[0]?.id ?? "");
+// Montado so quando aberto. Abre com TODOS os trechos que o poste na tela
+// enxerga (o "movimento agora" do poste e o maior deles), ou com os trechos
+// selecionados no mapa. Varios trechos saem num PACOTE so: a API grava todos
+// numa transacao e o servico decide depois, ja vendo todos.
+export default function SimularLeitura({ fechar, trechos, trechosIniciais = [], pontoAtual, aoPublicar }) {
+  const existe = (id) => trechos.some((t) => t.id === id);
+  const [selecionados, setSelecionados] = useState(() => {
+    const ini = trechosIniciais.filter(existe);
+    return ini.length ? ini : trechos[0] ? [trechos[0].id] : [];
+  });
   const [tipo, setTipo] = useState("volume");
   // "normal" = como a plataforma publicaria; "teste" = forcar evento imediato
   // (POST /teste/eventos): o comando vai ao no sem a rampa de descida.
   const [modo, setModo] = useState("normal");
+  // Volume pela FAIXA (cada trecho recebe as pessoas pela propria regua) ou
+  // pelo NUMERO de pessoas (o mesmo em todos; alvo = null).
+  const [alvo, setAlvo] = useState(ALVOS[0]);
   const [media, setMedia] = useState(0);
   const [ocorrencia, setOcorrencia] = useState("seguranca");
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState(null);
 
-  const escolhido = trechos.find((t) => String(t.id) === String(trecho));
-  const regua = escolhido?.regua ?? null;
-  const rapidos = regua
-    ? ALVOS.map((a) => ({ ...a, media: Math.round(a.nivel * regua * 100) / 100 }))
-    : [];
-  const nivelAtual = regua ? media / regua : null;
-
-  const ordenados = useMemo(
-    () => [...trechos].sort((a, b) => b.pontos.length - a.pontos.length || a.nome_logradouro.localeCompare(b.nome_logradouro)),
-    [trechos],
+  const escolhidos = selecionados.map((id) => trechos.find((t) => t.id === id)).filter(Boolean);
+  const pessoasDe = (t) => (alvo ? Math.round(alvo.nivel * (t.regua ?? 5) * 100) / 100 : media);
+  const disponiveis = useMemo(
+    () => [...trechos].filter((t) => !selecionados.includes(t.id))
+      .sort((a, b) => b.pontos.length - a.pontos.length || a.nome_logradouro.localeCompare(b.nome_logradouro)),
+    [trechos, selecionados],
   );
+  const doPoste = (pontoAtual?.trechos ?? []).filter((id) => existe(id) && !selecionados.includes(id));
+
+  const tirar = (id) => setSelecionados((s) => s.filter((x) => x !== id));
+  const por = (ids) => setSelecionados((s) => [...s, ...ids.filter((id) => !s.includes(id))]);
 
   async function publicar() {
     setEnviando(true);
     setErro(null);
-    const base = { ocorrido_em: agoraServidor(), trecho: Number(trecho), origem: "painel-demonstracao" };
-    const corpo =
-      tipo === "volume"
-        ? { ...base, tipo: "volume", pessoas_media: media, periodo_s: 300 }
+    const agora = agoraServidor();
+    const itens = escolhidos.map((t) => {
+      const base = { ocorrido_em: agora, trecho: t.id, origem: "painel-demonstracao" };
+      return tipo === "volume"
+        ? { ...base, tipo: "volume", pessoas_media: pessoasDe(t), periodo_s: 300 }
         : { ...base, tipo: "ocorrencia", ocorrencia };
+    });
+    const corpo = itens.length === 1 ? itens[0] : itens;
     try {
-      const evento = modo === "teste" ? await api.publicarTeste(corpo) : await api.publicarLeitura(corpo);
-      aoPublicar(evento);
+      const r = modo === "teste" ? await api.publicarTeste(corpo) : await api.publicarLeitura(corpo);
+      if (r.aceitos) {
+        if (r.recusados.length) {
+          setErro(`${r.recusados.length} de ${itens.length} recusado(s): ${r.recusados.map((x) => x.erro).join("; ")}`);
+          if (!r.aceitos.length) return;
+        }
+        aoPublicar(r.aceitos[0]);
+      } else {
+        aoPublicar(r);
+      }
       fechar();
     } catch (e) {
       setErro(e.message);
@@ -91,7 +116,7 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
       onClick={fechar}
     >
       <div
-        className="w-full max-w-lg rounded-xl border border-borda bg-carta p-5 shadow-xl"
+        className="max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-xl border border-borda bg-carta p-5 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-start justify-between gap-4">
@@ -100,7 +125,7 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
               Simular publicação da plataforma
             </h2>
             <p className="text-xs text-suave">
-              O que o sistema de monitoramento enviaria: o volume dos últimos 5 min do trecho, ou uma ocorrência na hora.
+              O que o sistema de monitoramento enviaria: o volume dos últimos 5 min de cada trecho, ou uma ocorrência na hora.
             </p>
           </div>
           <button type="button" onClick={fechar} className="rounded-md p-1 text-suave hover:bg-borda/40" aria-label="fechar">
@@ -133,20 +158,35 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
           </p>
         )}
 
-        <label className="mb-4 block text-xs text-suave">
-          local (trecho de via)
-          <select
-            value={trecho}
-            onChange={(e) => setTrecho(e.target.value)}
-            className="mt-1 w-full rounded-md border border-borda bg-fundo px-2 py-2 text-sm text-texto"
-          >
-            {ordenados.map((t) => (
-              <option key={t.id} value={t.id}>
-                {nomeTrecho(t)}
-              </option>
+        <div className="mb-4">
+          <p className="mb-1 text-xs text-suave">
+            trechos de via ({escolhidos.length}){escolhidos.length > 1 && " · enviados juntos, num pacote só"}
+          </p>
+          <div className="flex flex-wrap gap-1">
+            {escolhidos.map((t) => (
+              <span key={t.id} className="inline-flex items-center gap-1 rounded-full border border-luz/50 bg-luz/10 py-0.5 pr-1 pl-2 text-xs text-luz">
+                {rua(t)}
+                <button type="button" onClick={() => tirar(t.id)} aria-label={`tirar ${rua(t)}`}
+                  className="rounded-full p-0.5 hover:bg-luz/20"><X size={11} /></button>
+              </span>
             ))}
-          </select>
-        </label>
+            {!escolhidos.length && <span className="text-xs text-falha">nenhum trecho escolhido</span>}
+          </div>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            {doPoste.length > 0 && (
+              <button type="button" onClick={() => por(doPoste)}
+                className="rounded-md border border-borda px-2 py-1 text-xs text-luz hover:border-luz">
+                + todos os trechos do {pontoAtual.codigo} ({doPoste.length})
+              </button>
+            )}
+            <select value="" onChange={(e) => e.target.value && por([Number(e.target.value)])}
+              aria-label="acrescentar trecho"
+              className="min-w-0 flex-1 rounded-md border border-borda bg-fundo px-2 py-1 text-xs text-texto">
+              <option value="">+ acrescentar outro trecho…</option>
+              {disponiveis.map((t) => <option key={t.id} value={t.id}>{nomeTrecho(t)}</option>)}
+            </select>
+          </div>
+        </div>
 
         <div className="mb-4 flex gap-1" role="tablist" aria-label="tipo de publicação">
           {[
@@ -163,45 +203,59 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
         {tipo === "volume" ? (
           <fieldset className="mb-4">
             <legend className="mb-1 text-xs text-suave">média de pessoas na área nos últimos 5 min</legend>
-            <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setMedia((n) => Math.max(0, arredonda(n - 0.1)))}
-                className="rounded-md border border-borda p-2 hover:bg-borda/40" aria-label="diminuir 0,1">
-                <Minus size={14} />
+            <div className="flex flex-wrap items-center gap-1">
+              <span className="mr-1 text-[11px] text-suave">pela faixa:</span>
+              {ALVOS.map((a) => (
+                <button key={a.rotulo} type="button" onClick={() => setAlvo(a)}
+                  className={`rounded-md border px-2 py-1 text-xs ${alvo === a ? "border-luz text-luz" : "border-borda text-suave hover:bg-borda/40"}`}>
+                  {a.rotulo} ({(a.nivel * 100).toLocaleString("pt-BR", { maximumFractionDigits: 1 })}%)
+                </button>
+              ))}
+            </div>
+            <div className="mt-2 flex items-center gap-2">
+              <span className="text-[11px] text-suave">ou pessoas (igual em todos):</span>
+              <button type="button" onClick={() => { setMedia((n) => Math.max(0, arredonda((alvo ? 0 : n) - 0.1))); setAlvo(null); }}
+                className="rounded-md border border-borda p-1.5 hover:bg-borda/40" aria-label="diminuir 0,1">
+                <Minus size={12} />
               </button>
               <input
-                type="number" min={0} max={10000} step={0.1} value={media}
-                onChange={(e) => setMedia(Math.max(0, Math.min(10000, arredonda(Number(e.target.value) || 0))))}
-                className="w-20 rounded-md border border-borda bg-fundo px-2 py-2 text-center text-lg tabular-nums text-texto"
+                type="number" min={0} max={10000} step={0.1} value={alvo ? "" : media} placeholder="--"
+                onChange={(e) => { setAlvo(null); setMedia(Math.max(0, Math.min(10000, arredonda(Number(e.target.value) || 0)))); }}
+                className={`w-20 rounded-md border bg-fundo px-2 py-1 text-center tabular-nums text-texto ${alvo ? "border-borda" : "border-luz"}`}
                 aria-label="média de pessoas"
               />
-              <button type="button" onClick={() => setMedia((n) => arredonda(n + 0.1))}
-                className="rounded-md border border-borda p-2 hover:bg-borda/40" aria-label="aumentar 0,1">
-                <Plus size={14} />
+              <button type="button" onClick={() => { setMedia((n) => arredonda((alvo ? 0 : n) + 0.1)); setAlvo(null); }}
+                className="rounded-md border border-borda p-1.5 hover:bg-borda/40" aria-label="aumentar 0,1">
+                <Plus size={12} />
               </button>
-              <div className="ml-2 flex flex-wrap gap-1">
-                {rapidos.map((r) => (
-                  <button key={r.rotulo} type="button" onClick={() => setMedia(r.media)}
-                    className={`rounded-md border px-2 py-1 text-xs ${media === r.media ? "border-luz text-luz" : "border-borda text-suave hover:bg-borda/40"}`}>
-                    {r.rotulo} ({r.media.toLocaleString("pt-BR")})
-                  </button>
-                ))}
-              </div>
             </div>
-            <p className="mt-2 text-[11px] text-suave">
-              Ocupação média, e não soma de passagens. O serviço compara com o movimento normal da rua; o volume vale 15 min.
-            </p>
-            {regua && (
-              <p className="mt-1 text-[11px] text-suave">
-                Régua deste trecho: <strong>{regua.toLocaleString("pt-BR")} pessoas</strong>
-                {escolhido?.regua_aprendida ? " (aprendida dos últimos 28 dias)" : " (valor inicial, até haver 7 dias de histórico)"}.
-                {" "}{media.toLocaleString("pt-BR")} pessoas = nível {nivelAtual.toFixed(3).replace(".", ",")} →
-                movimento <strong>{faixaMov(nivelAtual)}</strong>.
-              </p>
+            {escolhidos.length > 0 && (
+              <ul className="mt-3 space-y-1 rounded-md border border-borda p-2 text-[11px]">
+                <li className="text-suave">o que vai ser enviado (pessoas ÷ régua do trecho = faixa):</li>
+                {escolhidos.map((t) => {
+                  const n = pessoasDe(t);
+                  const nivel = t.regua ? n / t.regua : null;
+                  return (
+                    <li key={t.id} className="flex justify-between gap-2">
+                      <span className="truncate">{rua(t)}</span>
+                      <span className="whitespace-nowrap tabular-nums">
+                        {num(n)} de {t.regua != null ? num(t.regua) : "--"}
+                        {t.regua_aprendida ? "" : "*"} = <b>{nivel != null ? `${num(nivel * 100)}%` : "--"}</b>
+                        {nivel != null && <> · {faixaMov(nivel)}</>}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
             )}
+            <p className="mt-2 text-[11px] text-suave">
+              Ocupação média, e não soma de passagens; o volume vale 15 min. Vale o maior trecho de cada poste.
+              {escolhidos.some((t) => !t.regua_aprendida) && " * régua inicial (sem 7 dias de histórico)."}
+            </p>
           </fieldset>
         ) : (
           <fieldset className="mb-4">
-            <legend className="mb-1 text-xs text-suave">ocorrência no trecho</legend>
+            <legend className="mb-1 text-xs text-suave">ocorrência {escolhidos.length > 1 ? "nos trechos" : "no trecho"}</legend>
             <div className="flex gap-1">
               {OCORRENCIAS.map((o) => (
                 <button key={o.v} type="button" onClick={() => setOcorrencia(o.v)}
@@ -222,10 +276,11 @@ export default function SimularLeitura({ fechar, trechos, trechoInicial, aoPubli
           <button type="button" onClick={fechar} className="rounded-md border border-borda px-3 py-2 text-sm hover:bg-borda/40">
             cancelar
           </button>
-          <button type="button" onClick={publicar} disabled={enviando || trecho === ""}
+          <button type="button" onClick={publicar} disabled={enviando || !escolhidos.length}
             className="inline-flex items-center gap-2 rounded-md bg-luz px-3 py-2 text-sm font-semibold text-white uppercase tracking-wide transition-colors hover:bg-tinta disabled:opacity-50 disabled:hover:bg-luz">
             <Send size={14} />
             {enviando ? "enviando..." : modo === "teste" ? "forçar agora" : "publicar"}
+            {escolhidos.length > 1 && ` (${escolhidos.length})`}
           </button>
         </div>
       </div>
