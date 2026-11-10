@@ -467,7 +467,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         C3 (redacao da NBR 5101) seguem com os autores.
         >> 09/11/2026 (situacao): (e) superado: Catlett retirado (v24); (a)-(d) seguem para leitura.
 
-[ ] C39. Conferencia da NBR 5101:2024 (10/10/2026, por trechos publicos na busca;
+[x] C39. Conferencia da NBR 5101:2024 (10/10/2026, por trechos publicos na busca;
         a norma original nao foi aberta): C2 (iluminancia vertical e reconhecimento
         facial) CONFERE; 6.10 (classes nao dimerizaveis, duas classes, 1/10 por
         minuto, nevoeiro) CONFERE; Quadro 8 CONFERE. FALTA: os pesos da tabela de
@@ -475,6 +475,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         original (biblioteca). v24: Catlett e SmartSantander retirados por decisao
         do autor; Stratumseind (2.8) ficou so com o que o resumo de Galic e
         Gellert sustenta.
+        >> 10/11/2026 (decisao do autor): pesos conferidos na NBR 5101:2024 aberta pelo autor (Tabela 6, p. 13): 1 + 0 + 1 + 0,5 + 0 = 2,5; P = 6 - 2,5 = 3,5 -> inteiro inferior = P3. CONFERE. Tabela 7 (p. 14) confere com o Quadro 8; 6.10.2 (p. 27) confere. v67: a conta passou a constar da 3.8. Prints em Downloads/normas.
 
 [x] C40. Rodada v25 (10/10/2026, AUDITORIA_VARREDURA_v24.md), redigida pela
         IA. Conferir: (a) 1.6, 3o eixo, reescrito sem "nao se resolve por tabela";
@@ -500,7 +501,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         mostrar 4 niveis (3.12.6.1 etc.).
         >> 09/11/2026 (resolvido por decisao do autor / superado): v28 editada e aprovada pelo autor no Word; F9 feito pelo autor (v60).
 
-[ ] C42. v29 (11/10/2026): revisao de referencias do colega (sobre a v18),
+[x] C42. v29 (11/10/2026): revisao de referencias do colega (sobre a v18),
         conferida pela IA no navegador. (a) Stratumseind (2.8): o colega diz que
         funcionou de 2014 a 2018 - a IA NAO achou essas datas no resumo de Galic e
         Gellert; o texto foi so para o passado. Se o colega tiver a fonte, incluir
@@ -510,12 +511,16 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         28/07/2022). (c) Quadro 11: termos em portugues da ISO/IEC 25010:2023
         escolhidos sem a traducao ABNT; conferir se ha versao NBR.
         >> 09/11/2026 (situacao): (c) resolvido (C44 f); (a) datas de Stratumseind e (b) seguem abertos.
+        >> 10/11/2026 (decisao do autor): (a) Stratumseind fica SEM datas (fontes: premio do De-escalate em dez. 2014, estudo de quatro anos, testes em 2018; nenhuma fonte da o fim); (b) Quadro 3: autor aprovou trocar 'prazos a partir de 2019' (vai na v67).
+        >> 10/11/2026 (decisao do autor): (b) v67: Quadro 3 diz 'instituida em 2017 e consolidada em 2022' (sem 2019, decisao do autor); (a) sem datas.
 
-[ ] C43. v31 (11/10/2026): correcoes da validacao das referencias
+[x] C43. v31 (11/10/2026): correcoes da validacao das referencias
         (VALIDACAO_REFERENCIAS_v30.md), redacao da IA: 3.10 (Perry) reescrito
         conforme o artigo; 2.7 (Grinsztajn) com o alcance do estudo; 3.5.2 com a
         data da contagem do GeoSampa. Ainda pendentes: Lin et al. (tres camadas,
         texto pago) e os pesos da classe P na NBR 5101 (C39).
+        >> 10/11/2026 (decisao do autor): Lin et al.: tres camadas confirmadas por fontes secundarias revisadas por pares que citam Lin et al. (2017) para percepcao, rede e aplicacao (arXiv 2004.12936, p. 3; IEEE IoT Journal 2023, DOI 10.1109/JIOT.2023.3246100; IEEE IoT Journal 2022, DOI 10.1109/JIOT.2021.3079115); original pago nao lido, autor aceitou. Pesos da classe P: autor vai fornecer a NBR 5101 (C39).
+        >> 10/11/2026 (decisao do autor): Lin et al. fechado pela fonte secundaria; pesos da classe P conferidos (C39).
 
 [ ] C44. v32 (11/10/2026), redacao da IA a ler:
         (a) 3.7: paragrafo novo "A divisao de responsabilidades entre a norma e
