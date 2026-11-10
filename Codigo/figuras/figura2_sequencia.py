@@ -49,13 +49,13 @@ numero(y, 2); seta(y, I, B, "valida e grava\no evento")
 y -= 1.05
 seta(y, B, S, "notifica o evento", tracejada=True)
 y -= 1.25
-numero(y, 3); seta(y, S, B, "lê o estado da via, a classe\ndo ponto e o histórico")
+numero(y, 3); seta(y, S, B, "por grupo de controle do trecho:\nlê o estado da via, a classe\ne o histórico")
 y -= 1.25
-numero(y, 4); proprio(y + 0.2, S, "previsão → inferência\nnebulosa → verificação\nnormativa (piso)")
+numero(y, 4); proprio(y + 0.2, S, "previsão → inferência\nnebulosa → verificação\nnormativa (piso), uma\nvez por grupo")
 y -= 1.45
-numero(y, 5); seta(y, S, B, "grava a decisão: nível pretendido,\nnível emitido, restrição e ativações")
+numero(y, 5); seta(y, S, B, "grava a decisão de cada ponto do grupo:\nníveis, restrição e ativações")
 y -= 1.45
-numero(y, 6); seta(y, S, M, "se o alvo mudou ou vai vencer:\n{decisao_id, nivel, validade_s,\npiso, taxa_min}")
+numero(y, 6); seta(y, S, M, "a cada nó do grupo, se o alvo\nmudou ou vai vencer: {decisao_id, nivel, validade_s,\npiso, taxa_min}")
 y -= 1.05
 seta(y, M, N, "entrega o comando")
 y -= 1.25
@@ -70,8 +70,8 @@ y -= 1.3
 numero(y, 10); seta(y, PA, I, "GET /decisoes, /telemetria,\n/eventos/{id}/explicacao")
 y -= 1.05
 seta(y, I, B, "consulta")
-ax.text((X[0] + X[-1]) / 2, BASE - 0.6,
-        "Sem evento novo, o serviço só decide de novo quando o comando está para vencer (varredura a cada minuto);\na rampa de descida corre no nó, e o vencimento da validade leva o nó ao pleno.",
+ax.text((X[0] + X[-1]) / 2, BASE - 0.85,
+        "Os pontos de um grupo de controle (mesmos trechos) recebem o mesmo nível; a figura acompanha um deles.\nSem evento novo, o serviço só decide de novo quando o comando está para vencer (varredura a cada minuto);\na rampa de descida corre no nó, e o vencimento da validade leva o nó ao pleno.",
         ha="center", va="center", fontsize=9, fontname=FONTE, style="italic")
 
 fig.savefig(sys.argv[1], bbox_inches="tight", pad_inches=0.12, facecolor="white")

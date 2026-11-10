@@ -915,6 +915,27 @@ E. DECLARACAO E ENTREGA
         Lembrar: Figura 12 e Apendices E e F nao estao no Quadro 19 (uso de
         IA): acrescentar linha e percentual. F9 no Word (sumario e listas).
 
+[ ] E9. v65 (09/11/2026), figuras conferidas contra a arquitetura, texto
+        redigido pela IA:
+        a) Figura 5 regerada (decisao por grupo de controle) e passos (3) a
+           (6) de 3.12.6.3 reescritos por grupo.
+        b) Figura 10 NOVA: captura do mapa do bairro em 09/11, estado de
+           demonstracao (BANCADA-01 desligada = sem comunicacao; alertas de
+           postes simulados provocados). Frase no paragrafo da visao de
+           bairro diz isso e que o painel ganhou aba de alertas e lista de
+           trechos depois das Figuras 6 a 9. Conferir se a banca aceita
+           figura com alertas provocados; fonte cita o OpenStreetMap.
+        c) ER, foto posterior e meteorologia viram Figuras 11, 12 e 13
+           (remissoes e Quadro 19 ajustados). Quadro 19: a linha das
+           capturas agora inclui a Figura 10 (conferir o percentual).
+        d) Figuras 6 a 9 RECAPTURADAS (pedido do autor: grafico mais robusto e
+           coerente): poste SIMULADO IP0598561 em 09/11 22h53, volumes do
+           gerador de demonstracao (INVENTADOS) e luz sintetica; os dois
+           paragrafos que as descrevem foram reescritos pela IA e dizem que
+           nao sao resultado. As capturas antigas (bancada real, 10/10) sairam:
+           conferir se a banca prefere o no fisico.
+        F9 no Word: a lista de figuras ainda mostra a numeracao antiga.
+
 ===============================================================================
 FIM
 ===============================================================================
