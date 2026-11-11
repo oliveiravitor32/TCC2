@@ -28,7 +28,8 @@ Como usar
 -------------------------------------------------------------------------------
 A. CRITERIOS E LIMIARES QUE NAO VEM DE NORMA NEM DE LITERATURA
 -------------------------------------------------------------------------------
-[ ] A1. Tercis -> classes. Movimento baixo/medio/alto (tercis do proprio trecho)
+[x] A1. Tercis -> classes. Movimento baixo/medio/alto (tercis do proprio trecho)
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK.
         ligado a classe minima / uma abaixo / classe da via. A norma nao da
         numeros; o criterio e "dos autores".
         Onde: 3.7, 5.3.  Conferir: voces defendem esse criterio? Saberiam
@@ -216,7 +217,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         (o termo tecnico do trabalho e "inferencia nebulosa"). Conferir.
         >> 09/11/2026 (resolvido por decisao do autor / superado): "inteligencia artificial" confirmado pelo autor (C17).
 
-[ ] C17. Rodada v7 do texto (01/10/2026) - o que foi aplicado e precisa ser lido:
+[x] C17. Rodada v7 do texto (01/10/2026) - o que foi aplicado e precisa ser lido:
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK.
         C10 (item 61 em 3.7, 3.9, 5.6, 6.3), C11 (2.6 reescrita: as tres
         propriedades "motivam" e nenhuma e exclusiva do fuzzy), C12 e C13
         (tercis unicos, todas as horas, 54 % da noite na faixa baixa), C14
@@ -230,7 +232,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         antes de submeter (ver D6), ou retirar as citacoes.
         >> 09/11/2026 (situacao): parcial: C11-C16 resolvidos e Akashi retirado (D10); falta ler o texto da v7.
 
-[ ] C18. Identificacao espacial (3.5.2): a ligacao TRECHO -> POSTE esta bem
+[x] C18. Identificacao espacial (3.5.2): a ligacao TRECHO -> POSTE esta bem
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK.
         explicada e apoiada (GeoSampa, Caderno de Encargos itens 13/13.1/13.3,
         raio de 25 m, recorte do Jardim Helena, TALQ como referencia). A
         ligacao CAMERA -> TRECHO esta so implicita: o texto diz que as cameras
@@ -324,7 +327,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         proposta da IA, nao testada. Conferir.
         >> 09/11/2026 (resolvido por decisao do autor / superado): superado: cadencia de 5 s saiu na v20 (comando so na mudanca ou renovacao).
 
-[ ] C27. Sessao de bancada (04/10/2026, DIVERGENCIAS 66): a IA rodou o CT17
+[x] C27. Sessao de bancada (04/10/2026, DIVERGENCIAS 66): a IA rodou o CT17
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK.
         tres vezes e mudou a FORMA DE MEDIR duas vezes depois de ver o
         resultado: (1) carimbo do evento corrigido pelo desvio de relogio
         notebook x VM; (2) latencia ate a primeira telemetria de qualquer
@@ -345,7 +349,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         mudanca de criterio foi feita depois do ensaio. A IA nao escolheu.
         >> 09/11/2026 (resolvido por decisao do autor / superado): autor escolheu a opcao a (C29); na v21 o CT18 ficou satisfeito.
 
-[ ] C29. v17 (05/10/2026): a IA redigiu 3.12.9, 4.3 e a energia de bancada em 4.5
+[x] C29. v17 (05/10/2026): a IA redigiu 3.12.9, 4.3 e a energia de bancada em 4.5
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK.
         a partir dos registros da sessao (DIVERGENCIAS 66). Interpretacoes da
         IA a conferir: (1) latencia ate a telemetria como "limite superior" do
         RNF03; (2) "a resposta imediata pressupoe relogios sincronizados" como
@@ -356,7 +361,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         3.4.4 (conferencia) e a linha nova do Quadro 14 sao texto da IA.
         >> 09/11/2026 (situacao): (4) decidido pelo autor e superado na v21; (1)-(3) seguem para leitura.
 
-[ ] C30. Comparacao XGBoost x linear x Random Forest (DIVERGENCIAS 68): desenho
+[x] C30. Comparacao XGBoost x linear x Random Forest (DIVERGENCIAS 68): desenho
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK.
         do experimento, hiperparametros da RF e o limiar de 2 % sao escolhas
         da IA, fixadas no protocolo antes de rodar. Resultado: XGBoost
         superior ao linear e EQUIVALENTE a Random Forest. Na v19 a IA redigiu
@@ -435,7 +441,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         - 5.1, 5.2, 5.4, 7, Resumo e Abstract continuam PENDENTES (autores).
         >> 09/11/2026 (resolvido por decisao do autor / superado): superado: paragrafo norma x tercis entrou na v32 (aprovado, C44 a); CT18 refeito na v21; 5.1, Cap. 6, Resumo e Abstract escritos (v46-v48).
 
-[ ] C36. Rodada v21 (10/10/2026, DIVERGENCIAS 73) - texto redigido pela IA com
+[x] C36. Rodada v21 (10/10/2026, DIVERGENCIAS 73) - texto redigido pela IA com
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK.
         os resultados da caixa nova: Quadro 4, 3.4.2, 3.4.4, 3.12.9, 4.3, 4.5, 5.3
         e Apendice B. Conferir contra bancada/resultados/sessao_113.json e
         ct*_20261010*. Pontos: (a) o CT16 usou comandos provocados (ocorrencia
@@ -457,6 +464,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         municipais, que nao foram usados para os cenarios: decidir.
 
 [ ] C38. Rodada v23 (10/10/2026), redigida pela IA: (a) 2.1 passou a declarar
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a, c, d.
         revisao NARRATIVA e saiu a lista de bases/termos, porque o autor nao
         confirmou a busca; (b) objetivo b) reescrito (1.5.2) - conferir se a
         conclusao (Cap. 7) o declara cumprido; (c) Reia e Cruz (2023) NAO
@@ -523,6 +531,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         >> 10/11/2026 (decisao do autor): Lin et al. fechado pela fonte secundaria; pesos da classe P conferidos (C39).
 
 [ ] C44. v32 (11/10/2026), redacao da IA a ler:
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a, b, d.
         (a) 3.7: paragrafo novo "A divisao de responsabilidades entre a norma e
         os tercis..." (C35, aprovado pelo autor).
         (b) 3.12.6.3: exemplo trocado pela decisao real da bancada de 10/10/2026
@@ -691,13 +700,15 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         O autor declarou no chat que a conclusao e texto dele (a IA so
         resumiu); confirmar que a linha do Quadro 19 reflete isso.
 [ ] C58. v59 (checagem do roteiro): texto novo da IA a conferir - (a) 3.12.2,
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a, b, c, d.
         justificativa do processo iterativo e incremental (prazo curto,
         equipe pequena, especificacao como criterio); (b) paragrafo novo no
         fim de 5.4 com os trabalhos em sequencia; (c) 4.6 reescrito so com a
         leitura pelo criterio (a interpretacao ficou em 5.2); (d) frase das
         hipoteses e "arranjo nao localizado na revisao" no Resumo/Abstract
         (Resumo agora com 289 palavras).
-[ ] C59. v60: paragrafo novo em 3.1 com WAZLAWICK (2009), redigido pela IA
+[x] C59. v60: paragrafo novo em 3.1 com WAZLAWICK (2009), redigido pela IA
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK.
         a partir do cap. 2 do livro (secoes 2.2, 2.3 e 2.6, lidas pela IA):
         conferir que o enquadramento (pesquisa empirica, "apresentacao de
         algo presumivelmente melhor", hipotese como "coracao da monografia")
@@ -707,7 +718,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         de 2009, fora do recorte de 10 anos de 2.1 (mas e obra de metodologia,
         nao fonte da revisao). Conferir a BIBLIOGRAFIA CONSULTADA (10 docs).
         >> 09/11/2026: EDICAO CONFERIDA: o autor leu a de (c) 2009, Elsevier Editora, Rio de Janeiro, ISBN 978-85-352-3522-7 (6a tiragem; PDF do autor, pagina Copyright) = a referencia do texto. Falta so o enquadramento da 3.1.
-[ ] C60. v61: 3.12.6.4, Apendice D e 5.3 REESCRITOS PELA IA a partir do
+[x] C60. v61: 3.12.6.4, Apendice D e 5.3 REESCRITOS PELA IA a partir do
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK.
         VALIDACAO_ARQUITETURA.md. Conferir: (a) grupo de controle = postes com
         o mesmo conjunto de trechos; a afirmacao "nao altera nenhum nivel" vale
         porque cada poste ja decide pelo maior volume e por qualquer ocorrencia
@@ -720,6 +732,7 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         para a cobertura total so por causa da decisao por grupo e da previsao
         por trecho - estimativa da IA, nao recalculada por teste de carga.
 [ ] C61. v62: texto da IA a conferir - (a) 3.12.6.4: "o prototipo ja
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a a e.
         decide assim" (grupo implementado; teste e suite iguais); (b) 3.12.6.3:
         paragrafo da visao de bairro (33 nos simulados, luz sintetica, fora dos
         resultados); (c) 3.12.6.1: frase dos logs; (d) Quadros 16 e 17 com
@@ -951,7 +964,8 @@ E. DECLARACAO E ENTREGA
         modelo salvo (Docs/Entregavel2/matriz.py); nao estao no TCC.
         Gerar o PDF final pelo Word (o .pdf da pasta e uma previa).
 
-[ ] E7. v63, 3.12.2 e Quadro 1 do Entregavel 2 (redigidos pela IA em
+[x] E7. v63, 3.12.2 e Quadro 1 do Entregavel 2 (redigidos pela IA em
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK.
         02/11/2026): divisao por area (Vitor borda/infra, Lucas IA, Bruno
         requisitos/operacao). Conferir que cada um fez de fato o que esta
         escrito e sabe explicar a sua parte; o servico de decisao e o painel
@@ -959,6 +973,7 @@ E. DECLARACAO E ENTREGA
         Conferir tambem se o Apendice A precisa citar a divisao.
 
 [ ] E8. v64 (03/11/2026), recomendacoes do orientador sobre a v60, tudo
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a a e.
         redigido pela IA:
         a) 5.4: REDACAO DE TERMO ADITIVO para o indicador de iluminancia
            (afere contra a classe vigente registrada; sem registro, vale a
@@ -983,6 +998,7 @@ E. DECLARACAO E ENTREGA
         IA): acrescentar linha e percentual. F9 no Word (sumario e listas).
 
 [ ] E9. v65 (09/11/2026), figuras conferidas contra a arquitetura, texto
+        >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a, b, d.
         redigido pela IA:
         a) Figura 5 regerada (decisao por grupo de controle) e passos (3) a
            (6) de 3.12.6.3 reescritos por grupo.
@@ -1002,6 +1018,20 @@ E. DECLARACAO E ENTREGA
            nao sao resultado. As capturas antigas (bancada real, 10/10) sairam:
            conferir se a banca prefere o no fisico.
         F9 no Word: a lista de figuras ainda mostra a numeracao antiga.
+
+[ ] C62  v69 (10/11/2026), leitura guiada itens 5, 8, 12 e 18.
+        a) 3.1: classificacao reorganizada pela IA segundo GERHARDT e SILVEIRA
+           (2009, p. 35-39; livro aberto em lume.ufrgs.br, prints em
+           Downloads/metodologia): documental e experimental passam a
+           procedimentos; objetivos = exploratoria na caracterizacao e
+           EXPLICATIVA na avaliacao (opcao C, escolhida pelo autor). Conferir
+           as paginas e saber justificar na banca.
+        b) 3.5.2 e 5.3: camera -> trecho como requisito da integracao, e
+           "Nao se verificou se a plataforma municipal dispoe hoje dessa
+           associacao" (texto aprovado pelo autor).
+        c) 3.13.2: frase nova dizendo que a Figura 11 mostra so o caminho da
+           decisao e omite as seis tabelas de apoio.
+        d) Resumo/Abstract: lacuna explicita (texto aprovado pelo autor).
 
 ===============================================================================
 FIM
