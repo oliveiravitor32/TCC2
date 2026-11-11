@@ -295,7 +295,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         decisao nao consome imagem nem identificador (3.10)". A "tensao de
         rede" saiu daqui (ja esta no item do no em baixa tensao). Conferir.
         >> 10/11/2026 (decisao do autor): conferido pelos autores na folha de defesa (FOLHA_DE_DEFESA.md); v66: 5.3 passa a dizer 'Cada grupo de controle e decidido a partir dos seus proprios trechos'.
-[ ] C23. 5.3: o item "O prototipo e um no unico..." pode confundir, porque o
+[x] C23. 5.3: o item "O prototipo e um no unico..." pode confundir, porque o
+        >> 11/11/2026 (decisao do autor): 5.3 diz "O prototipo fisico e um no unico... os demais pontos de luz do sistema sao simulados por programa" (v70).
         sistema tem dois pontos de luz cadastrados (bancada e simulado) e o
         CT20 preve um segundo no. Ajustar a frase depois da sessao de bancada,
         conforme o que for demonstrado.
@@ -452,7 +453,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         energia de bancada so pelo duty; (d) o ensaio de estabilidade de 10 min
         (0,2 %) e da caixa antiga e foi mantido com essa ressalva.
 
-[ ] C37. Rodada v22 (10/10/2026): retirada de afirmacoes sem base
+[x] C37. Rodada v22 (10/10/2026): retirada de afirmacoes sem base
+        >> 11/11/2026 (decisao do autor): trechos suavizados mantidos como escolha dos autores.
         (AUDITORIA_AFIRMACOES_v21.md). Ler no _v22_revisado.docx. Onde a IA
         SUAVIZOU em vez de tirar (por ser trecho importante), conferir: 1.2.1
         ("Neste trabalho, cidade inteligente designa"), 2.4 (criterio dos quatro
@@ -464,7 +466,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         segue pendente. O objetivo b) (1.5.2) ainda fala em dados publicos
         municipais, que nao foram usados para os cenarios: decidir.
 
-[ ] C38. Rodada v23 (10/10/2026), redigida pela IA: (a) 2.1 passou a declarar
+[x] C38. Rodada v23 (10/10/2026), redigida pela IA: (a) 2.1 passou a declarar
+        >> 11/11/2026 (decisao do autor): subitens restantes conferidos na v70; fechado.
         >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a, c, d.
         revisao NARRATIVA e saiu a lista de bases/termos, porque o autor nao
         confirmou a busca; (b) objetivo b) reescrito (1.5.2) - conferir se a
@@ -531,7 +534,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         >> 10/11/2026 (decisao do autor): Lin et al.: tres camadas confirmadas por fontes secundarias revisadas por pares que citam Lin et al. (2017) para percepcao, rede e aplicacao (arXiv 2004.12936, p. 3; IEEE IoT Journal 2023, DOI 10.1109/JIOT.2023.3246100; IEEE IoT Journal 2022, DOI 10.1109/JIOT.2021.3079115); original pago nao lido, autor aceitou. Pesos da classe P: autor vai fornecer a NBR 5101 (C39).
         >> 10/11/2026 (decisao do autor): Lin et al. fechado pela fonte secundaria; pesos da classe P conferidos (C39).
 
-[ ] C44. v32 (11/10/2026), redacao da IA a ler:
+[x] C44. v32 (11/10/2026), redacao da IA a ler:
+        >> 11/11/2026 (decisao do autor): subitens restantes conferidos na v70; fechado.
         >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a, b, d.
         (a) 3.7: paragrafo novo "A divisao de responsabilidades entre a norma e
         os tercis..." (C35, aprovado pelo autor).
@@ -700,7 +704,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         a da inferencia nebulosa com mais variaveis e conjectura do autor.
         O autor declarou no chat que a conclusao e texto dele (a IA so
         resumiu); confirmar que a linha do Quadro 19 reflete isso.
-[ ] C58. v59 (checagem do roteiro): texto novo da IA a conferir - (a) 3.12.2,
+[x] C58. v59 (checagem do roteiro): texto novo da IA a conferir - (a) 3.12.2,
+        >> 11/11/2026: todos os subitens aprovados na leitura guiada; fechado.
         >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a, b, c, d.
         justificativa do processo iterativo e incremental (prazo curto,
         equipe pequena, especificacao como criterio); (b) paragrafo novo no
@@ -732,7 +737,8 @@ C. INTERPRETACOES E CONCLUSOES (analise critica)
         ensaiado; (d) Apendice D: os mesmos US$ 2.976/mes passam a valer tambem
         para a cobertura total so por causa da decisao por grupo e da previsao
         por trecho - estimativa da IA, nao recalculada por teste de carga.
-[ ] C61. v62: texto da IA a conferir - (a) 3.12.6.4: "o prototipo ja
+[x] C61. v62: texto da IA a conferir - (a) 3.12.6.4: "o prototipo ja
+        >> 11/11/2026: (f) conferido com o banco local: 284 testes aprovados (281 de 18/10 + 3 de tests/test_modo_teste.py, de 26/10, modo de teste fora do TCC). Fechado (decisao do autor).
         >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a a e.
         decide assim" (grupo implementado; teste e suite iguais); (b) 3.12.6.3:
         paragrafo da visao de bairro (33 nos simulados, luz sintetica, fora dos
@@ -946,7 +952,8 @@ E. DECLARACAO E ENTREGA
 [ ] E2. Apendice A: preencher o periodo de uso, CPFs, local e data.
         >> 10/11/2026: v68 com o periodo de uso ate 10/11/2026 (decisao do autor). Falta: CPFs, local e data; percentual da linha nova "5.3, 5.4 e 6.1" (termo aditivo) no Quadro 19; exportar de novo os prompts ate 10/11 (o zip atual vai ate 10/10).
         >> 10/11/2026: percentual da linha nova e F9 feitos pelo autor; prompts exportados em Documents/Arquivo_prompts_IA_TCC2_20261110.zip (43 sessoes, 13/09 a 10/11). Falta so CPFs, local e data, que o autor preenche fora da IA.
-[ ] E3. Os tres autores leram os Quadros 19 e 20 e sabem explica-los.
+[x] E3. Os tres autores leram os Quadros 19 e 20 e sabem explica-los.
+        >> 11/11/2026 (decisao do autor): realizado.
 [ ] E4. git push feito e repositorio tornado publico (o Apendice B afirma que e
         publico); antes, conferir que nao ha segredo no historico.
         >> 09/11/2026 (situacao): repositorio ja e PUBLICO (oliveiravitor32/TCC2); falta push dos commits novos e conferir segredos no historico.
@@ -973,7 +980,8 @@ E. DECLARACAO E ENTREGA
         nao aparecem mais na linha de ninguem (so "programacao em par").
         Conferir tambem se o Apendice A precisa citar a divisao.
 
-[ ] E8. v64 (03/11/2026), recomendacoes do orientador sobre a v60, tudo
+[x] E8. v64 (03/11/2026), recomendacoes do orientador sobre a v60, tudo
+        >> 11/11/2026: todos os subitens aprovados na leitura guiada; fechado.
         >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a a e.
         redigido pela IA:
         a) 5.4: REDACAO DE TERMO ADITIVO para o indicador de iluminancia
@@ -998,7 +1006,8 @@ E. DECLARACAO E ENTREGA
         Lembrar: Figura 12 e Apendices E e F nao estao no Quadro 19 (uso de
         IA): acrescentar linha e percentual. F9 no Word (sumario e listas).
 
-[ ] E9. v65 (09/11/2026), figuras conferidas contra a arquitetura, texto
+[x] E9. v65 (09/11/2026), figuras conferidas contra a arquitetura, texto
+        >> 11/11/2026 (decisao do autor): subitens restantes conferidos na v70; fechado.
         >> 10/11/2026 (leitura guiada, decisao do autor): OK nos subitens a, b, d.
         redigido pela IA:
         a) Figura 5 regerada (decisao por grupo de controle) e passos (3) a
@@ -1020,7 +1029,8 @@ E. DECLARACAO E ENTREGA
            conferir se a banca prefere o no fisico.
         F9 no Word: a lista de figuras ainda mostra a numeracao antiga.
 
-[ ] C62  v69 (10/11/2026), leitura guiada itens 5, 8, 12 e 18.
+[x] C62  v69 (10/11/2026), leitura guiada itens 5, 8, 12 e 18.
+        >> 11/11/2026 (decisao do autor): conferido a, b, c e d.
         a) 3.1: classificacao reorganizada pela IA segundo GERHARDT e SILVEIRA
            (2009, p. 35-39; livro aberto em lume.ufrgs.br, prints em
            Downloads/metodologia): documental e experimental passam a
