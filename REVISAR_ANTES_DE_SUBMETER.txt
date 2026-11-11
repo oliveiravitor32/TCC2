@@ -86,7 +86,8 @@ B. DESENHO DOS EXPERIMENTOS (inferencia empirica)
         espertas, intervalo de 95 %): feitas DEPOIS do protocolo e declaradas
         assim.  Onde: 4.6.
         >> 10/11/2026 (decisao do autor): conferido pelos autores na folha de defesa (FOLHA_DE_DEFESA.md).
-[ ] B5. Rodar pelo menos um comando do Quadro 22 (Apendice B) e conferir que o
+[x] B5. Rodar pelo menos um comando do Quadro 22 (Apendice B) e conferir que o
+        >> 10/11/2026: rodado pela IA a pedido do autor (python -m modelo.treinar_zurique, ~3 min): MAE 0,0416, faixa 0,914, F1 0,638; RF +3,0 % em 11/12; +4,2 pp e F1 +0,055 sobre a semana anterior. Bate com a v69. O json so mudou data, tempos e o 16o digito de um MAE (descartado). Rodado tambem pelo autor (Vitor) no proprio terminal em 10/11/2026: saida identica. Concluido.
         numero bate com o do texto. Sugestao:
           python -m modelo.experimento_zurique   (precisa do arquivo de dados)
           python -m cenarios.avaliacao_ia.deficit
