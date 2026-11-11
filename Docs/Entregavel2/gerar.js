@@ -341,8 +341,8 @@ const s5 = [
     ["Alertas", "Um cartão por situação atual: falha total, perda de controle, sem comunicação, ponto em falha, manutenção; contador vermelho na aba", "Cada cartão traz o ponto, o grupo, desde quando, a razão medida/esperada e o botão \"ver no monitoramento\""],
     ["Decisões explicadas", "Para cada decisão: eventos usados, previsão, regras ativadas, nível pretendido, restrição aplicada e nível emitido; o cartão do movimento agora abre a lista de trechos do poste, com o maior (o que definiu o movimento) destacado", "Responde \"por que a luz está assim\". Ex.: R5 (observada baixa e prevista baixa) → classe mínima, limitada pela taxa. Um botão abre as faixas de movimentação (tercis) e as réguas de cada trecho"],
   ], [1700, 3600, 3771]),
-  ...figura("Aba de monitoramento do painel", "Docs/Fotos/painel_monitoramento.jpg", "jpg", 1510, 665, 16, "Fonte: Captura do painel do protótipo (2026)."),
-  ...figura("Decisão explicada pelo painel", "Docs/Fotos/painel_decisao_explicada.jpg", "jpg", 1510, 600, 16, "Fonte: Captura do painel do protótipo (2026)."),
+  ...figura("Aba de monitoramento do painel", "Docs/Fotos/painel_monitoramento_simulado.jpg", "jpg", 1870, 1405, 16, "Fonte: Captura do painel do protótipo (2026), poste simulado JH-IP0598561, dados de demonstração."),
+  ...figura("Decisão explicada pelo painel", "Docs/Fotos/painel_decisao_explicada_simulado.jpg", "jpg", 1860, 1890, 15, "Fonte: Captura do painel do protótipo (2026), poste simulado JH-IP0598561, dados de demonstração."),
   P("As publicações feitas pelo painel são carimbadas com o horário da VM. Para demonstrar a reação do sistema, use o botão \"simular publicação\" do painel (publica num trecho ou, como pacote, nos trechos selecionados no mapa) ou, no Git Bash, publique um volume baixo: `./evento.sh volume 0.05`. A luz deve descer em rampa até o piso. Uma ocorrência (`./evento.sh ocorrencia seguranca`) faz a luz voltar ao pleno na hora."),
   H2("5.3 Guia de resolução de problemas"),
   ...quadro("Sintoma, causa provável e procedimento corretivo", ["Categoria", "Sintoma", "Causa provável", "Procedimento corretivo"], [
