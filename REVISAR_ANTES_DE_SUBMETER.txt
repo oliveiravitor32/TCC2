@@ -930,6 +930,8 @@ E. DECLARACAO E ENTREGA
         intervencao humana (%)" de todas as linhas.
         >> 09/11/2026 (resolvido por decisao do autor / superado): percentuais preenchidos pelo autor (v34, v53, v57); o Quadro 21 citado aqui e o atual Quadro 19.
 [ ] E2. Apendice A: preencher o periodo de uso, CPFs, local e data.
+        >> 10/11/2026: v68 com o periodo de uso ate 10/11/2026 (decisao do autor). Falta: CPFs, local e data; percentual da linha nova "5.3, 5.4 e 6.1" (termo aditivo) no Quadro 19; exportar de novo os prompts ate 10/11 (o zip atual vai ate 10/10).
+        >> 10/11/2026: percentual da linha nova e F9 feitos pelo autor; prompts exportados em Documents/Arquivo_prompts_IA_TCC2_20261110.zip (43 sessoes, 13/09 a 10/11). Falta so CPFs, local e data, que o autor preenche fora da IA.
 [ ] E3. Os tres autores leram os Quadros 19 e 20 e sabem explica-los.
 [ ] E4. git push feito e repositorio tornado publico (o Apendice B afirma que e
         publico); antes, conferir que nao ha segredo no historico.
