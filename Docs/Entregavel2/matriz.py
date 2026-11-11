@@ -1,4 +1,4 @@
-import sys; sys.path.insert(0, r"C:\Users\vitor\Documents\GitHub\TCC2\Codigo")
+import sys, pathlib; sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "Codigo"))
 import json, numpy as np, xgboost as xgb
 from modelo import treinar_zurique as T
 d,_=T.preparar(); d=T.atributos(d)
