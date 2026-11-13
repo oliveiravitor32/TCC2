@@ -955,7 +955,7 @@ E. DECLARACAO E ENTREGA
         >> 10/11/2026: percentual da linha nova e F9 feitos pelo autor; prompts exportados em Documents/Arquivo_prompts_IA_TCC2_20261110.zip (43 sessoes, 13/09 a 10/11). Falta so CPFs, local e data, que o autor preenche fora da IA.
 [x] E3. Os tres autores leram os Quadros 19 e 20 e sabem explica-los.
         >> 11/11/2026 (decisao do autor): realizado.
-[ ] E4. git push feito e repositorio tornado publico (o Apendice B afirma que e
+[x] E4. git push feito e repositorio tornado publico (o Apendice B afirma que e
         publico); antes, conferir que nao ha segredo no historico.
         >> 09/11/2026 (situacao): repositorio ja e PUBLICO (oliveiravitor32/TCC2); falta push dos commits novos e conferir segredos no historico.
         >> 09/11/2026: varredura do historico (09/11/2026): nenhum segredo real; os valores do .env da VM, do segredos.h e dos .env do painel foram procurados em todos os commits sem aparecer (so usuario BANCADA-01, dominio e cabecalho PEM, publicos). docker-compose.yml local usa a senha de desenvolvimento 'iluminacao' (so local; producao usa SENHA_BANCO).
@@ -1053,7 +1053,7 @@ E. DECLARACAO E ENTREGA
 
 [x] C66 (v77, 13/11/2026) 1.3, primeira das tres afirmacoes: "a integracao ... e compativel com a infraestrutura ja contratada pelo municipio, sem aquisicao de equipamento, porque a capacidade de observar e a de comandar ja existem e estao especificadas em contrato" (antes: "e tecnicamente realizavel"). Redacao da IA para alinhar ao Resumo; conferir se concorda.
 
-[ ] C67 (v78, 13/11/2026) LISTA DE SIGLAS (43 siglas, levantadas pela IA numa varredura do texto inteiro da v77) e FOLHA DE APROVACAO (modelo dos colegas: Prof. Marco Gomes como orientador e dois membros em branco). Conferir: (a) se falta ou sobra alguma sigla e se cada significado esta certo (ex.: SES, SMSO, SMSU, RA, CT); (b) com o orientador se a folha de aprovacao e a lista de siglas sao exigidas no modelo da UNIP; (c) preencher o percentual da linha nova do Quadro 19 ("Lista de siglas e folha de aprovacao"); (d) Tabela 1 diz "retomada no fim do periodo" e 2.1 explica Gerhardt e Silveira e Wazlawick como referencia de metodo fora do recorte.
+[x] C67 (v78, 13/11/2026) LISTA DE SIGLAS (43 siglas, levantadas pela IA numa varredura do texto inteiro da v77) e FOLHA DE APROVACAO (modelo dos colegas: Prof. Marco Gomes como orientador e dois membros em branco). Conferir: (a) se falta ou sobra alguma sigla e se cada significado esta certo (ex.: SES, SMSO, SMSU, RA, CT); (b) com o orientador se a folha de aprovacao e a lista de siglas sao exigidas no modelo da UNIP; (c) preencher o percentual da linha nova do Quadro 19 ("Lista de siglas e folha de aprovacao"); (d) Tabela 1 diz "retomada no fim do periodo" e 2.1 explica Gerhardt e Silveira e Wazlawick como referencia de metodo fora do recorte.
 
 [x] C68 (v80, 13/11/2026) 5.3, limitacao da degradacao da contagem: frase nova da IA "A propria atenuacao pode contribuir para essa degradacao, porque menos luz na via tende a piorar a imagem que alimenta a contagem; esse efeito nao foi avaliado." (achado da avaliacao critica). Conferir se concorda. Na mesma versao: 2.1 "de 2016 a 2026", 3.12.6.4 "revogada apos a apresentacao do trabalho", siglas WGS84 e NAT.
 
