@@ -949,7 +949,8 @@ E. DECLARACAO E ENTREGA
         experimentos), ajustar se preciso e preencher a coluna "nivel de
         intervencao humana (%)" de todas as linhas.
         >> 09/11/2026 (resolvido por decisao do autor / superado): percentuais preenchidos pelo autor (v34, v53, v57); o Quadro 21 citado aqui e o atual Quadro 19.
-[ ] E2. Apendice A: preencher o periodo de uso, CPFs, local e data.
+[x] E2. Apendice A: preencher o periodo de uso, CPFs, local e data.
+        >> 13/11/2026 (autor): periodo 13/09/2026 a 12/11/2026, Local: Sao Paulo, Data: 12/11/2026 (v76); Entregavel 2 v2 ajustado para 12/11.
         >> 10/11/2026: v68 com o periodo de uso ate 10/11/2026 (decisao do autor). Falta: CPFs, local e data; percentual da linha nova "5.3, 5.4 e 6.1" (termo aditivo) no Quadro 19; exportar de novo os prompts ate 10/11 (o zip atual vai ate 10/10).
         >> 10/11/2026: percentual da linha nova e F9 feitos pelo autor; prompts exportados em Documents/Arquivo_prompts_IA_TCC2_20261110.zip (43 sessoes, 13/09 a 10/11). Falta so CPFs, local e data, que o autor preenche fora da IA.
 [x] E3. Os tres autores leram os Quadros 19 e 20 e sabem explica-los.
@@ -1043,6 +1044,12 @@ E. DECLARACAO E ENTREGA
         c) 3.13.2: frase nova dizendo que a Figura 11 mostra so o caminho da
            decisao e omite as seis tabelas de apoio.
         d) Resumo/Abstract: lacuna explicita (texto aprovado pelo autor).
+
+[x] C63 (v72, 12/11/2026) Resumo e Abstract: redação proposta pela IA a partir da avaliação crítica e aceita pelo autor. (a) "sem nunca deixar a via 2 lux ou mais abaixo do nível pedido (déficit médio de 0,8 lux)" — conferir contra a Tabela 3 (195 min abaixo com margem de 0,02, nenhum 2 lux abaixo). (b) conclusão "compatível com o que os contratos vigentes já exigem; a viabilidade em campo depende de a plataforma publicar os dados... e de a telegestão aceitar os comandos" no lugar de "é viável". Conferir também a tradução no Abstract.
+
+[x] C64 (v73, 12/11/2026) Frases redigidas pela IA a partir da avaliação crítica: (a) 5.3, limitação de Zurique: "As séries de Melbourne e de Zurique vêm de contadores automáticos, que registram passagens, e não da ocupação média que a interface especifica (3.5.2); o que se transfere ao sistema é a forma do ciclo diário, normalizada por ponto, e não a grandeza" — conferir se concorda com essa justificativa. (b) 3.11: nível do horário fixo (classe mínima 0,5, taxa de 0,1/min, volta ao pleno às 5 h), tirado de decisao/energia.py. (c) 3.5.2: 36 registros → 35 postes (placa IP0412416 duplicada) → 34 associados (IP0410156 a mais de 25 m), tirado do DIVERGENCIAS.
+
+[x] C65 (v74, 12/11/2026) Apêndice G, montado pela IA: (a) Quadro 22 — origem de cada regra transcrita do arquivo v6-zurique.toml (R1 e R7 têm origem de domínio, não de norma nem de literatura); conferir. (b) Figura 14 e o parágrafo que a descreve: escolha da noite (ponto 1358, dia útil, 30/07/2019) feita pela IA, e a leitura do gráfico (uma classe abaixo até 0 h, piso de 0 h às 5 h, 64,3 % do pleno e 81,1 % do fixo nessa noite); conferir se concorda. (c) Quadro 19 do Apêndice A: falta incluir o Quadro 22 e a Figura 14 na linha dos diagramas/figuras, com o percentual dos autores. -> FEITO na v75 (100 %, decisão do autor em 12/11/2026).
 
 ===============================================================================
 FIM
