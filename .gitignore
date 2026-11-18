@@ -2,3 +2,26 @@
 .claude/
 # arquivos de bloqueio do Word
 ~$*
+
+# Arquivos de trabalho mantidos só localmente (retirados do repositório em 17/11/2026)
+AUDITORIA_*.md
+CHECAGEM_ROTEIRO.md
+VALIDACAO_*.md
+PLANO_*.md
+REVISAR_ANTES_DE_SUBMETER.txt
+Codigo/LACUNAS_TCC.txt
+ROTEIRO_RESPOSTAS_BANCA.md
+LEVANTAMENTO_ATAQUES_BANCA.md
+PREPARACAO_POR_INTEGRANTE.md
+FOLHA_DE_DEFESA.md
+LEITURA_GUIADA.md
+CLAUDE.md
+ferramentas_docx/
+Transicao_*.docx
+Docs/Pre-projeto/
+Docs/TCC-Desenvolvimento/
+Docs/Entregavel2/Entregavel2_Guia_do_Usuario_e_Manual_de_Operacao.docx
+Docs/Entregavel2/*_v4.pdf
+Docs/Entregavel2/fig.py
+Docs/Entregavel2/gerar.js
+Docs/Entregavel2/matriz.py

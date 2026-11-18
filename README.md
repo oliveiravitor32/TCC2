@@ -2,7 +2,7 @@
 
 Trabalho de Conclusão de Curso (2026) de **Vitor Oliveira dos Santos**, **Lucas de Araujo Vergara** e **Bruno Bonavigo Dacal**.
 
-O texto completo do TCC está em [`Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v70.docx`](Transicao_pre-projeto-para-TCC-Completo_TCC_Iluminacao_SP_v70.docx), a versão mais recente.
+Este repositório reúne o código do protótipo, os protocolos e os resultados citados no Apêndice B do TCC.
 
 ---
 
@@ -188,16 +188,10 @@ Os volumes do bairro mostrados no mapa do painel são **inventados** por um gera
 ```
 TCC2/
 ├── README.md                     ← este arquivo
-├── Transicao_..._v70.docx        ← texto do TCC (versão mais recente; v68 e v69 ficam como histórico)
-├── REVISAR_ANTES_DE_SUBMETER.txt ← lista de tudo que a IA propôs e os autores conferiram
-├── FOLHA_DE_DEFESA.md, VALIDACAO_*.md, AUDITORIA_*.md ← conferências do texto e das fontes
-├── ferramentas_docx/             ← scripts que editam o .docx de forma rastreável (uma rodada por versão)
 ├── Docs/
 │   ├── Fotos/                    ← fotos do nó e capturas do painel
 │   ├── Figuras/                  ← diagramas do README (gerados por Codigo/figuras)
-│   ├── Entregavel2/              ← Guia do Usuário e Manual de Operação
-│   ├── Pre-projeto/              ← pré-projeto
-│   └── TCC-Desenvolvimento/      ← versões do texto ao longo do semestre
+│   └── Entregavel2/              ← Guia do Usuário e Manual de Operação
 └── Codigo/
     ├── api_eventos/   ← API REST: recebe volumes e ocorrências e expõe decisões, telemetria e explicações
     ├── decisao/       ← o coração: previsão, regras (inferência), verificação, rampa, grupos, diagnóstico, energia
@@ -230,7 +224,7 @@ Divisão por área de responsabilidade:
 - **Lucas:** módulo de inteligência (previsão, regras, métricas).
 - **Bruno:** requisitos, normas, dados urbanos e operação (painel e alertas).
 
-**Uso de IA generativa.** Entre 13/09/2026 e 10/11/2026, o trabalho usou o **Claude Opus 5 e Claude Opus 5.5 (Anthropic), pela ferramenta Claude Code**, em **programação em par** com papéis fixos:
+**Uso de IA generativa.** Entre 13/09/2026 e 13/11/2026, o trabalho usou o **Claude Opus 5 e Claude Opus 5.5 (Anthropic), pela ferramenta Claude Code**, em **programação em par** com papéis fixos:
 - **A IA foi a executora:** escreveu código, scripts, protocolos e versões de texto.
 - **Os autores foram os navegadores:**
   - definiram o problema, os requisitos e a arquitetura;
@@ -240,8 +234,8 @@ Divisão por área de responsabilidade:
 
 Algumas práticas garantiram que o trabalho continuasse dos autores:
 - **Protocolo antes do resultado.** Cada experimento tem um `PROTOCOLO_*.md` escrito e versionado **antes** de rodar. O hash do commit do protocolo e o do resultado estão no Apêndice B do TCC.
-- **Lista de revisão.** Tudo que a IA propôs como critério, interpretação, conclusão ou fonte entrou em [`REVISAR_ANTES_DE_SUBMETER.txt`](REVISAR_ANTES_DE_SUBMETER.txt), e só os autores marcam como conferido.
-- **Fontes conferidas no navegador.** As referências foram abertas e conferidas uma a uma (`VALIDACAO_REFERENCIAS_*.md`).
+- **Lista de revisão.** Tudo que a IA propôs como critério, interpretação, conclusão ou fonte entrou numa lista de revisão, e só os autores marcaram como conferido.
+- **Fontes conferidas no navegador.** As referências foram abertas e conferidas uma a uma.
 - **Resultado ruim também é publicado.** H3 rejeitada, previsão substituível com dados por hora e Mamdani igualado por tabela estão declarados no texto.
 - **Declaração completa.** O Apêndice A do TCC (Quadro 19) diz, seção por seção, o que a IA gerou e quanto os autores conferiram ou refizeram.
 
