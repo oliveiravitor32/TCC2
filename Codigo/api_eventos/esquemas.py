@@ -159,6 +159,8 @@ class Ponto(BaseModel):
     medido_em: datetime | None
     nivel_antes: float | None = None
     lux_antes: float | None = None
+    # Nivel da decisao que gerou a ultima telemetria (o esperado da medicao).
+    nivel_medido: float | None = None
     # Visao de bairro (DIVERGENCIAS 76).
     latitude: float | None = None
     longitude: float | None = None

@@ -384,7 +384,8 @@ def consultar_pontos(conn: psycopg.Connection = Conn) -> list[dict]:
                c.iluminancia_media_min_lux AS lux_pleno,
                cm.iluminancia_media_min_lux / c.iluminancia_media_min_lux AS piso_fracao,
                u.nivel_emitido, u.restricao_aplicada, u.criado_em AS decidido_em,
-               t.lux_medido, t.duty, t.medido_em, t.nivel_antes, t.lux_antes
+               t.lux_medido, t.duty, t.medido_em, t.nivel_antes, t.lux_antes,
+               t.nivel_emitido AS nivel_medido
           FROM ponto_de_luz p
           JOIN classe_iluminacao c       ON c.codigo = p.classe_codigo
           LEFT JOIN classe_iluminacao cm ON cm.codigo = c.classe_min_dimerizacao
@@ -393,7 +394,14 @@ def consultar_pontos(conn: psycopg.Connection = Conn) -> list[dict]:
                  WHERE d.ponto_de_luz_id = p.id
                  ORDER BY d.criado_em DESC LIMIT 1
                ) u ON true
-          LEFT JOIN telemetria t ON t.decisao_id = u.id
+          -- ultima telemetria do ponto (nao a da ultima decisao: decisao que
+          -- mantem o alvo nao gera comando nem telemetria, 3.13.2)
+          LEFT JOIN LATERAL (
+                SELECT tt.*, dd.nivel_emitido FROM telemetria tt
+                  JOIN decisao dd ON dd.id = tt.decisao_id
+                 WHERE tt.ponto_de_luz_id = p.id
+                 ORDER BY tt.medido_em DESC LIMIT 1
+               ) t ON true
          ORDER BY p.simulado, p.codigo
         """
     ).fetchall()

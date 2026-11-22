@@ -130,9 +130,11 @@ function quando(iso) {
 }
 
 export function Entregue({ ponto, latenciaMs, ultimoComando, ultimaResposta }) {
+  // A medicao e a da ultima telemetria do ponto; o esperado vem da decisao
+  // que gerou essa telemetria (nivel_medido), nao da ultima decisao.
   const razao =
-    ponto?.lux_medido != null && ponto?.nivel_emitido
-      ? ponto.lux_medido / (ponto.nivel_emitido * ponto.lux_pleno)
+    ponto?.lux_medido != null && ponto?.nivel_medido
+      ? ponto.lux_medido / (ponto.nivel_medido * ponto.lux_pleno)
       : null;
   return (
     <Cartao icone={Lightbulb} titulo="luz entregue">
@@ -140,9 +142,9 @@ export function Entregue({ ponto, latenciaMs, ultimoComando, ultimaResposta }) {
         {lux(ponto?.lux_medido)}
       </p>
       <p className="text-xs text-suave">
-        medida pelo sensor; esperado{" "}
-        {ponto?.nivel_emitido != null
-          ? lux(ponto.nivel_emitido * ponto.lux_pleno)
+        medida pelo sensor em {quando(ponto?.medido_em)}; esperado{" "}
+        {ponto?.nivel_medido != null
+          ? lux(ponto.nivel_medido * ponto.lux_pleno)
           : "--"}
       </p>
       <dl className="mt-3 space-y-1 text-xs text-suave">
