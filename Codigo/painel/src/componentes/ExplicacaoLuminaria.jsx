@@ -43,8 +43,14 @@ function trechosDaDecisao(d, ponto, trechos, eventosPorId) {
     for (const l of linhas) l.definiu = Boolean(l.ocorrencia);
     if (!linhas.some((l) => l.definiu)) linhas.forEach((l) => (l.definiu = false));
   } else {
-    const max = Math.max(...linhas.map((l) => l.fracao ?? -1));
-    for (const l of linhas) l.definiu = l.fracao !== null && l.fracao === max;
+    // Um so: no empate, o primeiro na ordem gravada na decisao, igual ao
+    // "veio de" do quadro (o primeiro que atinge o maior percentual).
+    let escolhido = null, max = -1;
+    for (const id of Object.keys(volumes)) {
+      const l = linhas.find((x) => x.id === id);
+      if (l?.fracao != null && l.fracao > max) { max = l.fracao; escolhido = l; }
+    }
+    for (const l of linhas) l.definiu = l === escolhido;
   }
   linhas.sort((a, b) => (b.definiu - a.definiu) || ((b.fracao ?? -1) - (a.fracao ?? -1)));
   return linhas;
@@ -165,7 +171,11 @@ function QuadrosPorTrecho({ d, linhas, codigo, trechos }) {
             {!escuro && l.ocorrencia == null && l.fracao != null && (
               <p className="mt-1 text-xs text-suave">
                 lida nesta decisão, mas não definiu o nível
-                {d.entrada?.ocorrencia ? " (ocorrência em outro trecho vence qualquer volume)" : " (percentual menor que o do trecho escuro)"}
+                {d.entrada?.ocorrencia
+                  ? " (ocorrência em outro trecho vence qualquer volume)"
+                  : linhas.find((x) => x.definiu)?.fracao === l.fracao
+                    ? " (empatou com o trecho escuro: o resultado seria o mesmo)"
+                    : " (percentual menor que o do trecho escuro)"}
               </p>
             )}
             {escuro && c?.item && (
