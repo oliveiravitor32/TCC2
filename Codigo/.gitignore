@@ -12,6 +12,7 @@ cenarios/resultados/*.json
 .logs/
 # Segredos do no (Wi-Fi e credencial do broker): nunca versionar
 firmware/no/segredos.h
+firmware/no-reserva-de-emergencia/segredos.h
 # Chave da API da VM para a conferencia de bancada (bancada/destino.py)
 bancada/chave_vm.txt
 # Senha do no simulado SIMULADO-02 no broker da VM (CT20)
@@ -30,3 +31,4 @@ modelo/dados/melbourne_minuto/
 
 # saida da compilacao do firmware (arduino-cli)
 firmware/no/build/
+firmware/no-reserva-de-emergencia/build/
