@@ -89,10 +89,12 @@ def volume_perfil(perfil: str, escala: float, quando: datetime, rnd: random.Rand
     return max(0.0, escala * f * (1 + rnd.gauss(0, 0.1)))
 
 
-def pacote_perfis(ids, pesos, tipos, rnd, agora) -> list[dict]:
+def pacote_perfis(ids, pesos, tipos, rnd, agora, periodo_s=PERIODO_S) -> list[dict]:
+    # periodo_s acompanha o intervalo de envio: a media declarada cobre o
+    # tempo desde a leitura anterior (validade de 15 min no servico)
     return [{"ocorrido_em": agora.isoformat(), "tipo": "volume",
              "pessoas_media": round(volume_perfil(tipos[t], pesos[t], agora, rnd), 2),
-             "periodo_s": PERIODO_S, "trecho": t, "origem": "gerador-demo"} for t in ids]
+             "periodo_s": periodo_s, "trecho": t, "origem": "gerador-demo"} for t in ids]
 
 
 def gravar_historico_perfis(ids, pesos, tipos, dias, rnd) -> None:
@@ -148,6 +150,20 @@ def publicar(url: str, chave: str, itens: list[dict]) -> dict:
                                  method="POST")
     with urllib.request.urlopen(req, timeout=30) as r:
         return json.loads(r.read())
+
+
+# Botao do painel (POST /teste/gerador, so demonstracao): desligado, o gerador
+# nao publica e confere de novo a cada ESPERA_DESLIGADO_S, para voltar logo
+# que religarem. Sem resposta da API, segue publicando, como antes.
+ESPERA_DESLIGADO_S = 10
+
+
+def envio_ligado(url: str) -> bool:
+    try:
+        with urllib.request.urlopen(url.rstrip("/") + "/teste/gerador", timeout=10) as r:
+            return bool(json.loads(r.read()).get("ativo", True))
+    except Exception:
+        return True
 
 
 def gravar_historico(ids: list[int], pesos: dict[int, float], dias: int, rnd: random.Random) -> None:
@@ -213,9 +229,14 @@ def main() -> None:
     if a.perfis:
         log.info("perfis: %s", ", ".join(f"{t}={tipos[t]}" for t in ids))
         while True:
+            if not a.uma_vez and not envio_ligado(url):
+                log.info("envio desligado pelo painel; nada publicado")
+                time.sleep(ESPERA_DESLIGADO_S)
+                continue
             try:
                 r = publicar(url, chave, pacote_perfis(ids, pesos, tipos, rnd,
-                                                       datetime.now(timezone.utc)))
+                                                       datetime.now(timezone.utc),
+                                                       int(a.intervalo_s)))
                 log.info("perfis: %s aceitos, %s recusados", len(r["aceitos"]), len(r["recusados"]))
             except Exception as erro:
                 log.warning("publicacao falhou: %s", erro)
@@ -224,6 +245,10 @@ def main() -> None:
             time.sleep(a.intervalo_s)
     inicio = time.monotonic()
     while True:
+        if not a.uma_vez and not envio_ligado(url):
+            log.info("envio desligado pelo painel; nada publicado")
+            time.sleep(ESPERA_DESLIGADO_S)
+            continue
         f = ((time.monotonic() - inicio) / 60 % a.ciclo_min) / a.ciclo_min
         try:
             r = publicar(url, chave, pacote(ids, f, pesos, rnd, datetime.now(timezone.utc)))

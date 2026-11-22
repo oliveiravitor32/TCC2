@@ -302,6 +302,36 @@ def publicar_evento_teste(request: Request, response: Response, corpo: Any = Bod
     return resultado
 
 
+# Envio automatico da frota simulada (simulador/gerador_volumes.py): o painel
+# liga e desliga, para um teste manual nao ser sobrescrito pelo pacote
+# seguinte. So demonstracao, fora do TCC. Fica na memoria da API (um processo
+# so): se ela reiniciar, o envio volta a ficar ligado.
+_gerador_ativo = True
+
+
+def _estado_gerador() -> dict:
+    return {"disponivel": MODO_TESTE, "ativo": _gerador_ativo or not MODO_TESTE}
+
+
+@app.get("/teste/gerador")
+def consultar_gerador() -> dict:
+    return _estado_gerador()
+
+
+@app.post("/teste/gerador", dependencies=[Depends(exigir_chave)])
+def mudar_gerador(request: Request, corpo: dict = Body(...)) -> dict:
+    global _gerador_ativo
+    if not MODO_TESTE:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "modo de teste desligado")
+    ativo = corpo.get("ativo")
+    if not isinstance(ativo, bool):
+        raise HTTPException(422, "informe {\"ativo\": true|false}")
+    _gerador_ativo = ativo
+    log.warning("rid=%s MODO TESTE: envio da frota simulada %s", request.state.rid,
+                "LIGADO" if ativo else "DESLIGADO")
+    return _estado_gerador()
+
+
 @app.get("/eventos", response_model=list[Evento])
 def consultar_eventos(
     inicio: datetime | None = None,

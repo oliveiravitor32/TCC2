@@ -11,7 +11,7 @@
 // continua no servico.
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { CircleDot, FlaskConical, Lightbulb, Pause, Play, RefreshCw, WifiOff } from "lucide-react";
+import { CircleDot, FlaskConical, Lightbulb, Pause, Play, Radio, RefreshCw, WifiOff } from "lucide-react";
 import { ESTADOS, api, hora } from "./api";
 import { Entregue, EstadoDaVia, Inferencia, Verificacao } from "./componentes/Cartoes";
 import { Alertas, Decisoes, Eventos } from "./componentes/Listas";
@@ -104,6 +104,27 @@ export default function App() {
 
   const estado = ESTADOS[ponto?.estado_operacional] ?? ESTADOS.sem_comunicacao;
 
+  // Envio automatico da frota simulada (so demonstracao): o botao so aparece
+  // com o modo de teste da API ligado e o painel com a chave de publicacao.
+  const [gerador, setGerador] = useState(null);
+  const [mudandoGerador, setMudandoGerador] = useState(false);
+  useEffect(() => {
+    const ler = () => api.gerador().then(setGerador).catch(() => setGerador(null));
+    ler();
+    const id = setInterval(ler, 5000);
+    return () => clearInterval(id);
+  }, []);
+  const alternarGerador = async () => {
+    setMudandoGerador(true);
+    try {
+      setGerador(await api.mudarGerador(!gerador.ativo));
+    } catch (e) {
+      alert(`nao foi possivel mudar o envio: ${e.message}`);
+    } finally {
+      setMudandoGerador(false);
+    }
+  };
+
   return (
     <div className="flex min-h-full flex-col">
       <header className="w-full bg-tinta text-white">
@@ -147,6 +168,24 @@ export default function App() {
             <FlaskConical size={14} />
             simular publicação
           </button>
+          {gerador?.disponivel && api.podePublicar && (
+            <button
+              type="button"
+              onClick={alternarGerador}
+              disabled={mudandoGerador}
+              title={gerador.ativo
+                ? "Para o envio automatico de volumes da frota simulada (a cada 5 min)"
+                : "Envio automatico PARADO: os volumes ja recebidos valem ate 15 min"}
+              className={`inline-flex items-center gap-1 px-3 py-1.5 font-semibold uppercase tracking-wide transition-colors disabled:opacity-50 ${
+                gerador.ativo
+                  ? "border border-white/30 text-white hover:border-luz hover:bg-luz"
+                  : "animate-pulse bg-piso text-white hover:bg-white hover:text-tinta"
+              }`}
+            >
+              <Radio size={14} />
+              {gerador.ativo ? "desligar envio da frota simulada" : "ligar envio da frota simulada"}
+            </button>
+          )}
           <span>atualizado {hora(atualizadoEm?.toISOString())}</span>
           <button
             type="button"

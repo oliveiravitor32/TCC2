@@ -64,6 +64,9 @@ export const api = {
   publicarLeitura: (corpo) => enviar("/eventos", corpo),
   // Modo de teste (so demonstracao): o comando sai sem a rampa de descida.
   publicarTeste: (corpo) => enviar("/teste/eventos", corpo),
+  // Envio automatico da frota simulada (so demonstracao, com MODO_TESTE=1).
+  gerador: () => pegar("/teste/gerador"),
+  mudarGerador: (ativo) => enviar("/teste/gerador", { ativo }),
   decisoes: (params) => pegar("/decisoes", params),
   telemetria: (params) => pegar("/telemetria", params),
   eventos: (params) => pegar("/eventos", params),
