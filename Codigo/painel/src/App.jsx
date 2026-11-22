@@ -35,7 +35,8 @@ export default function App() {
   // Trechos com que a modal de publicacao abre (null = fechada): os do poste
   // na tela (botao do topo) ou os selecionados no mapa.
   const [modalTrechos, setModalTrechos] = useState(null);
-  const [eventoExplicado, setEventoExplicado] = useState(null);
+  // Filtro da aba "decisoes explicadas": por publicacao, luminaria ou trecho.
+  const [filtroExpl, setFiltroExpl] = useState({ modo: "publicacao", evento: null, ponto: null, trecho: null });
   const [erro, setErro] = useState(null);
   const [rodando, setRodando] = useState(true);
   const [atualizadoEm, setAtualizadoEm] = useState(null);
@@ -244,8 +245,13 @@ export default function App() {
         trechos={trechos}
         trechosIniciais={modalTrechos}
         pontoAtual={ponto}
-        aoPublicar={(evento) => {
-          setEventoExplicado(evento.id);
+        aoPublicar={(evento, aceitos = [evento]) => {
+          // Publicou num trecho do poste da tela: abre filtrado por ele.
+          // Senao (trechos so do mapa), filtra pelo trecho publicado.
+          const doPoste = new Set(ponto?.trechos ?? []);
+          setFiltroExpl(aceitos.some((e) => doPoste.has(e.trecho))
+            ? { modo: "luminaria", ponto: ponto.codigo, evento: null, trecho: null }
+            : { modo: "trecho", trecho: evento.trecho, evento: evento.id, ponto: null });
           setAba("explicacoes");
           buscar();
         }}
@@ -277,8 +283,9 @@ export default function App() {
         <Explicacoes
           eventos={dados.todosEventos}
           trechos={trechos}
-          selecionado={eventoExplicado}
-          setSelecionado={setEventoExplicado}
+          pontos={dados.pontos}
+          filtro={filtroExpl}
+          setFiltro={setFiltroExpl}
         />
       ) : (
       <>

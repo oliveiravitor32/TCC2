@@ -60,7 +60,8 @@ export const api = {
   podePublicar: Boolean(CHAVE_DEMO),
   pontos: () => pegar("/pontos"),
   trechos: () => pegar("/trechos"),
-  explicacao: (eventoId) => pegar(`/eventos/${eventoId}/explicacao`),
+  // `decisao` (opcional) pede a cadeia de uma decisao exata daquele evento.
+  explicacao: (eventoId, decisao) => pegar(`/eventos/${eventoId}/explicacao`, { decisao }),
   publicarLeitura: (corpo) => enviar("/eventos", corpo),
   // Modo de teste (so demonstracao): o comando sai sem a rampa de descida.
   publicarTeste: (corpo) => enviar("/teste/eventos", corpo),

@@ -95,7 +95,7 @@ export default function SimularLeitura({ fechar, trechos, trechosIniciais = [], 
           setErro(`${r.recusados.length} de ${itens.length} recusado(s): ${r.recusados.map((x) => x.erro).join("; ")}`);
           if (!r.aceitos.length) return;
         }
-        aoPublicar(r.aceitos[0]);
+        aoPublicar(r.aceitos[0], r.aceitos);
       } else {
         aoPublicar(r);
       }

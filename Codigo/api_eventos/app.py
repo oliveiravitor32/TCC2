@@ -24,6 +24,7 @@ from pathlib import Path
 import secrets
 from collections.abc import Iterator
 from contextlib import asynccontextmanager
+from uuid import UUID
 from datetime import datetime, time, timedelta, timezone
 
 from typing import Any
@@ -486,7 +487,12 @@ def _motivo(restricao: str, pretendido: float, emitido: float, anterior: float |
 
 
 @app.get("/eventos/{evento_id}/explicacao", response_model=Explicacao)
-def explicar_evento(evento_id: int, conn: psycopg.Connection = Conn) -> dict:
+def explicar_evento(evento_id: int, decisao: UUID | None = None,
+                    conn: psycopg.Connection = Conn) -> dict:
+    """Cadeia da decisao a partir de uma publicacao. Sem `decisao`, a primeira
+    decisao de cada ponto que usou o evento; com `decisao`, aquela decisao
+    exata (o painel filtrado por luminaria: um volume vale 15 min e apoia
+    varias decisoes seguidas)."""
     evento = conn.execute(
         "SELECT *, trecho_id AS trecho FROM evento_urbano WHERE id = %s", (evento_id,)
     ).fetchone()
@@ -509,6 +515,7 @@ def explicar_evento(evento_id: int, conn: psycopg.Connection = Conn) -> dict:
                 SELECT d.* FROM decisao d
                   JOIN decisao_evento de ON de.decisao_id = d.id AND de.evento_id = %(ev)s
                  WHERE d.ponto_de_luz_id = p.id
+                   AND (%(dec)s::uuid IS NULL OR d.id = %(dec)s)
                  ORDER BY d.criado_em LIMIT 1
                ) d ON true
           LEFT JOIN versao_base_regras r ON r.id = d.versao_base_regras_id
@@ -518,7 +525,7 @@ def explicar_evento(evento_id: int, conn: psycopg.Connection = Conn) -> dict:
          WHERE tp.trecho_id = %(trecho)s
          ORDER BY tp.distancia_m
         """,
-        {"ev": evento_id, "trecho": evento["trecho"]},
+        {"ev": evento_id, "trecho": evento["trecho"], "dec": decisao},
     ).fetchall()
 
     decisoes = []

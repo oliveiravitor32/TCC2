@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, Brain, ChevronRight, Info, Lightbulb, ShieldCheck, X } from "lucide-react";
 import FaixasMovimento from "./FaixasMovimento";
+import ExplicacaoLuminaria from "./ExplicacaoLuminaria";
 import { RESTRICOES, api, descreverDegrau, descreverEvento, faixaHoraria, faixaMov, hora, lux, pct } from "../api";
 
 function Etapa({ icone: Icone, titulo, children }) {
@@ -101,7 +102,7 @@ function ModalTrechos({ ponto, observada, children, fechar }) {
   );
 }
 
-function Decisao({ d, trechos }) {
+export function Decisao({ d, trechos }) {
   const [trechosAbertos, setTrechosAbertos] = useState(false);
   const [faixasAbertas, setFaixasAbertas] = useState(false);
   if (!d.decidida) {
@@ -243,13 +244,28 @@ function Decisao({ d, trechos }) {
   );
 }
 
-export default function Explicacoes({ eventos, trechos = [], selecionado, setSelecionado }) {
+const MODOS = [
+  { id: "publicacao", rotulo: "Publicação" },
+  { id: "luminaria", rotulo: "Luminária" },
+  { id: "trecho", rotulo: "Trecho" },
+];
+
+export default function Explicacoes({ eventos, trechos = [], pontos = [], filtro, setFiltro }) {
   const [explicacao, setExplicacao] = useState(null);
   const [erro, setErro] = useState(null);
+  const modo = filtro.modo;
 
-  const atual = selecionado ?? eventos[0]?.id ?? null;
+  // Pontos reais primeiro, os simulados do bairro (JH-) depois.
+  const pontosOrdenados = [...pontos].sort((a, b) =>
+    (a.codigo.startsWith("JH-") - b.codigo.startsWith("JH-")) || a.codigo.localeCompare(b.codigo));
+  const pontoSel = filtro.ponto ?? pontosOrdenados[0]?.codigo ?? null;
+  const trechoSel = filtro.trecho ?? trechos[0]?.id ?? null;
+  const lista = modo === "trecho" ? eventos.filter((e) => e.trecho === trechoSel) : eventos;
+  const atual = modo === "luminaria" ? null : (filtro.evento ?? lista[0]?.id ?? null);
+  const setSelecionado = (id) => setFiltro({ ...filtro, evento: id });
 
   useEffect(() => {
+    setExplicacao(null);
     if (atual == null) return;
     let vivo = true;
     const buscar = () =>
@@ -268,9 +284,43 @@ export default function Explicacoes({ eventos, trechos = [], selecionado, setSel
   return (
     <div className="grid gap-4 lg:grid-cols-[18rem_1fr]">
       <section className="rounded-xl border border-borda bg-carta p-3">
-        <h2 className="mb-2 border-l-4 border-luz pl-2 text-xs font-bold tracking-wide text-luz uppercase">publicações recebidas</h2>
+        <div className="mb-3 grid grid-cols-3 overflow-hidden rounded-md border border-borda text-xs font-semibold">
+          {MODOS.map((m) => (
+            <button key={m.id} type="button" onClick={() => setFiltro({ ...filtro, modo: m.id, evento: null })}
+                    className={`px-2 py-1.5 ${modo === m.id ? "bg-luz text-white" : "text-suave hover:bg-borda/40"}`}>
+              {m.rotulo}
+            </button>
+          ))}
+        </div>
+        {modo === "trecho" && (
+          <select value={trechoSel ?? ""} aria-label="trecho"
+                  onChange={(e) => setFiltro({ ...filtro, trecho: Number(e.target.value), evento: null })}
+                  className="mb-3 w-full rounded-md border border-borda bg-carta px-2 py-1.5 text-xs">
+            {trechos.map((t) => (
+              <option key={t.id} value={t.id}>
+                {[t.tipo_logradouro, t.nome_logradouro].filter(Boolean).join(" ")} {t.numero_inicial ?? ""}–{t.numero_final ?? ""} · trecho {t.id}
+              </option>
+            ))}
+          </select>
+        )}
+        <h2 className="mb-2 border-l-4 border-luz pl-2 text-xs font-bold tracking-wide text-luz uppercase">
+          {modo === "luminaria" ? "luminárias" : "publicações recebidas"}
+        </h2>
+        {modo === "luminaria" ? (
+          <ul className="max-h-[32rem] space-y-1 overflow-y-auto text-xs">
+            {pontosOrdenados.map((p) => (
+              <li key={p.codigo}>
+                <button type="button" onClick={() => setFiltro({ ...filtro, ponto: p.codigo })}
+                        className={`flex w-full items-baseline gap-2 rounded-md px-2 py-1 text-left ${p.codigo === pontoSel ? "bg-luz/15 text-luz" : "hover:bg-borda/40"}`}>
+                  <span className="font-medium">{p.codigo}</span>
+                  <span className="ml-auto text-suave">{p.trechos?.length ?? 0} trecho(s)</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
         <ul className="max-h-[32rem] space-y-1 overflow-y-auto text-xs">
-          {eventos.map((e) => (
+          {lista.map((e) => (
             <li key={e.id}>
               <button
                 type="button"
@@ -285,11 +335,16 @@ export default function Explicacoes({ eventos, trechos = [], selecionado, setSel
               </button>
             </li>
           ))}
-          {eventos.length === 0 && <li className="py-3 text-center text-suave">nenhuma publicação ainda</li>}
+          {lista.length === 0 && <li className="py-3 text-center text-suave">nenhuma publicação ainda</li>}
         </ul>
+        )}
       </section>
 
       <section className="space-y-3 rounded-xl border border-borda bg-carta p-4">
+        {modo === "luminaria" ? (
+          <ExplicacaoLuminaria codigo={pontoSel} pontos={pontos} trechos={trechos} eventos={eventos} />
+        ) : (
+        <>
         {erro && <p className="text-xs text-falha">{erro}</p>}
         {!explicacao && !erro && <p className="text-sm text-suave">escolha uma publicação à esquerda</p>}
         {explicacao && (
@@ -309,6 +364,8 @@ export default function Explicacoes({ eventos, trechos = [], selecionado, setSel
               explicacao.decisoes.map((d) => <Decisao key={d.ponto} d={d} trechos={trechos} />)
             )}
           </>
+        )}
+        </>
         )}
       </section>
     </div>
