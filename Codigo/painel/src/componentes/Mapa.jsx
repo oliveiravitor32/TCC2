@@ -8,7 +8,7 @@
 // continua passando pela verificacao normativa do servico.
 
 import { Fragment, useMemo, useState } from "react";
-import { CircleMarker, MapContainer, Polyline, TileLayer, Tooltip } from "react-leaflet";
+import { Circle, CircleMarker, MapContainer, Polyline, TileLayer, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { AlertTriangle, ExternalLink, Send, ShieldAlert, ShieldCheck, X } from "lucide-react";
 import { RESTRICOES, TERCIS, agoraServidor, api, hora, lux } from "../api";
@@ -46,12 +46,18 @@ function corTrecho(t) {
   return { cor: "#f97316", texto: "movimento alto" };
 }
 
+// Raio da associacao poste -> trecho (3.5.2; cadastro/associar.py RAIO_M):
+// todo trecho a ate esta distancia do poste entra na decisao dele.
+const RAIO_ASSOCIACAO_M = 25;
+
 const latlng = (geo) => (geo?.coordinates ?? []).map(([lon, lat]) => [lat, lon]);
 
 export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto, aoPublicar, aoPublicarTrechos }) {
   const [selecao, setSelecao] = useState(new Set());
   const [grupoEmFoco, setGrupoEmFoco] = useState(null);
   const [codigoFoco, setCodigoFoco] = useState(null);
+  // Poste sob o mouse: mostra o raio de 25 m e os trechos que ele olha.
+  const [posteHover, setPosteHover] = useState(null);
   const foco = pontos.find((p) => p.codigo === codigoFoco) ?? null;
   const [enviando, setEnviando] = useState(false);
   const [mensagem, setMensagem] = useState(null);
@@ -86,7 +92,13 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
 
   // Poste OU trechos, nunca os dois: selecionar trecho fecha o poste.
   const alternar = (id) => {
-    setCodigoFoco(null);
+    // Com um poste destacado, clicar num trecho so tira o destaque: nao
+    // seleciona nada para publicar.
+    setPosteHover(null);
+    if (codigoFoco !== null) {
+      setCodigoFoco(null);
+      return;
+    }
     setMensagem(null);
     setSelecao((s) => {
       const n = new Set(s);
@@ -148,6 +160,27 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
                 </Fragment>
               );
             })}
+            {foco && foco.latitude !== null && (
+              <>
+                <Circle center={[foco.latitude, foco.longitude]} radius={RAIO_ASSOCIACAO_M} interactive={false}
+                        pathOptions={{ color: "#0a0a0a", weight: 2, dashArray: "6 4", fillColor: "#4f78dc", fillOpacity: 0.15 }} />
+                {trechos.filter((t) => t.geometria_wgs84 && (foco.trechos ?? []).includes(t.id)).map((t) => (
+                  <Polyline key={`foco-${t.id}`} positions={latlng(t.geometria_wgs84)} interactive={false}
+                            pathOptions={{ color: "#4f78dc", weight: 14, opacity: 0.6, lineCap: "round" }} />
+                ))}
+              </>
+            )}
+            {posteHover && posteHover.codigo !== codigoFoco && (
+              <>
+                <Circle center={[posteHover.latitude, posteHover.longitude]} radius={RAIO_ASSOCIACAO_M}
+                        interactive={false}
+                        pathOptions={{ color: "#4f78dc", weight: 2, dashArray: "6 4", fillColor: "#4f78dc", fillOpacity: 0.12 }} />
+                {trechos.filter((t) => t.geometria_wgs84 && (posteHover.trechos ?? []).includes(t.id)).map((t) => (
+                  <Polyline key={`hover-${t.id}`} positions={latlng(t.geometria_wgs84)} interactive={false}
+                            pathOptions={{ color: "#4f78dc", weight: 13, opacity: 0.45, lineCap: "round" }} />
+                ))}
+              </>
+            )}
             {comPosicao.map((p) => {
               const s = saude(p);
               const real = !p.simulado;
@@ -163,14 +196,22 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
                   }}
                   eventHandlers={{
                     // O clique ja troca o ponto analisado nas outras abas.
+                    // Clique destaca os trechos do poste (so visual, nao abre
+                    // publicacao); clicar de novo no mesmo poste tira o destaque.
                     click: () => {
+                      // O marcador e recriado no clique e perde o mouseout.
+                      setPosteHover(null);
                       setSelecao(new Set());
                       setMensagem(null);
+                      if (codigoFoco === p.codigo) {
+                        setCodigoFoco(null);
+                        return;
+                      }
                       setCodigoFoco(p.codigo);
                       aoSelecionarPonto?.(p.codigo);
                     },
-                    mouseover: () => setGrupoEmFoco(p.grupo_id),
-                    mouseout: () => setGrupoEmFoco(null),
+                    mouseover: () => { setGrupoEmFoco(p.grupo_id); setPosteHover(p); },
+                    mouseout: () => { setGrupoEmFoco(null); setPosteHover(null); },
                   }}
                 >
                   <Tooltip direction="top" offset={[0, -8]}>
@@ -178,7 +219,8 @@ export default function Mapa({ pontos, trechos, aoSelecionarPonto, aoAbrirPonto,
                     <br />poste {p.placa ?? "--"} · grupo {p.grupo_id ?? "--"} ({tamanhoGrupo.get(p.grupo_id) ?? 1} poste(s))
                     <br />nível {p.nivel_emitido ?? "--"} · {RESTRICOES[p.restricao_aplicada]?.texto ?? "sem decisão"}
                     <br />luz {lux(p.lux_medido)} · {s.texto} · {hora(p.decidido_em)}
-                    <br />clique para ver os detalhes
+                    <br />olha {p.trechos?.length ?? 0} trecho(s) a até {RAIO_ASSOCIACAO_M} m (círculo azul)
+                    <br />{p.codigo === codigoFoco ? "clique de novo para tirar o destaque" : "clique para destacar os trechos e ver os detalhes"}
                   </Tooltip>
                 </CircleMarker>
               );
