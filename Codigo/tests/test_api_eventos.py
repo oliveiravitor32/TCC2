@@ -330,7 +330,8 @@ def test_energia_conta_a_luz_que_ja_valia_no_inicio_da_janela(cliente, conn):
     import datetime as dt
 
     agora = dt.datetime.now(dt.timezone.utc)
-    _telemetria_em(conn, agora - dt.timedelta(minutes=60), 1.0, 10.0)
+    # 10 min antes do inicio da janela: dentro da validade maxima do comando.
+    _telemetria_em(conn, agora - dt.timedelta(minutes=40), 1.0, 10.0)
     _telemetria_em(conn, agora - dt.timedelta(minutes=10), 1.0, 10.0)
     r = cliente.get("/energia", params={"janela_min": 30}).json()
     assert r["energia_pela_luz_wh"] == pytest.approx(20.0, rel=0.01)
@@ -340,6 +341,18 @@ def test_energia_conta_a_luz_que_ja_valia_no_inicio_da_janela(cliente, conn):
     ini = dt.datetime.fromisoformat(r["amostras"][0]["medido_em"])
     fim = dt.datetime.fromisoformat(r["amostras"][-1]["medido_em"])
     assert (fim - ini).total_seconds() == pytest.approx(30 * 60, abs=5)
+
+
+def test_energia_nao_estende_leitura_velha(cliente, conn):
+    """No que parou de responder: a ultima leitura, de dias atras, nao vira
+    consumo na janela (nao se sabe se a luz esta acesa)."""
+    import datetime as dt
+
+    agora = dt.datetime.now(dt.timezone.utc)
+    _telemetria_em(conn, agora - dt.timedelta(days=3), 1.0, 10.0)
+    r = cliente.get("/energia", params={"janela_min": 30}).json()
+    assert r["amostras"] == []
+    assert r["energia_pela_luz_wh"] == 0
 
 
 def test_energia_desconta_a_residual_da_sessao(cliente, conn):

@@ -302,6 +302,7 @@ export default function App() {
           trajetória do nível
         </h2>
         <Trajetoria
+          ponto={ponto?.codigo}
           decisoes={dados.decisoes}
           telemetria={dados.telemetria}
           piso={piso ?? 0.5}

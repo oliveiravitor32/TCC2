@@ -692,7 +692,11 @@ def consultar_energia(
     # O no so manda telemetria quando recebe comando: a luz que ja valia no
     # inicio da janela e a da ULTIMA leitura anterior a ela. Sem isso, o
     # tempo entre o inicio da janela e a primeira leitura contava como zero
-    # watt, e o painel mostrava uma economia que nao existiu.
+    # watt, e o painel mostrava uma economia que nao existiu. So vale uma
+    # leitura RECENTE: dentro da validade maxima do comando antes do inicio.
+    # Mais velha que isso, o no ja teria voltado ao pleno pelo failsafe ou
+    # parou de responder; o tempo sem leitura fica sem dado, nao vira watt.
+    limite_anterior = inicio - timedelta(seconds=config.VALIDADE_COMANDO_MAX_S)
     anterior = conn.execute(
         """
         SELECT t.medido_em, t.recebido_em, t.duty, t.lux_medido,
@@ -701,9 +705,10 @@ def consultar_energia(
           JOIN decisao d ON d.id = t.decisao_id
           LEFT JOIN sessao_medicao s ON s.id = t.sessao_id
          WHERE t.ponto_de_luz_id = %(ponto)s AND t.recebido_em < %(inicio)s
+           AND t.recebido_em >= %(limite)s
          ORDER BY t.recebido_em DESC LIMIT 1
         """,
-        {"ponto": alvo["id"], "inicio": inicio},
+        {"ponto": alvo["id"], "inicio": inicio, "limite": limite_anterior},
     ).fetchone()
     if anterior is not None:
         linhas = [{**anterior, "recebido_em": inicio}, *linhas]
