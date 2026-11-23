@@ -1,6 +1,6 @@
 # Iluminação pública adaptativa para São Paulo
 
-Trabalho de Conclusão de Curso (2026) de **Vitor Oliveira dos Santos**, **Lucas de Araujo Vergara** e **Bruno Bonavigo Dacal**.
+Trabalho de Conclusão de Curso (2026) de **[Vitor Oliveira dos Santos](https://github.com/oliveiravitor32)**, **[Lucas de Araujo Vergara](https://github.com/LucasAVerg)** e **[Bruno Bonavigo Dacal](https://github.com/Bonavigo)**.
 
 Este repositório reúne o código do protótipo, os protocolos e os resultados citados no Apêndice B do TCC.
 
@@ -535,3 +535,30 @@ O TCC declara estes limites na seção 5.3:
 - A energia é **estimada**, não medida eletricamente. O trabalho não afirma economia anual, de parque ou em reais.
 - Os números de escala (publicações por segundo, custo de US$ 2.976/mês) são **cálculo**, não teste de carga.
 - A medição da bancada não é verificação fotométrica normativa: ela garante repetibilidade e consistência, não exatidão metrológica em lux.
+
+---
+
+## Contribuidores
+
+<table>
+  <tr>
+    <td align="center" width="160">
+      <a href="https://github.com/oliveiravitor32">
+        <img src="https://github.com/oliveiravitor32.png?size=240" width="120" height="120" alt="Vitor Oliveira dos Santos"><br>
+        <sub><b>Vitor Oliveira dos Santos</b></sub>
+      </a>
+    </td>
+    <td align="center" width="160">
+      <a href="https://github.com/LucasAVerg">
+        <img src="https://github.com/LucasAVerg.png?size=240" width="120" height="120" alt="Lucas de Araujo Vergara"><br>
+        <sub><b>Lucas de Araujo Vergara</b></sub>
+      </a>
+    </td>
+    <td align="center" width="160">
+      <a href="https://github.com/Bonavigo">
+        <img src="https://github.com/Bonavigo.png?size=240" width="120" height="120" alt="Bruno Bonavigo Dacal"><br>
+        <sub><b>Bruno Bonavigo Dacal</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
