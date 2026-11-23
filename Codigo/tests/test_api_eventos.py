@@ -323,6 +323,25 @@ def test_energia_integra_a_serie_da_luz_medida(cliente, conn):
     assert r["razao_pleno"] == pytest.approx(0.5, rel=0.05)
 
 
+def test_energia_conta_a_luz_que_ja_valia_no_inicio_da_janela(cliente, conn):
+    """O no so manda telemetria quando recebe comando. Uma leitura plena de
+    antes da janela vale ate a primeira dentro dela: o inicio da janela nao
+    pode contar como zero watt (era uma economia que nao existiu)."""
+    import datetime as dt
+
+    agora = dt.datetime.now(dt.timezone.utc)
+    _telemetria_em(conn, agora - dt.timedelta(minutes=60), 1.0, 10.0)
+    _telemetria_em(conn, agora - dt.timedelta(minutes=10), 1.0, 10.0)
+    r = cliente.get("/energia", params={"janela_min": 30}).json()
+    assert r["energia_pela_luz_wh"] == pytest.approx(20.0, rel=0.01)
+    assert r["energia_pelo_comando_wh"] == pytest.approx(20.0, rel=0.01)
+    assert r["razao_pleno"] == pytest.approx(1.0, rel=0.01)
+    # O grafico cobre a janela inteira: do inicio ate agora.
+    ini = dt.datetime.fromisoformat(r["amostras"][0]["medido_em"])
+    fim = dt.datetime.fromisoformat(r["amostras"][-1]["medido_em"])
+    assert (fim - ini).total_seconds() == pytest.approx(30 * 60, abs=5)
+
+
 def test_energia_desconta_a_residual_da_sessao(cliente, conn):
     import datetime as dt
 

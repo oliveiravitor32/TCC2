@@ -47,6 +47,7 @@ from decisao.energia import (
     energia_decisoes,
     energia_pleno_constante,
     energia_por_fracao,
+    TAXA_PADRAO,
     trajetoria_horario_fixo,
 )
 
@@ -688,6 +689,25 @@ def consultar_energia(
         {"ponto": alvo["id"], "inicio": inicio},
     ).fetchall()
 
+    # O no so manda telemetria quando recebe comando: a luz que ja valia no
+    # inicio da janela e a da ULTIMA leitura anterior a ela. Sem isso, o
+    # tempo entre o inicio da janela e a primeira leitura contava como zero
+    # watt, e o painel mostrava uma economia que nao existiu.
+    anterior = conn.execute(
+        """
+        SELECT t.medido_em, t.recebido_em, t.duty, t.lux_medido,
+               COALESCE(s.lux_residual, 0) AS residual, d.nivel_emitido
+          FROM telemetria t
+          JOIN decisao d ON d.id = t.decisao_id
+          LEFT JOIN sessao_medicao s ON s.id = t.sessao_id
+         WHERE t.ponto_de_luz_id = %(ponto)s AND t.recebido_em < %(inicio)s
+         ORDER BY t.recebido_em DESC LIMIT 1
+        """,
+        {"ponto": alvo["id"], "inicio": inicio},
+    ).fetchone()
+    if anterior is not None:
+        linhas = [{**anterior, "recebido_em": inicio}, *linhas]
+
     amostras = []
     for l in linhas:
         # Fracao pela luz: quanto da iluminancia da classe esta sendo
@@ -703,6 +723,11 @@ def consultar_energia(
             "potencia_comandada_w": round(potencia * comandada, 3),
         })
 
+    # O ultimo valor vale ate agora: repetido no fim, o grafico cobre a
+    # janela inteira (nao muda a integral).
+    if amostras and amostras[-1]["medido_em"] < fim:
+        amostras.append({**amostras[-1], "medido_em": fim})
+
     serie_luz = [(a["medido_em"], a["fracao_medida"]) for a in amostras]
     pela_luz = energia_por_fracao(serie_luz, potencia, fim=fim)
 
@@ -714,6 +739,22 @@ def consultar_energia(
         """,
         {"ponto": alvo["id"], "inicio": inicio},
     ).fetchall()
+    # Mesmo cuidado pelo comando: o nivel no inicio da janela vem da ultima
+    # decisao anterior a ela, com a rampa de descida ja percorrida ate ali.
+    antes = conn.execute(
+        """
+        SELECT criado_em, nivel_anterior, nivel_emitido FROM decisao
+         WHERE ponto_de_luz_id = %(ponto)s AND criado_em < %(inicio)s
+         ORDER BY criado_em DESC LIMIT 1
+        """,
+        {"ponto": alvo["id"], "inicio": inicio},
+    ).fetchone()
+    if antes is not None:
+        b = float(antes["nivel_emitido"])
+        a = float(antes["nivel_anterior"]) if antes["nivel_anterior"] is not None else b
+        decorrido = (inicio - antes["criado_em"]).total_seconds() / 60
+        no_inicio = max(b, a - TAXA_PADRAO * decorrido) if b < a else b
+        decisoes = [{"criado_em": inicio, "nivel_anterior": no_inicio, "nivel_emitido": b}, *decisoes]
     pelo_comando = energia_decisoes(
         [(d["criado_em"],
           float(d["nivel_anterior"]) if d["nivel_anterior"] is not None else None,

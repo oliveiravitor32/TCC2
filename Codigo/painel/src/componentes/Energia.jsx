@@ -66,6 +66,10 @@ export default function Energia({ energia }) {
           <> Divergência para a estimativa pelo comando: {(divergencia * 100).toFixed(1)}%.</>
         )}
       </p>
+      <p className="mt-1 text-[11px] font-semibold leading-relaxed text-tinta">
+        Acima de 100% = luz entregue acima do pedido (erro de calibração), não consumo
+        acima do nominal.
+      </p>
     </Cartao>
   );
 }
