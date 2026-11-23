@@ -18,6 +18,7 @@ Este repositório reúne o código do protótipo, os protocolos e os resultados 
 8. [Como o projeto foi desenvolvido (programação em par com IA)](#8-como-o-projeto-foi-desenvolvido-programação-em-par-com-ia)
 9. [Como reproduzir os resultados](#9-como-reproduzir-os-resultados)
 10. [Limites do trabalho](#10-limites-do-trabalho)
+11. [Contribuidores](#11-contribuidores)
 
 ---
 
@@ -538,7 +539,7 @@ O TCC declara estes limites na seção 5.3:
 
 ---
 
-## Contribuidores
+## 11. Contribuidores
 
 <table>
   <tr>
