@@ -181,6 +181,8 @@ Os volumes do bairro mostrados no mapa do painel são **inventados** por um gera
 | Implantação | Docker Compose numa VM da Oracle Cloud (camada gratuita), com Caddy |
 | Testes | pytest |
 
+**Onde está o código do broker?** Não tem código nosso: o broker é o Mosquitto pronto (imagem `eclipse-mosquitto:2`), e o que é nosso é a configuração de segurança dele, em `Codigo/deploy/broker/` (`mosquitto.conf`: porta 8883 só com TLS e senha; `acl`: cada nó só publica e assina os próprios tópicos; `passwd` e `certs/` ficam só na VM, fora do git). O broker só repassa mensagens: quem grava a telemetria no banco é o serviço de decisão, que assina `iluminacao/+/telemetria` (`decisao/servico.py`).
+
 ---
 
 ## 7. O que tem em cada pasta
