@@ -545,19 +545,19 @@ O TCC declara estes limites na seção 5.3:
     <td align="center" width="160">
       <a href="https://github.com/oliveiravitor32">
         <img src="https://github.com/oliveiravitor32.png?size=240" width="120" height="120" alt="Vitor Oliveira dos Santos"><br>
-        <sub><b>Vitor Oliveira dos Santos</b></sub>
+        <sub><b>Vitor Santos</b></sub>
       </a>
     </td>
     <td align="center" width="160">
       <a href="https://github.com/LucasAVerg">
         <img src="https://github.com/LucasAVerg.png?size=240" width="120" height="120" alt="Lucas de Araujo Vergara"><br>
-        <sub><b>Lucas de Araujo Vergara</b></sub>
+        <sub><b>Lucas Vergara</b></sub>
       </a>
     </td>
     <td align="center" width="160">
       <a href="https://github.com/Bonavigo">
         <img src="https://github.com/Bonavigo.png?size=240" width="120" height="120" alt="Bruno Bonavigo Dacal"><br>
-        <sub><b>Bruno Bonavigo Dacal</b></sub>
+        <sub><b>Bruno Dacal</b></sub>
       </a>
     </td>
   </tr>
