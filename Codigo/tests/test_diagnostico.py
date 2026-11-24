@@ -197,6 +197,41 @@ def test_perda_de_controle_exige_doze_ciclos(conn, ponto):
     assert tipo == "perda_controle"
 
 
+def test_falha_total_continuada_tambem_abre_perda_de_controle(conn, ponto):
+    """Caso real da BANCADA-01 (22/11/2026): luminaria apagada por muitos
+    ciclos e depois luz fora da tolerancia. A falha total tambem e divergencia;
+    a perda de controle abre no 12o ciclo, mesmo que ele seja de falha total,
+    e nao fica perdida quando o contador ja passou de 12."""
+    m = Monitor()
+    m.limiares[ponto.id] = LIM
+    agora = T0
+    tipos = lambda: {r[0] for r in conn.execute("SELECT tipo FROM alerta_diagnostico")}  # noqa: E731
+    for i in range(1, 13):
+        m.avaliar(conn, ciclo_com_lux(conn, ponto, agora, lux=0.3).id)
+        assert ("perda_controle" in tipos()) == (i >= 12), f"ciclo {i}"
+        agora += timedelta(seconds=5)
+    assert tipos() == {"falha_total", "perda_controle"}
+    # Seguir fora da tolerancia nao duplica nenhum dos dois.
+    m.avaliar(conn, ciclo_com_lux(conn, ponto, agora, lux=7.0).id)
+    assert conn.execute("SELECT count(*) FROM alerta_diagnostico").fetchone()[0] == 2
+
+
+def test_no_desconectado_em_falha_mostra_sem_comunicacao(conn, ponto):
+    """Sem contato e o mais urgente; ao voltar, a falha total aberta reaparece."""
+    m = Monitor()
+    agora = T0
+    for _ in range(3):
+        m.avaliar(conn, ciclo_com_lux(conn, ponto, agora, lux=0.3).id)
+        agora += timedelta(seconds=5)
+    estado = lambda: conn.execute(  # noqa: E731
+        "SELECT estado_operacional FROM ponto_de_luz WHERE id = %s", (ponto.id,)).fetchone()[0]
+    assert estado() == "falha"
+    ciclo.atualizar_estado_ponto(conn, ponto.codigo, online=False)
+    assert estado() == "sem_comunicacao"
+    ciclo.atualizar_estado_ponto(conn, ponto.codigo, online=True)
+    assert estado() == "falha"
+
+
 def test_leitura_isolada_fora_da_tolerancia_nao_alerta(conn, ponto):
     m = Monitor()
     m.limiares[ponto.id] = LIM

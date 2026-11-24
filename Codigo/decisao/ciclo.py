@@ -768,16 +768,30 @@ def atualizar_estado_ponto(conn: psycopg.Connection, ponto_codigo: str, online: 
 
     Last will (LACUNA 2): sem conexao -> 'sem_comunicacao'. Conferencia ou
     recalibracao pela serial (bancada/conferir.py) -> 'manutencao', para o
-    painel nao confundir a pausa com defeito. 'falha' e posta a mao e nao e
-    sobrescrita aqui.
+    painel nao confundir a pausa com defeito. 'falha' vinda de falha total
+    aberta da lugar a 'sem_comunicacao' e volta ao reconectar; 'falha' posta
+    a mao no cadastro nao e sobrescrita aqui.
     """
     novo = "manutencao" if manutencao else ("operante" if online else "sem_comunicacao")
+    # Sem contato e o problema mais urgente: aparece mesmo com o ponto em
+    # falha (o alerta de falha total segue aberto na aba de alertas). Ao
+    # voltar, o ponto retorna a 'falha' se ainda houver falha total aberta.
     conn.execute(
         """
-        UPDATE ponto_de_luz
-           SET estado_operacional = %(novo)s
-         WHERE codigo = %(ponto)s
-           AND estado_operacional IN ('operante', 'sem_comunicacao', 'manutencao')
+        UPDATE ponto_de_luz p
+           SET estado_operacional = CASE
+                 WHEN %(novo)s = 'operante' AND EXISTS (
+                      SELECT 1 FROM alerta_diagnostico a
+                       WHERE a.ponto_de_luz_id = p.id AND a.tipo = 'falha_total'
+                         AND a.encerrado_em IS NULL)
+                 THEN 'falha' ELSE %(novo)s END
+         WHERE p.codigo = %(ponto)s
+           AND (p.estado_operacional IN ('operante', 'sem_comunicacao', 'manutencao')
+                -- 'falha' posta a mao (sem alerta aberto) nao e sobrescrita.
+                OR (p.estado_operacional = 'falha' AND EXISTS (
+                      SELECT 1 FROM alerta_diagnostico a
+                       WHERE a.ponto_de_luz_id = p.id AND a.tipo = 'falha_total'
+                         AND a.encerrado_em IS NULL)))
         """,
         {"novo": novo, "ponto": ponto_codigo},
     )

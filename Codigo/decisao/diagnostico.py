@@ -197,11 +197,15 @@ class Monitor:
         c.falha = c.falha + 1 if diag == "falha_total" else 0
         c.perda = c.perda + 1 if diag in ("falha_total", "divergente") else 0
 
-        if diag == "falha_total" and c.falha == lim.ciclos_falha:
+        # ">=" e nao "==": o contador pode passar do limiar sem abrir (ex.: o
+        # 12o ciclo fora da tolerancia foi de falha total). _abrir nao duplica
+        # (um alerta aberto por tipo e por ponto). A falha total tambem e
+        # divergencia acima da tolerancia, por isso conta para a perda.
+        if diag == "falha_total" and c.falha >= lim.ciclos_falha:
             self._abrir(conn, ponto_id, decisao_id, "falha_total", leitura, lim, c.falha)
-        elif diag == "divergente" and c.perda == lim.ciclos_perda:
+        if diag in ("falha_total", "divergente") and c.perda >= lim.ciclos_perda:
             self._abrir(conn, ponto_id, decisao_id, "perda_controle", leitura, lim, c.perda)
-        elif diag == "normal":
+        if diag == "normal":
             self._fechar(conn, ponto_id)
         return diag
 

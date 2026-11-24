@@ -20,7 +20,7 @@ import Trajetoria from "./componentes/Trajetoria";
 import SimularLeitura from "./componentes/SimularLeitura";
 import Explicacoes from "./componentes/Explicacoes";
 import Mapa from "./componentes/Mapa";
-import PainelAlertas, { listarAlertas } from "./componentes/PainelAlertas";
+import PainelAlertas, { TIPOS, listarAlertas } from "./componentes/PainelAlertas";
 
 const PERIODO_MS = 2000; // metade do ciclo de decisao (5 s), sem afoga-lo
 const JANELA = 240; // decisoes exibidas na trajetoria
@@ -104,6 +104,15 @@ export default function App() {
   const ultimaResposta = dados.telemetria[0]?.recebido_em ?? null;
 
   const estado = ESTADOS[ponto?.estado_operacional] ?? ESTADOS.sem_comunicacao;
+  // Selo do cabecalho com o mesmo nome, cor e icone do cartao da aba Alertas.
+  // Operante sem alerta aberto: o selo verde de sempre.
+  const abertos = new Set(dados.alertas.map((a) => a.tipo));
+  const tipoSelo = ponto?.estado_operacional === "falha"
+    ? (abertos.has("falha_total") ? "falha_total" : "falha")
+    : ["sem_comunicacao", "manutencao"].includes(ponto?.estado_operacional)
+      ? ponto.estado_operacional
+      : abertos.has("perda_controle") ? "perda_controle" : null;
+  const selo = tipoSelo ? TIPOS[tipoSelo] : null;
 
   // Envio automatico da frota simulada (so demonstracao): o botao so aparece
   // com o modo de teste da API ligado e o painel com a chave de publicacao.
@@ -155,10 +164,18 @@ export default function App() {
             </select>
           </label>
         )}
-        <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold text-white uppercase tracking-wide ${estado.cor.replace("text-", "bg-")}`}>
-          <CircleDot size={12} aria-hidden="true" />
-          {estado.texto}
-        </span>
+        {selo ? (
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide"
+                style={{ background: selo.cor, color: selo.cor === "#facc15" ? "#0a0a0a" : "#ffffff" }}>
+            <selo.icone size={12} aria-hidden="true" />
+            {selo.titulo}
+          </span>
+        ) : (
+          <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold text-white uppercase tracking-wide ${estado.cor.replace("text-", "bg-")}`}>
+            <CircleDot size={12} aria-hidden="true" />
+            {estado.texto}
+          </span>
+        )}
 
         <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-white/70">
           <button

@@ -5,7 +5,7 @@
 import { AlertTriangle, Wrench, WifiOff, ExternalLink, CheckCircle2 } from "lucide-react";
 import { hora } from "./Dica";
 
-const TIPOS = {
+export const TIPOS = {
   falha_total: {
     titulo: "falha total", cor: "#facc15", icone: AlertTriangle,
     texto: "comando acima de zero e luz perto da residual: luminária apagada",
