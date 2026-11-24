@@ -1,0 +1,42 @@
+{
+  "gerado_em": "2026-11-22T04:32:38.392784+00:00",
+  "simulada": false,
+  "ponto": "BANCADA-01",
+  "classe": "P3",
+  "lux_classe": 10.0,
+  "lux_piso": 5.0,
+  "sessao_tabela_no": 120,
+  "tolerancia": 0.0339,
+  "origem_tolerancia": "arquivo da sessao 120",
+  "residual": 0.0,
+  "residual_ok": true,
+  "niveis": [
+    {
+      "nivel": 1.0,
+      "duty": 2247,
+      "lux_esperado": 10.0,
+      "lux_liquido": 10.75,
+      "razao": 1.075,
+      "ok": false
+    },
+    {
+      "nivel": 0.75,
+      "duty": 1696,
+      "lux_esperado": 7.5,
+      "lux_liquido": 8.04,
+      "razao": 1.072,
+      "ok": false
+    },
+    {
+      "nivel": 0.5,
+      "duty": 1154,
+      "lux_esperado": 5.0,
+      "lux_liquido": 5.43,
+      "razao": 1.086,
+      "ok": false
+    }
+  ],
+  "aprovada": false,
+  "motivo": "iluminancia fora da tolerancia: a bancada mudou; recalibre",
+  "sessao_id": 123
+}

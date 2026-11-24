@@ -1,0 +1,42 @@
+{
+  "gerado_em": "2026-11-22T04:17:06.993442+00:00",
+  "simulada": false,
+  "ponto": "BANCADA-01",
+  "classe": "P3",
+  "lux_classe": 10.0,
+  "lux_piso": 5.0,
+  "sessao_tabela_no": 120,
+  "tolerancia": 0.0339,
+  "origem_tolerancia": "arquivo da sessao 120",
+  "residual": 0.0,
+  "residual_ok": true,
+  "niveis": [
+    {
+      "nivel": 1.0,
+      "duty": 2247,
+      "lux_esperado": 10.0,
+      "lux_liquido": 9.96,
+      "razao": 0.996,
+      "ok": true
+    },
+    {
+      "nivel": 0.75,
+      "duty": 1696,
+      "lux_esperado": 7.5,
+      "lux_liquido": 7.47,
+      "razao": 0.996,
+      "ok": true
+    },
+    {
+      "nivel": 0.5,
+      "duty": 1154,
+      "lux_esperado": 5.0,
+      "lux_liquido": 4.98,
+      "razao": 0.996,
+      "ok": true
+    }
+  ],
+  "aprovada": true,
+  "motivo": "",
+  "sessao_id": 121
+}
